@@ -2,7 +2,7 @@
 
 from typing import Optional, Union
 
-from ...domain import TaskRepository, TaskId, TaskStatus, Priority, TaskNotFoundError
+from ...domain import TaskRepository, TaskId, TaskStatus, Priority, TaskNotFoundError, AutoRuleGenerator
 from ...domain.events import TaskUpdated
 from ..dtos.task_dto import UpdateTaskRequest, TaskResponse
 
@@ -10,8 +10,9 @@ from ..dtos.task_dto import UpdateTaskRequest, TaskResponse
 class UpdateTaskUseCase:
     """Use case for updating an existing task"""
     
-    def __init__(self, task_repository: TaskRepository):
+    def __init__(self, task_repository: TaskRepository, auto_rule_generator: Optional[AutoRuleGenerator] = None):
         self._task_repository = task_repository
+        self._auto_rule_generator = auto_rule_generator
     
     def execute(self, request: UpdateTaskRequest) -> TaskResponse:
         """Execute the update task use case"""
@@ -55,6 +56,15 @@ class UpdateTaskUseCase:
         
         # Save the updated task
         self._task_repository.save(task)
+        
+        # Generate auto rules if generator is provided
+        if self._auto_rule_generator:
+            try:
+                self._auto_rule_generator.generate_rules_for_task(task)
+            except Exception as e:
+                # Log the error but don't fail the task update
+                import logging
+                logging.warning(f"Failed to generate auto rules for task {task.id}: {e}")
         
         # Handle domain events
         events = task.get_events()

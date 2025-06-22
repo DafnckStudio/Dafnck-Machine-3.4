@@ -850,6 +850,17 @@ class Task:
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert task to dictionary representation"""
+        # Handle assignees - convert AgentRole enums to strings
+        assignees_list = []
+        if self.assignees is not None:
+            for assignee in self.assignees:
+                if hasattr(assignee, 'value'):
+                    # Handle AgentRole enum - convert to string with @ prefix
+                    assignees_list.append(f"@{assignee.value}")
+                else:
+                    # Handle string assignees
+                    assignees_list.append(str(assignee))
+        
         return {
             "id": str(self.id),
             "title": self.title,
@@ -859,7 +870,7 @@ class Task:
             "priority": str(self.priority),
             "details": self.details,
             "estimatedEffort": self.estimated_effort,
-            "assignees": self.assignees.copy() if self.assignees is not None else [],
+            "assignees": assignees_list,
             "labels": self.labels.copy() if self.labels is not None else [],
             "dependencies": [dep.value if hasattr(dep, 'value') else str(dep) for dep in self.dependencies],
             "subtasks": self.subtasks.copy(),

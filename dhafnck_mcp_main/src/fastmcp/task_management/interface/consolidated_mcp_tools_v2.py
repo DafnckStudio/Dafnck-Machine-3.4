@@ -100,8 +100,16 @@ class SimpleMultiAgentTools:
     def _load_projects(self):
         self._ensure_brain_dir()
         if os.path.exists(self._projects_file):
-            with open(self._projects_file, 'r') as f:
-                self._projects = json.load(f)
+            try:
+                with open(self._projects_file, 'r') as f:
+                    content = f.read().strip()
+                    if content:
+                        self._projects = json.loads(content)
+                    else:
+                        self._projects = {}
+            except (json.JSONDecodeError, FileNotFoundError) as e:
+                logging.warning(f"Failed to load projects file {self._projects_file}: {e}")
+                self._projects = {}
         else:
             self._projects = {}
     

@@ -220,9 +220,12 @@ class FileAutoRuleGenerator(AutoRuleGenerator):
         if not assignee:
             assignee = "default_agent"
         
+        # Ensure assignee is a string before calling startswith()
+        assignee_str = str(assignee)
+        
         # Remove '@' prefix if present
-        if assignee.startswith("@"):
-            assignee = assignee[1:]
+        if assignee_str.startswith("@"):
+            assignee_str = assignee_str[1:]
 
         # Convert task to dict
         task_dict = task.to_dict()
@@ -241,7 +244,7 @@ class FileAutoRuleGenerator(AutoRuleGenerator):
 - **Priority**: {str(task_dict.get('priority', 'N/A')).upper()}
 - **Labels**: {', '.join(task_dict.get('labels', []))}
 
-### ROLE: {assignee.upper()} ###
+### ROLE: {assignee_str.upper()} ###
 - This is a simplified role for testing purposes.
 
 ### OPERATING RULES ###
