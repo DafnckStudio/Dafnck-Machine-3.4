@@ -330,7 +330,7 @@ class TestMCPServerIntegrationCoverage:
         from unittest.mock import patch
         
         # Test that logging is configured when main is called
-        with patch('task_mcp.interface.ddd_mcp_server.create_mcp_server') as mock_create:
+        with patch('fastmcp.task_management.interface.ddd_mcp_server.create_mcp_server') as mock_create:
             with patch('logging.basicConfig') as mock_logging:
                 mock_server = Mock()
                 mock_create.return_value = mock_server
@@ -544,6 +544,7 @@ class TestPerformanceAndEdgeCases:
             "id": "20241201001",
             "title": "Updated Title",
             "description": "Test Description",
+            "project_id": "test_project",
             "status": "todo",
             "priority": "medium",
             "details": "",
@@ -1333,6 +1334,7 @@ class TestApplicationDTOsCoverage:
                 "id": f"2024120100{i}",
                 "title": f"Task {i}",
                 "description": "Test Description",
+                "project_id": "test_project",
                 "status": "todo",
                 "priority": "medium",
                 "details": "",
@@ -1375,10 +1377,10 @@ class TestInterfaceLayerCoverage:
         """Comprehensive test for MCP tools initialization and registration"""
         from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
         
-        with patch('task_mcp.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo, \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_gen, \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.TaskApplicationService') as mock_service, \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.CursorRulesTools') as mock_cursor:
+        with patch('fastmcp.task_management.infrastructure.repositories.json_task_repository.JsonTaskRepository') as mock_repo, \
+             patch('fastmcp.task_management.infrastructure.services.file_auto_rule_generator.FileAutoRuleGenerator') as mock_gen, \
+             patch('fastmcp.task_management.application.services.task_application_service.TaskApplicationService') as mock_service, \
+             patch('fastmcp.task_management.interface.cursor_rules_tools.CursorRulesTools') as mock_cursor:
             
             tools = ConsolidatedMCPToolsV2()
             

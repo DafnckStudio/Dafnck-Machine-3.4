@@ -10,10 +10,10 @@ from typing import Optional, List
 class AgentDocGenerator:
     """Agent Documentation Generator for converting YAML agent definitions to MDC format"""
     
-    def __init__(self):
+    def __init__(self, agent_yaml_lib: Optional[Path] = None, agents_output_dir: Optional[Path] = None):
         self.project_root = self._get_project_root()
-        self.agent_yaml_lib = self.project_root / "cursor_agent/yaml-lib"
-        self.agents_output_dir = self.project_root / ".cursor/rules/agents"
+        self.agent_yaml_lib = agent_yaml_lib or self.project_root / "cursor_agent/yaml-lib"
+        self.agents_output_dir = agents_output_dir or self.project_root / ".cursor/rules/agents"
         self.convert_script = self.project_root / "cursor_agent/yaml-lib/convert_yaml_to_mdc_format.py"
     
     def _get_project_root(self) -> Path:
@@ -150,7 +150,7 @@ CONVERT_SCRIPT = PROJECT_ROOT / "cursor_agent/yaml-lib/convert_yaml_to_mdc_forma
 
 
 def clear_agents_output_dir():
-    generator = AgentDocGenerator()
+    generator = AgentDocGenerator(agents_output_dir=AGENTS_OUTPUT_DIR)
     generator.clear_agents_output_dir()
 
 
@@ -160,13 +160,19 @@ def convert_yaml_to_mdc(yaml_file: Path) -> str:
 
 
 def generate_agent_docs(agent_name=None, clear_all=False):
-    generator = AgentDocGenerator()
+    generator = AgentDocGenerator(
+        agent_yaml_lib=AGENT_YAML_LIB, 
+        agents_output_dir=AGENTS_OUTPUT_DIR
+    )
     generator.generate_agent_docs(agent_name, clear_all)
 
 
 def generate_docs_for_assignees(assignees, clear_all=False):
     """Generate agent docs for all unique assignees in the list."""
-    generator = AgentDocGenerator()
+    generator = AgentDocGenerator(
+        agent_yaml_lib=AGENT_YAML_LIB,
+        agents_output_dir=AGENTS_OUTPUT_DIR
+    )
     generator.generate_docs_for_assignees(assignees, clear_all)
 
 

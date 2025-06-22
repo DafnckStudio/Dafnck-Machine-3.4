@@ -110,6 +110,28 @@ class TaskResponse:
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     
+    def __init__(self, id: str, title: str, description: str, status: str, priority: str, 
+                 details: str, estimated_effort: str, assignees: List[str], labels: List[str],
+                 dependencies: List[str], subtasks: List[Dict[str, Any]], due_date: Optional[str],
+                 created_at: Optional[datetime], updated_at: Optional[datetime], 
+                 project_id: Optional[str] = None):
+        """Initialize TaskResponse with optional project_id"""
+        self.id = id
+        self.title = title
+        self.description = description
+        self.project_id = project_id
+        self.status = status
+        self.priority = priority
+        self.details = details
+        self.estimated_effort = estimated_effort
+        self.assignees = assignees
+        self.labels = labels
+        self.dependencies = dependencies
+        self.subtasks = subtasks
+        self.due_date = due_date
+        self.created_at = created_at
+        self.updated_at = updated_at
+    
     @classmethod
     def from_domain(cls, task) -> 'TaskResponse':
         """Create response DTO from domain entity"""
@@ -128,7 +150,7 @@ class TaskResponse:
             id=task_dict["id"],
             title=task_dict["title"],
             description=task_dict["description"],
-            project_id=task_dict["project_id"],
+            project_id=task_dict.get("project_id"),  # Use .get() to handle None/missing values
             status=task_dict["status"],
             priority=task_dict["priority"],
             details=task_dict["details"],

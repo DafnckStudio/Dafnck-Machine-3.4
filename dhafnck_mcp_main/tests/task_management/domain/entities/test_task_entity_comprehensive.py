@@ -496,10 +496,9 @@ class TestTaskSubtasks:
     
     def test_add_subtask_minimal(self):
         """Test adding subtask with minimal data"""
-        subtask = {"title": "Test Subtask"}
+        result = self.task.add_subtask(title="Test Subtask")
         
-        self.task.add_subtask(subtask)
-        
+        assert result == "Test Subtask"  # Method now returns the title
         assert len(self.task.subtasks) == 1
         added_subtask = self.task.subtasks[0]
         assert added_subtask["title"] == "Test Subtask"
@@ -516,25 +515,24 @@ class TestTaskSubtasks:
     
     def test_add_subtask_with_id(self):
         """Test adding subtask with existing ID"""
-        subtask = {"id": "custom-id", "title": "Test Subtask"}
+        result = self.task.add_subtask(title="Test Subtask", id="custom-id")
         
-        self.task.add_subtask(subtask)
-        
+        assert result == "Test Subtask"
         added_subtask = self.task.subtasks[0]
         assert added_subtask["id"] == "custom-id"
     
     def test_add_subtask_no_title(self):
         """Test adding subtask without title fails"""
-        with pytest.raises(ValueError, match="Subtask must have a title"):
-            self.task.add_subtask({})
+        with pytest.raises(ValueError, match="Either subtask_title or title must be provided"):
+            self.task.add_subtask()
         
         with pytest.raises(ValueError, match="Subtask must have a title"):
-            self.task.add_subtask({"title": ""})
+            self.task.add_subtask(title="")
     
     def test_add_multiple_subtasks_auto_id(self):
         """Test adding multiple subtasks with auto-generated IDs"""
-        self.task.add_subtask({"title": "Subtask 1"})
-        self.task.add_subtask({"title": "Subtask 2"})
+        self.task.add_subtask(title="Subtask 1")
+        self.task.add_subtask(title="Subtask 2")
         
         assert len(self.task.subtasks) == 2
         
@@ -545,8 +543,7 @@ class TestTaskSubtasks:
     
     def test_remove_subtask_by_string_id(self):
         """Test removing subtask by string ID"""
-        subtask = {"id": "test-id", "title": "Test Subtask"}
-        self.task.add_subtask(subtask)
+        self.task.add_subtask(title="Test Subtask", id="test-id")
         
         result = self.task.remove_subtask("test-id")
         

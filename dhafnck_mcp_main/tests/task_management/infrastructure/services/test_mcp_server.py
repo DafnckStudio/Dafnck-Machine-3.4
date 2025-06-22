@@ -17,7 +17,7 @@ from io import StringIO
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
 # Import the module under test
-import mcp_server
+import fastmcp.server.main_server as mcp_server
 from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
 
 

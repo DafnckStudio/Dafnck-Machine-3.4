@@ -552,7 +552,7 @@ class Task:
             self.updated_at = datetime.now(timezone.utc)
     
     def add_subtask(self, subtask_title: str = None, title: str = None, description: str = None, 
-                   assignee: str = None, estimated_effort: str = None, **kwargs) -> None:
+                   assignee: str = None, estimated_effort: str = None, **kwargs) -> str:
         """Add a subtask to the task with flexible parameter support"""
         # Handle both old style (single string) and new style (keyword arguments)
         if subtask_title is not None and title is None:
@@ -614,6 +614,9 @@ class Task:
             new_value=subtask_data,
             updated_at=self.updated_at
         ))
+        
+        # Return the subtask title for backward compatibility with tests
+        return subtask_data["title"]
     
     def remove_subtask(self, subtask_id: Union[int, str]) -> bool:
         """Remove a subtask by ID (supports both integer and hierarchical IDs)"""
@@ -741,11 +744,11 @@ class Task:
     def get_subtask_progress(self) -> Dict[str, Any]:
         """Get subtask completion progress"""
         if not self.subtasks:
-            return {"total": 0, "completed": 0, "percentage": 100.0}  # No subtasks = 100% complete
+            return {"total": 0, "completed": 0, "percentage": 0}  # No subtasks = 0% complete
         
         total = len(self.subtasks)
         completed = sum(1 for st in self.subtasks if st.get("completed", False))
-        percentage = round((completed / total) * 100, 1) if total > 0 else 100.0
+        percentage = round((completed / total) * 100, 1) if total > 0 else 0
         
         return {
             "total": total,

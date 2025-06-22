@@ -1,0 +1,28 @@
+{
+  "migration_workflow_test": {
+    "id": "migration_workflow_test",
+    "name": "Migration Workflow Test Project",
+    "description": "Complete workflow test for migration validation",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      },
+      "workflow_tree": {
+        "id": "workflow_tree",
+        "name": "Workflow Test Tree",
+        "description": "Task tree for workflow testing"
+      }
+    },
+    "registered_agents": {
+      "workflow_test_agent": {
+        "id": "workflow_test_agent",
+        "name": "Workflow Test Agent",
+        "call_agent": "@coding_agent"
+      }
+    },
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  }
+}
