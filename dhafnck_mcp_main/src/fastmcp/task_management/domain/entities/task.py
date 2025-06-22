@@ -52,15 +52,22 @@ class Task:
         self._validate()
         
         # Set timestamps if not provided (ensure timezone-aware)
-        if self.created_at is None:
-            self.created_at = datetime.now(timezone.utc)
-        elif self.created_at.tzinfo is None:
-            self.created_at = self.created_at.replace(tzinfo=timezone.utc)
-            
-        if self.updated_at is None:
-            self.updated_at = datetime.now(timezone.utc)
-        elif self.updated_at.tzinfo is None:
-            self.updated_at = self.updated_at.replace(tzinfo=timezone.utc)
+        # For new tasks, both timestamps should be identical
+        if self.created_at is None and self.updated_at is None:
+            now = datetime.now(timezone.utc)
+            self.created_at = now
+            self.updated_at = now
+        else:
+            # Handle existing timestamps separately
+            if self.created_at is None:
+                self.created_at = datetime.now(timezone.utc)
+            elif self.created_at.tzinfo is None:
+                self.created_at = self.created_at.replace(tzinfo=timezone.utc)
+                
+            if self.updated_at is None:
+                self.updated_at = datetime.now(timezone.utc)
+            elif self.updated_at.tzinfo is None:
+                self.updated_at = self.updated_at.replace(tzinfo=timezone.utc)
     
     def __eq__(self, other):
         """Tasks are equal if they have the same ID"""

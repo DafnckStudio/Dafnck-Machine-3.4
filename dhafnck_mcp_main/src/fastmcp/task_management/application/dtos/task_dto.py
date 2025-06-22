@@ -97,6 +97,7 @@ class TaskResponse:
     id: str
     title: str
     description: str
+    project_id: Optional[str]
     status: str
     priority: str
     details: str
@@ -106,17 +107,28 @@ class TaskResponse:
     dependencies: List[str]
     subtasks: List[Dict[str, Any]]
     due_date: Optional[str]
-    created_at: Optional[str]
-    updated_at: Optional[str]
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
     
     @classmethod
     def from_domain(cls, task) -> 'TaskResponse':
         """Create response DTO from domain entity"""
         task_dict = task.to_dict()
+        
+        # Parse datetime strings back to datetime objects if they're strings
+        created_at = task_dict["created_at"]
+        if isinstance(created_at, str):
+            created_at = datetime.fromisoformat(created_at)
+        
+        updated_at = task_dict["updated_at"]  
+        if isinstance(updated_at, str):
+            updated_at = datetime.fromisoformat(updated_at)
+        
         return cls(
             id=task_dict["id"],
             title=task_dict["title"],
             description=task_dict["description"],
+            project_id=task_dict["project_id"],
             status=task_dict["status"],
             priority=task_dict["priority"],
             details=task_dict["details"],
@@ -126,8 +138,8 @@ class TaskResponse:
             dependencies=task_dict["dependencies"],
             subtasks=task_dict["subtasks"],
             due_date=task_dict["dueDate"],
-            created_at=task_dict["created_at"],
-            updated_at=task_dict["updated_at"]
+            created_at=created_at,
+            updated_at=updated_at
         )
 
 

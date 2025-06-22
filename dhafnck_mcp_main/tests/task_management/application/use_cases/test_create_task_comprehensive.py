@@ -68,7 +68,7 @@ class TestCreateTaskUseCase:
         assert result.task.title == "Test Task"
         assert result.task.description == "Test Description"
         assert result.task.id is not None
-        assert result.task.status.value == TaskStatus.todo().value
+        assert result.task.status == "todo"
         assert result.task.priority is not None
         assert result.task.created_at is not None
         assert result.task.updated_at is not None
@@ -81,11 +81,11 @@ class TestCreateTaskUseCase:
         assert result.task is not None
         assert result.task.title == "Detailed Task"
         assert result.task.description == "Detailed Description"
-        assert result.task.priority.value == Priority.high().value
+        assert result.task.priority == "high"
         assert result.task.details == "Detailed information"
-        assert result.task.estimated_effort.value == "medium"
-        assert AgentRole.CODING in result.task.assignees
-        assert AgentRole.TEST_CASE_GENERATOR in result.task.assignees
+        assert result.task.estimated_effort == "medium"
+        assert "@coding_agent" in result.task.assignees
+        assert "@test_agent" in result.task.assignees
         assert "feature" in result.task.labels
         assert "backend" in result.task.labels
         assert result.task.due_date is not None
@@ -248,12 +248,12 @@ class TestCreateTaskUseCase:
     
     def test_execute_repository_error(self, use_case, basic_request, repository):
         """Test handling repository error"""
-        repository.create = Mock(side_effect=Exception("Repository error"))
+        repository.save = Mock(side_effect=Exception("Repository error"))
         
         result = use_case.execute(basic_request)
         
         assert result.success is False
-        assert "error" in result.__dict__ or hasattr(result, 'error_message')
+        assert "error" in result.message or "Repository error" in result.message
     
     def test_execute_multiple_tasks(self, use_case):
         """Test creating multiple tasks"""
@@ -304,8 +304,13 @@ class TestCreateTaskUseCase:
         result = use_case.execute(request)
         
         assert result.success is True
-        assert result.task.title == long_title
-        assert result.task.description == long_description
+        # Title should be truncated to 200 characters
+        assert len(result.task.title) <= 200
+        assert result.task.title.startswith("Very long title")
+        # Description should be truncated to 1000 characters  
+        assert len(result.task.description) <= 1000
+        assert result.task.description.startswith("Very long description")
+        # Details should be preserved as-is (no length limit in use case)
         assert result.task.details == long_details
     
     def test_execute_with_all_assignee_roles(self, use_case):
@@ -365,7 +370,7 @@ class TestCreateTaskUseCase:
             tasks.append(result.task)
         
         # Check repository has all tasks
-        all_tasks = repository.list_all()
+        all_tasks = repository.find_all()
         assert len(all_tasks) == 3
         
         # Tasks should be in creation order

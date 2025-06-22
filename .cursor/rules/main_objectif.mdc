@@ -14,6 +14,7 @@ ROOT_PATH on WSL Ubuntu: /home/<username>/agentic-project
 
 username : daihungpham
 
+PLAN_ACTUAL : [migration_plan.md](mdc:.cursor/rules/migration_plan.md)
 
 **See the full Multi-Agent Orchestration documentation:**
 [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc)
