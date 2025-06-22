@@ -943,7 +943,6 @@ class ConsolidatedMCPToolsV2:
             Returns:
                 Dict with agent information and combined content from all YAML files
             """
-            # Use the CallAgentUseCase to handle the logic and MDC generation
             return self._call_agent_use_case.execute(name_agent)
 
     # ═══════════════════════════════════════════════════════════════════
@@ -951,15 +950,13 @@ class ConsolidatedMCPToolsV2:
     # ═══════════════════════════════════════════════════════════════════
     
     def _handle_core_task_operations(self, action, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date, project_id=None, force_full_generation=False):
-        """Helper to handle core task operations (create, get, update, delete)"""
+        """Internal handler for core task CRUD operations."""
         try:
             if action == "create":
-                if not title or not description:
-                    return {"success": False, "error": "Title and description are required to create a task."}
-                
                 request = CreateTaskRequest(
                     title=title,
                     description=description,
+                    project_id=project_id,
                     status=status,
                     priority=priority,
                     details=details,
@@ -969,31 +966,30 @@ class ConsolidatedMCPToolsV2:
                     due_date=due_date
                 )
                 response = self._task_app_service.create_task(request)
-                # Convert response to dict format expected by tests
-                response_dict = asdict(response)
-                return {"success": True, "action": "create", **response_dict}
-
+                logging.info(f"Create task response: {response}")
+                if response.success:
+                    return {
+                        "success": True,
+                        "action": "create",
+                        "task": asdict(response.task) if response.task else None
+                    }
+                else:
+                    return {
+                        "success": False,
+                        "action": "create",
+                        "error": response.message
+                    }
             elif action == "get":
-                if not task_id:
-                    return {"success": False, "error": "Task ID is required to get a task."}
-                
-                try:
-                    response = self._task_app_service.get_task(task_id, force_full_generation=force_full_generation)
-                    # Convert response to dict format expected by tests
-                    response_dict = asdict(response)
-                    return {"success": True, "action": "get", **response_dict}
-                except TaskNotFoundError as e:
-                    error_message = f"Task with ID {task_id} not found"
-                    return {"success": False, "error": error_message}
-                except Exception as e:
-                    logging.error(f"Error during get task for task {task_id}: {traceback.format_exc()}")
-                    error_message = f"Error during auto rule generation: {str(e)}"
-                    return {"success": False, "error": error_message}
-
+                task_response = self._task_app_service.get_task(task_id, generate_rules=True, force_full_generation=force_full_generation)
+                if task_response:
+                    return {
+                        "success": True,
+                        "action": "get",
+                        "task": asdict(task_response)
+                    }
+                else:
+                    return {"success": False, "action": "get", "error": f"Task with ID {task_id} not found."}
             elif action == "update":
-                if not task_id:
-                    return {"success": False, "error": "Task ID is required to update a task."}
-                
                 request = UpdateTaskRequest(
                     task_id=task_id,
                     title=title,
@@ -1006,22 +1002,26 @@ class ConsolidatedMCPToolsV2:
                     labels=labels,
                     due_date=due_date
                 )
-                response = self._task_app_service.update_task(request)
-                # Convert response to dict format expected by tests
-                response_dict = asdict(response)
-                return {"success": True, "action": "update", **response_dict}
-
+                task_response = self._task_app_service.update_task(request)
+                if task_response and task_response.success:
+                    return {
+                        "success": True,
+                        "action": "update",
+                        "task": asdict(task_response.task)
+                    }
+                
+                error_message = task_response.message if task_response else f"Task with ID {task_id} not found."
+                return {"success": False, "action": "update", "error": error_message}
             elif action == "delete":
-                if not task_id:
-                    return {"success": False, "error": "Task ID is required to delete a task."}
-                self._task_app_service.delete_task(task_id)
-                return {"success": True, "action": "delete"}
-            
+                success = self._task_app_service.delete_task(task_id)
+                if success:
+                    return {"success": True, "action": "delete"}
+                else:
+                    return {"success": False, "action": "delete", "error": f"Task with ID {task_id} not found."}
             else:
                 return {"success": False, "error": f"Invalid core action: {action}"}
-        except TaskNotFoundError as e:
-            return {"success": False, "error": str(e)}
-        except ValueError as e:
+        except Exception as e:
+            logging.error(f"Error in core task operation '{action}': {traceback.format_exc()}")
             return {"success": False, "error": str(e)}
 
     def _handle_complete_task(self, task_id):

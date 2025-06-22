@@ -570,7 +570,7 @@ class TestPerformanceAndEdgeCases:
         # Assert
         mock_repository.save.assert_called_once()
         mock_task.update_title.assert_called_once_with("Updated Title")
-        assert result.title == "Updated Title"
+        assert result.task.title == "Updated Title"
 
 
 class TestSearchTasksUseCaseCoverage:

@@ -49,22 +49,22 @@ class ManageDependenciesUseCase:
         if not dependency_task:
             raise TaskNotFoundError(f"Dependency task {request.dependency_id} not found")
         
-        # Check for circular dependency
-        if task.has_circular_dependency(dependency_id):
-            return DependencyResponse(
-                task_id=str(request.task_id),
-                dependencies=task.get_dependency_ids(),
-                success=False,
-                message="Cannot add dependency: would create circular reference"
-            )
-        
-        # Check if dependency already exists
+        # Check if dependency already exists first
         if task.has_dependency(dependency_id):
             return DependencyResponse(
                 task_id=str(request.task_id),
                 dependencies=task.get_dependency_ids(),
                 success=False,
                 message=f"Dependency {request.dependency_id} already exists"
+            )
+
+        # Then, check for circular dependency
+        if task.has_circular_dependency(dependency_id):
+            return DependencyResponse(
+                task_id=str(request.task_id),
+                dependencies=task.get_dependency_ids(),
+                success=False,
+                message="Cannot add dependency: would create circular reference"
             )
         
         task.add_dependency(dependency_id)

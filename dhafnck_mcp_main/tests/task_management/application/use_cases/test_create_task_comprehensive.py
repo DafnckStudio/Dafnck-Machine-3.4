@@ -98,11 +98,8 @@ class TestCreateTaskUseCase:
             priority="invalid_priority"
         )
         
-        result = use_case.execute(request)
-        
-        # Should handle gracefully with default priority
-        assert result.success is True
-        assert result.task.priority is not None
+        with pytest.raises(ValueError, match="Invalid priority: invalid_priority"):
+            use_case.execute(request)
     
     def test_execute_with_invalid_estimated_effort(self, use_case):
         """Test creating task with invalid estimated effort"""
@@ -153,10 +150,8 @@ class TestCreateTaskUseCase:
             description="Test Description"
         )
         
-        result = use_case.execute(request)
-        
-        # Should handle validation appropriately
-        assert result is not None
+        with pytest.raises(ValueError, match="Task title cannot be empty"):
+            use_case.execute(request)
     
     def test_execute_with_empty_description(self, use_case):
         """Test creating task with empty description"""
@@ -165,10 +160,8 @@ class TestCreateTaskUseCase:
             description=""
         )
         
-        result = use_case.execute(request)
-        
-        # Should handle validation appropriately
-        assert result is not None
+        with pytest.raises(ValueError, match="Task description cannot be empty"):
+            use_case.execute(request)
     
     def test_execute_with_none_values(self, use_case):
         """Test creating task with None values"""
@@ -213,15 +206,13 @@ class TestCreateTaskUseCase:
         
         # Verify auto rule generator was called
         auto_rule_generator.generate_rule.assert_called_once()
-        call_args = auto_rule_generator.generate_rule.call_args
         
-        # Should be called with role and task context
-        assert len(call_args[0]) >= 1  # At least role argument
-        if len(call_args[0]) > 1:
-            task_context = call_args[0][1]
-            assert isinstance(task_context, dict)
-            assert "id" in task_context
-            assert "title" in task_context
+        # Verify that context was passed correctly
+        call_args, call_kwargs = auto_rule_generator.generate_rule.call_args
+        assert "task" in call_kwargs
+        task_context = call_kwargs["task"]
+        assert isinstance(task_context, Task)
+        assert task_context.title == "Test Task"
     
     def test_execute_auto_rule_generation_failure(self, use_case, basic_request, auto_rule_generator):
         """Test handling auto rule generation failure"""
@@ -469,9 +460,27 @@ class TestCreateTaskUseCase:
         auto_rule_generator.generate_rule.assert_called_once()
         
         # Should extract role from assignee
-        call_args = auto_rule_generator.generate_rule.call_args[0]
-        role = call_args[0]
-        assert "coding" in role.lower() or role == "coding_agent"
+        _, call_kwargs = auto_rule_generator.generate_rule.call_args
+        assert "role" in call_kwargs
+        assert call_kwargs["role"] == "coding_agent"
+        assert "task" in call_kwargs
+    
+    def test_execute_auto_rule_generation_no_assignee(self, use_case, auto_rule_generator):
+        """Test auto rule generation with no assignee"""
+        request = CreateTaskRequest(
+            title="Test Task",
+            description="Test Description"
+        )
+        
+        result = use_case.execute(request)
+        
+        assert result.success is True
+        auto_rule_generator.generate_rule.assert_called_once()
+        
+        # Role should be None if no assignees
+        _, call_kwargs = auto_rule_generator.generate_rule.call_args
+        assert call_kwargs["role"] is None
+        assert "task" in call_kwargs
 
 
 if __name__ == "__main__":

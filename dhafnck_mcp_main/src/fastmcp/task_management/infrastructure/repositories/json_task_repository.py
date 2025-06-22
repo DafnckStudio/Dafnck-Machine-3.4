@@ -36,6 +36,13 @@ class InMemoryTaskRepository(TaskRepository):
         self._tasks: Dict[int, Task] = {}
         self._next_id = 1
     
+    def create(self, task: Task) -> Task:
+        """Create a new task, assign an ID, and save it"""
+        if task.id is None:
+            task.id = self.get_next_id()
+        self.save(task)
+        return task
+    
     def find_by_id(self, task_id: TaskId) -> Optional[Task]:
         """Find task by ID"""
         return self._tasks.get(task_id.value)
@@ -226,7 +233,14 @@ class JsonTaskRepository(TaskRepository):
         """Load data from JSON file"""
         try:
             with open(self._file_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                data = json.load(f)
+                if isinstance(data, list):
+                    # Handle case where file is just a list of tasks
+                    return {"tasks": data}
+                if "tasks" not in data:
+                    # Handle case where object is missing 'tasks' key
+                    return {"tasks": []}
+                return data
         except (FileNotFoundError, json.JSONDecodeError):
             return {"tasks": []}
     

@@ -18,9 +18,9 @@ from ..events.task_events import TaskCreated, TaskUpdated, TaskDeleted, TaskRetr
 class Task:
     """Task domain entity with business logic"""
     
-    id: TaskId
     title: str
     description: str
+    id: Optional[TaskId] = None
     status: Optional[TaskStatus] = None
     priority: Optional[Priority] = None
     project_id: Optional[str] = None
@@ -40,6 +40,11 @@ class Task:
     def __post_init__(self):
         """Validate task data after initialization"""
         # Set default values if not provided
+        if self.id is None:
+            # This case should be handled by the repository, 
+            # but as a fallback, we can log a warning.
+            logging.warning("Task created without an ID. Repository should assign one.")
+
         if self.status is None:
             self.status = TaskStatus.todo()
         if self.priority is None:
@@ -404,7 +409,14 @@ class Task:
         ))
     
     def update_due_date(self, due_date: Optional[str]) -> None:
-        """Update task due date"""
+        """Update task due date with validation"""
+        if due_date is not None:
+            try:
+                # Validate date format (YYYY-MM-DD)
+                datetime.fromisoformat(due_date)
+            except ValueError:
+                raise ValueError(f"Invalid due date format: {due_date}. Expected YYYY-MM-DD.")
+
         old_due_date = self.due_date
         self.due_date = due_date
         self.updated_at = datetime.now(timezone.utc)
@@ -552,7 +564,7 @@ class Task:
             self.updated_at = datetime.now(timezone.utc)
     
     def add_subtask(self, subtask_title: str = None, title: str = None, description: str = None, 
-                   assignee: str = None, estimated_effort: str = None, **kwargs) -> str:
+                   assignee: str = None, estimated_effort: str = None, **kwargs) -> Dict[str, Any]:
         """Add a subtask to the task with flexible parameter support"""
         # Handle dictionary input (test compatibility)
         if isinstance(subtask_title, dict):
@@ -618,8 +630,8 @@ class Task:
             updated_at=self.updated_at
         ))
         
-        # Return the subtask title for backward compatibility with tests
-        return subtask_data["title"]
+        # Return the subtask dictionary
+        return subtask_data
     
     def remove_subtask(self, subtask_id: Union[int, str]) -> bool:
         """Remove a subtask by ID (supports both integer and hierarchical IDs)"""

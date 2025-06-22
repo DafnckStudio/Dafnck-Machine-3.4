@@ -19,18 +19,9 @@ class CreateTaskUseCase:
             # Generate new task ID
             task_id = self._task_repository.get_next_id()
             
-            # Create domain value objects with graceful error handling
-            try:
-                status = TaskStatus(request.status or "todo")
-            except ValueError:
-                # Use default status if invalid
-                status = TaskStatus.todo()
-            
-            try:
-                priority = Priority(request.priority or "medium")
-            except ValueError:
-                # Use default priority if invalid
-                priority = Priority.medium()
+            # Create domain value objects. Let ValueError propagate for invalid inputs.
+            status = TaskStatus(request.status or "todo")
+            priority = Priority(request.priority or "medium")
             
             # Handle very long content gracefully by truncating
             title = request.title
@@ -62,31 +53,13 @@ class CreateTaskUseCase:
             # Generate auto rules if generator is provided
             if self._auto_rule_generator:
                 try:
-                    # Check if the generator has generate_rule method (for tests)
-                    if hasattr(self._auto_rule_generator, 'generate_rule'):
-                        # Extract role from first assignee if available
-                        role = "senior_developer"  # default role
-                        if task.assignees:
-                            first_assignee = task.assignees[0]
-                            if first_assignee.startswith("@"):
-                                role = first_assignee[1:]  # Remove @ prefix
-                            else:
-                                role = first_assignee
-                        
-                        # Create task context
-                        task_context = {
-                            "id": str(task.id),
-                            "title": task.title,
-                            "description": task.description,
-                            "assignees": task.assignees,
-                            "priority": str(task.priority),
-                            "status": str(task.status)
-                        }
-                        
-                        self._auto_rule_generator.generate_rule(role, task_context)
-                    else:
-                        # Use the domain interface method
-                        self._auto_rule_generator.generate_rules_for_task(task)
+                    role = None
+                    if task.assignees:
+                        assignee = task.assignees[0]
+                        if assignee.startswith('@'):
+                            role = assignee[1:]
+
+                    self._auto_rule_generator.generate_rule(task=task, role=role)
                 except Exception as e:
                     # Log the error but don't fail the task creation
                     import logging
@@ -103,8 +76,11 @@ class CreateTaskUseCase:
             task_response = TaskResponse.from_domain(task)
             return CreateTaskResponse.success_response(task_response)
             
+        except ValueError as e:
+            # Re-raise validation errors so they can be handled by the caller
+            raise e
         except Exception as e:
-            # Handle any errors during task creation
+            # Handle any other errors during task creation
             import logging
             logging.error(f"Failed to create task: {e}")
             return CreateTaskResponse.error_response(f"Failed to create task: {str(e)}") 

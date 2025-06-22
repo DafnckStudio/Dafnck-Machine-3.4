@@ -23,7 +23,7 @@ class CallAgentUseCase:
             base_dir = self._cursor_agent_dir / "yaml-lib" / name_agent
             
             # Log the path for debugging
-            logging.info(f"Looking for agent in: {base_dir}")
+            logging.debug(f"Looking for agent in: {base_dir}")
             
             if not base_dir.exists() or not base_dir.is_dir():
                 return {
@@ -80,7 +80,7 @@ class CallAgentUseCase:
             # just like get_task and do_next operations do
             try:
                 generate_docs_for_assignees([name_agent], clear_all=False)
-                logging.info(f"Generated agent documentation for: {name_agent}")
+                logging.debug(f"Generated agent documentation for: {name_agent}")
             except Exception as e:
                 logging.warning(f"Failed to generate agent documentation for {name_agent}: {str(e)}")
                 # Don't fail the entire operation if MDC generation fails

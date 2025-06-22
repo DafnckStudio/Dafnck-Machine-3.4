@@ -9,8 +9,8 @@ from fastmcp.task_management.application.use_cases.create_task import CreateTask
 from fastmcp.task_management.application.use_cases.delete_task import DeleteTaskUseCase
 from fastmcp.task_management.application.use_cases.list_tasks import ListTasksUseCase
 from fastmcp.task_management.application.use_cases.update_task import UpdateTaskUseCase
-from fastmcp.task_management.application.use_cases.manage_subtasks import ManageSubtasksUseCase
-from fastmcp.task_management.application.dtos.task_dto import CreateTaskRequest, UpdateTaskRequest, ListTasksRequest, TaskResponse
+from fastmcp.task_management.application.use_cases.manage_subtasks import ManageSubtasksUseCase, AddSubtaskRequest, UpdateSubtaskRequest
+from fastmcp.task_management.application.dtos.task_dto import CreateTaskRequest, UpdateTaskRequest, ListTasksRequest, TaskResponse, UpdateTaskResponse
 from fastmcp.task_management.domain.exceptions.task_exceptions import TaskNotFoundError
 from fastmcp.task_management.domain.entities.task import Task
 from fastmcp.task_management.domain.value_objects.task_id import TaskId
@@ -30,8 +30,8 @@ class TestCompleteTaskEdgeCases:
         return Mock()
 
     @pytest.fixture
-    def complete_task_use_case(self, mock_repository, mock_auto_rule_generator):
-        return CompleteTaskUseCase(mock_repository, mock_auto_rule_generator)
+    def complete_task_use_case(self, mock_repository):
+        return CompleteTaskUseCase(mock_repository)
 
     def test_complete_task_with_subtasks_completion(self, complete_task_use_case, mock_repository):
         """Test completing task that has subtasks - should complete all subtasks"""
@@ -142,7 +142,7 @@ class TestCreateTaskEdgeCases:
         # Should handle invalid effort gracefully (just store as string)
         result = create_task_use_case.execute(request)
         assert result is not None
-        assert result.title == "Test Task"
+        assert result.task.title == "Test Task"
 
     def test_create_task_repository_save_failure(self, create_task_use_case, mock_repository):
         """Test handling repository save failure during task creation"""
@@ -151,10 +151,13 @@ class TestCreateTaskEdgeCases:
             description="Test description"
         )
         
+        mock_repository.get_next_id.return_value = TaskId.generate()
         mock_repository.save.side_effect = Exception("Database connection failed")
         
-        with pytest.raises(Exception, match="Database connection failed"):
-            create_task_use_case.execute(request)
+        result = create_task_use_case.execute(request)
+        
+        assert result.success is False
+        assert "Failed to create task: Database connection failed" in str(result.message)
 
 
 class TestDeleteTaskEdgeCases:
@@ -265,8 +268,9 @@ class TestUpdateTaskEdgeCases:
         
         # Should succeed and use default "medium" effort
         result = update_task_use_case.execute(request)
-        assert isinstance(result, TaskResponse)
-        assert task.estimated_effort == "medium"
+        assert isinstance(result, UpdateTaskResponse)
+        assert result.success is True
+        assert result.task.estimated_effort == "medium"
 
     def test_update_task_empty_assignees_list(self, update_task_use_case, mock_repository):
         """Test updating task with empty assignees list"""
@@ -285,8 +289,9 @@ class TestUpdateTaskEdgeCases:
         )
         
         result = update_task_use_case.execute(request)
-        assert isinstance(result, TaskResponse)
-        assert task.assignees == []
+        assert isinstance(result, UpdateTaskResponse)
+        assert result.success is True
+        assert result.task.assignees == []
 
     def test_update_task_empty_labels_list(self, update_task_use_case, mock_repository):
         """Test updating task with empty labels list"""
@@ -305,8 +310,9 @@ class TestUpdateTaskEdgeCases:
         )
         
         result = update_task_use_case.execute(request)
-        assert isinstance(result, TaskResponse)
-        assert task.labels == []
+        assert isinstance(result, UpdateTaskResponse)
+        assert result.success is True
+        assert result.task.labels == []
 
     def test_update_task_repository_save_error(self, update_task_use_case, mock_repository):
         """Test handling repository save error during update"""
@@ -337,7 +343,7 @@ class TestUpdateTaskEdgeCases:
         
         mock_repository.find_by_id.return_value = task
         mock_repository.save.return_value = None
-        mock_auto_rule_generator.generate_auto_rule.side_effect = Exception("Rule generation failed")
+        mock_auto_rule_generator.generate_rules_for_task.side_effect = Exception("Rule generation failed")
         
         request = UpdateTaskRequest(
             task_id=str(task.id),
@@ -346,11 +352,13 @@ class TestUpdateTaskEdgeCases:
         
         # Should complete successfully even if rule generation fails
         result = update_task_use_case.execute(request)
-        assert isinstance(result, TaskResponse)
+        assert isinstance(result, UpdateTaskResponse)
+        assert result.success is True
+        assert result.task.title == "Updated Title"
 
 
 class TestManageSubtasksEdgeCases:
-    """Edge cases for ManageSubtasksUseCase to improve coverage from 87% to 95%+"""
+    """Edge cases for ManageSubtasksUseCase to improve coverage from 80% to 95%+"""
 
     @pytest.fixture
     def mock_repository(self):
@@ -361,83 +369,89 @@ class TestManageSubtasksEdgeCases:
         return ManageSubtasksUseCase(mock_repository)
 
     def test_add_subtask_to_nonexistent_task(self, manage_subtasks_use_case, mock_repository):
-        """Test adding subtask to non-existent task"""
-        mock_repository.find_by_id.side_effect = TaskNotFoundError("Task not found")
+        """Test adding subtask to non-existent task should raise TaskNotFoundError"""
+        mock_repository.find_by_id.return_value = None
         
+        request = AddSubtaskRequest(task_id="20250101999", title="Subtask")
+
         with pytest.raises(TaskNotFoundError):
-            manage_subtasks_use_case.execute("add_subtask", "20250101999", {"title": "Subtask"})
+            manage_subtasks_use_case.add_subtask(request)
 
     def test_complete_subtask_invalid_id(self, manage_subtasks_use_case, mock_repository):
-        """Test completing subtask with invalid subtask ID"""
-        task = Task.create(
-            id=TaskId.generate(),
-            title="Test Task",
-            description="Test"
-        )
-        
+        """Test completing subtask with invalid ID should return success: False"""
+        task = Task.create(id=TaskId.generate(), title="Test Task", description="Test")
+        task.add_subtask({"title": "Subtask 1"})
         mock_repository.find_by_id.return_value = task
         
-        # Try to complete non-existent subtask - should not raise exception but return failure
-        result = manage_subtasks_use_case.execute("complete_subtask", str(task.id), {"subtask_id": 999})
+        # This subtask ID does not exist
+        result = manage_subtasks_use_case.complete_subtask(str(task.id), 999)
         assert result["success"] is False
 
     def test_update_subtask_invalid_id(self, manage_subtasks_use_case, mock_repository):
-        """Test updating subtask with invalid subtask ID"""
-        task = Task.create(
-            id=TaskId.generate(),
-            title="Test Task",
-            description="Test"
-        )
-        
+        """Test updating subtask with invalid subtask ID should raise ValueError"""
+        task = Task.create(id=TaskId.generate(), title="Test Task", description="Test")
         mock_repository.find_by_id.return_value = task
         
-        # Try to update non-existent subtask
-        with pytest.raises(ValueError, match="Subtask 999 not found in task"):
-            manage_subtasks_use_case.execute("update_subtask", str(task.id), {
-                "subtask_id": 999,
-                "title": "Updated"
-            })
+        request = UpdateSubtaskRequest(
+            task_id=str(task.id),
+            subtask_id=999,  # Non-existent subtask
+            title="Updated"
+        )
+        
+        with pytest.raises(ValueError, match="Subtask 999 not found"):
+            manage_subtasks_use_case.update_subtask(request)
 
     def test_remove_subtask_invalid_id(self, manage_subtasks_use_case, mock_repository):
-        """Test removing subtask with invalid subtask ID"""
-        task = Task.create(
-            id=TaskId.generate(),
-            title="Test Task",
-            description="Test"
-        )
-        
+        """Test removing subtask with invalid subtask ID should return success: False"""
+        task = Task.create(id=TaskId.generate(), title="Test Task", description="Test")
         mock_repository.find_by_id.return_value = task
         
-        # Try to remove non-existent subtask - should not raise exception but return failure
-        result = manage_subtasks_use_case.execute("remove_subtask", str(task.id), {"subtask_id": 999})
+        result = manage_subtasks_use_case.remove_subtask(str(task.id), 999)
         assert result["success"] is False
 
-    def test_invalid_action(self, manage_subtasks_use_case, mock_repository):
-        """Test invalid subtask management action"""
-        task = Task.create(
-            id=TaskId.generate(),
-            title="Test Task",
-            description="Test"
-        )
-        
-        mock_repository.find_by_id.return_value = task
-        
-        with pytest.raises(ValueError, match="Invalid action"):
-            manage_subtasks_use_case.execute("invalid_action", str(task.id), {})
-
-    def test_repository_save_error_during_subtask_operations(self, manage_subtasks_use_case, mock_repository):
-        """Test repository save error during subtask operations"""
-        task = Task.create(
-            id=TaskId.generate(),
-            title="Test Task",
-            description="Test"
-        )
-        
+    def test_repo_save_error_on_add_subtask(self, manage_subtasks_use_case, mock_repository):
+        """Test repository save error during add_subtask"""
+        task = Task.create(id=TaskId.generate(), title="Test Task", description="Test")
         mock_repository.find_by_id.return_value = task
         mock_repository.save.side_effect = Exception("Database error")
         
+        request = AddSubtaskRequest(task_id=str(task.id), title="New Subtask")
+        
         with pytest.raises(Exception, match="Database error"):
-            manage_subtasks_use_case.execute("add_subtask", str(task.id), {
-                "title": "New Subtask",
-                "description": "Test subtask"
-            }) 
+            manage_subtasks_use_case.add_subtask(request)
+
+    def test_repo_save_error_on_complete_subtask(self, manage_subtasks_use_case, mock_repository):
+        """Test repository save error during complete_subtask"""
+        task = Task.create(id=TaskId.generate(), title="Test Task", description="Test")
+        added_subtask = task.add_subtask({"title": "Subtask 1"})
+        mock_repository.find_by_id.return_value = task
+        mock_repository.save.side_effect = Exception("Database error")
+
+        with pytest.raises(Exception, match="Database error"):
+            manage_subtasks_use_case.complete_subtask(str(task.id), added_subtask['id'])
+
+    def test_repo_save_error_on_update_subtask(self, manage_subtasks_use_case, mock_repository):
+        """Test repository save error during update_subtask"""
+        task = Task.create(id=TaskId.generate(), title="Test Task", description="Test")
+        added_subtask = task.add_subtask({"title": "Subtask 1"})
+        mock_repository.find_by_id.return_value = task
+        mock_repository.save.side_effect = Exception("Database error")
+
+        request = UpdateSubtaskRequest(
+            task_id=str(task.id),
+            subtask_id=added_subtask['id'],
+            title="Updated Title"
+        )
+        
+        with pytest.raises(Exception, match="Database error"):
+            manage_subtasks_use_case.update_subtask(request)
+
+    def test_repo_save_error_on_remove_subtask(self, manage_subtasks_use_case, mock_repository):
+        """Test repository save error during remove_subtask"""
+        task = Task.create(id=TaskId.generate(), title="Test Task", description="Test")
+        added_subtask = task.add_subtask({"title": "Subtask 1"})
+        mock_repository.find_by_id.return_value = task
+        mock_repository.save.side_effect = Exception("Database error")
+
+        with pytest.raises(Exception, match="Database error"):
+            manage_subtasks_use_case.remove_subtask(str(task.id), added_subtask['id']) 

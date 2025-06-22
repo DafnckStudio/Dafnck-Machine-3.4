@@ -78,7 +78,7 @@ class TaskStatus:
         """Check if transition to new status is valid"""
         transitions = {
             TaskStatusEnum.TODO.value: {TaskStatusEnum.IN_PROGRESS.value, TaskStatusEnum.CANCELLED.value},
-            TaskStatusEnum.IN_PROGRESS.value: {TaskStatusEnum.BLOCKED.value, TaskStatusEnum.REVIEW.value, TaskStatusEnum.TESTING.value, TaskStatusEnum.CANCELLED.value},
+            TaskStatusEnum.IN_PROGRESS.value: {TaskStatusEnum.BLOCKED.value, TaskStatusEnum.REVIEW.value, TaskStatusEnum.TESTING.value, TaskStatusEnum.CANCELLED.value, TaskStatusEnum.DONE.value},
             TaskStatusEnum.BLOCKED.value: {TaskStatusEnum.IN_PROGRESS.value, TaskStatusEnum.CANCELLED.value},
             TaskStatusEnum.REVIEW.value: {TaskStatusEnum.IN_PROGRESS.value, TaskStatusEnum.TESTING.value, TaskStatusEnum.DONE.value, TaskStatusEnum.CANCELLED.value},
             TaskStatusEnum.TESTING.value: {TaskStatusEnum.IN_PROGRESS.value, TaskStatusEnum.REVIEW.value, TaskStatusEnum.DONE.value, TaskStatusEnum.CANCELLED.value},

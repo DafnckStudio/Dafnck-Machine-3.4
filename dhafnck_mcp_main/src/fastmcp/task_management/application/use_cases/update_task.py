@@ -4,7 +4,7 @@ from typing import Optional, Union
 
 from ...domain import TaskRepository, TaskId, TaskStatus, Priority, TaskNotFoundError, AutoRuleGenerator
 from ...domain.events import TaskUpdated
-from ..dtos.task_dto import UpdateTaskRequest, TaskResponse
+from ..dtos.task_dto import UpdateTaskRequest, TaskResponse, UpdateTaskResponse
 
 
 class UpdateTaskUseCase:
@@ -14,7 +14,7 @@ class UpdateTaskUseCase:
         self._task_repository = task_repository
         self._auto_rule_generator = auto_rule_generator
     
-    def execute(self, request: UpdateTaskRequest) -> TaskResponse:
+    def execute(self, request: UpdateTaskRequest) -> UpdateTaskResponse:
         """Execute the update task use case"""
         # Convert to domain value object with proper type handling
         domain_task_id = self._convert_to_task_id(request.task_id)
@@ -74,10 +74,13 @@ class UpdateTaskUseCase:
                 pass
         
         # Convert to response DTO
-        return TaskResponse.from_domain(task)
+        task_response = TaskResponse.from_domain(task)
+        return UpdateTaskResponse.success_response(task_response)
     
-    def _convert_to_task_id(self, task_id: Union[str, int]) -> TaskId:
+    def _convert_to_task_id(self, task_id: Union[str, int, TaskId]) -> TaskId:
         """Convert task_id to TaskId domain object"""
+        if isinstance(task_id, TaskId):
+            return task_id
         if isinstance(task_id, int):
             return TaskId.from_int(task_id)
         elif isinstance(task_id, str):

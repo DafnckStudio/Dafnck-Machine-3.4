@@ -62,12 +62,12 @@ class ManageSubtasksUseCase:
             "assignee": request.assignee
         }
         
-        task.add_subtask(subtask)
+        added_subtask = task.add_subtask(subtask)
         self._task_repository.save(task)
         
         return SubtaskResponse(
             task_id=str(request.task_id),
-            subtask=subtask,
+            subtask=added_subtask,
             progress=task.get_subtask_progress()
         )
     

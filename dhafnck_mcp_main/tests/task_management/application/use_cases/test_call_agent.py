@@ -3,6 +3,7 @@
 import os
 import tempfile
 import pytest
+import logging
 from pathlib import Path
 from unittest.mock import patch, mock_open, MagicMock
 import yaml
@@ -214,6 +215,7 @@ simple: "just a string"
 
     def test_execute_logs_debug_info(self, call_agent_use_case, caplog):
         """Test that debug information is logged"""
+        caplog.set_level(logging.DEBUG)
         with patch('fastmcp.task_management.application.use_cases.call_agent.generate_docs_for_assignees'):
             result = call_agent_use_case.execute("test_agent")
             
