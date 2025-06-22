@@ -3,7 +3,10 @@ description:
 globs: 
 alwaysApply: true
 ---
-# Main objectif
+# Main objectif : Migrate cursor_agent to dhafnck_mcp_main, assuming all functions work correctly and are covered by tests.
+
+**Tip: Read the logic in cursor_agent to fix issues in dhafnck_mcp_main.
+
 CONTINUE_AUTOMATIC_NEW_TASK : OFF
 if CONTINUE_AUTOMATIC_NEW_TASK = OFF, terminate chat if task is completed
 
@@ -15,6 +18,8 @@ ROOT_PATH on WSL Ubuntu: /home/<username>/agentic-project
 username : daihungpham
 
 PLAN_ACTUAL : [migration_plan.md](mdc:.cursor/rules/migration_plan.md)
+
+
 
 **See the full Multi-Agent Orchestration documentation:**
 [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc)
