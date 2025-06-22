@@ -1,0 +1,517 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Organization Guide
+
+**Project**: Agentic Coding Framework - Cursor Agent
+**Version**: 2.0.0
+**Last Updated**: 2025-01-16
+
+## Overview
+
+
+This document provides a comprehensive guide to the organization and structure of the Cursor Agent project, which is part of the larger Agentic Coding Framework. The project implements a Domain-Driven Design (DDD) architecture with MCP (Model Context Protocol) server capabilities for task management and intelligent code assistance.
+
+## 🏗️ Project Architecture
+
+### Core Architecture Pattern
+- **Domain-Driven Design (DDD)**: Clean separation of concerns across layers [ddd-structure.mdc](mdc:cursor_agent/.cursor/rules/ddd-structure.mdc)
+- **MCP Server**: Model Context Protocol implementation for Cursor IDE integration [configuration.mdc](mdc:cursor_agent/.cursor/rules/configuration.mdc)
+- **Consolidated Tools**: 8 MCP tools organized in logical categories
+- **YAML-Based Configuration**: Role definitions and workflow configurations
+- **Test-Driven Development**: Comprehensive testing across all layers
+
+## 📁 Directory Structure
+
+```
+cursor_agent/
+├── 📄 pyproject.toml              # Python project configuration
+├── 📄 pytest.ini                  # Testing configuration
+├── 📄 uv.lock                     # UV dependency lock file
+├── 📄 mcp_config_example.json     # MCP configuration example
+├── 📄 tsconfig.json               # TypeScript configuration
+├── 📁 src/                        # Source code (DDD architecture)
+│   ├── 📄 __init__.py
+│   ├── 📄 mcp_server.py           # Main MCP server entry point
+│   ├── 📄 index.ts                # TypeScript configuration
+│   └── 📁 task_mcp/               # Task management MCP module
+│       ├── 📄 __init__.py
+│       ├── 📁 domain/             # Domain layer (business logic)
+│       ├── 📁 application/        # Application layer (use cases)
+│       ├── 📁 infrastructure/     # Infrastructure layer (external concerns)
+│       └── 📁 interface/          # Interface layer (MCP tools)
+├── 📁 tests/                      # Test files
+│   ├── 📁 dev/                    # Development tests
+│   │   ├── 📁 unit/               # Unit tests
+│   │   └── 📁 integration/        # Integration tests
+│   ├── 📁 quick/                  # Quick smoke tests
+│   └── 📁 fixtures/               # Test fixtures
+├── 📁 .venv/                      # Python virtual environment
+├── 📁 yaml-lib/                   # YAML role definitions and configurations
+├── 📁 examples/                   # Usage examples
+├── 📁 logs/                       # Log files
+├── 📁 htmlcov/                    # Coverage reports
+└── 📁 .cursor/                    # Cursor IDE configuration
+    └── 📁 rules/                  # Project documentation
+```
+
+## 🧱 DDD Architecture Layers
+
+### 1. Domain Layer (`src/task_mcp/domain/`)
+**Purpose**: Core business logic and domain concepts
+
+```
+domain/
+├── 📁 entities/
+│   ├── 📄 __init__.py
+│   ├── 📄 task.py                 # Task entity with business rules
+│   ├── 📄 agent.py                # Agent entity
+│   ├── 📄 project.py              # Project entity
+│   ├── 📄 task_tree.py            # Task tree entity
+│   └── 📄 work_session.py         # Work session entity
+├── 📁 value_objects/
+│   ├── 📄 __init__.py
+│   ├── 📄 task_id.py              # Task identifier value object
+│   ├── 📄 task_status.py          # Task status enumeration
+│   └── 📄 priority.py             # Priority value object
+├── 📁 events/
+│   ├── 📄 __init__.py
+│   └── 📄 task_events.py          # Domain events
+├── 📁 exceptions/
+│   ├── 📄 __init__.py
+│   └── 📄 task_exceptions.py      # Domain-specific exceptions
+├── 📁 repositories/
+│   ├── 📄 __init__.py
+│   └── 📄 task_repository.py      # Repository interface
+└── 📁 services/
+    ├── 📄 __init__.py
+    ├── 📄 auto_rule_generator.py  # Domain service for rule generation
+    └── 📄 orchestrator.py         # Multi-agent orchestration service
+```
+
+### 2. Application Layer (`src/task_mcp/application/`)
+**Purpose**: Use cases and application services
+
+```
+application/
+├── 📁 use_cases/
+│   ├── 📄 __init__.py
+│   ├── 📄 create_task.py          # Create task use case
+│   ├── 📄 get_task.py             # Get task use case
+│   ├── 📄 list_tasks.py           # List tasks use case
+│   ├── 📄 update_task.py          # Update task use case
+│   ├── 📄 delete_task.py          # Delete task use case
+│   ├── 📄 complete_task.py        # Complete task use case
+│   ├── 📄 search_tasks.py         # Search tasks use case
+│   ├── 📄 do_next.py              # Do next task use case
+│   ├── 📄 manage_subtasks.py      # Subtask management
+│   └── 📄 manage_dependencies.py  # Dependency management
+├── 📁 services/
+│   ├── 📄 __init__.py
+│   └── 📄 task_application_service.py  # Application service coordinator
+└── 📁 dtos/
+    ├── 📄 __init__.py
+    └── 📄 task_dto.py             # Data transfer objects
+```
+
+### 3. Infrastructure Layer (`src/task_mcp/infrastructure/`)
+**Purpose**: External concerns and implementations
+
+```
+infrastructure/
+├── 📁 repositories/
+│   ├── 📄 __init__.py
+│   └── 📄 json_task_repository.py # JSON file repository implementation
+├── 📁 services/
+│   ├── 📄 __init__.py
+│   ├── 📄 file_auto_rule_generator.py  # File-based rule generator
+│   └── 📁 legacy/                 # Legacy components (preserved for compatibility)
+│       ├── 📄 __init__.py
+│       ├── 📄 models.py
+│       ├── 📄 project_analyzer.py
+│       ├── 📄 role_manager.py
+│       ├── 📄 rules_generator.py
+│       └── 📁 project_analyzer/   # Project analysis modules
+```
+
+### 4. Interface Layer (`src/task_mcp/interface/`)
+**Purpose**: MCP protocol implementation and external interfaces
+
+```
+interface/
+├── 📄 __init__.py
+├── 📄 ddd_mcp_server.py              # DDD-based MCP server implementation
+├── 📄 consolidated_mcp_server.py     # Consolidated server
+├── 📄 consolidated_mcp_tools_v2.py   # Main MCP tools (3 tools)
+└── 📄 cursor_rules_tools.py          # Cursor rules tools (5 tools)
+```
+
+## 📚 YAML Library (`yaml-lib/`)
+
+### Purpose
+Role-based configuration system for intelligent code assistance and workflow management.
+
+### Structure
+```
+yaml-lib/
+├── 📁 cache_engineer/            # Cache engineering role
+├── 📁 cli_engineer/              # CLI engineering role
+├── 📁 code_reviewer/             # Code review role
+├── 📁 context_engineer/          # Context analysis role
+├── 📁 devops_engineer/           # DevOps engineering role
+├── 📁 metrics_engineer/          # Metrics and monitoring role
+├── 📁 platform_engineer/         # Platform engineering role
+├── 📁 qa_engineer/               # Quality assurance role
+├── 📁 security_engineer/         # Security engineering role
+├── 📁 senior_developer/          # Senior development role
+├── 📁 task_planner/              # Task planning role
+└── 📁 technical_writer/          # Technical writing role
+```
+
+### Role Structure Template
+Each role directory follows this structure:
+```
+role_name/
+├── 📄 job_desc.yaml              # Role description and persona
+├── 📁 contexts/                  # Context-specific configurations
+├── 📁 rules/                     # Role-specific rules and practices
+├── 📁 tools/                     # Role-specific tools and utilities
+└── 📁 output_format/             # Expected output formats
+```
+
+## 🧪 Testing Structure (`tests/`)
+
+### Test Organization
+```
+tests/
+├── 📄 conftest.py                # Test configuration
+├── 📁 dev/                       # Development tests
+│   ├── 📁 unit/                  # Unit tests for all layers
+│   │   ├── 📄 test_domain_entities.py
+│   │   ├── 📄 test_value_objects.py
+│   │   ├── 📄 test_mcp_tools.py
+│   │   └── ... (20+ test files)
+│   └── 📁 integration/           # Integration tests
+│       ├── 📄 test_mcp_integration.py
+│       ├── 📄 test_auto_rule_integration.py
+│       └── ... (integration test files)
+├── 📁 quick/                     # Quick smoke tests
+│   ├── 📄 test_basic_api.py
+│   ├── 📄 test_imports.py
+│   └── 📄 test_server_start.py
+└── 📁 fixtures/                  # Test data
+    └── 📄 test_tasks.json
+```
+
+### Test Categories
+- **Unit Tests**: Domain logic and business rules
+- **Integration Tests**: Layer interactions and data flow
+- **MCP Tests**: Protocol implementation and tool functionality
+- **YAML Tests**: Configuration loading and validation
+
+## 🔧 Configuration Files
+
+### Project Configuration
+- **`pyproject.toml`**: Python project metadata, dependencies, and build configuration
+- **`pytest.ini`**: Test runner configuration
+- **`uv.lock`**: UV dependency version lock file
+- **`mcp_config_example.json`**: MCP server configuration example
+- **`tsconfig.json`**: TypeScript configuration
+
+### MCP Server Configuration
+- **Location**: `~/.cursor/mcp.json` (system-wide)
+- **Purpose**: Cursor IDE integration configuration
+- **Server Entry**: `cursor_agent/src/mcp_server.py`
+
+## 🛠️ MCP Tools (8 Total)
+
+### Project Management Category (3 tools)
+1. **`manage_project`** - Complete multi-agent project lifecycle management
+   - Actions: create, get, list, create_tree, get_tree_status, orchestrate, dashboard
+2. **`manage_task`** - Comprehensive task lifecycle management
+   - Actions: create, get, update, delete, complete, list, search, next, add_subtask, complete_subtask, list_subtasks, add_dependency, list_dependencies
+3. **`manage_agent`** - Multi-agent team management and intelligent assignment
+   - Actions: register, get, list, update, unregister, assign, unassign, get_assignments, get_workload, rebalance, add_capability, remove_capability
+
+### Cursor Rules Management Category (5 tools)
+4. **`update_auto_rule`** - Direct update of AI assistant context rules
+5. **`validate_rules`** - Comprehensive rule file quality and structure analysis
+6. **`manage_cursor_rules`** - Complete rule file system management
+   - Actions: list, backup, restore, clean, info
+7. **`regenerate_auto_rule`** - Smart context generation for AI assistant
+8. **`validate_tasks_json`** - Tasks.json integrity validator
+
+## 📋 Data Storage
+
+### Task Storage
+- **Format**: JSON with atomic operations
+- **Location**: `.cursor/rules/tasks/tasks.json`
+- **Features**: Validation, concurrent access handling, backup support
+
+### Context Files
+- **Location**: `.cursor/rules/contexts/context_[task_id].txt`
+- **Purpose**: Task-specific context and progress tracking
+- **Auto-Generation**: Created/updated by `get_task` MCP tool
+
+## 🔄 Workflow Integration
+
+### Auto Rule Generation
+- **Trigger**: `manage_task` with action="get"
+- **Output**: `.cursor/rules/auto_rule.mdc`
+- **Source**: YAML role definitions + project analysis
+- **Purpose**: Provide task-specific AI assistant context
+
+### Task Planning Workflow
+- **Configuration**: `yaml-lib/task_planner/tools/003_lite_workflow_config.yaml`
+- **Tools**: `workflow_tools.py`, `workflow_cli.py`, `workflow_examples.py`
+- **Features**: 4 feature types, 12 phases, 10 roles
+
+## 🔐 Security and Data Safety
+
+### Data Protection
+- **Atomic File Operations**: Prevent data corruption
+- **Input Validation**: All MCP tool parameters validated
+- **Error Handling**: Comprehensive error recovery mechanisms
+- **Access Control**: Proper file permissions and sanitization
+
+## 📖 Documentation
+
+### Project Documentation
+- **Location**: `cursor_agent/.cursor/rules/`
+- **Files**: 
+  - `project_organization.mdc` (this file)
+  - `configuration.mdc` - MCP server configuration
+  - `ddd-structure.mdc` - DDD architecture details
+
+### Main Project Documentation
+- **Location**: `.cursor/rules/`
+- **Key Files**:
+  - `main_objectif.mdc` - Main project objectives and MCP configuration
+  - `tasks/tasks.json` - Task management data
+  - `auto_rule.mdc` - Auto-generated AI assistant rules
+
+## 🚀 Development Workflow
+
+### Getting Started
+1. **Environment Setup**: `cursor_agent/.venv/` (Python virtual environment)
+2. **Dependencies**: Managed via `pyproject.toml` and `uv.lock`
+3. **MCP Server**: Start with `cursor_agent/src/mcp_server.py`
+4. **Testing**: Run tests from `cursor_agent/tests/`
+
+### Development Principles
+- **DDD Architecture**: Maintain clean layer separation
+- **Test-Driven Development**: Comprehensive test coverage
+- **YAML Configuration**: Use YAML for role and workflow definitions
+- **MCP Integration**: All functionality exposed via MCP tools
+- **Documentation**: Keep documentation up-to-date with code changes
+
+## 📋 File Creation Rules
+
+### ⚠️ CRITICAL: File Location Rules
+**AI assistants and developers MUST follow these strict file location rules:**
+
+#### **1. Source Code Files**
+```
+✅ CORRECT LOCATIONS:
+- Domain entities: cursor_agent/src/task_mcp/domain/entities/
+- Value objects: cursor_agent/src/task_mcp/domain/value_objects/
+- Use cases: cursor_agent/src/task_mcp/application/use_cases/
+- Repositories: cursor_agent/src/task_mcp/infrastructure/repositories/
+- MCP tools: cursor_agent/src/task_mcp/interface/
+- Main server: cursor_agent/src/mcp_server.py
+
+❌ NEVER CREATE IN:
+- Root directory (/)
+- .cursor/rules/ (reserved for documentation)
+- cursor_agent/ root (only for config files)
+```
+
+#### **2. Test Files**
+```
+✅ CORRECT LOCATION:
+- ALL test files: cursor_agent/tests/
+
+❌ NEVER CREATE IN:
+- Root directory
+- src/ directories
+- Any other location
+```
+
+#### **3. YAML Configuration Files**
+```
+✅ CORRECT LOCATIONS:
+- Role definitions: cursor_agent/yaml-lib/[role_name]/
+- Job descriptions: cursor_agent/yaml-lib/[role_name]/job_desc.yaml
+- Tools: cursor_agent/yaml-lib/[role_name]/tools/
+- Contexts: cursor_agent/yaml-lib/[role_name]/contexts/
+- Rules: cursor_agent/yaml-lib/[role_name]/rules/
+
+❌ NEVER CREATE IN:
+- Root directory
+- src/ directories
+- .cursor/rules/
+```
+
+#### **4. Documentation Files**
+```
+✅ CORRECT LOCATIONS:
+- Project docs: cursor_agent/.cursor/rules/
+- Main project docs: .cursor/rules/
+- Context files: .cursor/rules/contexts/
+- Task data: .cursor/rules/tasks/
+
+❌ NEVER CREATE IN:
+- Root directory (unless explicitly requested)
+- src/ directories
+- yaml-lib/ directories
+```
+
+#### **5. Configuration Files**
+```
+✅ CORRECT LOCATIONS:
+- Python config: cursor_agent/pyproject.toml
+- Test config: cursor_agent/pytest.ini
+- Dependencies: cursor_agent/uv.lock
+- MCP config: cursor_agent/mcp_config_example.json
+
+❌ NEVER CREATE IN:
+- Root directory (unless explicitly requested)
+- Nested subdirectories
+```
+
+### 🚫 File Creation Restrictions
+
+#### **Root Directory Protection**
+```
+⚠️ NEVER create files in root directory (/) unless:
+1. User explicitly requests it
+2. It's a standard project file (README.md, .gitignore, etc.)
+3. User gives specific permission
+
+✅ Always ask user before creating root files
+❌ Never assume root directory creation is okay
+```
+
+#### **Directory Structure Preservation**
+```
+🔒 PROTECTED DIRECTORIES:
+- .cursor/rules/ (AI documentation only)
+- cursor_agent/src/ (source code only)
+- cursor_agent/yaml-lib/ (YAML configs only)
+- cursor_agent/tests/ (test files only)
+
+⚠️ Each directory has a specific purpose - respect it!
+```
+
+#### **File Type Rules**
+```
+📁 cursor_agent/src/ → ONLY Python source code
+📁 cursor_agent/tests/ → ONLY test files (test_*.py)
+📁 cursor_agent/yaml-lib/ → ONLY YAML configurations
+📁 cursor_agent/.cursor/rules/ → ONLY project documentation
+📁 .cursor/rules/ → ONLY main project documentation
+```
+
+### 🎯 Before Creating Any File
+
+#### **Mandatory Checklist**
+1. **❓ Ask yourself**: "Where should this file go according to its purpose?"
+2. **📋 Check the rules**: Does this location match the file creation rules?
+3. **🔍 Verify path**: Is this the correct directory for this file type?
+4. **⚠️ Root check**: Am I about to create a file in the root directory?
+5. **👤 User permission**: Did the user explicitly request this location?
+
+#### **Decision Tree**
+```
+Is it a Python source file?
+├─ YES → cursor_agent/src/task_mcp/[appropriate_layer]/
+└─ NO → Is it a test file?
+    ├─ YES → cursor_agent/tests/
+    └─ NO → Is it YAML config?
+        ├─ YES → cursor_agent/yaml-lib/[role]/
+        └─ NO → Is it documentation?
+            ├─ YES → cursor_agent/.cursor/rules/ OR .cursor/rules/
+            └─ NO → ASK USER FOR PERMISSION
+```
+
+### 🚨 Common Mistakes to Avoid
+
+#### **❌ Wrong Locations**
+```
+WRONG: Creating test files in root directory
+RIGHT: cursor_agent/tests/test_*.py
+
+WRONG: Creating source files in cursor_agent/
+RIGHT: cursor_agent/src/task_mcp/[layer]/
+
+WRONG: Creating YAML files in .cursor/rules/
+RIGHT: cursor_agent/yaml-lib/[role]/
+
+WRONG: Creating docs in root directory
+RIGHT: cursor_agent/.cursor/rules/ or .cursor/rules/
+```
+
+#### **❌ Permission Assumptions**
+```
+WRONG: "I'll create this utility in root directory"
+RIGHT: "Where should I create this file? Let me check the rules."
+
+WRONG: Creating files without considering project structure
+RIGHT: Following the established directory hierarchy
+```
+
+### 🔧 File Creation Process
+
+#### **Step-by-Step Process**
+1. **Identify file type** (source, test, config, docs)
+2. **Check location rules** (refer to this document)
+3. **Verify directory exists** (create if needed following structure)
+4. **Create file in correct location**
+5. **Update relevant documentation** (if needed)
+
+#### **Location Verification Commands**
+```bash
+# Check if you're in the right directory
+pwd
+
+# Verify target directory exists
+ls -la cursor_agent/src/task_mcp/domain/entities/
+
+# Create directory if needed (following structure)
+mkdir -p cursor_agent/tests/
+```
+
+## 🔍 Key Integration Points
+
+### Cursor IDE Integration
+- **MCP Server**: Provides 8 tools for task management
+- **Auto Rules**: Dynamic rule generation based on task context
+- **Context Tracking**: Automatic context file management
+
+### YAML-Based Intelligence
+- **Role Definitions**: 12 specialized roles with specific capabilities
+- **Workflow Configuration**: Structured development workflows
+- **Context Generation**: Intelligent rule generation based on project analysis
+
+## 📊 Project Metrics
+
+### Code Organization
+- **Total Roles**: 12 specialized roles
+- **MCP Tools**: 8 functional tools (3 project management + 5 cursor rules)
+- **Test Coverage**: Comprehensive across all layers
+- **Documentation**: Complete project documentation
+
+### Technology Stack
+- **Language**: Python 3.8+
+- **Protocol**: MCP (Model Context Protocol)
+- **Architecture**: Domain-Driven Design (DDD)
+- **Storage**: JSON with atomic operations
+- **Configuration**: YAML-based role system
+- **Testing**: pytest with comprehensive coverage
+- **Package Management**: UV (modern Python package manager)
+
+---
+
+*This document provides a complete overview of the Cursor Agent project organization. For specific implementation details, refer to the source code and individual component documentation.*

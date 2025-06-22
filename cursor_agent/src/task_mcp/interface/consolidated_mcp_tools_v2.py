@@ -102,8 +102,15 @@ class SimpleMultiAgentTools:
     def _load_projects(self):
         self._ensure_brain_dir()
         if os.path.exists(self._projects_file):
-            with open(self._projects_file, "r") as f:
-                self._projects = json.load(f)
+            try:
+                with open(self._projects_file, "r") as f:
+                    self._projects = json.load(f)
+            except PermissionError:
+                # Re-raise permission errors for proper test handling
+                raise
+            except (json.JSONDecodeError, FileNotFoundError):
+                # Handle corrupted JSON or missing files gracefully
+                self._projects = {}
         else:
             self._projects = {}
 
@@ -360,12 +367,15 @@ class ConsolidatedMCPToolsV2:
         self._cursor_rules_tools = CursorRulesTools()
 
         # Initialize multi-agent tools with optional custom projects file path
-        self._multi_agent_tools = SimpleMultiAgentTools(
-            projects_file_path=projects_file_path
-        )
+        self._multi_agent_tools = SimpleMultiAgentTools(projects_file_path)
 
         # Initialize call agent use case
         self._call_agent_use_case = CallAgentUseCase(CURSOR_AGENT_DIR)
+
+    @property
+    def multi_agent_tools(self):
+        """Expose multi-agent tools for testing"""
+        return self._multi_agent_tools
 
     def register_tools(self, mcp: FastMCP):
         """Register all consolidated MCP tools in three logical categories"""
@@ -1109,32 +1119,18 @@ class ConsolidatedMCPToolsV2:
         project_id=None,
         force_full_generation=False,
     ):
-        """Helper to handle core task operations (create, get, update, delete)"""
+        """Handle core task operations (create, get, update, delete)"""
         try:
             if action == "create":
                 if not title:
                     return {
                         "success": False,
-                        "error": "Title is required for creating a task.",
-                    }
-
-                if labels and not all(
-                    LabelValidator.is_valid_label(label) for label in labels
-                ):
-                    invalid_labels = [
-                        label
-                        for label in labels
-                        if not LabelValidator.is_valid_label(label)
-                    ]
-                    return {
-                        "success": False,
-                        "error": f"Invalid label(s) provided: {', '.join(invalid_labels)}",
+                        "error": "Title is required to create a task.",
                     }
 
                 request = CreateTaskRequest(
                     title=title,
                     description=description,
-                    project_id=project_id,
                     status=status,
                     priority=priority,
                     details=details,
@@ -1143,8 +1139,21 @@ class ConsolidatedMCPToolsV2:
                     labels=labels,
                     due_date=due_date,
                 )
-                response = self._task_app_service.create_task(request)
-                return {"success": True, "action": "create", "task": asdict(response)}
+                try:
+                    response = self._task_app_service.create_task(request)
+                    # Handle both dataclass and dict responses
+                    if hasattr(response, '__dict__'):
+                        try:
+                            from dataclasses import asdict
+                            task_data = asdict(response)
+                        except TypeError:
+                            # Not a dataclass, convert manually
+                            task_data = response.__dict__ if hasattr(response, '__dict__') else str(response)
+                    else:
+                        task_data = response
+                    return {"success": True, "action": "create", "task": task_data}
+                except Exception as e:
+                    return {"success": False, "error": f"Failed to create task: {str(e)}"}
 
             elif action == "get":
                 if not task_id:
@@ -1157,7 +1166,17 @@ class ConsolidatedMCPToolsV2:
                         task_id, force_full_generation=force_full_generation
                     )
                     if task:
-                        return {"success": True, "action": "get", "task": asdict(task)}
+                        # Handle both dataclass and dict responses
+                        if hasattr(task, '__dict__'):
+                            try:
+                                from dataclasses import asdict
+                                task_data = asdict(task)
+                            except TypeError:
+                                # Not a dataclass, convert manually
+                                task_data = task.__dict__ if hasattr(task, '__dict__') else str(task)
+                        else:
+                            task_data = task
+                        return {"success": True, "action": "get", "task": task_data}
                     else:
                         return {"success": False, "error": f"Task {task_id} not found"}
                 except TaskNotFoundError as e:
@@ -1188,8 +1207,21 @@ class ConsolidatedMCPToolsV2:
                     labels=labels,
                     due_date=due_date,
                 )
-                response = self._task_app_service.update_task(request)
-                return {"success": True, "action": "update", "task": asdict(response)}
+                try:
+                    response = self._task_app_service.update_task(request)
+                    # Handle both dataclass and dict responses
+                    if hasattr(response, '__dict__'):
+                        try:
+                            from dataclasses import asdict
+                            task_data = asdict(response)
+                        except TypeError:
+                            # Not a dataclass, convert manually
+                            task_data = response.__dict__ if hasattr(response, '__dict__') else str(response)
+                    else:
+                        task_data = response
+                    return {"success": True, "action": "update", "task": task_data}
+                except Exception as e:
+                    return {"success": False, "error": f"Failed to update task: {str(e)}"}
 
             elif action == "delete":
                 if not task_id:
@@ -1197,8 +1229,11 @@ class ConsolidatedMCPToolsV2:
                         "success": False,
                         "error": "Task ID is required to delete a task.",
                     }
-                self._task_app_service.delete_task(task_id)
-                return {"success": True, "action": "delete"}
+                try:
+                    self._task_app_service.delete_task(task_id)
+                    return {"success": True, "action": "delete"}
+                except Exception as e:
+                    return {"success": False, "error": f"Failed to delete task: {str(e)}"}
 
             else:
                 return {"success": False, "error": f"Invalid core action: {action}"}
@@ -1206,6 +1241,8 @@ class ConsolidatedMCPToolsV2:
             return {"success": False, "error": str(e)}
         except ValueError as e:
             return {"success": False, "error": str(e)}
+        except Exception as e:
+            return {"success": False, "error": f"Operation failed: {str(e)}"}
 
     def _handle_complete_task(self, task_id):
         """Helper to handle task completion"""
@@ -1215,90 +1252,104 @@ class ConsolidatedMCPToolsV2:
                 "error": "task_id is required for completing a task",
             }
 
-        self._task_app_service.complete_task(task_id)
-        return {
-            "success": True,
-            "action": "complete",
-            "task_id": task_id,
-            "message": f"Task {task_id} and all subtasks completed successfully",
-        }
+        try:
+            self._task_app_service.complete_task(task_id)
+            return {
+                "success": True,
+                "action": "complete",
+                "task_id": task_id,
+                "message": f"Task {task_id} and all subtasks completed successfully",
+            }
+        except TaskNotFoundError as e:
+            return {"success": False, "error": str(e)}
+        except Exception as e:
+            return {"success": False, "error": f"Failed to complete task: {str(e)}"}
 
     def _handle_list_tasks(self, status, priority, assignees, labels, limit):
         """Handle task listing with filters"""
-        request = ListTasksRequest(
-            status=status,
-            priority=priority,
-            assignees=assignees,
-            labels=labels,
-            limit=limit,
-        )
+        try:
+            request = ListTasksRequest(
+                status=status,
+                priority=priority,
+                assignees=assignees,
+                labels=labels,
+                limit=limit,
+            )
 
-        response = self._task_app_service.list_tasks(request)
-        return {
-            "success": True,
-            "tasks": [
-                {
-                    "id": task.id,
-                    "title": task.title,
-                    "description": task.description,
-                    "status": task.status,
-                    "priority": task.priority,
-                    "assignees": task.assignees,
-                    "labels": task.labels,
-                }
-                for task in response.tasks
-            ],
-            "count": len(response.tasks),
-        }
+            response = self._task_app_service.list_tasks(request)
+            return {
+                "success": True,
+                "tasks": [
+                    {
+                        "id": task.id,
+                        "title": task.title,
+                        "description": task.description,
+                        "status": task.status,
+                        "priority": task.priority,
+                        "assignees": task.assignees,
+                        "labels": task.labels,
+                    }
+                    for task in response.tasks
+                ],
+                "count": len(response.tasks),
+            }
+        except Exception as e:
+            return {"success": False, "error": f"Failed to list tasks: {str(e)}"}
 
     def _handle_search_tasks(self, query, limit):
         """Handle task search"""
         if not query:
             return {"success": False, "error": "query is required for searching tasks"}
 
-        request = SearchTasksRequest(query=query, limit=limit or 10)
-        response = self._task_app_service.search_tasks(request)
+        try:
+            request = SearchTasksRequest(query=query, limit=limit or 10)
+            response = self._task_app_service.search_tasks(request)
 
-        return {
-            "success": True,
-            "tasks": [
-                {
-                    "id": task.id,
-                    "title": task.title,
-                    "description": task.description,
-                    "status": task.status,
-                    "priority": task.priority,
-                    "assignees": task.assignees,
-                    "labels": task.labels,
-                }
-                for task in response.tasks
-            ],
-            "count": len(response.tasks),
-            "query": query,
-        }
+            return {
+                "success": True,
+                "tasks": [
+                    {
+                        "id": task.id,
+                        "title": task.title,
+                        "description": task.description,
+                        "status": task.status,
+                        "priority": task.priority,
+                        "assignees": task.assignees,
+                        "labels": task.labels,
+                    }
+                    for task in response.tasks
+                ],
+                "count": len(response.tasks),
+                "query": query,
+            }
+        except Exception as e:
+            return {"success": False, "error": f"Failed to search tasks: {str(e)}"}
 
     def _handle_do_next(self):
         """Handle next task recommendation"""
-        do_next_use_case = DoNextUseCase(
-            self._task_repository, self._auto_rule_generator
-        )
-        response = do_next_use_case.execute()
+        try:
+            do_next_use_case = DoNextUseCase(
+                self._task_repository, self._auto_rule_generator
+            )
+            response = do_next_use_case.execute()
 
-        if response.has_next and response.next_item:
-            return {
-                "success": True,
-                "action": "next",
-                "next_item": response.next_item,
-                "message": response.message,
-            }
-        else:
-            return {
-                "success": True,
-                "action": "next",
-                "next_item": None,
-                "message": response.message,
-                "context": response.context if response.context else None,
-            }
+            if response.has_next and response.next_item:
+                return {
+                    "success": True,
+                    "action": "next",
+                    "next_item": response.next_item,
+                    "message": response.message,
+                }
+            else:
+                return {
+                    "success": True,
+                    "action": "next",
+                    "next_item": None,
+                    "message": response.message,
+                    "context": response.context if response.context else None,
+                }
+        except Exception as e:
+            return {"success": False, "error": f"Failed to get next task: {str(e)}"}
 
     def _handle_dependency_operations(self, action, task_id, dependency_data=None):
         """Handle dependency operations (add, remove, get, clear, get_blocking)"""
@@ -1365,6 +1416,8 @@ class ConsolidatedMCPToolsV2:
                     "success": False,
                     "error": f"Unknown dependency action: {action}",
                 }
+        except TaskNotFoundError as e:
+            return {"success": False, "error": str(e)}
         except Exception as e:
             return {"success": False, "error": f"Dependency operation failed: {str(e)}"}
 
