@@ -42,13 +42,13 @@ class CreateTaskUseCase:
                 description = description[:1000]
             
             # Create domain entity
-            task = Task(
+            task = Task.create(
                 id=task_id,
                 title=title,
                 description=description,
-                project_id=request.project_id,
                 status=status,
                 priority=priority,
+                project_id=request.project_id,
                 details=request.details,
                 estimated_effort=request.estimated_effort,
                 assignees=request.assignees,

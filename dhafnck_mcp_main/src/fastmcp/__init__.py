@@ -13,7 +13,7 @@ import fastmcp.server
 from fastmcp.client import Client
 from . import client
 
-__version__ = version("fastmcp")
+__version__ = version("dhafnck_mcp")
 
 
 # ensure deprecation warnings are displayed by default

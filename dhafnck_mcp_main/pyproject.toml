@@ -79,6 +79,9 @@ websockets = ["websockets>=15.0.1"]
 requires = ["hatchling", "uv-dynamic-versioning>=0.7.0"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/fastmcp"]
+
 [tool.hatch.version]
 source = "uv-dynamic-versioning"
 

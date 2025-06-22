@@ -133,15 +133,14 @@ def temp_project_dir(tmp_path, sample_tasks_data):
 @pytest.fixture
 def sample_task_entity():
     """Sample Task entity for testing."""
-    return Task(
+    return Task.create(
         id=TaskId.from_int(1),
         title="Test Task",
         description="Test task description",
         status=TaskStatus(TaskStatusEnum.TODO),
         priority=Priority(PriorityLevel.HIGH),
-        assignee="qa_engineer",
-        labels=["test"],
-        subtasks=[]
+        assignees=["qa_engineer"],
+        labels=["test"]
     )
 
 
