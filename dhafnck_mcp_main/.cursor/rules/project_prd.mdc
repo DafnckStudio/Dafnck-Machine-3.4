@@ -30,10 +30,10 @@ This document summarizes the current projects as defined in `/dhafnck_mcp_main/.
 
 ---
 
-## Project: FastMCP Framework Development
+## Project: dhafnck_mcp Framework Development
 - **ID:** dhafnck_mcp_main
-- **Name:** FastMCP Framework Development
-- **Description:** Comprehensive development of FastMCP v2 - The fast, Pythonic way to build MCP servers and clients. A complete framework for Model Context Protocol implementation with advanced features.
+- **Name:** dhafnck_mcp Framework Development
+- **Description:** Comprehensive development of dhafnck_mcp - Advanced MCP server framework with integrated task management. A complete framework for Model Context Protocol implementation with advanced features.
 - **Task Trees:**
   - main: Main Tasks
   - core_framework: Core Framework Development

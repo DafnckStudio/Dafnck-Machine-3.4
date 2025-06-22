@@ -7,7 +7,7 @@ alwaysApply: false
 
 ## 🔧 Server Details
 - **Server Name**: `task_management`
-- **Framework**: FastMCP 2.0 with Domain-Driven Design
+- **Framework**: dhafnck_mcp with Domain-Driven Design
 - **Location**: `dhafnck_mcp_main/src/mcp_server.py`
 - **Working Directory**: `/home/<username>/agentic-project`
 - **Environment**: `PYTHONPATH` set to `dhafnck_mcp_main/src`

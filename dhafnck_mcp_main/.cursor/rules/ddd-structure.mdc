@@ -36,7 +36,7 @@ The task management MCP server follows Domain-Driven Design principles with clea
 
 ### Presentation/Interface Layer (`dhafnck_mcp_main/src/task_mcp/interface/`)
 **Handles user interaction and presentation logic.**
-- **FastMCP Server**: `ddd_mcp_server.py` and `main_mcp_server.py`
+- **dhafnck_mcp Server**: `ddd_mcp_server.py` and `main_mcp_server.py`
 - **Unified Tool Interface**: `mcp_api_tools.py`
 
 #### Key Principles in Action
@@ -115,7 +115,7 @@ tests/
 ## 🔧 Technology Stack
 
 ### Core Framework
-- **FastMCP 2.0**: Modern MCP server framework
+- **dhafnck_mcp**: Modern MCP server framework
 - **Python 3.8+**: Core programming language
 - **JSON Storage**: Simple, reliable task persistence with atomic operations
 - **Comprehensive Logging**: Debug and monitoring capabilities
@@ -130,7 +130,7 @@ tests/
 ### Dependencies
 - **Minimal Dependencies**: Keep external dependencies clean and minimal
 - **Standard Library**: Prefer Python standard library when possible
-- **FastMCP**: Only essential MCP framework dependency
+- **dhafnck_mcp**: Only essential MCP framework dependency
 - **No Database**: JSON-based storage for simplicity and reliability
 
 ## 🗑️ Removed Components
@@ -151,7 +151,7 @@ tests/
 ## 🔄 Architecture Evolution
 
 ### Current State (Enhanced 2025-01-16)
-- **✅ DDD-based FastMCP Server**: Fully operational with consolidated tools
+- **✅ DDD-based dhafnck_mcp Server**: Fully operational with consolidated tools
 - **✅ 8 MCP Tools**: Complete tool suite with enhanced descriptions
 - **✅ Date-based Task IDs**: YYYYMMDDXXX format system
 - **✅ Subtask Management**: Hierarchical task breakdown

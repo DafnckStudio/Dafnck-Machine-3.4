@@ -1,8 +1,8 @@
 [project]
-name = "fastmcp"
+name = "dhafnck_mcp"
 dynamic = ["version"]
-description = "The fast, Pythonic way to build MCP servers."
-authors = [{ name = "Jeremiah Lowin" }]
+description = "The dhafnck_mcp - Advanced MCP server framework with integrated task management."
+authors = [{ name = "daihungpham" }]
 dependencies = [
     "python-dotenv>=1.1.0",
     "exceptiongroup>=1.2.2",
@@ -26,9 +26,10 @@ keywords = [
     "mcp server",
     "mcp client",
     "model context protocol",
-    "fastmcp",
+    "dhafnck_mcp",
     "llm",
     "agent",
+    "task management",
 ]
 classifiers = [
     "Intended Audience :: Developers",
@@ -63,12 +64,12 @@ dev = [
 ]
 
 [project.scripts]
-fastmcp = "fastmcp.cli:app"
+dhafnck_mcp = "fastmcp.cli:app"
 
 [project.urls]
-Homepage = "https://gofastmcp.com"
-Repository = "https://github.com/jlowin/fastmcp"
-Documentation = "https://gofastmcp.com"
+Homepage = "https://github.com/dhafnck/dhafnck_mcp"
+Repository = "https://github.com/dhafnck/dhafnck_mcp"
+Documentation = "https://github.com/dhafnck/dhafnck_mcp"
 
 [project.optional-dependencies]
 websockets = ["websockets>=15.0.1"]
@@ -95,9 +96,9 @@ asyncio_default_test_loop_scope = "session"
 # filterwarnings = ["error::DeprecationWarning"]
 timeout = 3
 env = [
-    "FASTMCP_TEST_MODE=1",
-    'D:FASTMCP_LOG_LEVEL=DEBUG',
-    'D:FASTMCP_ENABLE_RICH_TRACEBACKS=0',
+    "DHAFNCK_MCP_TEST_MODE=1",
+    'D:DHAFNCK_MCP_LOG_LEVEL=DEBUG',
+    'D:DHAFNCK_MCP_ENABLE_RICH_TRACEBACKS=0',
 ]
 
 [tool.pyright]
