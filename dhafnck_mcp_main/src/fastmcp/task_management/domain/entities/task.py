@@ -554,8 +554,11 @@ class Task:
     def add_subtask(self, subtask_title: str = None, title: str = None, description: str = None, 
                    assignee: str = None, estimated_effort: str = None, **kwargs) -> str:
         """Add a subtask to the task with flexible parameter support"""
-        # Handle both old style (single string) and new style (keyword arguments)
-        if subtask_title is not None and title is None:
+        # Handle dictionary input (test compatibility)
+        if isinstance(subtask_title, dict):
+            # Dictionary style: add_subtask({"title": "title", "completed": True})
+            subtask_data = subtask_title.copy()
+        elif subtask_title is not None and title is None and isinstance(subtask_title, str):
             # Old style: add_subtask("title")
             subtask_data = {"title": subtask_title}
         elif title is not None:
@@ -636,8 +639,8 @@ class Task:
                     updated_at=self.updated_at
                 ))
                 return True
-        # Raise error for non-existent subtasks
-        raise ValueError(f"Subtask with ID '{subtask_id}' not found")
+        # Return False for non-existent subtasks instead of raising error
+        return False
     
     def update_subtask(self, subtask_id: Union[int, str], updates: Dict[str, Any]) -> bool:
         """Update a subtask by ID (supports both integer and hierarchical IDs)"""
@@ -658,8 +661,8 @@ class Task:
                     updated_at=self.updated_at
                 ))
                 return True
-        # Raise error for non-existent subtasks
-        raise ValueError(f"Subtask with ID '{subtask_id}' not found")
+        # Return False for non-existent subtasks instead of raising error
+        return False
     
     def complete_subtask(self, subtask_id: Union[int, str]) -> bool:
         """Mark a subtask as completed (supports both integer and hierarchical IDs)"""
@@ -670,12 +673,8 @@ class Task:
             self.updated_at = datetime.now(timezone.utc)
             return True
         else:
-            # Treat as ID - this will raise ValueError if not found
-            try:
-                return self.update_subtask(subtask_id, {"completed": True})
-            except ValueError:
-                # Re-raise with a more specific message for complete_subtask
-                raise ValueError(f"Subtask with ID '{subtask_id}' not found")
+            # Treat as ID - returns False if not found
+            return self.update_subtask(subtask_id, {"completed": True})
     
     def complete_task(self) -> None:
         """Complete the task by marking all subtasks as completed and setting status to done"""

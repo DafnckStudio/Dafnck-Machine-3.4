@@ -1,0 +1,28 @@
+{
+  "test_project": {
+    "id": "test_project",
+    "name": "Test Project",
+    "description": "A test project for unit tests",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {
+      "coding_agent": {
+        "id": "coding_agent",
+        "name": "Coding Agent",
+        "call_agent": "@coding-agent"
+      },
+      "test_agent": {
+        "id": "test_agent", 
+        "name": "Test Agent",
+        "call_agent": "@test-orchestrator-agent"
+      }
+    },
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  }
+} 

@@ -116,7 +116,7 @@ class TestProjectAnalyzerFacade:
             "Project analyzer module exports." in module.__doc__
         )
     
-    @patch('src.task_mcp.infrastructure.services.legacy.project_analyzer.ProjectAnalyzer')
+    @patch('fastmcp.task_management.infrastructure.services.legacy.project_analyzer.ProjectAnalyzer')
     def test_project_analyzer_can_be_instantiated(self, mock_analyzer):
         """Test that ProjectAnalyzer can be instantiated through the facade"""
         # Mock the ProjectAnalyzer class

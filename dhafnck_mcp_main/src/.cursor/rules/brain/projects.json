@@ -22,7 +22,12 @@
         "call_agent": "@coding_agent"
       }
     },
-    "agent_assignments": {},
+    "agent_assignments": {
+      "workflow_test_agent": [
+        "main",
+        "workflow_tree"
+      ]
+    },
     "created_at": "2025-01-01T00:00:00Z"
   }
 }

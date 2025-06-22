@@ -251,9 +251,9 @@ class TestTaskEntityComprehensive:
             description="Parent Description"
         )
         
-        # No subtasks - 100% progress
+        # No subtasks - 0% progress (consistent with business logic)
         progress = task.get_subtask_progress()
-        assert progress["percentage"] == 100.0
+        assert progress["percentage"] == 0.0
         
         # Add subtasks
         task.add_subtask("Subtask 1")

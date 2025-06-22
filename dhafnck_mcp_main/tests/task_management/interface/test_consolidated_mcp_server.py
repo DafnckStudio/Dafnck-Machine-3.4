@@ -12,8 +12,8 @@ from fastmcp.task_management.interface.consolidated_mcp_server import (
 class TestConsolidatedMCPServer:
     """Test the consolidated MCP server functionality"""
     
-    @patch('src.task_mcp.interface.consolidated_mcp_server.FastMCP')
-    @patch('src.task_mcp.interface.consolidated_mcp_server.ConsolidatedMCPToolsV2')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_server.FastMCP')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_server.ConsolidatedMCPToolsV2')
     def test_create_consolidated_mcp_server(self, mock_tools_class, mock_fastmcp_class):
         """Test creating the consolidated MCP server"""
         # Setup mocks
@@ -36,8 +36,8 @@ class TestConsolidatedMCPServer:
         # Verify the MCP instance is returned
         assert result == mock_mcp
     
-    @patch('src.task_mcp.interface.consolidated_mcp_server.create_consolidated_mcp_server')
-    @patch('src.task_mcp.interface.consolidated_mcp_server.logging')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_server.create_consolidated_mcp_server')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_server.logging')
     def test_main_success(self, mock_logging, mock_create_server):
         """Test main function successful execution"""
         # Setup mocks
@@ -54,8 +54,8 @@ class TestConsolidatedMCPServer:
         mock_create_server.assert_called_once()
         mock_mcp.run.assert_called_once()
     
-    @patch('src.task_mcp.interface.consolidated_mcp_server.create_consolidated_mcp_server')
-    @patch('src.task_mcp.interface.consolidated_mcp_server.logging')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_server.create_consolidated_mcp_server')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_server.logging')
     def test_main_keyboard_interrupt(self, mock_logging, mock_create_server):
         """Test main function handles KeyboardInterrupt gracefully"""
         # Setup mocks
@@ -76,8 +76,8 @@ class TestConsolidatedMCPServer:
         # Verify info message was logged
         mock_logging.info.assert_called_once_with("Consolidated server stopped by user")
     
-    @patch('src.task_mcp.interface.consolidated_mcp_server.create_consolidated_mcp_server')
-    @patch('src.task_mcp.interface.consolidated_mcp_server.logging')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_server.create_consolidated_mcp_server')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_server.logging')
     def test_main_generic_exception(self, mock_logging, mock_create_server):
         """Test main function handles generic exceptions"""
         # Setup mocks
@@ -102,8 +102,8 @@ class TestConsolidatedMCPServer:
         # Verify error message was logged
         mock_logging.error.assert_called_once_with(f"Consolidated server error: {test_error}")
     
-    @patch('src.task_mcp.interface.consolidated_mcp_server.create_consolidated_mcp_server')
-    @patch('src.task_mcp.interface.consolidated_mcp_server.logging')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_server.create_consolidated_mcp_server')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_server.logging')
     def test_main_server_creation_failure(self, mock_logging, mock_create_server):
         """Test main function handles server creation failure"""
         # Setup mocks
@@ -132,8 +132,8 @@ class TestConsolidatedMCPServer:
         import fastmcp.task_management.interface.consolidated_mcp_server
         
         # Verify the module has the expected functions
-        assert hasattr(src.task_mcp.interface.consolidated_mcp_server, 'create_consolidated_mcp_server')
-        assert hasattr(src.task_mcp.interface.consolidated_mcp_server, 'main')
+        assert hasattr(fastmcp.task_management.interface.consolidated_mcp_server, 'create_consolidated_mcp_server')
+        assert hasattr(fastmcp.task_management.interface.consolidated_mcp_server, 'main')
         
         # If we get here, the import succeeded without sys.path manipulation
         assert True

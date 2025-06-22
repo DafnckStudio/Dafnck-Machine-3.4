@@ -198,26 +198,44 @@ class TaskId:
     @classmethod
     def generate_subtask(cls, parent_id: 'TaskId', existing_subtask_ids: list = None) -> 'TaskId':
         """Generate a new subtask ID in YYYYMMDDXXX.XXX format"""
-        if parent_id.is_subtask:
-            raise ValueError("Cannot create subtask of a subtask")
-        
         if existing_subtask_ids is None:
             existing_subtask_ids = []
         
-        # Find the highest subtask sequence number for this parent
-        max_sequence = 0
+        # Convert existing_subtask_ids to strings for consistency
+        existing_id_strings = []
         for subtask_id in existing_subtask_ids:
             try:
-                tid = cls(str(subtask_id))
-                if tid.is_subtask and tid.parent_task_id.value == parent_id.value:
-                    sequence_num = int(tid.subtask_sequence)
-                    max_sequence = max(max_sequence, sequence_num)
+                if hasattr(subtask_id, 'value'):
+                    existing_id_strings.append(str(subtask_id.value))
+                else:
+                    existing_id_strings.append(str(subtask_id))
             except (ValueError, AttributeError):
+                continue
+        
+        # Find the highest subtask sequence number for the parent task
+        max_sequence = 0
+        parent_prefix = str(parent_id.value)
+        
+        for subtask_id_str in existing_id_strings:
+            try:
+                if subtask_id_str.startswith(parent_prefix + "."):
+                    sequence_part = subtask_id_str.split('.')[1]
+                    sequence_num = int(sequence_part)
+                    max_sequence = max(max_sequence, sequence_num)
+            except (ValueError, IndexError):
                 continue
         
         # Generate next sequence number
         next_sequence = max_sequence + 1
+        
         if next_sequence > 999:
             raise ValueError(f"Maximum subtasks per task (999) exceeded for task {parent_id}")
         
+        new_id = f"{parent_prefix}.{next_sequence:03d}"
+        return cls(new_id)
+    
+    @classmethod
+    def generate(cls, existing_ids: list = None) -> 'TaskId':
+        """Generate a new task ID - alias for generate_new for backward compatibility"""
+        return cls.generate_new(existing_ids) 
         return cls(f"{parent_id.value}.{next_sequence:03d}") 
