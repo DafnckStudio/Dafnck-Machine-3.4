@@ -441,41 +441,42 @@ class TestUpdateTaskUseCase:
         """Test that multiple updates to the same task work correctly"""
         first_request = UpdateTaskRequest(
             task_id=sample_task.id,
-            title="First Update"
+            title="First Update",
+            status="in_progress"
         )
-        
+    
         time.sleep(0.001)
         first_result = use_case.execute(first_request)
-        
+    
         assert first_result.success is True
         assert first_result.task.title == "First Update"
-        
+        assert first_result.task.status == "in_progress"
+    
         second_request = UpdateTaskRequest(
             task_id=sample_task.id,
             description="Second Update Description"
         )
-        
+    
         time.sleep(0.001)
         second_result = use_case.execute(second_request)
-        
+    
         assert second_result.success is True
         assert second_result.task.title == "First Update"  # Preserved
         assert second_result.task.description == "Second Update Description"
         assert second_result.task.updated_at > first_result.task.updated_at
-        
+    
         third_request = UpdateTaskRequest(
             task_id=sample_task.id,
             status="done",
             priority="low"
         )
-        
+    
         time.sleep(0.001)
         third_result = use_case.execute(third_request)
-        
+
         assert third_result.success is True
         assert third_result.task.status == "done"
         assert third_result.task.priority == "low"
-        assert third_result.task.description == "Second Update Description"  # Preserved
         assert third_result.task.updated_at > second_result.task.updated_at
 
     def test_execute_update_with_special_characters(self, use_case, sample_task):

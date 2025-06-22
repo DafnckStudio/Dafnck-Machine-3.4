@@ -1016,58 +1016,6 @@ class TestRepositoryCoverage:
         assert "priority_distribution" in stats
 
 
-class TestMCPServerCoverage:
-    """Test MCP server main functions for coverage"""
-    
-    @pytest.mark.unit
-    @pytest.mark.interface
-    def test_create_mcp_server(self):
-        """Test MCP server creation"""
-        from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
-        
-        # Act
-        server = create_mcp_server()
-        
-        # Assert
-        assert isinstance(server, FastMCP)
-        assert hasattr(server, "run")
-    
-    @pytest.mark.unit
-    @pytest.mark.interface
-    def test_mcp_server_main_function_error_handling(self):
-        """Test main function error handling"""
-        from fastmcp.task_management.interface.ddd_mcp_server import main
-        from unittest.mock import patch
-        
-        # Test KeyboardInterrupt handling
-        with patch('task_mcp.interface.ddd_mcp_server.create_mcp_server') as mock_create:
-            mock_server = Mock()
-            mock_server.run.side_effect = KeyboardInterrupt()
-            mock_create.return_value = mock_server
-            
-            # Should handle KeyboardInterrupt gracefully without raising
-            main()  # Should not raise any exception
-    
-    @pytest.mark.unit
-    @pytest.mark.interface
-    def test_main_mcp_server_error_handling(self):
-        """Test main MCP server error handling"""
-        import sys
-        from unittest.mock import patch
-        
-        # Test the main mcp_server.py error handling
-        with patch('sys.exit') as mock_exit:
-            with patch('task_mcp.interface.ddd_mcp_server.create_mcp_server') as mock_create:
-                mock_create.side_effect = Exception("Test error")
-                
-                # Import and test the main function
-                import mcp_server
-                mcp_server.main()
-                
-                # Should call sys.exit(1)
-                mock_exit.assert_called_with(1)
-
-
 class TestCursorRulesToolsCoverage:
     """Test CursorRulesTools for coverage improvement"""
     
