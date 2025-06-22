@@ -29,7 +29,6 @@ MCP config
 ## 📁 File Locations
 - **MCP Config**: `~/.cursor/mcp.json`
 - **Cursor Settings**: `.cursor/settings.json`
-- **Startup Script**: `dhafnck_mcp_main/start_mcp_server.sh`
 - **Tasks Storage**: `.cursor/rules/tasks/tasks.json`
 - **Auto-generated Rules**: `.cursor/rules/auto_rule.mdc`
 
