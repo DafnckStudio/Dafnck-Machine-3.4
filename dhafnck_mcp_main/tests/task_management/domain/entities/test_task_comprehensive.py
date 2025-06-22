@@ -12,7 +12,7 @@ from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
 from fastmcp.task_management.domain.value_objects.priority import Priority
 from fastmcp.task_management.domain.enums.agent_roles import AgentRole
 from fastmcp.task_management.domain.enums.common_labels import CommonLabel
-from fastmcp.task_management.domain.enums.estimated_effort import EstimatedEffort
+from fastmcp.task_management.domain.enums.estimated_effort import EstimatedEffort, EffortLevel
 from fastmcp.task_management.domain.exceptions.task_exceptions import TaskDomainError, InvalidTaskStateError
 
 
@@ -49,9 +49,9 @@ class TestTaskEntityComprehensive:
             status=TaskStatus.in_progress(),
             priority=Priority.high(),
             details="Detailed information",
-            estimated_effort=EstimatedEffort.MEDIUM.value,
-            assignees=[AgentRole.CODING_AGENT],
-            labels=[CommonLabel.FEATURE, CommonLabel.HIGH_PRIORITY],
+            estimated_effort=EffortLevel.MEDIUM.label,
+            assignees=[f"@{AgentRole.CODING.value}"],
+            labels=[CommonLabel.FEATURE.value, CommonLabel.URGENT.value],
             dependencies=["dep1", "dep2"],
             due_date="2024-12-31T23:59:59Z",
             created_at=created_at,
@@ -64,9 +64,9 @@ class TestTaskEntityComprehensive:
         assert task.status.value == "in_progress"
         assert task.priority.value == "high"
         assert task.details == "Detailed information"
-        assert task.estimated_effort == EstimatedEffort.MEDIUM.value
-        assert AgentRole.CODING_AGENT in task.assignees
-        assert CommonLabel.FEATURE in task.labels
+        assert task.estimated_effort == EffortLevel.MEDIUM.label
+        assert f"@{AgentRole.CODING.value}" in task.assignees
+        assert CommonLabel.FEATURE.value in task.labels
         assert "dep1" in task.dependencies
         assert task.due_date == "2024-12-31T23:59:59Z"
 
@@ -283,8 +283,9 @@ class TestTaskEntityComprehensive:
         # Task with TODO status is not blocked
         assert not task.is_blocked
         
-        # Task with BLOCKED status is blocked
-        task.update_status(TaskStatus.blocked())
+        # Task with BLOCKED status is blocked (need to go through valid transition)
+        task.update_status(TaskStatus.in_progress())  # todo -> in_progress
+        task.update_status(TaskStatus.blocked())     # in_progress -> blocked
         assert task.is_blocked
 
     def test_is_completed_property(self):
@@ -298,8 +299,10 @@ class TestTaskEntityComprehensive:
         # TODO task is not completed
         assert not task.is_completed
         
-        # DONE task is completed
-        task.update_status(TaskStatus.done())
+        # DONE task is completed (need to go through valid transition)
+        task.update_status(TaskStatus.in_progress())  # todo -> in_progress
+        task.update_status(TaskStatus.review())       # in_progress -> review
+        task.update_status(TaskStatus.done())         # review -> done
         assert task.is_completed
 
     def test_can_be_assigned_property(self):
@@ -313,13 +316,20 @@ class TestTaskEntityComprehensive:
         # TODO task can be assigned
         assert task.can_be_assigned
         
-        # DONE task cannot be assigned
-        task.update_status(TaskStatus.done())
+        # DONE task cannot be assigned (need to go through valid transition)
+        task.update_status(TaskStatus.in_progress())  # todo -> in_progress
+        task.update_status(TaskStatus.review())       # in_progress -> review
+        task.update_status(TaskStatus.done())         # review -> done
         assert not task.can_be_assigned
         
-        # CANCELLED task cannot be assigned
-        task.update_status(TaskStatus.cancelled())
-        assert not task.can_be_assigned
+        # Test cancelled task separately
+        task2 = Task(
+            id=TaskId.generate_new(),
+            title="Test Task 2",
+            description="Test Description 2"
+        )
+        task2.update_status(TaskStatus.cancelled())   # todo -> cancelled
+        assert not task2.can_be_assigned
 
     def test_add_assignee(self):
         """Test adding assignees"""
@@ -330,15 +340,15 @@ class TestTaskEntityComprehensive:
         )
         
         # Add assignee
-        task.add_assignee(AgentRole.CODING_AGENT)
-        assert AgentRole.CODING_AGENT in task.assignees
+        task.add_assignee(AgentRole.CODING)
+        assert f"@{AgentRole.CODING.value}" in task.assignees
         
         # Add duplicate assignee (should not duplicate)
-        task.add_assignee(AgentRole.CODING_AGENT)
-        assert task.assignees.count(AgentRole.CODING_AGENT) == 1
+        task.add_assignee(AgentRole.CODING)
+        assert task.assignees.count(f"@{AgentRole.CODING.value}") == 1
         
         # Add different assignee
-        task.add_assignee(AgentRole.TEST_ORCHESTRATOR_AGENT)
+        task.add_assignee(AgentRole.TEST_ORCHESTRATOR)
         assert len(task.assignees) == 2
 
     def test_remove_assignee(self):
@@ -347,16 +357,16 @@ class TestTaskEntityComprehensive:
             id=TaskId.generate_new(),
             title="Test Task",
             description="Test Description",
-            assignees=[AgentRole.CODING_AGENT, AgentRole.TEST_ORCHESTRATOR_AGENT]
+            assignees=[f"@{AgentRole.CODING.value}", f"@{AgentRole.TEST_ORCHESTRATOR.value}"]
         )
         
         # Remove assignee
-        task.remove_assignee(AgentRole.CODING_AGENT)
-        assert AgentRole.CODING_AGENT not in task.assignees
-        assert AgentRole.TEST_ORCHESTRATOR_AGENT in task.assignees
+        task.remove_assignee(AgentRole.CODING)
+        assert f"@{AgentRole.CODING.value}" not in task.assignees
+        assert f"@{AgentRole.TEST_ORCHESTRATOR.value}" in task.assignees
         
         # Remove non-existent assignee (should not raise error)
-        task.remove_assignee(AgentRole.CODING_AGENT)  # Already removed
+        task.remove_assignee(AgentRole.CODING)  # Already removed
 
     def test_add_label(self):
         """Test adding labels"""
@@ -368,11 +378,11 @@ class TestTaskEntityComprehensive:
         
         # Add label
         task.add_label(CommonLabel.FEATURE)
-        assert CommonLabel.FEATURE in task.labels
+        assert CommonLabel.FEATURE.value in task.labels
         
         # Add duplicate label (should not duplicate)
         task.add_label(CommonLabel.FEATURE)
-        assert task.labels.count(CommonLabel.FEATURE) == 1
+        assert task.labels.count(CommonLabel.FEATURE.value) == 1
 
     def test_remove_label(self):
         """Test removing labels"""
@@ -380,13 +390,13 @@ class TestTaskEntityComprehensive:
             id=TaskId.generate_new(),
             title="Test Task",
             description="Test Description",
-            labels=[CommonLabel.FEATURE, CommonLabel.HIGH_PRIORITY]
+            labels=[CommonLabel.FEATURE.value, CommonLabel.URGENT.value]
         )
         
         # Remove label
         task.remove_label(CommonLabel.FEATURE)
-        assert CommonLabel.FEATURE not in task.labels
-        assert CommonLabel.HIGH_PRIORITY in task.labels
+        assert CommonLabel.FEATURE.value not in task.labels
+        assert CommonLabel.URGENT.value in task.labels
 
     def test_add_dependency(self):
         """Test adding dependencies"""
@@ -403,17 +413,18 @@ class TestTaskEntityComprehensive:
     def test_remove_dependency(self):
         """Test removing dependencies"""
         dep_id = TaskId.generate_new()
+        dep_id2 = TaskId.generate_new()
         task = Task(
             id=TaskId.generate_new(),
             title="Test Task",
             description="Test Description",
-            dependencies=[dep_id.value, "dep2"]
+            dependencies=[dep_id, dep_id2]
         )
         
         # Remove dependency
         task.remove_dependency(dep_id)
-        assert dep_id.value not in task.dependencies
-        assert "dep2" in task.dependencies
+        assert not task.has_dependency(dep_id)
+        assert task.has_dependency(dep_id2)
 
     def test_to_dict_comprehensive(self):
         """Test converting task to dictionary"""
@@ -428,9 +439,9 @@ class TestTaskEntityComprehensive:
             status=TaskStatus.in_progress(),
             priority=Priority.high(),
             details="Test details",
-            estimated_effort=EstimatedEffort.MEDIUM.value,
-            assignees=[AgentRole.CODING_AGENT],
-            labels=[CommonLabel.FEATURE],
+            estimated_effort=EffortLevel.MEDIUM.label,
+            assignees=[f"@{AgentRole.CODING.value}"],
+            labels=[CommonLabel.FEATURE.value],
             dependencies=["dep1"],
             due_date="2024-12-31T23:59:59Z",
             created_at=created_at,
@@ -591,9 +602,9 @@ class TestTaskEntityComprehensive:
         task.add_subtask("Code review")
         
         # Add assignees and labels
-        task.add_assignee(AgentRole.CODING_AGENT)
+        task.add_assignee(AgentRole.CODING)
         task.add_label(CommonLabel.FEATURE)
-        task.add_label(CommonLabel.HIGH_PRIORITY)
+        task.add_label(CommonLabel.URGENT)
         
         # Progress through workflow
         task.update_status(TaskStatus.in_progress())
@@ -612,8 +623,9 @@ class TestTaskEntityComprehensive:
         task.complete_subtask(2)  # Tests complete
         task.complete_subtask(3)  # Review complete
         
-        # Mark task as done
-        task.update_status(TaskStatus.done())
+        # Transition through proper workflow states before marking as done
+        task.update_status(TaskStatus.review())  # Move to review first
+        task.update_status(TaskStatus.done())    # Now can mark as done
         
         # Verify final state
         assert task.is_completed

@@ -462,7 +462,9 @@ class Task:
         if dependency_id == self.id:
             raise ValueError("Task cannot depend on itself")
         
-        if dependency_id.value not in [dep.value for dep in self.dependencies]:
+        # Handle both TaskId objects and string values when checking for duplicates
+        existing_deps = [dep.value if hasattr(dep, 'value') else str(dep) for dep in self.dependencies]
+        if dependency_id.value not in existing_deps:
             self.dependencies.append(dependency_id)
             self.updated_at = datetime.now(timezone.utc)
     
@@ -470,18 +472,22 @@ class Task:
         """Remove a task dependency"""
         # Find and remove dependency by value comparison
         for i, dep in enumerate(self.dependencies):
-            if dep.value == dependency_id.value:
+            # Handle both TaskId objects and string values
+            dep_value = dep.value if hasattr(dep, 'value') else str(dep)
+            if dep_value == dependency_id.value:
                 self.dependencies.pop(i)
                 self.updated_at = datetime.now(timezone.utc)
                 break
     
     def has_dependency(self, dependency_id: TaskId) -> bool:
         """Check if task has a specific dependency"""
-        return dependency_id.value in [dep.value for dep in self.dependencies]
+        # Handle both TaskId objects and string values
+        return dependency_id.value in [dep.value if hasattr(dep, 'value') else str(dep) for dep in self.dependencies]
     
     def get_dependency_ids(self) -> List[str]:
         """Get list of dependency IDs as strings"""
-        return [str(dep.value) for dep in self.dependencies]
+        # Handle both TaskId objects and string values
+        return [dep.value if hasattr(dep, 'value') else str(dep) for dep in self.dependencies]
     
     def clear_dependencies(self) -> None:
         """Remove all dependencies"""
@@ -620,8 +626,8 @@ class Task:
                     updated_at=self.updated_at
                 ))
                 return True
-        # Don't raise error for non-existent subtasks, just return False
-        return False
+        # Raise error for non-existent subtasks
+        raise ValueError(f"Subtask with ID '{subtask_id}' not found")
     
     def update_subtask(self, subtask_id: Union[int, str], updates: Dict[str, Any]) -> bool:
         """Update a subtask by ID (supports both integer and hierarchical IDs)"""
@@ -642,8 +648,8 @@ class Task:
                     updated_at=self.updated_at
                 ))
                 return True
-        # Don't raise error for non-existent subtasks, just return False
-        return False
+        # Raise error for non-existent subtasks
+        raise ValueError(f"Subtask with ID '{subtask_id}' not found")
     
     def complete_subtask(self, subtask_id: Union[int, str]) -> bool:
         """Mark a subtask as completed (supports both integer and hierarchical IDs)"""
@@ -654,8 +660,12 @@ class Task:
             self.updated_at = datetime.now(timezone.utc)
             return True
         else:
-            # Treat as ID
-            return self.update_subtask(subtask_id, {"completed": True})
+            # Treat as ID - this will raise ValueError if not found
+            try:
+                return self.update_subtask(subtask_id, {"completed": True})
+            except ValueError:
+                # Re-raise with a more specific message for complete_subtask
+                raise ValueError(f"Subtask with ID '{subtask_id}' not found")
     
     def complete_task(self) -> None:
         """Complete the task by marking all subtasks as completed and setting status to done"""
@@ -695,6 +705,10 @@ class Task:
             if self._subtask_ids_match(current_id, subtask_id):
                 return subtask
         return None
+    
+    def get_subtask_by_id(self, subtask_id: Union[int, str]) -> Optional[Dict[str, Any]]:
+        """Get a subtask by ID - alias for get_subtask for backward compatibility"""
+        return self.get_subtask(subtask_id)
     
     def _subtask_ids_match(self, current_id: Union[int, str], target_id: Union[int, str]) -> bool:
         """Helper method to compare subtask IDs regardless of type"""
@@ -847,7 +861,7 @@ class Task:
             "estimatedEffort": self.estimated_effort,
             "assignees": self.assignees.copy() if self.assignees is not None else [],
             "labels": self.labels.copy() if self.labels is not None else [],
-            "dependencies": [str(dep) for dep in self.dependencies],
+            "dependencies": [dep.value if hasattr(dep, 'value') else str(dep) for dep in self.dependencies],
             "subtasks": self.subtasks.copy(),
             "dueDate": self.due_date,
             "created_at": self.created_at.isoformat() if self.created_at else None,

@@ -12,7 +12,7 @@ from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
 from fastmcp.task_management.domain.value_objects.priority import Priority
 from fastmcp.task_management.domain.enums.agent_roles import AgentRole
 from fastmcp.task_management.domain.enums.common_labels import CommonLabel
-from fastmcp.task_management.domain.enums.estimated_effort import EstimatedEffort
+from fastmcp.task_management.domain.enums.estimated_effort import EstimatedEffort, EffortLevel
 
 
 class TestTaskEntityFocused:
@@ -139,8 +139,8 @@ class TestTaskEntityFocused:
         assert task.details == "Detailed information"
         
         # Update estimated effort
-        task.update_estimated_effort(EstimatedEffort.LARGE.value)
-        assert task.estimated_effort == EstimatedEffort.LARGE.value
+        task.update_estimated_effort(EffortLevel.LARGE.label)
+        assert task.estimated_effort == EffortLevel.LARGE.label
 
     def test_assignee_management(self):
         """Test assignee management methods"""
@@ -284,13 +284,11 @@ class TestTaskEntityFocused:
         )
         
         # Add subtask
-        subtask_data = {
-            "title": "Subtask 1",
-            "description": "First subtask",
-            "assignees": ["@coding_agent"]
-        }
-        
-        task.add_subtask(subtask_data)
+        task.add_subtask(
+            title="Subtask 1",
+            description="First subtask",
+            assignees=["@coding_agent"]
+        )
         assert len(task.subtasks) == 1
         
         subtask = task.subtasks[0]
@@ -315,7 +313,7 @@ class TestTaskEntityFocused:
         assert task.subtasks[0]["completed"] is True
         
         # Add another subtask
-        task.add_subtask({"title": "Subtask 2", "description": "Second subtask"})
+        task.add_subtask(title="Subtask 2", description="Second subtask")
         assert len(task.subtasks) == 2
         
         # Test progress calculation
@@ -340,8 +338,8 @@ class TestTaskEntityFocused:
         )
         
         # Test empty title validation
-        with pytest.raises(ValueError, match="must have a title"):
-            task.add_subtask({"description": "No title"})
+        with pytest.raises(ValueError, match="Either subtask_title or title must be provided"):
+            task.add_subtask(description="No title")
 
     def test_task_completion(self):
         """Test task completion logic"""
@@ -354,8 +352,8 @@ class TestTaskEntityFocused:
         )
         
         # Add subtasks
-        task.add_subtask({"title": "Subtask 1", "description": "First"})
-        task.add_subtask({"title": "Subtask 2", "description": "Second"})
+        task.add_subtask(title="Subtask 1", description="First")
+        task.add_subtask(title="Subtask 2", description="Second")
         
         # Complete task
         task.complete_task()
@@ -388,7 +386,7 @@ class TestTaskEntityFocused:
         assert task.is_overdue()
         
         # Test effort level
-        task.update_estimated_effort(EstimatedEffort.LARGE.value)
+        task.update_estimated_effort(EffortLevel.LARGE.label)
         effort_level = task.get_effort_level()
         assert effort_level is not None
 
@@ -456,7 +454,7 @@ class TestTaskEntityFocused:
         # Add some data
         task.add_assignee("@coding_agent")
         task.add_label("feature")
-        task.add_subtask({"title": "Subtask", "description": "Test"})
+        task.add_subtask(title="Subtask", description="Test")
         
         task_dict = task.to_dict()
         
