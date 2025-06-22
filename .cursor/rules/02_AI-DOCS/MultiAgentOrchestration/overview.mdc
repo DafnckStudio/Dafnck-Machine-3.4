@@ -1,0 +1,90 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Overview & System Architecture
+
+## 🎯 What is Multi-Agent Orchestration?
+
+The Multi-Agent Orchestration System enables multiple specialized AI agents to work together seamlessly on complex projects. Each agent brings domain-specific expertise and collaborates with others to deliver comprehensive, high-quality solutions.
+
+---
+
+## 🏗️ System Architecture
+
+### Core Components
+
+1. **Uber Orchestrator Agent** (`@uber-orchestrator-agent`)
+   - Central coordination hub
+   - Task distribution and prioritization
+   - Cross-agent communication management
+
+2. **Specialized Agents** (50+ available)
+   - Domain-specific expertise
+   - Defined collaboration patterns
+   - Automatic role switching
+
+3. **Task Management System**
+   - MCP-based task coordination
+   - Automatic context generation
+   - Progress tracking and reporting
+
+4. **Project Orchestration**
+   - Multi-tree project structures
+   - Agent assignment optimization
+   - Workload balancing
+
+---
+
+## 🔄 Orchestration Workflow (High-Level)
+
+1. **Project Initialization**: Create a project and define workstreams (trees)
+2. **Agent Registration & Assignment**: Register agents and assign them to workstreams
+3. **Task Creation & Distribution**: Define tasks, dependencies, and assign agents
+4. **Orchestration Execution**: Run intelligent orchestration and monitor progress
+
+---
+
+## 🤝 Collaboration Patterns (Summary)
+
+- **Sequential**: Agents work in a strict order (e.g., Architect → Tech Spec → Coder → Reviewer → Tester)
+- **Parallel**: Multiple agents work on independent streams simultaneously
+- **Cross-Domain**: Agents from different domains collaborate on shared objectives
+
+(See [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/collaboration_patterns.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/collaboration_patterns.mdc) for details and diagrams)
+
+---
+
+## 📊 Key Features
+
+- **Automatic Workload Balancing**: Assigns tasks based on agent capacity and skills
+- **Intelligent Task Prioritization**: Handles dependencies, bottlenecks, and deadlines
+- **Cross-Agent Communication**: Shares context, status, and manages handoffs
+- **Scalable Architecture**: Supports large teams and complex projects
+
+---
+
+## 💡 Benefits
+
+- **Minimal Setup**: Only 3 fields per agent registration
+- **Auto-Generation**: Agent details loaded from YAML configurations
+- **Context-Aware**: Agents adapt to task context
+- **Efficient Storage**: Smaller, faster project files
+- **Centralized Updates**: Agent improvements benefit all projects
+
+---
+
+## 🚀 Getting Started (Summary)
+
+1. Create a project with multiple workstreams
+2. Register specialized agents
+3. Assign agents to workstreams
+4. Create coordinated tasks
+5. Run orchestration and monitor progress
+
+For a step-by-step guide, see [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/quick_start.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/quick_start.mdc).
+
+---
+
+*Agent details are automatically generated from YAML configurations in `cursor_agent/yaml-lib/` when agents are called.*

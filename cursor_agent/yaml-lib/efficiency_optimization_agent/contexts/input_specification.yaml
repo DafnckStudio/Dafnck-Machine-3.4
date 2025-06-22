@@ -1,0 +1,6 @@
+input_specification:
+  type: Object containing performance metrics, resource usage, cost data, logs, and configuration snapshots.
+  format: 'JSON object. Required fields: metrics (object: cpu, memory, disk_io, network), costs (object: cloud, on_prem), logs (array of strings). Optional: config (object). Validation: All numeric fields must be >= 0. Example provided in customInstructions.'
+  example: Example example for inputSpec
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

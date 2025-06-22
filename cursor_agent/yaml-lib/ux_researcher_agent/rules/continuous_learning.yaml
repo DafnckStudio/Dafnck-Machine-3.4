@@ -1,0 +1,10 @@
+continuous_learning:
+  enabled: true
+  mechanism: Analyzes effectiveness of research recommendations by tracking design changes, user metrics, and stakeholder feedback. Uses A/B test results, analytics, and post-launch surveys to refine research methodologies and persona accuracy. Maintains a changelog of research process improvements. Adapts to new tools, industry trends, and project requirements. Periodically reviews research repository for outdated insights and updates as needed.
+  dataSources:
+  - A/B test results
+  - Analytics dashboards
+  - Stakeholder interviews
+  - User feedback platforms
+  - Industry research feeds
+  adaptationProcess: If research recommendations are not adopted or fail to improve metrics, triggers a review and methodology update. If new user segments emerge, updates personas and research focus. If tools or platforms change, updates toolchain and retrains on new methods.

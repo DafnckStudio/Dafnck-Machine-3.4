@@ -1,0 +1,146 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Collaboration & Workflow Patterns
+
+## Overview
+
+This guide outlines proven collaboration patterns for multi-agent orchestration, including when to use each pattern, implementation details, best practices, and anti-patterns.
+
+---
+
+## 🔄 Core Collaboration Patterns
+
+### 1. Sequential Pipeline Pattern
+- **Use Case**: Tasks requiring strict order and handoffs between specialized agents
+- **Diagram**:
+```mermaid
+graph LR
+    A[@elicitation-agent] --> B[@system-architect-agent]
+    B --> C[@tech-spec-agent]
+    C --> D[@coding-agent]
+    D --> E[@code-reviewer-agent]
+    E --> F[@test-orchestrator-agent]
+```
+- **Best Practices**: Clear handoffs, documentation, quality gates, rollback procedures
+
+---
+
+### 2. Parallel Execution Pattern
+- **Use Case**: Independent workstreams that can execute simultaneously
+- **Diagram**:
+```mermaid
+graph TD
+    A[Project Start] --> B[@system-architect-agent]
+    B --> C[Architecture Complete]
+    C --> D[@ui-designer-agent]
+    C --> E[@coding-agent]
+    C --> F[@security-auditor-agent]
+    D --> G[Integration Phase]
+    E --> G
+    F --> G
+```
+- **Best Practices**: Interface definitions, sync points, shared context, integration testing
+
+---
+
+### 3. Cross-Domain Collaboration Pattern
+- **Use Case**: Complex tasks requiring expertise from multiple domains
+- **Diagram**:
+```mermaid
+graph TB
+    A[@system-architect-agent] <--> B[@security-auditor-agent]
+    B <--> C[@compliance-scope-agent]
+    A <--> D[@tech-spec-agent]
+    D <--> E[@coding-agent]
+    E <--> F[@code-reviewer-agent]
+    B --> F
+    C --> F
+```
+- **Best Practices**: Collaboration protocols, shared vocabulary, cross-domain reviews, conflict resolution
+
+---
+
+### 4. Hub-and-Spoke Pattern
+- **Use Case**: Central coordination with specialized satellite agents
+- **Diagram**:
+```mermaid
+graph TD
+    A[@uber-orchestrator-agent] --> B[@coding-agent]
+    A --> C[@ui-designer-agent]
+    A --> D[@security-auditor-agent]
+    A --> E[@test-orchestrator-agent]
+    B --> A
+    C --> A
+    D --> A
+    E --> A
+```
+- **Best Practices**: Avoid bottlenecks, clear escalation, regular updates, agent autonomy
+
+---
+
+### 5. Peer-to-Peer Collaboration Pattern
+- **Use Case**: Equal partners working together on shared objectives
+- **Diagram**:
+```mermaid
+graph LR
+    A[@coding-agent] <--> B[@code-reviewer-agent]
+    B <--> C[@test-orchestrator-agent]
+    C <--> A
+    A <--> D[@security-auditor-agent]
+    B <--> D
+    C <--> D
+```
+- **Best Practices**: Consensus mechanisms, clear communication, shared responsibility, conflict resolution
+
+---
+
+## 🔧 Advanced Collaboration Techniques
+
+- **Dynamic Role Assignment**: Agents switch roles based on context
+- **Collaborative Decision Making**: Multi-agent consensus for critical decisions
+- **Knowledge Sharing Protocols**: Shared knowledge base and context updates
+
+---
+
+## 📊 Collaboration Quality Metrics
+- Communication efficiency (volume, response time, context sharing)
+- Coordination effectiveness (completion rate, deadlines, quality, rework)
+- Agent satisfaction (workload balance, specialization, autonomy, conflict resolution)
+
+---
+
+## 🚨 Common Collaboration Anti-Patterns
+- **Bottleneck**: Single agent blocks progress → Distribute authority
+- **Silo**: Agents work in isolation → Regular sync, shared context
+- **Chaos**: No structure → Clear roles, protocols, hierarchy
+- **Micromanagement**: Over-coordination → Trust agent expertise, define boundaries
+
+---
+
+## 🎯 Pattern Selection Guidelines
+- **Sequential**: Strict dependencies, quality gates, rollback needed
+- **Parallel**: Independent tasks, speed, clear integration
+- **Cross-Domain**: Multi-domain, compliance, high-risk, innovation
+- **Hub-and-Spoke**: Central coordination, resource optimization, scalability
+- **Peer-to-Peer**: Equal expertise, consensus, innovation, flexibility
+
+---
+
+## 📚 Implementation Checklist
+- [ ] Define collaboration pattern for project
+- [ ] Establish communication protocols
+- [ ] Implement shared context/knowledge
+- [ ] Set up quality metrics
+- [ ] Create conflict resolution procedures
+- [ ] Test with small tasks first
+- [ ] Scale to complex scenarios
+- [ ] Continuously optimize
+
+---
+
+*For more on orchestration and agent management, see:*
+- [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/overview.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/overview.mdc)
+- [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/agent_registration.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/agent_registration.mdc)

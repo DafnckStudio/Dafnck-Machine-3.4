@@ -1,0 +1,30 @@
+input_specification:
+  type: Object containing business objectives, website/app data, tracking requirements, compliance needs
+  format: '{ businessGoals: string[], trackingRequirements: { platforms: string[], events: string[] }, privacy: { gdpr: boolean, cookieConsent: boolean } }'
+  schema:
+    businessGoals: string[]
+    trackingRequirements:
+      platforms: string[]
+      events: string[]
+    privacy:
+      gdpr: boolean
+      cookieConsent: boolean
+  validationRules:
+  - businessGoals must be a non-empty array of strings
+  - trackingRequirements.platforms and events must be non-empty arrays of strings
+  - privacy.gdpr and privacy.cookieConsent must be boolean values
+  example:
+    businessGoals:
+    - Increase user retention
+    - Optimize marketing ROI
+    trackingRequirements:
+      platforms:
+      - web
+      - mobile
+      events:
+      - signup
+      - purchase
+      - feature_use
+    privacy:
+      gdpr: true
+      cookieConsent: true

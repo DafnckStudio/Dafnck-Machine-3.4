@@ -1,0 +1,25 @@
+input_specification:
+  type: System metrics, performance data, workload indicators, resource utilization
+  format: 'JSON object with fields: { queueDepth: number, agentUtilization: number, responseTime: number, complexityScore: number, errorRate: number, cpuUsage: number, memoryUsage: number, gpuUsage?: number, networkUsage?: number, timestamp: ISO8601 string }'
+  schema:
+    queueDepth: integer
+    agentUtilization: float (0-1)
+    responseTime: float (ms)
+    complexityScore: integer (1-10)
+    errorRate: float (0-1)
+    cpuUsage: float (0-1)
+    memoryUsage: float (0-1)
+    gpuUsage: float (0-1, optional)
+    networkUsage: float (0-1, optional)
+    timestamp: string (ISO8601)
+  example:
+    queueDepth: 42
+    agentUtilization: 0.85
+    responseTime: 120.5
+    complexityScore: 8
+    errorRate: 0.03
+    cpuUsage: 0.92
+    memoryUsage: 0.88
+    timestamp: '2024-06-01T12:00:00Z'
+  validation: Reject input if required fields are missing or out of range; log and escalate malformed input.
+  validationRules: Example validationRules for inputSpec

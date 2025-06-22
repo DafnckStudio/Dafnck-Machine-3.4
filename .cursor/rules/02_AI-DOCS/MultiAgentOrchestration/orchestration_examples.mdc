@@ -1,0 +1,143 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Practical Orchestration Examples
+
+## Overview
+
+This section provides practical, real-world examples of multi-agent orchestration for common project scenarios using the simplified agent registration format.
+
+---
+
+## 🌐 Example: Full-Stack Web Application Development
+
+### Scenario
+Build a modern e-commerce web application with React frontend, Python backend, and comprehensive testing.
+
+### Agent Team Composition
+- **@system_architect_agent**: Overall system design
+- **@ui_designer_agent**: User interface design
+- **@coding_agent**: Implementation (frontend & backend)
+- **@security_auditor_agent**: Security review
+- **@test_orchestrator_agent**: Testing coordination
+- **@devops_agent**: Deployment and infrastructure
+
+### Implementation
+```typescript
+// Step 1: Project Setup
+await manage_project({
+  action: "create",
+  project_id: "ecommerce_app",
+  name: "E-Commerce Web Application",
+  description: "Full-stack e-commerce platform with modern architecture"
+});
+
+const trees = [
+  { id: "architecture", name: "System Architecture" },
+  { id: "frontend", name: "Frontend Development" },
+  { id: "backend", name: "Backend Development" },
+  { id: "security", name: "Security Implementation" },
+  { id: "testing", name: "Quality Assurance" },
+  { id: "deployment", name: "DevOps & Deployment" }
+];
+for (const tree of trees) {
+  await manage_project({
+    action: "create_tree",
+    project_id: "ecommerce_app",
+    tree_id: tree.id,
+    tree_name: tree.name
+  });
+}
+
+// Step 2: Register Agents
+const agents = [
+  { id: "system_architect", name: "System Architect", call_agent: "@system_architect_agent", tree: "architecture" },
+  { id: "ui_designer", name: "UI Designer", call_agent: "@ui_designer_agent", tree: "frontend" },
+  { id: "backend_developer", name: "Backend Developer", call_agent: "@coding_agent", tree: "backend" },
+  { id: "security_specialist", name: "Security Specialist", call_agent: "@security_auditor_agent", tree: "security" },
+  { id: "qa_engineer", name: "QA Engineer", call_agent: "@test_orchestrator_agent", tree: "testing" },
+  { id: "devops_engineer", name: "DevOps Engineer", call_agent: "@devops_agent", tree: "deployment" }
+];
+for (const agent of agents) {
+  await manage_agent({
+    action: "register",
+    project_id: "ecommerce_app",
+    agent_id: agent.id,
+    name: agent.name,
+    call_agent: agent.call_agent
+  });
+  await manage_agent({
+    action: "assign",
+    project_id: "ecommerce_app",
+    agent_id: agent.id,
+    tree_id: agent.tree
+  });
+}
+
+// Step 3: Execute Orchestration
+const result = await manage_project({
+  action: "orchestrate",
+  project_id: "ecommerce_app"
+});
+console.log("Orchestration Result:", result);
+
+const dashboard = await manage_project({
+  action: "dashboard",
+  project_id: "ecommerce_app"
+});
+console.log("Project Dashboard:", dashboard);
+```
+
+### Expected Project Structure
+```json
+{
+  "ecommerce_app": {
+    "registered_agents": {
+      "system_architect": {
+        "id": "system_architect",
+        "name": "System Architect",
+        "call_agent": "@system_architect_agent"
+      },
+      "ui_designer": {
+        "id": "ui_designer",
+        "name": "UI Designer",
+        "call_agent": "@ui_designer_agent"
+      }
+    },
+    "agent_assignments": {
+      "system_architect": ["architecture"],
+      "ui_designer": ["frontend"]
+    }
+  }
+}
+```
+
+### Expected Outcomes
+- **Architecture Phase**: Complete system design and database schema
+- **Implementation Phase**: Parallel frontend and backend development
+- **Quality Phase**: Security audit and comprehensive testing
+- **Deployment Phase**: Production-ready application with CI/CD
+
+---
+
+## 🎯 Key Benefits of Simplified Format
+- Minimal setup: Only 3 fields per agent registration
+- Auto-generation: Agent capabilities loaded from YAML
+- Clean separation: Projects reference agents, not define them
+- Dynamic loading: Agent details loaded when needed
+- Efficient storage: Smaller, faster project files
+
+---
+
+## 💡 Best Practices
+- Use clear workstream trees for complex projects
+- Use meaningful call_agent references
+- Plan task dependencies for parallel execution
+- Implement quality gates for assurance
+- Monitor continuously for proactive issue resolution
+
+---
+
+*Agent details are automatically generated from YAML configurations in `cursor_agent/yaml-lib/` when agents are called.*

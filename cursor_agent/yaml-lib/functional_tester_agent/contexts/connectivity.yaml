@@ -1,0 +1,6 @@
+connectivity:
+  interactsWith:
+  - test-orchestrator-agent
+  - coding-agent
+  feedbackLoop: Receives test results and bug reports to refine testing strategies. Learns from both successful and failed tests. Feedback is logged, analyzed for patterns, and used to update test templates and prioritization logic. Shares learnings with related agents.
+  selfReference: No self-reference required; removed for clarity.

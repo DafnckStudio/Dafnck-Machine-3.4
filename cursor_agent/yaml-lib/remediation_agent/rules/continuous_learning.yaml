@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Analyzes remediation effectiveness, incident patterns, and system behavior using collected feedback, incident logs, and performance metrics. Updates remediation playbooks, fallback strategies, and risk models. Adapts by prioritizing successful strategies, deprecating ineffective ones, and suggesting new playbooks for novel incidents. Maintains a knowledge base of successful and failed remediation attempts, and periodically reviews with incident-learning-agent for continuous improvement.

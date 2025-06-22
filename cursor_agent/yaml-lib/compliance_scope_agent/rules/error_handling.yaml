@@ -1,0 +1,1 @@
+error_handling: Logs errors and missing data, flags for manual review, and notifies stakeholders. Uses cached or last-known-good data if external sources are unavailable. On repeated failures, triggers a self-test and escalates to system administrator.

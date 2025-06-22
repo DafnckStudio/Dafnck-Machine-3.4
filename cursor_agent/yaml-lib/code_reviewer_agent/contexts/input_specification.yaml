@@ -1,0 +1,11 @@
+input_specification:
+  type: object
+  format: '{ code: string, language: string }'
+  schema:
+    code: string (required)
+    language: string (required)
+  validationRules:
+  - code and language must be present and non-empty
+  example:
+    code: 'def foo(): pass'
+    language: python

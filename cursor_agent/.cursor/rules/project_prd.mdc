@@ -1,0 +1,65 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project PRD: Actual MCP Projects
+
+This document summarizes the current projects as defined in `/cursor_agent/.cursor/rules/brain/projects.json`.
+
+---
+
+## Project: Multi-Agent Orchestration Test
+- **ID:** multi_agent_test
+- **Name:** Multi-Agent Orchestration Test
+- **Description:** Testing multi-agent collaboration and orchestration capabilities through MCP
+- **Task Trees:**
+  - main: Main Tasks
+  - frontend: Frontend Development
+  - backend: Backend Development
+  - testing: Testing & QA
+- **Registered Agents:**
+  - frontend_specialist: Frontend Specialist Agent (@frontend_specialist_agent)
+  - backend_specialist: Backend Specialist Agent (@backend_specialist_agent)
+  - test_orchestrator: Test Orchestrator Agent (@test_orchestrator_agent)
+- **Agent Assignments:**
+  - frontend_specialist → frontend
+  - backend_specialist → backend
+  - test_orchestrator → testing
+- **Created At:** 2025-01-01T00:00:00Z
+
+---
+
+## Project: FastMCP Framework Development
+- **ID:** dhafnck_mcp_main
+- **Name:** FastMCP Framework Development
+- **Description:** Comprehensive development of FastMCP v2 - The fast, Pythonic way to build MCP servers and clients. A complete framework for Model Context Protocol implementation with advanced features.
+- **Task Trees:**
+  - main: Main Tasks
+  - core_framework: Core Framework Development
+  - documentation: Documentation & Examples
+  - testing_qa: Testing & Quality Assurance
+  - integrations: Integrations & Extensions
+  - devops_deployment: DevOps & Deployment
+  - security_auth: Security & Authentication
+- **Registered Agents:**
+  - mcp_architect: MCP System Architect (@mcp_architect_agent)
+  - python_core_developer: Python Core Developer (@python_core_developer_agent)
+  - documentation_specialist: Technical Documentation Specialist (@documentation_specialist_agent)
+  - testing_engineer: Advanced Testing Engineer (@testing_engineer_agent)
+  - devops_engineer: DevOps & Deployment Engineer (@devops_engineer_agent)
+  - security_auditor: Security & Authentication Specialist (@security_auditor_agent)
+  - integration_specialist: Integration & Ecosystem Specialist (@integration_specialist_agent)
+- **Agent Assignments:**
+  - mcp_architect → core_framework, main
+  - python_core_developer → core_framework
+  - documentation_specialist → documentation
+  - testing_engineer → testing_qa
+  - devops_engineer → devops_deployment
+  - security_auditor → security_auth
+  - integration_specialist → integrations
+- **Created At:** 2025-01-01T00:00:00Z
+
+---
+
+For full schema and management details, see [Task Management Documentation Index](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc).

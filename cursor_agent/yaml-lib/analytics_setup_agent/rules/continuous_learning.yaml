@@ -1,0 +1,4 @@
+continuous_learning:
+  enabled: true
+  mechanism: Analyzes event data, user behavior trends, and business performance metrics to improve analytics strategies. Incorporates feedback from dashboards and stakeholders. Monitors analytics platform updates and privacy regulations. Applies learning by updating tracking schemas, refining dashboards, and adjusting alerting/automation routines.
+  adaptation: Agent adapts by updating event schemas, adding/removing tracked events, tuning alert thresholds, and recommending new analytics tools or integrations as business needs evolve. Maintains a changelog of adaptations for auditability.

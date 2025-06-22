@@ -1,0 +1,74 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Task Management Workflow (MCP)
+
+## Overview
+This workflow describes how to manage tasks, projects, and agents using the MCP tools and the real data structure in `/cursor_agent/.cursor/rules/brain/projects.json` and `.cursor/rules/tasks/tasks.json`.
+
+## 1. Project & Task Tree Management
+- **Create a project:**
+  - Use `manage_project` with `action="create"`, `project_id`, `name`, and optional `description`.
+- **Create a task tree:**
+  - Use `manage_project` with `action="create_tree"`, `project_id`, `tree_id`, `tree_name`, and optional `tree_description`.
+
+## 2. Agent Management
+- **Register an agent:**
+  - Use `manage_agent` with `action="register"`, `project_id`, `agent_id`, `name`, and `call_agent` (e.g., `@coding_agent`).
+- **Assign agent to a tree:**
+  - Use `manage_agent` with `action="assign"`, `project_id`, `agent_id`, `tree_id`.
+
+## 3. Task Lifecycle
+- **Create a task:**
+  - Use `manage_task` with `action="create"`, `title`, `description`, `priority`, `assignees`, `labels`, and (optionally) `project_id`.
+- **Get a task:**
+  - Use `manage_task` with `action="get"`, `task_id`.
+- **Update a task:**
+  - Use `manage_task` with `action="update"`, `task_id`, and fields to update.
+- **Complete a task:**
+  - Use `manage_task` with `action="complete"`, `task_id`.
+- **Add a subtask:**
+  - Use `manage_subtask` with `action="add_subtask"`, `task_id`, and `subtask_data`.
+
+## 4. Automatic Context & Role Switching
+- When you `get` or `complete` a task, the system auto-generates `.cursor/rules/auto_rule.mdc` and switches to the primary agent role (see [Agent Auto-Switch Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/agent_auto_switch_workflow.mdc)).
+
+## 5. Example Workflow
+```typescript
+// Create a project
+manage_project({ action: "create", project_id: "my_proj", name: "My Project" })
+
+// Register and assign an agent
+manage_agent({ action: "register", project_id: "my_proj", agent_id: "dev1", name: "Dev One", call_agent: "@coding_agent" })
+manage_agent({ action: "assign", project_id: "my_proj", agent_id: "dev1", tree_id: "main" })
+
+// Create a task
+manage_task({ action: "create", title: "Build Login", description: "Create login page", priority: "high", assignees: ["@coding_agent"], labels: ["frontend"] })
+
+// Get and work on the task
+manage_task({ action: "get", task_id: "20250619001" })
+// (auto_rule.mdc is generated, agent role switches)
+
+// Complete the task
+manage_task({ action: "complete", task_id: "20250619001" })
+```
+
+## 6. Visual Workflow
+```mermaid
+flowchart TD
+    A["Create Project"] --> B["Register Agent"]
+    B --> C["Assign Agent to Tree"]
+    C --> D["Create Task"]
+    D --> E["Get Task (auto context)"]
+    E --> F["Work on Task"]
+    F --> G["Complete Task"]
+```
+
+## 7. Best Practices
+- Always use MCP tools; never edit JSON files directly.
+- Use the `@` prefix for agent assignees.
+- Only fields and actions present in the real system are supported.
+
+For more, see [Quick Start & Tutorials](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/quick_start.mdc).

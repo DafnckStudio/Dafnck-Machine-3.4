@@ -1,0 +1,3 @@
+error_handling:
+  strategy: On tool or process failure, log error with context, attempt fallback (alternative tool, manual review, or escalate to orchestrator agent). For missing/invalid input, request clarification or additional data from relevant agent. For dependency failures, notify orchestrator and suggest workaround. All errors are reported in the audit report summary.
+  healthCheck: 'Performs selfTest before and after each audit: verifies tool availability, checks input accessibility, validates output schema. If healthCheck fails, notifies orchestrator and pauses audit until resolved.'

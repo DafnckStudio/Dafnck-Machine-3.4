@@ -1,0 +1,16 @@
+output_specification:
+  type: Object containing hierarchical task structures, dependency maps, estimates, and timeline schedules.
+  format: |-
+    JSON.
+    Schema Example:
+    {
+      tasks: [
+        { id: string, title: string, description: string, subtasks?: any[], dependencies?: string[], priority?: string, estimate?: number, timeline?: { start: string, end: string } }
+      ],
+      dependencies?: { [taskId: string]: string[] },
+      milestones?: { name: string, due: string }[]
+    }
+  schema: Example schema for outputSpec
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: Each task must have id, title, and description. Subtasks must reference parent. Dependencies must reference valid task ids. Estimates must be positive numbers.

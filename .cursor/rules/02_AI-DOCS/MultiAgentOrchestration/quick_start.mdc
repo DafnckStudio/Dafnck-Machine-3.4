@@ -1,0 +1,180 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Quick Start & Tutorials
+
+## Overview
+
+This guide helps you set up and run your first multi-agent orchestration workflow in under 15 minutes. You'll create a simple web development project with multiple specialized agents working together.
+
+---
+
+## 🚀 Prerequisites
+- Access to MCP task management tools
+- Basic understanding of the agent system
+- Familiarity with project structure
+
+---
+
+## 📋 Step-by-Step Quick Start
+
+### 1. Create Your First Multi-Agent Project
+```typescript
+// Create the main project
+await manage_project({
+  action: "create",
+  project_id: "quickstart_webapp",
+  name: "Quick Start Web Application",
+  description: "Multi-agent web app development demo"
+})
+
+// Create workstream trees
+const workstreams = ["design", "frontend", "backend", "testing"];
+for (const stream of workstreams) {
+  await manage_project({
+    action: "create_tree",
+    project_id: "quickstart_webapp",
+    tree_id: stream,
+    tree_name: stream.charAt(0).toUpperCase() + stream.slice(1)
+  })
+}
+```
+
+### 2. Register Your Agent Team (Simplified Format)
+```typescript
+const agents = [
+  { id: "ui_designer", name: "UI Designer", call_agent: "@ui_designer_agent", tree: "design" },
+  { id: "frontend_dev", name: "Frontend Developer", call_agent: "@coding_agent", tree: "frontend" },
+  { id: "backend_dev", name: "Backend Developer", call_agent: "@coding_agent", tree: "backend" },
+  { id: "qa_tester", name: "QA Tester", call_agent: "@test_orchestrator_agent", tree: "testing" }
+];
+for (const agent of agents) {
+  await manage_agent({
+    action: "register",
+    project_id: "quickstart_webapp",
+    agent_id: agent.id,
+    name: agent.name,
+    call_agent: agent.call_agent
+  });
+  await manage_agent({
+    action: "assign",
+    project_id: "quickstart_webapp",
+    agent_id: agent.id,
+    tree_id: agent.tree
+  });
+}
+```
+
+### 3. Create Coordinated Tasks
+```typescript
+const tasks = [
+  { title: "Design User Interface Mockups", description: "Create wireframes and UI mockups", assignees: ["@ui_designer_agent"], priority: "high", estimated_effort: "medium", labels: ["design", "ui"] },
+  { title: "Implement Frontend Components", description: "Build React components", assignees: ["@coding_agent"], priority: "high", estimated_effort: "large", labels: ["frontend", "react"] },
+  { title: "Develop Backend API", description: "Create FastAPI backend", assignees: ["@coding_agent"], priority: "high", estimated_effort: "large", labels: ["backend", "api"] },
+  { title: "Integration Testing", description: "Test frontend and backend integration", assignees: ["@test_orchestrator_agent"], priority: "medium", estimated_effort: "medium", labels: ["testing", "integration"] }
+];
+for (const task of tasks) {
+  await manage_task({
+    action: "create",
+    title: task.title,
+    description: task.description,
+    assignees: task.assignees,
+    priority: task.priority,
+    estimated_effort: task.estimated_effort,
+    labels: task.labels,
+    project_id: "quickstart_webapp"
+  });
+}
+```
+
+### 4. Execute Orchestration
+```typescript
+const orchestrationResult = await manage_project({
+  action: "orchestrate",
+  project_id: "quickstart_webapp"
+});
+console.log("Orchestration Status:", orchestrationResult);
+
+const dashboard = await manage_project({
+  action: "dashboard",
+  project_id: "quickstart_webapp"
+});
+console.log("Project Dashboard:", dashboard);
+```
+
+### 5. Monitor Progress
+```typescript
+const monitorProject = async () => {
+  const dashboard = await manage_project({
+    action: "dashboard",
+    project_id: "quickstart_webapp"
+  });
+  // ...monitoring logic...
+};
+setInterval(monitorProject, 30000);
+```
+
+---
+
+## 🎯 Key Simplifications
+- Minimal setup: Only 3 fields per agent
+- Auto-generation: Agent capabilities loaded from YAML
+- Clean separation: Projects reference agents, not define them
+- Dynamic loading: Agent details loaded when needed
+
+---
+
+## 🔍 Verification Steps
+- Check agent registration and assignments
+- Monitor orchestration dashboard
+- Rebalance agents if bottlenecks occur
+
+---
+
+## 🚀 Next Steps
+1. Explore advanced features (dependencies, cross-tree coordination)
+2. Add more agents
+3. Optimize workstreams
+4. Monitor performance
+
+---
+
+## 🔧 Common Quick Start Issues
+- **Agents Not Responding**: Check registration and capability matching
+- **Tasks Not Assigned**: Verify orchestration and assignments
+- **Bottlenecks**: Check dependencies and rebalance workload
+
+---
+
+## 📚 What You've Learned
+- Project creation, agent management, task coordination, orchestration, monitoring, optimization
+
+---
+
+## 🎯 Quick Reference Commands
+```typescript
+// Project management
+manage_project({ action: 'create', project_id: 'my_project' })
+manage_project({ action: 'orchestrate', project_id: 'my_project' })
+manage_project({ action: 'dashboard', project_id: 'my_project' })
+// Agent management
+manage_agent({ action: 'register', project_id: 'my_project', agent_id: 'my_agent' })
+manage_agent({ action: 'assign', project_id: 'my_project', agent_id: 'my_agent', tree_id: 'my_tree' })
+manage_agent({ action: 'rebalance', project_id: 'my_project' })
+// Task management
+manage_task({ action: 'create', title: 'My Task', assignees: ['@my-agent'] })
+manage_task({ action: 'next' })
+manage_task({ action: 'update', task_id: 'task_123', status: 'in_progress' })
+```
+
+---
+
+*Agent details are automatically generated from YAML configurations in `cursor_agent/yaml-lib/` when agents are called.*
+
+---
+
+*For more advanced patterns and troubleshooting, see:*
+- [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/collaboration_patterns.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/collaboration_patterns.mdc)
+- [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/troubleshooting.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/troubleshooting.mdc)

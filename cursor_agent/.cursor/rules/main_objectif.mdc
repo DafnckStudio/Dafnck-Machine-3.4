@@ -1,0 +1,65 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Main objectif
+
+**See the full Multi-Agent Orchestration documentation:**
+[.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc)
+
+**See the full Task Management documentation:**
+[.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc)
+
+MUST follow the new Task Management documentation for all MCP-based task, project, and agent operations.
+
+## Command executes:
+- MUST do when use terminal commande: try exit commande
+- when commande is longer than 10 sec force quit for see result
+
+run terminal commande →
+    ├── force quit if run more than 10s
+    └── see result
+
+## Tools calls on chat need counter on background
+
+## 📋 **IMPORTANT: CONTEXT SYNCHRONIZATION**
+- **Trigger**: Every time `get_task` or `do_next` is called via MCP server
+- **Target File**: `.cursor/rules/auto_rule.mdc`
+- **Purpose**: Provides precise, task-specific context and rules for AI assistant
+- **When get_task is called**: AI assistant should ALWAYS check this file (main_objectif.mdc) for updated context
+- **Auto-generated rules**: The `.cursor/rules/auto_rule.mdc` file is automatically updated with task-specific context
+- **Context precision**: This ensures the AI has the most precise and relevant context for the current task
+- **Role alignment**: AI behavior automatically adapts to the assigned role and current phase
+- **See also:** [Context Synchronization & Management](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/contextmaster.mdc)
+
+## 🔄 **AUTOMATIC AGENT ROLE SWITCHING**
+- **Trigger**: Every time `get_task` or `do_next` is called via MCP server
+- **Process**: System automatically extracts assignee from task and calls appropriate agent
+- **Format**: All assignees use "@" prefix (e.g., `@coding_agent`, `@functional_tester_agent`)
+- **Agent Call**: Automatically executes `call_agent(name_agent="agent_name")` (strips "@" prefix)
+- **YAML Loading**: Loads specialized configuration from `cursor_agent/yaml-lib/[agent_name]/`
+- **Role Switch**: AI adopts the appropriate expertise, behavior, and knowledge for the task
+- **Primary Assignee**: Only the first assignee in the list triggers automatic switching
+- **Documentation**: See [.cursor/rules/02_AI-DOCS/TaskManagement/agent_auto_switch_workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/agent_auto_switch_workflow.mdc) for complete details
+
+## UPDATE/CREATE context relative with task
+see [Context Synchronization & Management](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/contextmaster.mdc) for more details
+
+## Use MCP Server task_management when possible
+MUST follow [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc)
+
+see [Task_Management_MCP_Server_Documentation.mdc](mdc:cursor_agent/.cursor/rules/Task_Management_MCP_Server_Documentation.mdc) for more details
+
+- ALWAYS use the task_management MCP server for task operations
+- Use task_management MCP to manage [tasks.json](mdc:.cursor/rules/tasks/tasks.json)
+- ALWAYS use the MCP server first; NEVER access `.cursor/rules/tasks/tasks.json` directly unless the user requests it (AI does not have permission)
+
+## 🎯 **AUTO_RULE.MDC GENERATION AUTOMATIC**
+don't edit this file by ai, it generate automatic on task management
+
+## TEST MUST to activate virtual environment
+cursor_agent/.venv
+
+## See Also
+- [Context Synchronization & Management](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/contextmaster.mdc)

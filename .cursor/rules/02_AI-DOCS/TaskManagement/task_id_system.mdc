@@ -1,0 +1,53 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Task ID System (Date-Based)
+
+## Overview
+The MCP task management system uses a date-based hierarchical ID format for all tasks and subtasks. This ensures unique, sortable, and human-readable IDs.
+
+## Main Task ID Format
+- `YYYYMMDDXXX`
+  - `YYYY`: 4-digit year
+  - `MM`: 2-digit month
+  - `DD`: 2-digit day
+  - `XXX`: 3-digit sequence for that date (001-999)
+- **Example:** `20250617001` (first task on June 17, 2025)
+
+## Subtask ID Format
+- `YYYYMMDDXXX.XXX`
+  - Parent task ID + dot + 3-digit subtask sequence
+- **Example:** `20250617001.001` (first subtask of 20250617001)
+
+## Legacy Support
+- Numeric IDs (e.g., `42`) and legacy subtask IDs (e.g., `42.5`) are still supported for backward compatibility.
+
+## Validation
+- Main Task: `^20[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])[0-9]{3}$`
+- Subtask: `^20[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])[0-9]{3}(\.[0-9]{3})+$`
+- Legacy: `^[0-9]+(\.[0-9]+)*$`
+
+## Usage
+- All new tasks and subtasks are auto-assigned IDs in the new format by MCP tools.
+- Always quote IDs in tool calls (e.g., `"20250617001"`).
+- Both formats can coexist; migration is gradual.
+
+## Example
+```typescript
+// Create a new task (ID auto-generated)
+manage_task({ action: "create", title: "Payment Integration" })
+// Returns: { id: "20250617001", ... }
+
+// Add a subtask
+manage_subtask({ action: "add_subtask", task_id: "20250617001", subtask_data: { title: "API Integration" } })
+// Creates: "20250617001.001"
+```
+
+## Best Practices
+- Use the full date-based format for all new tasks.
+- Let the system auto-generate IDs.
+- Reference tasks and subtasks by their full ID.
+
+For more, see [Task Object Structure](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_object_structure.mdc).

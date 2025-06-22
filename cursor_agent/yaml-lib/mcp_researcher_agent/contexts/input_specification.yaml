@@ -1,0 +1,40 @@
+input_specification:
+  type: Research requirements, project specifications, evaluation criteria, technology focus areas
+  format: 'JSON object with fields: requirements (array of strings), evaluationCriteria (array of strings), technologyFocus (array of strings). Optional: budget, timeline, compliance, integration constraints.'
+  schema:
+    type: object
+    properties:
+      requirements:
+        type: array
+        items:
+          type: string
+      evaluationCriteria:
+        type: array
+        items:
+          type: string
+      technologyFocus:
+        type: array
+        items:
+          type: string
+      budget:
+        type: string
+      timeline:
+        type: string
+      compliance:
+        type: string
+      integrationConstraints:
+        type: string
+    required:
+    - requirements
+    - evaluationCriteria
+    - technologyFocus
+  example:
+    evaluationCriteria:
+    - Performance
+    - Security
+    - Cost
+    - Integration
+    technologyFocus:
+    - MCP servers
+    - cloud platforms
+  validationRules: Example validationRules for inputSpec

@@ -1,0 +1,418 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Context Master - Task Context Management System
+
+## 🚀 **QUICK START FOR AGENTS**
+
+AGENT use his intern tools for create/update context file on .cursor/rules/contexts
+
+### 📖 How to Quickly Understand Your Task
+When you're assigned to re-work on a task, follow this simple process:
+
+1. **Read Your Task Context File**: Look for `context_[TASK_ID].md` in `.cursor/rules/contexts/`
+2. **Check Task Status**: See if it's `todo`, `in_progress`, `done`, etc.
+3. **Review Previous Work**: Look at "Completed Actions" and "Current Session Summary" 
+4. **Understand Next Steps**: Check "Next Steps" section for what to do
+5. **Get Technical Details**: Review "Technical Details" for files, dependencies, technologies
+
+### 📁 Context Files Location
+```
+.cursor/rules/contexts/
+├── context_20250621001.md  ← Epic/Main task
+├── context_20250621002.md  ← Phase 1 task
+├── context_20250621003.md  ← Phase 2 task
+└── ... (more context files)
+```
+
+---
+
+## 🎯 Overview
+The Context Master system ensures AI assistants always operate with precise, task-specific context and rules. This system manages context synchronization, agent role switching, and context merging when tasks complete.
+
+## 📋 When to Update Context (create if not exist)
+
+### Automatic Triggers
+- Every `get_task` or `do_next` MCP call
+- Agent role switching (auto or explicit via `call_agent`)
+- Task status changes (in_progress → done, blocked → in_progress, etc.)
+- Subtask completion or creation
+- Project or task data modifications
+
+### Manual Triggers
+- User explicitly requests context update
+- Manual agent switch
+- Context corruption or inconsistency detected
+- Project phase transitions
+
+## 📋 Recent Context Updates
+
+### ✅ Task 20250622011 - Domain Entity Test (COMPLETED)
+- **Context File**: `context_20250622011.md`
+- **Agent**: @documentation_agent 
+- **Date**: 2025-06-22
+- **Status**: Context created for completed domain entity testing task
+- **Coverage Improvement**: 29.02% → 63.34% (+34.32%)
+- **Key Achievement**: Comprehensive domain entity test suite with 18 tests
+- **Files**: `test_domain_entity_coverage_improvement.py` created
+
+## 🔄 Context Update Process
+
+### 1. Individual Context Creation
+```bash
+# File naming convention: context_[TASK_ID].md
+# Location: .cursor/rules/contexts/
+```
+
+### 2. Context Merging on Task Completion
+When all tasks in a project/epic are complete, merge contexts into a master context file.
+
+## 📝 Templates
+
+### Template 1: Individual Task Context File
+```markdown
+# TASK CONTEXT: [Task Title]
+
+**Task ID**: `[TASK_ID]`
+**Status**: `[STATUS]`
+**Priority**: `[PRIORITY]`
+**Assignee**: `@[AGENT_NAME]`
+**Created**: `[DATE]`
+**Last Updated**: `[DATE]`
+
+## 🎯 Objective
+[Clear, concise description of what this task aims to achieve]
+
+## 📋 Requirements
+- [ ] Requirement 1
+- [ ] Requirement 2
+- [ ] Requirement 3
+
+## 🔧 Technical Details
+### Technologies/Frameworks
+- Technology 1
+- Technology 2
+
+### Key Files/Directories
+- `path/to/file1.py`
+- `path/to/directory/`
+
+### Dependencies
+- Dependency on Task ID: [TASK_ID]
+- Blocks Task ID: [TASK_ID]
+
+## 🚀 Progress Tracking
+### Completed Actions
+- [x] Action 1 - [Date] - [Agent]
+- [x] Action 2 - [Date] - [Agent]
+
+### Current Session Summary
+[What the AI agent accomplished in this session]
+
+### Next Steps
+- [ ] Next action 1
+- [ ] Next action 2
+
+## 🔍 Context Notes
+### Agent Insights
+[Key insights or decisions made by the AI agent]
+
+### Challenges Encountered
+[Any issues or blockers encountered]
+
+### Solutions Applied
+[How challenges were resolved]
+
+## 🔗 Related Resources
+- [Migration Plan](mdc:../../migration_plan.md)
+- [Related Task Context](mdc:context_[RELATED_TASK_ID].mdc)
+- [Project Documentation](mdc:../project_docs.mdc)
+```
+
+### Template for : 
+```markdown
+# PROJECT MASTER CONTEXT: [Project Name]
+
+**Project ID**: `[PROJECT_ID]`
+**Status**: `COMPLETED`
+**Start Date**: `[START_DATE]`
+**Completion Date**: `[COMPLETION_DATE]`
+**Lead Agent**: `@[ORCHESTRATOR_AGENT]`
+
+## 🎯 Project Overview
+[High-level description of the completed project]
+
+## 📊 Project Statistics
+- **Total Tasks**: [NUMBER]
+- **Total Subtasks**: [NUMBER]
+- **Agents Involved**: [LIST_OF_AGENTS]
+- **Duration**: [TIME_SPAN]
+- **Files Modified**: [NUMBER]
+- **Lines of Code**: [ADDED/MODIFIED/DELETED]
+
+## 🏗️ Architecture & Design Decisions
+### Key Architectural Choices
+1. **Decision 1**: [Rationale]
+2. **Decision 2**: [Rationale]
+
+### Design Patterns Used
+- Pattern 1: [Usage context]
+- Pattern 2: [Usage context]
+
+## 📋 Completed Tasks Summary
+### Phase 1: [Phase Name]
+- **Task ID**: [TASK_ID] - [Task Title] - [@agent] - [Status]
+- **Key Achievements**: [Summary]
+
+### Phase 2: [Phase Name]
+- **Task ID**: [TASK_ID] - [Task Title] - [@agent] - [Status]
+- **Key Achievements**: [Summary]
+
+## 🔧 Technical Implementation
+### Technologies Used
+- Technology 1: [Purpose/Usage]
+- Technology 2: [Purpose/Usage]
+
+### Key Files Created/Modified
+```
+project/
+├── module1/
+│   ├── file1.py (created)
+│   └── file2.py (modified)
+├── module2/
+│   └── file3.py (created)
+└── tests/
+    ├── test_module1.py (created)
+    └── test_module2.py (created)
+```
+
+### Database/Schema Changes
+[If applicable, describe any database modifications]
+
+## 🧪 Testing & Quality Assurance
+### Test Coverage
+- Unit Tests: [PERCENTAGE]%
+- Integration Tests: [PERCENTAGE]%
+- End-to-End Tests: [PERCENTAGE]%
+
+### Quality Metrics
+- Code Quality Score: [SCORE]
+- Performance Benchmarks: [METRICS]
+- Security Audit: [PASS/FAIL]
+
+## 🚀 Deployment & Operations
+### Deployment Strategy
+[How the project was deployed]
+
+### Monitoring & Observability
+[What monitoring was set up]
+
+### Rollback Plan
+[How to rollback if needed]
+
+## 📚 Knowledge Transfer
+### Key Learnings
+1. **Learning 1**: [Description]
+2. **Learning 2**: [Description]
+
+### Best Practices Identified
+1. **Practice 1**: [Description]
+2. **Practice 2**: [Description]
+
+### Pitfalls to Avoid
+1. **Pitfall 1**: [Description and how to avoid]
+2. **Pitfall 2**: [Description and how to avoid]
+
+## 🔄 Agent Collaboration Insights
+### Most Effective Agent Combinations
+- [@agent1] + [@agent2]: [Why effective]
+- [@agent3] + [@agent4]: [Why effective]
+
+### Agent Performance Analysis
+- **[@agent_name]**: [Performance summary]
+- **[@agent_name]**: [Performance summary]
+
+## 📖 Documentation Generated
+- [Link to API Documentation]
+- [Link to User Guide]
+- [Link to Developer Guide]
+- [Link to Deployment Guide]
+
+## 🔗 References & Resources
+- [External Documentation]
+- [Research Papers]
+- [Similar Projects]
+- [Vendor Documentation]
+```
+
+### Template 3: Quick Context Update Template
+```markdown
+# CONTEXT UPDATE: [Task ID] - [Date/Time]
+
+## Session Summary
+**Agent**: `@[AGENT_NAME]`
+**Duration**: `[TIME_SPAN]`
+**Status Change**: `[OLD_STATUS]` → `[NEW_STATUS]`
+
+## Actions Completed
+- [x] Action 1
+- [x] Action 2
+- [x] Action 3
+
+## Files Modified
+- `path/to/file1.py` - [Brief description of changes]
+- `path/to/file2.py` - [Brief description of changes]
+
+## Next Session Prep
+- [ ] Next action 1
+- [ ] Next action 2
+
+## Notes
+[Any important notes for the next session]
+```
+
+## 🔄 Context Merging Process
+
+### When to Merge Contexts
+1. **Epic Completion**: All tasks in an epic are marked as `done`
+2. **Project Milestone**: Major project phase completion
+3. **Sprint End**: End of development sprint
+4. **Manual Request**: User explicitly requests context consolidation
+
+### Merging Procedure
+1. **Collect**: Gather all individual task contexts
+2. **Analyze**: Extract common themes, patterns, and insights
+3. **Synthesize**: Create master context using Template 2
+4. **Archive**: Move individual contexts to archive folder
+5. **Update**: Update main project documentation
+
+### Automated Merging Script Template
+```python
+# Context Merger Script (Future Implementation)
+def merge_task_contexts(project_id: str) -> str:
+    """
+    Merges individual task contexts into master project context
+    
+    Args:
+        project_id: The project identifier
+        
+    Returns:
+        Path to the generated master context file
+    """
+    # Implementation would go here
+    pass
+```
+
+## 🛠️ Maintenance Guidelines
+
+### Daily Maintenance
+- [ ] Update active task contexts with session summaries
+- [ ] Check for orphaned context files
+- [ ] Verify context-task alignment
+
+### Weekly Maintenance
+- [ ] Review and merge completed task contexts
+- [ ] Update master project contexts
+- [ ] Clean up archived contexts older than 30 days
+
+### Monthly Maintenance
+- [ ] Audit context template usage
+- [ ] Update templates based on usage patterns
+- [ ] Generate context utilization reports
+
+## 🔍 Best Practices
+
+### Context Creation
+1. **Be Specific**: Include precise technical details
+2. **Be Actionable**: Include clear next steps
+3. **Be Traceable**: Link to related tasks and resources
+4. **Be Timely**: Update contexts immediately after work sessions
+
+### Context Maintenance
+1. **Never Edit auto_rule.mdc**: It's auto-generated
+2. **Use MCP Tools**: Always use proper MCP tools for updates
+3. **Follow Naming Conventions**: Consistent file naming
+4. **Archive Regularly**: Keep active contexts manageable
+
+### Context Merging
+1. **Preserve History**: Don't lose important details
+2. **Extract Patterns**: Identify reusable insights
+3. **Document Decisions**: Capture architectural choices
+4. **Plan Future**: Include lessons learned
+
+## 📁 File Organization
+
+```
+.cursor/rules/contexts/
+├── active/                    # Currently active task contexts
+│   ├── context_[TASK_ID].md
+│   └── context_[TASK_ID].md
+├── completed/                 # Completed task contexts
+│   ├── context_[TASK_ID].md
+│   └── context_[TASK_ID].md
+├── master/                    # Master project contexts
+│   ├── project_[PROJECT_ID]_master.md
+│   └── epic_[EPIC_ID]_master.md
+└── archive/                   # Old contexts (>30 days)
+    ├── 2024-12/
+    └── 2025-01/
+```
+
+## Triggers Points
+
+### With Task Management MCP
+- Automatic context creation on task creation
+- Context updates on status changes
+- Context merging triggers on task completion
+
+### With Agent System
+- Context loading on agent switch
+- Agent-specific context sections
+- Cross-agent context sharing
+
+### With Documentation System
+- Context-driven documentation generation
+- Knowledge base updates from contexts
+- Template evolution based on usage
+
+## 📊 Metrics & Analytics
+
+### Context Health Metrics
+- Context freshness (last update time)
+- Context completeness (required fields filled)
+- Context accuracy (alignment with actual task state)
+
+### Usage Analytics
+- Most used context templates
+- Average context update frequency
+- Agent-specific context patterns
+
+## 🚨 Troubleshooting
+
+### Common Issues
+1. **Context Drift**: Context doesn't match actual task state
+   - **Solution**: Implement automated sync checks
+   
+2. **Orphaned Contexts**: Context files without corresponding tasks
+   - **Solution**: Regular cleanup scripts
+   
+3. **Template Inconsistency**: Different agents using different formats
+   - **Solution**: Enforce template validation
+
+### Emergency Procedures
+1. **Context Corruption**: If context files are corrupted
+   - Restore from git history
+   - Regenerate from task data
+   - Use backup templates
+
+2. **Missing Contexts**: If context files are missing
+   - Check archive folders
+   - Regenerate from MCP task data
+   - Use minimal context template
+
+## 📚 See Also
+- [Task Management Documentation Index](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc)
+- [Agent Auto Switch Workflow](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc)
+- [Task Management MCP Server Documentation](mdc:../../../cursor_agent/.cursor/rules/Task_Management_MCP_Server_Documentation.mdc)

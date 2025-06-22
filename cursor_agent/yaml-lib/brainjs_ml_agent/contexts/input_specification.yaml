@@ -1,0 +1,11 @@
+input_specification:
+  type: Training data, ML requirements, model specifications, performance targets
+  format: 'JSON, CSV, or array objects. Required fields: data (array), labels (array or object), modelType (string), hyperparameters (object, optional). Example: { data: [[0,1],[1,0]], labels: [0,1], modelType: ''feedforward'', hyperparameters: { learningRate: 0.01, epochs: 100 } }'
+  schema:
+    data: Array of feature arrays or objects (required)
+    labels: Array or object of target values (required)
+    modelType: String (e.g., 'feedforward', 'LSTM', 'CNN', required)
+    hyperparameters: Object (optional, e.g., learningRate, epochs, batchSize)
+  validation: Reject if data or labels are missing, mismatched, or malformed. Validate modelType against supported types. Hyperparameters must be numeric and within safe ranges.
+  example: Example example for inputSpec
+  validationRules: Example validationRules for inputSpec

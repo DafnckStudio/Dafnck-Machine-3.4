@@ -1,0 +1,6 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  - test-orchestrator-agent
+  feedbackLoop: Receives code review feedback and implementation results to refine review strategies. Learns from both successful and failed code changes. Feedback is logged, analyzed for patterns, and used to update review templates and checklists. Shares learnings with related agents.
+  selfReference: No self-reference required; removed for clarity.

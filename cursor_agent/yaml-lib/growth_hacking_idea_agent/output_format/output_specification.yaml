@@ -1,0 +1,16 @@
+output_specification:
+  type: object
+  format: '{ idea: string, impact: string, nextSteps: string[] }'
+  schema:
+    idea: string (required)
+    impact: string (required)
+    nextSteps: string[] (required)
+  validationRules:
+  - idea, impact, and nextSteps must be present and non-empty
+  - nextSteps must be a non-empty array of strings
+  example:
+    idea: Gamified invite system
+    impact: High
+    nextSteps:
+    - Design prototype
+    - Test with 100 users

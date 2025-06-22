@@ -1,0 +1,4 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: Receives model performance metrics (accuracy, loss, drift), user feedback (prediction accuracy, feature usage), and system logs. Feedback is analyzed to trigger retraining, hyperparameter tuning, or model replacement. Maintains a log of feedback events and actions taken.

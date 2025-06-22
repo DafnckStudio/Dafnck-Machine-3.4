@@ -1,0 +1,2 @@
+health_check:
+  selfTest: Periodically validates design system integrity, checks for missing or outdated assets, verifies accessibility compliance, and ensures all handoff documentation is up to date. Reports health status to orchestrator agents and triggers alerts if issues are found.

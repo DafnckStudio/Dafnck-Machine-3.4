@@ -1,0 +1,8 @@
+continuous_learning:
+  enabled: true
+  mechanism: Analyzes project outcomes, validation results, and agent performance metrics to improve task decomposition and orchestration strategies. Maintains a knowledge base of successful patterns and remediation approaches. Applies learning by updating heuristics, agent selection, and fallback logic for future projects. Periodically reviews failed cases for root cause analysis and improvement.
+  appliedTo:
+  - task decomposition algorithms
+  - agent assignment heuristics
+  - fallback/escalation strategies
+  - documentation templates

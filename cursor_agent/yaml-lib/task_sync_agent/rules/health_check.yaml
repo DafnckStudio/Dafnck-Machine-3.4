@@ -1,0 +1,4 @@
+health_check:
+  enabled: true
+  interval: 5m
+  selfTest: Runs validation of all connections, sample sync, and data integrity check. Reports status to orchestrator and logs results. Alerts on failure.

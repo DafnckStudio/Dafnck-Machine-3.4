@@ -1,0 +1,208 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Domain-Driven Design Architecture
+
+## 🏗️ DDD Architecture Overview
+The task management MCP server follows Domain-Driven Design principles with clean layer separation for maintainability, testability, and extensibility. The current implementation uses a consolidated approach with 8 MCP tools organized in logical categories.
+
+## 📁 Layer Structure
+
+### Domain Layer (`cursor_agent/src/task_mcp/domain/`)
+**Core business logic and rules**
+- **Entities**: Core business objects (Task, Subtask, Dependency, Agent, Project, TaskTree)
+- **Value Objects**: Immutable objects with business meaning (TaskId, Priority, TaskStatus)
+- **Domain Events**: Events that occur within the domain
+- **Business Rules**: Core business logic and constraints
+- **Interfaces**: Domain service contracts (AutoRuleGenerator, TaskRepository)
+
+### Application Layer (`cursor_agent/src/task_mcp/application/`)
+**Use cases and application services**
+- **Use Cases**: Specific application operations (CreateTask, UpdateTask, DoNext, etc.)
+- **Services**: Application-level services and coordination (TaskApplicationService)
+- **DTOs**: Data Transfer Objects for input/output (TaskDTO, CreateTaskRequest, etc.)
+- **Command Handlers**: Process application commands
+- **Query Handlers**: Handle application queries
+
+### Infrastructure Layer (`cursor_agent/src/task_mcp/infrastructure/`)
+**External concerns and persistence**
+- **Repositories**: Data persistence implementations (JsonTaskRepository)
+- **External Services**: Third-party service integrations
+- **File System**: JSON storage implementation with atomic operations
+- **Rule Generation**: File-based auto rule generation (FileAutoRuleGenerator)
+- **Configuration**: System configuration management
+
+### Presentation/Interface Layer (`cursor_agent/src/task_mcp/interface/`)
+**Handles user interaction and presentation logic.**
+- **FastMCP Server**: `ddd_mcp_server.py` and `main_mcp_server.py`
+- **Unified Tool Interface**: `mcp_api_tools.py`
+
+#### Key Principles in Action
+
+- **Dependency Inversion**: Application layer depends on `TaskRepository` (domain abstraction), not `JsonTaskRepository` (infrastructure detail).
+- **Single Responsibility**: Each use case in the application layer has a single responsibility (e.g., `CreateTaskUseCase`).
+
+### Layer Dependencies
+
+- **Domain Layer**: No dependencies on other layers.
+- **Application Layer**: Depends on Domain.
+- **Infrastructure Layer**: Depends on Domain and Application.
+- **Interface Layer**: Can access all other layers.
+  - **Main Tools**: `mcp_api_tools.py`
+  - **DDD Server**: `ddd_mcp_server.py`
+  - **Main Server**: `main_mcp_server.py`
+
+## 🛠️ Current Tool Architecture (8 Tools)
+
+### Project Management Category (3 tools)
+- **`manage_project`**: Multi-agent project lifecycle management
+- **`manage_task`**: Comprehensive task management with 15+ actions
+- **`manage_agent`**: Agent coordination and assignment
+
+### Cursor Rules Category (5 tools)
+- **`update_auto_rule`**: Direct AI context rule updates
+- **`validate_rules`**: Rule file quality analysis
+- **`manage_cursor_rules`**: Rule file system management
+- **`regenerate_auto_rule`**: Smart context generation
+- **`validate_tasks_json`**: Task database integrity validation
+
+## 🎯 DDD Benefits
+
+### Clean Separation of Concerns
+- **Domain Logic**: Isolated from external dependencies
+- **Business Rules**: Centralized and easily testable
+- **Infrastructure**: Easily replaceable and configurable
+- **Interfaces**: Flexible and adaptable to different protocols
+
+### Testability
+- **Unit Tests**: Domain logic tested in isolation
+- **Integration Tests**: Application layer coordination testing
+- **Infrastructure Tests**: External service integration testing
+- **Interface Tests**: MCP tool functionality verification
+
+### Maintainability
+- **Modular Design**: Changes isolated to specific layers
+- **Clear Dependencies**: Dependency direction enforced (inward only)
+- **Extensibility**: New features added without existing code changes
+- **Refactoring Safety**: Well-defined boundaries protect against breaking changes
+
+### Extensibility
+- **New Use Cases**: Easy addition of new application operations
+- **Protocol Support**: Additional protocols beyond MCP easily integrated
+- **Storage Backends**: Multiple persistence options supported
+- **Service Integration**: External services added without core changes
+
+## 🧪 Testing Architecture
+
+### Test Coverage (Comprehensive)
+- **Domain Tests**: Core business logic validation
+- **Application Tests**: Use case and service testing
+- **Infrastructure Tests**: Repository and external service testing
+- **Integration Tests**: End-to-end workflow validation
+
+### Test Organization
+```
+tests/
+├── dev/
+│   ├── unit/             # Unit tests for all layers
+│   └── integration/      # Integration tests
+├── quick/                # Quick smoke tests
+└── fixtures/             # Test data and fixtures
+```
+
+## 🔧 Technology Stack
+
+### Core Framework
+- **FastMCP 2.0**: Modern MCP server framework
+- **Python 3.8+**: Core programming language
+- **JSON Storage**: Simple, reliable task persistence with atomic operations
+- **Comprehensive Logging**: Debug and monitoring capabilities
+
+### Development Tools
+- **pytest**: Testing framework with comprehensive coverage
+- **mypy**: Static type checking
+- **black**: Code formatting
+- **flake8**: Code linting
+- **uv**: Modern Python package management
+
+### Dependencies
+- **Minimal Dependencies**: Keep external dependencies clean and minimal
+- **Standard Library**: Prefer Python standard library when possible
+- **FastMCP**: Only essential MCP framework dependency
+- **No Database**: JSON-based storage for simplicity and reliability
+
+## 🗑️ Removed Components
+
+### Legacy CLI Components (Removed)
+- ❌ `task_cli.py` - CLI interface removed
+- ❌ `cursor_agent_cli.py` - CLI wrapper removed  
+- ❌ `cursor_agent.py` - Legacy wrapper removed
+- ❌ `cursor_integration.json` - CLI integration removed
+- ❌ `modules/interfaces/cli/` - Entire CLI module removed
+
+### Rationale for Removal
+- **MCP-Only Focus**: Simplified to MCP server interface only
+- **Reduced Complexity**: Eliminated dual interface maintenance
+- **Better Integration**: Cursor MCP integration provides superior UX
+- **Maintenance Burden**: CLI interfaces required separate testing and documentation
+
+## 🔄 Architecture Evolution
+
+### Current State (Enhanced 2025-01-16)
+- **✅ DDD-based FastMCP Server**: Fully operational with consolidated tools
+- **✅ 8 MCP Tools**: Complete tool suite with enhanced descriptions
+- **✅ Date-based Task IDs**: YYYYMMDDXXX format system
+- **✅ Subtask Management**: Hierarchical task breakdown
+- **✅ Dependency Management**: Task relationship handling
+- **✅ Auto-rule Generation**: Dynamic context creation
+- **✅ Multi-Agent Support**: Basic project and agent coordination
+- **✅ Cursor Rules Integration**: Comprehensive rule management
+
+### Future Enhancements
+- **Enhanced Multi-Agent**: More sophisticated agent coordination
+- **Additional Storage Backends**: Database integration options
+- **Enhanced Validation**: More sophisticated business rule validation
+- **Performance Optimization**: Caching and optimization strategies
+- **Monitoring Integration**: Advanced logging and metrics
+
+## 📋 Development Guidelines
+
+### Code Organization
+- **Single Responsibility**: Each class has one clear purpose
+- **Dependency Inversion**: Depend on abstractions, not concretions
+- **Open/Closed Principle**: Open for extension, closed for modification
+- **Interface Segregation**: Small, focused interfaces
+
+### Layer Communication Rules
+- **Domain Layer**: No dependencies on other layers
+- **Application Layer**: Can depend on Domain only
+- **Infrastructure Layer**: Can depend on Domain and Application
+- **Interface Layer**: Can access all other layers.
+  - **Consolidated Tools**: `mcp_api_tools.py` with 3 main tools
+  - **DDD Server**: `ddd_mcp_server.py`
+
+### Adding New Features
+1. **Start with Domain**: Define business entities and rules
+2. **Add Use Cases**: Create application layer operations
+3. **Implement Infrastructure**: Add necessary persistence/external services
+4. **Create Interface**: Add MCP tools or other external interfaces
+5. **Write Tests**: Comprehensive testing at all layers
+
+## 🔧 Current Implementation Details
+
+### Consolidated Architecture
+- **Single Server File**: `mcp_server.py` as main entry point
+- **Consolidated Tools**: `consolidated_mcp_tools_v2.py` with 3 main tools
+- **Specialized Tools**: `cursor_rules_tools.py` with 5 cursor-specific tools
+- **DDD Server**: `ddd_mcp_server.py` for server configuration
+
+### Multi-Agent Capabilities
+- **Project Management**: Basic project creation and management
+- **Agent Registration**: Simple agent registration and assignment
+- **Task Tree Management**: Workstream organization
+- **Orchestration Dashboard**: Basic coordination overview
+
+---
+> **Architecture Principle**: Maintain clean layer separation with inward-only dependencies to ensure long-term maintainability and testability while providing a simplified, consolidated interface for MCP integration.

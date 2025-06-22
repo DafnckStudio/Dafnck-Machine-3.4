@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Analyzes compliance trends, regulatory updates, violation patterns, and remediation effectiveness. Incorporates new standards and best practices. Adapts test plans and checklists based on incident history and feedback from related agents. Periodically retrains heuristics and updates documentation.

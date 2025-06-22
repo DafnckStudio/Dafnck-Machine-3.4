@@ -1,0 +1,44 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Troubleshooting MCP Task Management
+
+## Agent Not Switching
+- **Problem:** The AI does not switch to the expected agent role.
+- **Solution:**
+  - Ensure the assignee or agent name uses the `@` prefix (if needed).
+  - Check that the agent folder exists in `/cursor_agent/yaml-lib/`.
+  - For explicit calls, verify the agent name is correct.
+
+## Missing Agent Configuration
+- **Problem:** The system cannot find the agent's YAML config.
+- **Solution:**
+  - Create the required YAML files in `/cursor_agent/yaml-lib/[agent_name]/`.
+  - Ensure `job_desc.yaml` and at least one rules/context file exist.
+
+## Task/Project/Agent Not Found
+- **Problem:** Tool returns a "not found" error.
+- **Solution:**
+  - Double-check the `project_id`, `task_id`, or `agent_id`.
+  - Use `manage_project({ action: "list" })` or `manage_agent({ action: "list", project_id })` to see available IDs.
+
+## ID Format Errors
+- **Problem:** Task or subtask ID is rejected.
+- **Solution:**
+  - Use the correct date-based format (see [Task ID System](/.cursor/rules/02_AI-DOCS/TaskManagement/task_id_system.mdc)).
+  - Always quote IDs in tool calls.
+
+## Subtask/Dependency Issues
+- **Problem:** Subtasks or dependencies are not linked as expected.
+- **Solution:**
+  - Ensure you use the correct parent `task_id` and subtask format.
+  - Use MCP tools for all subtask and dependency operations.
+
+## General Best Practices
+- Never edit JSON files directly; always use MCP tools.
+- Keep agent YAML configs up to date.
+- Assign only one primary agent per task for clarity.
+
+For more, see [Quick Start Guide](/.cursor/rules/02_AI-DOCS/TaskManagement/quick_start.mdc).

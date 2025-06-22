@@ -1,0 +1,19 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+1. [Overview & System Architecture](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/overview.mdc)
+2. [Context Synchronization & Management](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/contextmaster.mdc)
+3. [Task Object Structure & JSON Schema](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_object_structure.mdc)
+4. [Project Object Structure & JSON Schema](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/project_object_structure.mdc)
+5. [Agent Object Structure & JSON Schema](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/agent_object_structure.mdc)
+6. [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc)
+7. [Agent Auto-Switch Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/agent_auto_switch_workflow.mdc)
+8. [Task ID System](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_id_system.mdc)
+9. [Quick Start & Tutorials](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/quick_start.mdc)
+10. [Advanced Patterns & Orchestration](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/advanced_patterns.mdc)
+11. [Troubleshooting & FAQ](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/troubleshooting.mdc)
+12. [Best Practices & Maintenance](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/best_practices.mdc)
+
+> For all context update and synchronization logic, see [Context Synchronization & Management](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/contextmaster.mdc).

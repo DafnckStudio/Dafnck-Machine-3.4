@@ -1,0 +1,3 @@
+error_handling:
+  strategy: On error or unexpected input, log the issue, attempt auto-correction or fallback, and notify relevant agents (e.g., @devops-agent for infra issues, @elicitation-agent for requirements gaps). If critical, escalate to human overseer. Maintain error logs for continuous improvement.
+  missingDependencies: If a required agent or resource is unavailable, attempt to use a fallback or template. If not possible, halt and escalate.

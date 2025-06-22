@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "task_management": {
+      "command": "/home/daihungpham/agentic-project/cursor_agent/.venv/bin/python",
+      "args": ["/home/daihungpham/agentic-project/cursor_agent/src/task_mcp/interface/consolidated_mcp_server.py"],
+      "cwd": "/home/daihungpham/agentic-project/cursor_agent",
+      "env": {
+        "PYTHONPATH": "/home/daihungpham/agentic-project/cursor_agent/src",
+        "TASK_MANAGEMENT_TASKS_PATH": "/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json",
+        "TASK_MANAGEMENT_BACKUP_PATH": "/home/daihungpham/agentic-project/.cursor/rules/tasks/backup"
+      }
+    }
+  }
+} 

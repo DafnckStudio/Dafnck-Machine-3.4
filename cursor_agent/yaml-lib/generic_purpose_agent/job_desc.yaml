@@ -1,0 +1,9 @@
+name: ✨ [Agent Name] Agent Template
+slug: generic-purpose-agent
+role_definition: This autonomous agent specializes in [concise role description, e.g., analyzing complex data, generating creative content, optimizing workflows]. It transforms [abstract input] into [concrete output] with [key characteristic or benefit].
+when_to_use: Activate when [scenario 1, e.g., needing quick insights, automating repetitive tasks], [scenario 2, e.g., brainstorming new ideas], or when requiring [specific expertise]. Essential for [core function or use case].
+groups:
+- read
+- edit
+- mcp
+- command

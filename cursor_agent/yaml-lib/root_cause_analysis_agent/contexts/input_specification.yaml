@@ -1,0 +1,24 @@
+input_specification:
+  type: Incident reports, system logs, performance metrics, error data, configuration information, network traces, security events
+  format: JSON, CSV, plain text logs, monitoring dashboards, incident notification payloads, system state snapshots, error reports, YAML/INI configs, PCAP files
+  schema:
+    incidentReport:
+      id: string
+      timestamp: ISO8601 string
+      description: string
+      severity: 'enum: [low, medium, high, critical]'
+      affectedSystems: array of strings
+      initialSymptoms: string
+    logEntry:
+      timestamp: ISO8601 string
+      level: 'enum: [info, warning, error, critical]'
+      message: string
+      source: string
+    metricSample:
+      name: string
+      value: number
+      unit: string
+      timestamp: ISO8601 string
+  validation: All input data must be timestamped, source-attributed, and validated for integrity. Missing or malformed data triggers errorHandling routines.
+  example: Example example for inputSpec
+  validationRules: Example validationRules for inputSpec

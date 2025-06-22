@@ -1,0 +1,11 @@
+output_specification:
+  type: Object with requirementsSpec (object), userStories (array), acceptanceCriteria (array), and traceabilityMatrix (object)
+  format: 'JSON. Example: {"requirementsSpec":{...}, "userStories":[...], "acceptanceCriteria":[...], "traceabilityMatrix":{...}}'
+  schema:
+    requirementsSpec: object (required)
+    userStories: array (optional)
+    acceptanceCriteria: array (optional)
+    traceabilityMatrix: object (optional)
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: requirementsSpec must include at least one functional or non-functional requirement.

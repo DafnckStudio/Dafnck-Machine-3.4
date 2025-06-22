@@ -1,0 +1,13 @@
+input_specification:
+  type: 'Object containing: sourceCode (string, path), configFiles (array of strings), policyDocs (array of strings), complianceFrameworks (array of strings), auditScope (string, enum: [''code'', ''infra'', ''full-stack'']), additionalContext (object, optional)'
+  format: 'JSON object. Example: { ''sourceCode'': ''/repo'', ''configFiles'': [''docker-compose.yml''], ''policyDocs'': [''policy.md''], ''complianceFrameworks'': [''SOC2''], ''auditScope'': ''full-stack'', ''additionalContext'': { ''deadline'': ''2024-07-01'' } }'
+  schema:
+    sourceCode: string (path)
+    configFiles: string[]
+    policyDocs: string[]
+    complianceFrameworks: string[]
+    auditScope: 'string (enum: code, infra, full-stack)'
+    additionalContext: object (optional)
+  validation: All required fields must be present. Paths must be accessible. Enum values for auditScope.
+  example: Example example for inputSpec
+  validationRules: Example validationRules for inputSpec

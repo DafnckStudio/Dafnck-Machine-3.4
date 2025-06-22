@@ -1,0 +1,7 @@
+input_specification:
+  type: 'Object with fields: projectScope (string), teamStructure (array of strings), complianceNeeds (array of strings), organizationalConstraints (array of strings, optional), methodologyPreferences (array of strings, optional)'
+  format: 'JSON object. Example: {"projectScope":"...","teamStructure":[...],"complianceNeeds":[...],"organizationalConstraints":[...],"methodologyPreferences":[...]}.'
+  validation: All required fields must be present. Validate team roles against known agent types. If missing, request clarification.
+  example: '{"projectScope":"Build a GDPR-compliant SaaS platform","teamStructure":["frontend","backend","compliance"],"complianceNeeds":["GDPR"],"organizationalConstraints":["remote-only"],"methodologyPreferences":["Agile"]}'
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

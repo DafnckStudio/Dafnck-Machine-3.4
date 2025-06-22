@@ -1,0 +1,40 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Advanced Patterns & Orchestration (Planned/Optional)
+
+## Overview
+This document covers advanced and future features for MCP-based task management, including cross-tree dependencies and orchestration. These are not present in the current implementation but may be added for complex workflows.
+
+## Cross-Tree Dependencies
+- **Purpose:** Allow tasks in one tree to depend on tasks in another.
+- **Field:** `cross_tree_dependencies` (planned for project object)
+- **Example:**
+  ```json
+  "cross_tree_dependencies": [
+    { "source_tree": "frontend", "target_tree": "backend", "dependency_type": "api_integration" }
+  ]
+  ```
+- **Current Status:** Not present in `/cursor_agent/.cursor/rules/brain/projects.json`.
+
+## Orchestration Status
+- **Purpose:** Track and coordinate project-wide progress and agent assignments.
+- **Fields:** `orchestration_status`, `last_orchestration` (planned for project object)
+- **Example:**
+  ```json
+  "orchestration_status": "active",
+  "last_orchestration": "2025-01-19T09:45:00.000Z"
+  ```
+- **Current Status:** Not present in current implementation.
+
+## When to Use
+- Only for advanced, multi-team, or cross-domain projects.
+- Standard projects do not require these fields.
+
+## Best Practices
+- Keep project and agent structures simple unless advanced orchestration is needed.
+- Document any custom fields or patterns clearly.
+
+For standard usage, see [Project Object Structure](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/project_object_structure.mdc).

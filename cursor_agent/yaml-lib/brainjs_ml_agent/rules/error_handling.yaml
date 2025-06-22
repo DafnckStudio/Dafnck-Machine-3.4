@@ -1,0 +1,6 @@
+error_handling:
+  strategy: On error, log the event, notify relevant agents, and attempt recovery. If model training fails, revert to last known good checkpoint or baseline model. If input is invalid, return a validation error with details. If dependencies are missing, degrade gracefully and alert devops-agent. All errors are logged for audit and review.
+  fallbacks:
+  - Use last successful model checkpoint
+  - Switch to baseline heuristic if ML is unavailable
+  - Escalate to human review if confidence is low or errors persist

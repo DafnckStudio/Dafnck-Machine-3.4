@@ -1,0 +1,55 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Agent Auto-Switch Workflow
+
+## Overview
+When you get or complete a task, or explicitly request an agent call, the system automatically switches the AI role to the primary agent assigned to the task or the agent you specify, ensuring the right expertise is used.
+
+## How It Works
+1. **Trigger:**
+   - `manage_task` with `action="get"` or `action="next"` (auto-switch)
+   - **OR** user explicitly calls `call_agent(name_agent="agent_name")`
+2. **Extract Agent:**
+   - For auto-switch: The first entry in the `assignees` list (e.g., `@coding_agent`).
+   - For explicit call: The agent specified in `call_agent` (e.g., `coding_agent`).
+3. **Normalize Agent Name:**
+   - Strip the `@` prefix if present (e.g., `@coding_agent` → `coding_agent`).
+4. **Call Agent:**
+   - System calls `call_agent(name_agent="coding_agent")`.
+5. **Load Agent YAML:**
+   - Loads configuration from `/cursor_agent/yaml-lib/coding_agent/` (job_desc.yaml, rules, tools, contexts).
+6. **Switch Role:**
+   - AI immediately adopts the agent's expertise, tools, and behavioral patterns.
+
+## Example: Explicit Agent Call
+```typescript
+call_agent({ name_agent: "coding_agent" })
+// System loads YAML and switches role to coding_agent immediately
+```
+
+## Example: Task Auto-Switch
+```json
+{
+  "assignees": ["@coding_agent", "@reviewer"]
+}
+// Triggers: call_agent(name_agent="coding_agent") and switches role
+```
+
+## Troubleshooting
+- **Agent not switching?**
+  - Check that the assignee or agent name uses the `@` prefix (if needed) and matches a folder in `/cursor_agent/yaml-lib/`.
+- **Missing agent config?**
+  - Ensure the YAML files exist for the agent.
+- **Wrong agent called?**
+  - Only the first assignee is used for auto-switching, or the explicitly specified agent for direct calls.
+
+## Best Practices
+- Always use the `@` prefix for agent assignees in tasks.
+- When you want to switch to a specific agent, use `call_agent` directly.
+- Keep agent YAML configs up to date.
+- Assign only one primary agent per task for clarity.
+
+For more, see [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc).

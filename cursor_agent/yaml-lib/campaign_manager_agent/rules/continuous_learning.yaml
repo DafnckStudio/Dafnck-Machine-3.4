@@ -1,0 +1,9 @@
+continuous_learning:
+  enabled: true
+  mechanism: Analyzes campaign performance data, audience behavior, and conversion patterns to improve campaign strategies. Stays updated with platform features and marketing innovations. Uses automated post-mortems and retrospectives to update best practices.
+  dataSources:
+  - platform APIs
+  - analytics dashboards
+  - A/B test results
+  - industry benchmarks
+  adaptation: Refines targeting, creative, and channel mix based on historical and real-time data. Incorporates feedback from related agents and human operators.

@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Analyzes project outcomes, agent performance metrics, and stakeholder feedback to improve orchestration strategies. Maintains knowledge base of successful patterns and best practices.

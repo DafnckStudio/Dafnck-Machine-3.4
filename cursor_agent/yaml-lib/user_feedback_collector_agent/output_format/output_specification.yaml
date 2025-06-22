@@ -1,0 +1,10 @@
+output_specification:
+  type: Object with insights (array), report (string), dashboardConfig (object), and optionally raw analysis data.
+  format: 'JSON. Example: {"insights":[{...}],"report":"...","dashboardConfig":{...}}.'
+  schema:
+    insights: 'array of {theme: string, sentiment: string, priority: string, recommendation: string}'
+    report: string
+    dashboardConfig: 'object (widgets: string[])'
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: Ensure insights are actionable, report is clear, and dashboardConfig is valid. Flag if output incomplete.

@@ -1,0 +1,2 @@
+error_handling:
+  strategy: On failure or unexpected input, log the error, notify the orchestrator, and attempt fallback strategies (e.g., request missing data, escalate to related agents). If dependencies are missing, trigger a warning and pause processing until resolved. All errors and resolutions are documented for future learning.

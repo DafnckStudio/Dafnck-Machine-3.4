@@ -1,0 +1,8 @@
+error_handling:
+  strategy: On error (e.g., agent failure, missing dependency, invalid input), log the error, attempt automated recovery (retry, fallback agent, or stub generation), and escalate to @uber-orchestrator-agent if unresolved. All errors are documented in the audit trail.
+  edgeCases:
+  - Agent unavailable
+  - Circular dependencies
+  - Corrupted context files
+  - Ambiguous requirements
+  - Repeated validation failures

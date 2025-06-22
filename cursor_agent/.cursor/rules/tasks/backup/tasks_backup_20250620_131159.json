@@ -1,0 +1,1010 @@
+{
+  "tasks": [
+    {
+      "id": "20250620010",
+      "title": "Run test suite with coverage enabled",
+      "description": "Execute the full test suite using pytest-cov or coverage.py to generate a raw coverage report. Part of the 'Analyze current test coverage and generate a report' objective.",
+      "status": "done",
+      "priority": "high",
+      "details": "This is the first step in analyzing current test coverage. Reference: Task 20250620002.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@functional_tester_agent"
+      ],
+      "labels": [
+        "testing",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:11.411906",
+      "updated_at": "2025-06-20T09:35:21.402475"
+    },
+    {
+      "id": "20250620011",
+      "title": "Collect and review coverage report",
+      "description": "Gather the generated coverage report and review coverage percentages for each module. Part of the 'Analyze current test coverage and generate a report' objective.",
+      "status": "done",
+      "priority": "high",
+      "details": "This is the second step in analyzing current test coverage. Reference: Task 20250620002.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@functional_tester_agent"
+      ],
+      "labels": [
+        "testing",
+        "coverage",
+        "analysis"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:11.521973",
+      "updated_at": "2025-06-20T09:35:21.403468"
+    },
+    {
+      "id": "20250620012",
+      "title": "Identify untested or under-tested modules/functions",
+      "description": "List all code areas below the target coverage threshold. Part of the 'Analyze current test coverage and generate a report' objective.",
+      "status": "done",
+      "priority": "high",
+      "details": "This is the third step in analyzing current test coverage. Reference: Task 20250620002.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@functional_tester_agent"
+      ],
+      "labels": [
+        "testing",
+        "coverage",
+        "analysis"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:11.638350",
+      "updated_at": "2025-06-20T09:35:21.404538"
+    },
+    {
+      "id": "20250620013",
+      "title": "Summarize coverage gaps in a markdown/HTML report",
+      "description": "Create a human-readable report highlighting coverage gaps and next steps. Part of the 'Analyze current test coverage and generate a report' objective.",
+      "status": "done",
+      "priority": "high",
+      "details": "This is the final step in analyzing current test coverage. Reference: Task 20250620002.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@documentation_agent"
+      ],
+      "labels": [
+        "testing",
+        "coverage",
+        "report"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:11.755354",
+      "updated_at": "2025-06-20T09:35:21.405434"
+    },
+    {
+      "id": "20250620014",
+      "title": "Prioritize modules/functions with lowest coverage",
+      "description": "Make a prioritized list of modules and functions based on the coverage report. Part of the 'Write and expand unit tests for all modules' objective.",
+      "status": "done",
+      "priority": "high",
+      "details": "Reference: Task 20250620003.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@functional_tester_agent"
+      ],
+      "labels": [
+        "testing",
+        "unit-test",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:15.147534",
+      "updated_at": "2025-06-20T09:35:21.406308"
+    },
+    {
+      "id": "20250620015",
+      "title": "Write new unit tests for uncovered code",
+      "description": "Implement unit tests for all uncovered functions and methods. Part of the 'Write and expand unit tests for all modules' objective.",
+      "status": "done",
+      "priority": "high",
+      "details": "Created comprehensive unit tests for:\n1. project_analyzer.py facade (0% -> 100% coverage)\n2. consolidated_mcp_server.py (0% -> 100% coverage) \n3. context_generator.py (7% -> ~90% coverage)\n4. agent.py entity (49% -> ~85% coverage)\n5. task_tree.py entity (46% -> ~85% coverage)\n\nThese tests cover:\n- All public methods and functions\n- Edge cases and error conditions\n- Normal operation scenarios\n- Complex business logic paths\n- Factory methods and initialization\n- Status management and transitions\n- Dependency relationships\n- Comprehensive data validation\n\nThe new tests significantly improve overall coverage by targeting the files with the lowest coverage percentages first.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "testing",
+        "unit-test",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:15.262858",
+      "updated_at": "2025-06-20T09:35:21.407152"
+    },
+    {
+      "id": "20250620016",
+      "title": "Expand existing tests for edge cases",
+      "description": "Add tests for boundary conditions and error handling in existing test suites. Part of the 'Write and expand unit tests for all modules' objective.",
+      "status": "done",
+      "priority": "high",
+      "details": "Reference: Task 20250620003.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "testing",
+        "unit-test",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:15.372154",
+      "updated_at": "2025-06-20T13:02:57.680549"
+    },
+    {
+      "id": "20250620017",
+      "title": "Review and refactor test code for clarity and maintainability",
+      "description": "Refactor and improve test code to ensure readability and maintainability. Part of the 'Write and expand unit tests for all modules' objective.",
+      "status": "done",
+      "priority": "high",
+      "details": "Reference: Task 20250620003.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "testing",
+        "unit-test",
+        "refactor"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:15.482890",
+      "updated_at": "2025-06-20T13:03:54.241720"
+    },
+    {
+      "id": "20250620018",
+      "title": "List all API endpoints and service boundaries",
+      "description": "Inventory all integration points for the application. Part of the 'Implement integration tests for API/service boundaries' objective.",
+      "status": "done",
+      "priority": "high",
+      "details": "Reference: Task 20250620004.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@system_architect_agent"
+      ],
+      "labels": [
+        "testing",
+        "integration-test",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:18.869388",
+      "updated_at": "2025-06-20T13:04:36.533356"
+    },
+    {
+      "id": "20250620019",
+      "title": "Write integration tests for each endpoint/boundary",
+      "description": "Develop integration tests to verify correct data flow and error handling at each integration point. Part of the 'Implement integration tests for API/service boundaries' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620004.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@functional_tester_agent"
+      ],
+      "labels": [
+        "testing",
+        "integration-test",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:18.988345",
+      "updated_at": "2025-06-20T09:35:21.410617"
+    },
+    {
+      "id": "20250620020",
+      "title": "Test cross-module workflows",
+      "description": "Simulate real-world scenarios that span multiple modules to ensure correct integration. Part of the 'Implement integration tests for API/service boundaries' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620004.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@functional_tester_agent"
+      ],
+      "labels": [
+        "testing",
+        "integration-test",
+        "workflow"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:19.103506",
+      "updated_at": "2025-06-20T09:35:21.411763"
+    },
+    {
+      "id": "20250620021",
+      "title": "Identify critical user journeys",
+      "description": "List all major user workflows (e.g., login, data entry, submission, error flows) for E2E testing. Part of the 'Add end-to-end tests for user workflows' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620005.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@functional_tester_agent"
+      ],
+      "labels": [
+        "testing",
+        "e2e-test",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:21.770585",
+      "updated_at": "2025-06-20T09:35:21.412758"
+    },
+    {
+      "id": "20250620022",
+      "title": "Automate E2E tests for each journey",
+      "description": "Use tools like Selenium or Playwright to automate end-to-end tests for each critical user journey. Part of the 'Add end-to-end tests for user workflows' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620005.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@functional_tester_agent"
+      ],
+      "labels": [
+        "testing",
+        "e2e-test",
+        "automation"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:21.884864",
+      "updated_at": "2025-06-20T09:35:21.413650"
+    },
+    {
+      "id": "20250620023",
+      "title": "Test edge cases and error conditions in E2E flows",
+      "description": "Simulate failures and unexpected inputs in E2E tests to ensure robust error handling. Part of the 'Add end-to-end tests for user workflows' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620005.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@functional_tester_agent"
+      ],
+      "labels": [
+        "testing",
+        "e2e-test",
+        "error-handling"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:22.005028",
+      "updated_at": "2025-06-20T09:35:21.414609"
+    },
+    {
+      "id": "20250620024",
+      "title": "Update CI configuration to run tests with coverage",
+      "description": "Modify CI scripts (e.g., GitHub Actions) to run tests with coverage reporting. Part of the 'Set up and enforce coverage reporting in CI' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620006.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@devops_agent"
+      ],
+      "labels": [
+        "testing",
+        "coverage",
+        "ci"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:25.005375",
+      "updated_at": "2025-06-20T09:35:21.415536"
+    },
+    {
+      "id": "20250620025",
+      "title": "Set minimum coverage threshold in CI",
+      "description": "Configure CI to fail builds if coverage drops below 80%. Part of the 'Set up and enforce coverage reporting in CI' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620006.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@devops_agent"
+      ],
+      "labels": [
+        "testing",
+        "coverage",
+        "ci"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:25.113600",
+      "updated_at": "2025-06-20T09:35:21.416479"
+    },
+    {
+      "id": "20250620026",
+      "title": "Publish coverage reports as CI artifacts",
+      "description": "Make coverage reports accessible as build artifacts in CI. Part of the 'Set up and enforce coverage reporting in CI' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620006.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@devops_agent"
+      ],
+      "labels": [
+        "testing",
+        "coverage",
+        "ci"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:25.225559",
+      "updated_at": "2025-06-20T09:35:21.417489"
+    },
+    {
+      "id": "20250620027",
+      "title": "Write documentation on test types and strategy",
+      "description": "Document the project's test pyramid (unit, integration, E2E) and overall test strategy. Part of the 'Document test strategy and coverage results' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620007.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@documentation_agent"
+      ],
+      "labels": [
+        "testing",
+        "documentation",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:28.612863",
+      "updated_at": "2025-06-20T09:35:21.418472"
+    },
+    {
+      "id": "20250620028",
+      "title": "Summarize current coverage and goals",
+      "description": "Document current test coverage, goals, and provide links to reports. Part of the 'Document test strategy and coverage results' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620007.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@documentation_agent"
+      ],
+      "labels": [
+        "testing",
+        "documentation",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:28.722655",
+      "updated_at": "2025-06-20T09:35:21.419431"
+    },
+    {
+      "id": "20250620029",
+      "title": "Provide guidelines for future test contributions",
+      "description": "Write guidelines for how to write and maintain tests in the project. Part of the 'Document test strategy and coverage results' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620007.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@documentation_agent"
+      ],
+      "labels": [
+        "testing",
+        "documentation",
+        "contribution"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:28.850202",
+      "updated_at": "2025-06-20T09:35:21.421317"
+    },
+    {
+      "id": "20250620030",
+      "title": "Periodically audit test code",
+      "description": "Review all test code to identify gaps, redundancies, and dead code. Part of the 'Review and refactor tests to maximize coverage' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620008.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "refactor",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:30.918034",
+      "updated_at": "2025-06-20T00:26:47.652953"
+    },
+    {
+      "id": "20250620031",
+      "title": "Refactor and consolidate tests",
+      "description": "Improve maintainability and coverage by refactoring and consolidating test code. Part of the 'Review and refactor tests to maximize coverage' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620008.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "refactor",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:31.036481",
+      "updated_at": "2025-06-20T00:26:47.801602"
+    },
+    {
+      "id": "20250620032",
+      "title": "Set up automated alerts for coverage drops",
+      "description": "Integrate with CI or monitoring tools to alert when coverage drops below threshold. Part of the 'Monitor and maintain coverage above 80%' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620009.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "monitoring",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:33.913297",
+      "updated_at": "2025-06-20T00:26:49.780579"
+    },
+    {
+      "id": "20250620033",
+      "title": "Review pull requests for adequate test coverage",
+      "description": "Enforce coverage checks in code review to ensure new code is adequately tested. Part of the 'Monitor and maintain coverage above 80%' objective.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Reference: Task 20250620009.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "monitoring",
+        "coverage"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:24:34.025801",
+      "updated_at": "2025-06-20T00:26:49.917300"
+    },
+    {
+      "id": "20250620034",
+      "title": "Design E2E test scenarios for each user journey",
+      "description": "Design detailed end-to-end test scenarios for each critical user journey. Reference: Task 20250620022.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Subtask of 'Automate E2E tests for each journey'. Assign to test-orchestrator-agent.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "e2e-test",
+        "design"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:28:28.867667",
+      "updated_at": "2025-06-20T00:28:28.868034"
+    },
+    {
+      "id": "20250620035",
+      "title": "Implement E2E test scripts using Playwright/Selenium",
+      "description": "Develop automated E2E test scripts for each scenario using Playwright or Selenium. Reference: Task 20250620022.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Subtask of 'Automate E2E tests for each journey'. Assign to functional-tester-agent.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "e2e-test",
+        "automation"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:28:29.004761",
+      "updated_at": "2025-06-20T00:28:29.005613"
+    },
+    {
+      "id": "20250620036",
+      "title": "Review and validate E2E test results",
+      "description": "Review the results of automated E2E tests and validate their correctness. Reference: Task 20250620022.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Subtask of 'Automate E2E tests for each journey'. Assign to exploratory-tester-agent.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "e2e-test",
+        "review"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:28:29.124502",
+      "updated_at": "2025-06-20T00:28:29.124794"
+    },
+    {
+      "id": "20250620037",
+      "title": "Identify edge cases and error conditions for each workflow",
+      "description": "List all edge cases and error conditions for each E2E workflow. Reference: Task 20250620023.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Subtask of 'Test edge cases and error conditions in E2E flows'. Assign to test-orchestrator-agent.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "e2e-test",
+        "analysis"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:28:29.246420",
+      "updated_at": "2025-06-20T00:28:29.246698"
+    },
+    {
+      "id": "20250620038",
+      "title": "Implement E2E tests for error handling",
+      "description": "Develop E2E tests to cover error handling and edge cases. Reference: Task 20250620023.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Subtask of 'Test edge cases and error conditions in E2E flows'. Assign to functional-tester-agent.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "e2e-test",
+        "error-handling"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:28:29.358379",
+      "updated_at": "2025-06-20T00:28:29.358682"
+    },
+    {
+      "id": "20250620039",
+      "title": "Document and report E2E error handling coverage",
+      "description": "Document the coverage of E2E error handling tests and report findings. Reference: Task 20250620023.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Subtask of 'Test edge cases and error conditions in E2E flows'. Assign to documentation_agent.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "e2e-test",
+        "documentation"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:28:29.474919",
+      "updated_at": "2025-06-20T00:28:29.475330"
+    },
+    {
+      "id": "20250620040",
+      "title": "Extract API endpoint list from codebase",
+      "description": "Extract and list all API endpoints from the codebase. Reference: Task 20250620018.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Subtask of 'List all API endpoints and service boundaries'. Assign to system-architect-agent.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "integration-test",
+        "api"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:28:29.604916",
+      "updated_at": "2025-06-20T00:28:29.605205"
+    },
+    {
+      "id": "20250620041",
+      "title": "Document service boundaries and integration points",
+      "description": "Document all service boundaries and integration points in the system. Reference: Task 20250620018.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Subtask of 'List all API endpoints and service boundaries'. Assign to system-architect-agent.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "integration-test",
+        "documentation"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:28:29.721532",
+      "updated_at": "2025-06-20T00:28:29.721867"
+    },
+    {
+      "id": "20250620042",
+      "title": "Validate API/service documentation accuracy",
+      "description": "Review and validate the accuracy of API and service documentation. Reference: Task 20250620018.",
+      "status": "todo",
+      "priority": "high",
+      "details": "Subtask of 'List all API endpoints and service boundaries'. Assign to code-reviewer-agent.",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "testing",
+        "integration-test",
+        "review"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T00:28:29.854533",
+      "updated_at": "2025-06-20T00:28:29.854896"
+    },
+    {
+      "id": "20250620043",
+      "title": "Implement P0.2: Core workflow logic tests (do_next.py)",
+      "description": "Create comprehensive tests for src/task_mcp/application/use_cases/do_next.py to improve coverage from 22% to 80%+. This is the second highest priority item from the coverage analysis.",
+      "status": "done",
+      "priority": "critical",
+      "details": "Based on coverage priority list: P0.2 - Core workflow logic (do_next.py) currently has 22% coverage with 67/86 missing lines. This is critical business logic for task selection and prioritization. Expected effort: 8-12 hours. Expected coverage gain: +1.8%.",
+      "estimatedEffort": "",
+      "assignees": [
+        "@functional_tester_agent"
+      ],
+      "labels": [
+        "testing",
+        "unit-test",
+        "coverage",
+        "P0",
+        "critical"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T01:47:51.568075",
+      "updated_at": "2025-06-20T09:35:21.423197"
+    },
+    {
+      "id": "20250620044",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "status": "todo",
+      "priority": "low",
+      "details": "",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T12:59:19.883473",
+      "updated_at": "2025-06-20T12:59:19.885165"
+    },
+    {
+      "id": "20250620045",
+      "title": "Invalid Label Task",
+      "description": "A task with an invalid label",
+      "status": "todo",
+      "priority": "medium",
+      "details": "",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [
+        "this-is-not-a-valid-label"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T12:59:19.915526",
+      "updated_at": "2025-06-20T12:59:19.915843"
+    },
+    {
+      "id": "20250620046",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:02:30.590161",
+      "updated_at": "2025-06-20T13:02:30.590686"
+    },
+    {
+      "id": "20250620047",
+      "title": "Invalid Label Task",
+      "description": "A task with an invalid label",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "this-is-not-a-valid-label"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:02:30.623594",
+      "updated_at": "2025-06-20T13:02:30.623896"
+    },
+    {
+      "id": "20250620048",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:02:50.202147",
+      "updated_at": "2025-06-20T13:02:50.203043"
+    },
+    {
+      "id": "20250620049",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:03:27.665119",
+      "updated_at": "2025-06-20T13:03:27.665606"
+    },
+    {
+      "id": "20250620050",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:03:47.867757",
+      "updated_at": "2025-06-20T13:03:47.868123"
+    },
+    {
+      "id": "20250620051",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:06:03.827273",
+      "updated_at": "2025-06-20T13:06:03.827998"
+    },
+    {
+      "id": "20250620052",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:06:03.839279",
+      "updated_at": "2025-06-20T13:06:03.839615"
+    },
+    {
+      "id": "20250620053",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:06:03.850039",
+      "updated_at": "2025-06-20T13:06:03.857086"
+    },
+    {
+      "id": "20250620054",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:06:45.319082",
+      "updated_at": "2025-06-20T13:06:45.319593"
+    },
+    {
+      "id": "20250620055",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:06:45.330369",
+      "updated_at": "2025-06-20T13:06:45.330665"
+    },
+    {
+      "id": "20250620056",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:06:45.341355",
+      "updated_at": "2025-06-20T13:06:45.348732"
+    },
+    {
+      "id": "20250620057",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:07:59.593931",
+      "updated_at": "2025-06-20T13:07:59.595177"
+    },
+    {
+      "id": "20250620058",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:07:59.604998",
+      "updated_at": "2025-06-20T13:07:59.605341"
+    },
+    {
+      "id": "20250620059",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-20T13:07:59.616408",
+      "updated_at": "2025-06-20T13:07:59.624480"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+"""Main FastMCP Server with Task Management Integration"""
+
+import asyncio
+import logging
+import sys
+import os
+from typing import Optional
+
+
+def create_main_server(name: Optional[str] = None):
+    """Create and configure the main FastMCP server with task management integration"""
+    
+    # Use delayed imports to avoid circular import issues
+    from fastmcp import FastMCP
+    from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+    
+    # Initialize FastMCP server
+    server_name = name or "FastMCP Server with Task Management"
+    mcp = FastMCP(server_name)
+    
+    # Initialize and register task management tools
+    task_management_tools = ConsolidatedMCPToolsV2()
+    task_management_tools.register_tools(mcp)
+    
+    logging.info(f"Main server '{server_name}' initialized with task management tools")
+    
+    return mcp
+
+
+def main():
+    """Main entry point for the FastMCP server with task management"""
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    
+    try:
+        # Create server
+        mcp = create_main_server()
+        
+        # Run server (defaults to stdio transport)
+        logging.info("Starting FastMCP server with task management...")
+        mcp.run()
+    except KeyboardInterrupt:
+        logging.info("Server stopped by user")
+    except Exception as e:
+        logging.error(f"Server error: {e}")
+        raise
+
+
+if __name__ == "__main__":
+    main() 

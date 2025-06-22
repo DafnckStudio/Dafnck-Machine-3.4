@@ -1,0 +1,20 @@
+output_specification:
+  type: object (MCPConfigurationResult)
+  format: 'JSON object with fields: status (success|error), installed (array), health (object), errors (array, optional), documentation (string, path to docs), logs (array, optional)'
+  schema:
+    status: string (success|error)
+    installed:
+    - string (MCP server slug)
+    - '...'
+    health:
+      <server>: ok|warning|error
+    errors:
+    - string
+    - '...'
+    documentation: string (path)
+    logs:
+    - string
+    - '...'
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: Status must reflect overall result. Health must be reported for each server. Errors must be detailed if present. Documentation path must be valid.

@@ -1,0 +1,50 @@
+output_specification:
+  type: 'Object with fields: qaReport (object with summary, issues, scorecards)'
+  format: '{ qaReport: { summary: string, issues: Issue[], scorecards: { designSystem: number, accessibility: number } } }'
+  schema:
+    qaReport:
+      type: object
+      properties:
+        summary:
+          type: string
+        issues:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              location:
+                type: string
+              description:
+                type: string
+              recommendation:
+                type: string
+              severity:
+                type: string
+                enum:
+                - critical
+                - major
+                - minor
+                - enhancement
+        scorecards:
+          type: object
+          properties:
+            designSystem:
+              type: number
+            accessibility:
+              type: number
+  validationRules: Example validationRules for outputSpec
+  example:
+    qaReport:
+      summary: Passed all design system checks. 2 minor accessibility issues found.
+      issues:
+      - type: accessibility
+        location: Screen 3, Button A
+        description: Insufficient color contrast
+        recommendation: Increase contrast ratio to 4.5:1
+        severity: major
+      scorecards:
+        designSystem: 95
+        accessibility: 88
+  validation: qaReport.summary must be present; issues array may be empty; scorecards must be numbers between 0-100

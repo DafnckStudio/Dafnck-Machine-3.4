@@ -1,0 +1,11 @@
+input_specification:
+  type: Object containing application/system URLs, compliance standards, documentation links, and configuration settings.
+  format: 'JSON object. Required fields: applicationUrl (string), complianceStandards (array of strings), documentationLinks (array of strings, optional), config (object, optional). Example: { ''applicationUrl'': ''https://example.com'', ''complianceStandards'': [''WCAG 2.1 AA'', ''GDPR''], ''documentationLinks'': [''https://example.com/privacy.pdf''], ''config'': { ''dataRetention'': ''90d'' } }'
+  schema:
+    applicationUrl: string
+    complianceStandards: string[]
+    documentationLinks: string[] (optional)
+    config: object (optional)
+  validation: applicationUrl must be a valid URL; complianceStandards must be non-empty; config fields must match expected types.
+  example: Example example for inputSpec
+  validationRules: Example validationRules for inputSpec

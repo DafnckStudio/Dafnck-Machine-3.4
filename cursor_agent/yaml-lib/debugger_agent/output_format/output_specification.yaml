@@ -1,0 +1,11 @@
+output_specification:
+  type: Object containing root cause, fix, and documentation.
+  format: '{ rootCause: string, fix: string, testAdded: boolean, documentation: string }'
+  schema:
+    rootCause: string (required)
+    fix: string (required)
+    testAdded: boolean (required)
+    documentation: string (optional)
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: rootCause and fix must be present; testAdded should reflect if a regression test was created.

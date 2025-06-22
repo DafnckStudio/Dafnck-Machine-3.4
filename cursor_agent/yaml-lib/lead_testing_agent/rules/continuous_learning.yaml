@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Aggregates data from test runs, defect reports, and retrospective meetings. Uses analytics to identify gaps and improvement opportunities. Updates test strategies, checklists, and automation scripts. Periodically reviews industry best practices and integrates relevant changes. Adapts to new technologies and project requirements.

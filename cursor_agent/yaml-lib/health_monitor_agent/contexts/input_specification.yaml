@@ -1,0 +1,6 @@
+input_specification:
+  type: System metrics, performance data, log streams, configuration changes, service status
+  format: Metric data, log files, API responses, monitoring events, system state information
+  example: Example example for inputSpec
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

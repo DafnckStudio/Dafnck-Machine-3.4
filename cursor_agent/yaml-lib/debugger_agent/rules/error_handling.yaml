@@ -1,0 +1,2 @@
+error_handling:
+  strategy: 'On unexpected input, missing data, or tool failure: log the error, attempt to recover with fallback strategies (e.g., request more data, use alternative tools), and notify relevant agents. If unable to resolve, escalate to @system-architect-agent or @devops-agent with full context.'

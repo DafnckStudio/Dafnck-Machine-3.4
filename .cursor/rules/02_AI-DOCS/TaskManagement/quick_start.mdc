@@ -1,0 +1,50 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Quick Start Guide: MCP Task Management
+
+## 1. Create a Project
+```typescript
+manage_project({ action: "create", project_id: "demo_proj", name: "Demo Project" })
+```
+
+## 2. Register and Assign an Agent
+```typescript
+manage_agent({ action: "register", project_id: "demo_proj", agent_id: "dev1", name: "Dev One", call_agent: "@coding_agent" })
+manage_agent({ action: "assign", project_id: "demo_proj", agent_id: "dev1", tree_id: "main" })
+```
+
+## 3. Create a Task
+```typescript
+manage_task({ action: "create", title: "Build Login", description: "Create login page", priority: "high", assignees: ["@coding_agent"], labels: ["frontend"] })
+```
+
+## 4. Get and Work on a Task
+```typescript
+manage_task({ action: "get", task_id: "20250619001" })
+// (auto_rule.mdc is generated, agent role switches)
+```
+
+## 5. Complete a Task
+```typescript
+manage_task({ action: "complete", task_id: "20250619001" })
+```
+
+## 6. Add a Subtask
+```typescript
+manage_subtask({ action: "add_subtask", task_id: "20250619001", subtask_data: { title: "Create API endpoint" } })
+```
+
+## 7. List Projects
+```typescript
+manage_project({ action: "list" })
+```
+
+## 8. List Agents in a Project
+```typescript
+manage_agent({ action: "list", project_id: "demo_proj" })
+```
+
+For more, see [Task Management Workflow](/.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc).

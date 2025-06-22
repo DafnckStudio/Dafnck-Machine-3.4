@@ -1,0 +1,177 @@
+{
+  "test": {
+    "id": "test",
+    "name": "Test Project",
+    "description": "",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "multi_agent_test": {
+    "id": "multi_agent_test",
+    "name": "Multi-Agent Orchestration Test",
+    "description": "Testing multi-agent collaboration and orchestration capabilities through MCP",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      },
+      "frontend": {
+        "id": "frontend",
+        "name": "Frontend Development",
+        "description": "UI/UX development workstream"
+      },
+      "backend": {
+        "id": "backend",
+        "name": "Backend Development",
+        "description": "API and database development workstream"
+      },
+      "testing": {
+        "id": "testing",
+        "name": "Testing & QA",
+        "description": "Dedicated testing workstream for quality assurance"
+      }
+    },
+    "registered_agents": {
+      "frontend_specialist": {
+        "id": "frontend_specialist",
+        "name": "Frontend Specialist Agent",
+        "call_agent": "@frontend_specialist_agent"
+      },
+      "backend_specialist": {
+        "id": "backend_specialist",
+        "name": "Backend Specialist Agent",
+        "call_agent": "@backend_specialist_agent"
+      },
+      "test_orchestrator": {
+        "id": "test_orchestrator",
+        "name": "Test Orchestrator Agent",
+        "call_agent": "@test_orchestrator_agent"
+      }
+    },
+    "agent_assignments": {
+      "frontend_specialist": [
+        "frontend"
+      ],
+      "backend_specialist": [
+        "backend"
+      ],
+      "test_orchestrator": [
+        "testing"
+      ]
+    },
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "dhafnck_mcp_main": {
+    "id": "dhafnck_mcp_main",
+    "name": "FastMCP Framework Development",
+    "description": "Comprehensive development of FastMCP v2 - The fast, Pythonic way to build MCP servers and clients. A complete framework for Model Context Protocol implementation with advanced features.",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      },
+      "core_framework": {
+        "id": "core_framework",
+        "name": "Core Framework Development",
+        "description": "Core MCP server/client functionality, protocol implementation, and framework architecture"
+      },
+      "documentation": {
+        "id": "documentation",
+        "name": "Documentation & Examples",
+        "description": "Comprehensive documentation, tutorials, examples, and developer guides"
+      },
+      "testing_qa": {
+        "id": "testing_qa",
+        "name": "Testing & Quality Assurance",
+        "description": "Unit tests, integration tests, performance testing, and quality assurance"
+      },
+      "integrations": {
+        "id": "integrations",
+        "name": "Integrations & Extensions",
+        "description": "Third-party integrations, plugins, middleware, and ecosystem extensions"
+      },
+      "devops_deployment": {
+        "id": "devops_deployment",
+        "name": "DevOps & Deployment",
+        "description": "CI/CD pipelines, packaging, distribution, deployment automation, and infrastructure"
+      },
+      "security_auth": {
+        "id": "security_auth",
+        "name": "Security & Authentication",
+        "description": "Authentication systems, security auditing, vulnerability assessment, and compliance"
+      }
+    },
+    "registered_agents": {
+      "mcp_architect": {
+        "id": "mcp_architect",
+        "name": "MCP System Architect",
+        "call_agent": "@mcp_architect_agent"
+      },
+      "python_core_developer": {
+        "id": "python_core_developer",
+        "name": "Python Core Developer",
+        "call_agent": "@python_core_developer_agent"
+      },
+      "documentation_specialist": {
+        "id": "documentation_specialist",
+        "name": "Technical Documentation Specialist",
+        "call_agent": "@documentation_specialist_agent"
+      },
+      "testing_engineer": {
+        "id": "testing_engineer",
+        "name": "Advanced Testing Engineer",
+        "call_agent": "@testing_engineer_agent"
+      },
+      "devops_engineer": {
+        "id": "devops_engineer",
+        "name": "DevOps & Deployment Engineer",
+        "call_agent": "@devops_engineer_agent"
+      },
+      "security_auditor": {
+        "id": "security_auditor",
+        "name": "Security & Authentication Specialist",
+        "call_agent": "@security_auditor_agent"
+      },
+      "integration_specialist": {
+        "id": "integration_specialist",
+        "name": "Integration & Ecosystem Specialist",
+        "call_agent": "@integration_specialist_agent"
+      }
+    },
+    "agent_assignments": {
+      "mcp_architect": [
+        "core_framework",
+        "main"
+      ],
+      "python_core_developer": [
+        "core_framework"
+      ],
+      "documentation_specialist": [
+        "documentation"
+      ],
+      "testing_engineer": [
+        "testing_qa"
+      ],
+      "devops_engineer": [
+        "devops_deployment"
+      ],
+      "security_auditor": [
+        "security_auth"
+      ],
+      "integration_specialist": [
+        "integrations"
+      ]
+    },
+    "created_at": "2025-01-01T00:00:00Z"
+  }
+}
