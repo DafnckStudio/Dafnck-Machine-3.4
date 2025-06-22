@@ -245,8 +245,15 @@ class JsonTaskRepository(TaskRepository):
         except ValueError:
             task_id = TaskId.from_int(int(task_dict["id"]))
         
-        status = TaskStatus(task_dict.get("status", "todo"))
-        priority = Priority(task_dict.get("priority", "medium"))
+        try:
+            status = TaskStatus(task_dict.get("status", "todo"))
+        except ValueError:
+            status = TaskStatus("todo")  # Default to todo if invalid status
+            
+        try:
+            priority = Priority(task_dict.get("priority", "medium"))
+        except ValueError:
+            priority = Priority("medium")  # Default to medium if invalid priority
         
         created_at_str = task_dict.get("created_at")
         updated_at_str = task_dict.get("updated_at")
