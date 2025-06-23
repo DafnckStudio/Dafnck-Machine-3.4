@@ -133,7 +133,9 @@ class TestCoreTaskManagementTools:
         )
         
         assert subtask_result["success"] is True
-        assert "subtask" in subtask_result
+        assert "result" in subtask_result
+        assert "subtask" in subtask_result["result"]
+        assert subtask_result["result"]["subtask"]["title"] == "Test Subtask"
         
         # List subtasks
         list_result = mock_fastmcp_server.tools["manage_subtask"](
@@ -142,7 +144,9 @@ class TestCoreTaskManagementTools:
         )
         
         assert list_result["success"] is True
-        assert len(list_result["subtasks"]) == 1
+        assert "result" in list_result
+        assert len(list_result["result"]) == 1
+        assert list_result["result"][0]["title"] == "Test Subtask"
 
 
 class TestProjectManagementTools:
@@ -336,13 +340,13 @@ class TestIntegrationWorkflows:
         mock_fastmcp_server.tools["manage_subtask"](
             action="complete_subtask",
             task_id=task_id,
-            subtask_data={"subtask_id": subtask1["subtask"]["id"]}
+            subtask_data={"subtask_id": subtask1["result"]["subtask"]["id"]}
         )
-        
+    
         mock_fastmcp_server.tools["manage_subtask"](
             action="complete_subtask",
             task_id=task_id,
-            subtask_data={"subtask_id": subtask2["subtask"]["id"]}
+            subtask_data={"subtask_id": subtask2["result"]["subtask"]["id"]}
         )
         
         # Complete main task

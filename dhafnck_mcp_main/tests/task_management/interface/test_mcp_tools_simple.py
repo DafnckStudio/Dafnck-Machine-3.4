@@ -111,7 +111,7 @@ class TestMCPToolsSimple:
         auto_rule_gen = tools._auto_rule_generator
         
         # Test that auto rule generator has required methods
-        assert hasattr(auto_rule_gen, 'generate_auto_rule')
+        assert hasattr(auto_rule_gen, 'generate_rules_for_task')
         
         # Auto rule generator should be callable
         assert auto_rule_gen is not None

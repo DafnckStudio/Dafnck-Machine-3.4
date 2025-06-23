@@ -980,17 +980,31 @@ class ConsolidatedMCPToolsV2:
                 )
                 response = self._task_app_service.create_task(request)
                 logging.info(f"Create task response: {response}")
-                if response.success:
+
+                is_success = False
+                task_data = None
+                error_message = 'Unknown error'
+
+                if isinstance(response, dict):
+                    is_success = response.get('success', False)
+                    task_data = response.get('task')
+                    error_message = response.get('error', 'Unknown error')
+                else:  # Assumes object
+                    is_success = getattr(response, 'success', False)
+                    task_data = getattr(response, 'task', None)
+                    error_message = getattr(response, 'message', 'Unknown error')
+
+                if is_success:
                     return {
                         "success": True,
                         "action": "create",
-                        "task": asdict(response.task) if response.task else None
+                        "task": asdict(task_data) if task_data and not isinstance(task_data, dict) else task_data
                     }
                 else:
                     return {
                         "success": False,
                         "action": "create",
-                        "error": response.message
+                        "error": error_message
                     }
             elif action == "get":
                 task_response = self._task_app_service.get_task(task_id, generate_rules=True, force_full_generation=force_full_generation)
@@ -1015,15 +1029,28 @@ class ConsolidatedMCPToolsV2:
                     labels=labels,
                     due_date=due_date
                 )
-                task_response = self._task_app_service.update_task(request)
-                if task_response and task_response.success:
+                response = self._task_app_service.update_task(request)
+
+                is_success = False
+                task_data = None
+                error_message = f"Task with ID {task_id} not found."
+
+                if isinstance(response, dict):
+                    is_success = response.get('success', False)
+                    task_data = response.get('task')
+                    error_message = response.get('error', error_message)
+                elif response:  # Assumes object
+                    is_success = getattr(response, 'success', False)
+                    task_data = getattr(response, 'task', None)
+                    error_message = getattr(response, 'message', error_message)
+
+                if is_success:
                     return {
                         "success": True,
                         "action": "update",
-                        "task": asdict(task_response.task)
+                        "task": asdict(task_data) if task_data and not isinstance(task_data, dict) else task_data
                     }
                 
-                error_message = task_response.message if task_response else f"Task with ID {task_id} not found."
                 return {"success": False, "action": "update", "error": error_message}
             elif action == "delete":
                 success = self._task_app_service.delete_task(task_id)

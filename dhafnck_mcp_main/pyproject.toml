@@ -93,15 +93,24 @@ fallback-version = "0.0.0"
 
 
 [tool.pytest.ini_options]
+markers = [
+    "server",
+    "unit",
+    "interface",
+    "architecture",
+    "business_rules",
+    "migration",
+    "performance",
+]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
 asyncio_default_test_loop_scope = "session"
 # filterwarnings = ["error::DeprecationWarning"]
 timeout = 3
 env = [
-    "DHAFNCK_MCP_TEST_MODE=1",
-    'D:DHAFNCK_MCP_LOG_LEVEL=DEBUG',
-    'D:DHAFNCK_MCP_ENABLE_RICH_TRACEBACKS=0',
+    "FASTMCP_TEST_MODE=1",
+    'D:FASTMCP_LOG_LEVEL=DEBUG',
+    'D:FASTMCP_ENABLE_RICH_TRACEBACKS=0',
 ]
 
 [tool.pyright]

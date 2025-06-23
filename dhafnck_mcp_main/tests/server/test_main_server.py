@@ -53,9 +53,10 @@ class TestMCPServers:
         with patch('fastmcp.server.main_server.create_main_server', return_value=mock_mcp_instance), \
              patch('logging.error') as mock_log_error:
             
-            with pytest.raises(Exception, match="Test server crash"):
+            with pytest.raises(SystemExit) as excinfo:
                 main_server_main()
             
+            assert excinfo.value.code == 1
             mock_log_error.assert_called_once()
             assert "Server error: Test server crash" in mock_log_error.call_args[0][0]
 

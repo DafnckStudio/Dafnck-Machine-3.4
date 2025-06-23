@@ -72,6 +72,10 @@ class TestTaskIdProperties:
 class TestTaskIdGeneration:
     """Test TaskId generation methods"""
     
+    def setup_method(self, method):
+        """Reset counter before each test"""
+        TaskId.reset_counter()
+    
     def test_generate_new_with_no_existing(self):
         """Test generating new task ID with no existing IDs"""
         task_id = TaskId.generate_new([])
@@ -80,7 +84,8 @@ class TestTaskIdGeneration:
     
     def test_generate_new_with_existing(self):
         """Test generating new task ID with existing IDs"""
-        existing = ["20250101001", "20250101002"]
+        current_date_str = datetime.now().strftime('%Y%m%d')
+        existing = [f"{current_date_str}001", f"{current_date_str}002"]
         task_id = TaskId.generate_new(existing)
         assert task_id.sequence_part == "003"
     
