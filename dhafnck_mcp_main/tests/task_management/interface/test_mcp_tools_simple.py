@@ -21,10 +21,10 @@ class TestMCPToolsSimple:
     @pytest.fixture
     def tools(self):
         """Fixture to create a mocked instance of ConsolidatedMCPToolsV2"""
-        with patch('task_mcp.interface.consolidated_mcp_tools_v2.JsonTaskRepository'), \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator'), \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.TaskApplicationService'), \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.CursorRulesTools'):
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.JsonTaskRepository'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.TaskApplicationService'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.CursorRulesTools'):
             
             yield ConsolidatedMCPToolsV2()
 

@@ -384,6 +384,7 @@ class RoleManager:
         return AgentRole(
             name=config["name"],
             persona=config["persona"],
+            persona_icon=None,
             primary_focus=config["primary_focus"],
             rules=config["rules"],
             context_instructions=[],
@@ -406,6 +407,7 @@ class RoleManager:
         # Extract role information
         role_name = job_desc_data.get('name', role_dir.name.replace('_', ' ').title())
         persona = job_desc_data.get('persona', f"Expert {role_name}")
+        persona_icon = job_desc_data.get('persona_icon')
         primary_focus = job_desc_data.get('primary_focus', 
                                         job_desc_data.get('description', 
                                         job_desc_data.get('role_definition', f"{role_name} specialist")))
@@ -422,15 +424,18 @@ class RoleManager:
         # Load output format from output_format directory
         output_format = self._load_output_format_from_yaml_directory(role_dir / "output_format")
         
-        return AgentRole(
+        # Create AgentRole instance
+        role = AgentRole(
             name=role_name,
             persona=persona,
+            persona_icon=persona_icon,
             primary_focus=primary_focus,
             rules=rules,
             context_instructions=context_instructions,
             tools_guidance=tools_guidance,
             output_format=output_format
         )
+        return role
     
     def _read_yaml_file(self, file_path: Path) -> Dict:
         """Read and parse YAML file"""

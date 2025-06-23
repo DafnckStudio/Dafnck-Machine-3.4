@@ -46,12 +46,11 @@ class AgentDocGenerator:
                     file.unlink()
     
     def convert_yaml_to_mdc(self, yaml_file: Path) -> str:
-        """Convert a YAML file to MDC format using the conversion script"""
+        """Convert a YAML file to MDC format by loading and dumping it."""
         try:
-            result = subprocess.run([
-                "python", str(self.convert_script), str(yaml_file)
-            ], capture_output=True, text=True, check=True)
-            return result.stdout.strip()
+            with open(yaml_file, 'r', encoding='utf-8') as f:
+                data = yaml.safe_load(f)
+            return yaml.dump(data)
         except Exception as e:
             return f"(Error converting {yaml_file.name} to MDC: {e})"
     

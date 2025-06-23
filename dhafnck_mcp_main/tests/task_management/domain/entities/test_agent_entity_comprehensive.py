@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 import pytest
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
+import time
 from fastmcp.task_management.domain.entities.agent import (
     Agent,
     AgentStatus,
@@ -84,6 +85,7 @@ class TestAgentEntity:
     def test_add_capability(self):
         """Test adding capability to agent"""
         initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         # Add capability
         self.agent.add_capability(AgentCapability.FRONTEND_DEVELOPMENT)
@@ -98,6 +100,7 @@ class TestAgentEntity:
         self.agent.add_capability(AgentCapability.TESTING)
         
         initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         # Remove capability
         self.agent.remove_capability(AgentCapability.FRONTEND_DEVELOPMENT)
@@ -216,6 +219,7 @@ class TestAgentEntity:
         """Test assigning agent to project"""
         project_id = "project-123"
         initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         self.agent.assign_to_project(project_id)
         
@@ -226,6 +230,7 @@ class TestAgentEntity:
         """Test assigning agent to task tree"""
         tree_id = "tree-456"
         initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         self.agent.assign_to_tree(tree_id)
         
@@ -236,6 +241,7 @@ class TestAgentEntity:
         """Test starting a task successfully"""
         task_id = "task-789"
         initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         self.agent.start_task(task_id)
         
@@ -278,6 +284,7 @@ class TestAgentEntity:
         self.agent.start_task(task_id)
         initial_completed = self.agent.completed_tasks
         initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         # Complete task
         self.agent.complete_task(task_id, success=True)
@@ -297,6 +304,8 @@ class TestAgentEntity:
         # Start task first
         self.agent.start_task(task_id)
         initial_success_rate = self.agent.success_rate
+        initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         # Complete task with failure
         self.agent.complete_task(task_id, success=False)
@@ -307,6 +316,7 @@ class TestAgentEntity:
         assert self.agent.status == AgentStatus.AVAILABLE
         # Success rate should decrease
         assert self.agent.success_rate < initial_success_rate
+        assert self.agent.updated_at > initial_updated
     
     def test_complete_task_not_assigned(self):
         """Test completing task that wasn't assigned"""
@@ -332,6 +342,7 @@ class TestAgentEntity:
     def test_pause_work(self):
         """Test pausing agent work"""
         initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         self.agent.pause_work()
         
@@ -342,6 +353,7 @@ class TestAgentEntity:
         """Test resuming work when under capacity"""
         self.agent.pause_work()
         initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         self.agent.resume_work()
         
@@ -352,14 +364,18 @@ class TestAgentEntity:
         """Test resuming work when at capacity"""
         self.agent.start_task("task-1")  # This makes agent busy
         self.agent.pause_work()
+        initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         self.agent.resume_work()
         
         assert self.agent.status == AgentStatus.BUSY
+        assert self.agent.updated_at > initial_updated
     
     def test_go_offline(self):
         """Test setting agent offline"""
         initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         self.agent.go_offline()
         
@@ -370,6 +386,7 @@ class TestAgentEntity:
         """Test setting agent online"""
         self.agent.go_offline()
         initial_updated = self.agent.updated_at
+        time.sleep(0.001)
         
         self.agent.go_online()
         

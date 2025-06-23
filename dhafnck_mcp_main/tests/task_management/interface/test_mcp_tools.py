@@ -35,10 +35,10 @@ class TestConsolidatedMCPToolsV2:
     @pytest.fixture
     def mcp_tools(self, temp_projects_file):
         """Create ConsolidatedMCPToolsV2 instance with mocked dependencies and isolated files"""
-        with patch('task_mcp.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo_class, \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_generator_class, \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.TaskApplicationService') as mock_service_class, \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.CursorRulesTools') as mock_cursor_class:
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo_class, \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_generator_class, \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.TaskApplicationService') as mock_service_class, \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.CursorRulesTools') as mock_cursor_class:
             
             # Configure mock instances
             mock_repo = Mock()

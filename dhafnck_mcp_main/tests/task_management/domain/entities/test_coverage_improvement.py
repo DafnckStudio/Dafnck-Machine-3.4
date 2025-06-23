@@ -883,10 +883,10 @@ class TestMCPToolsCoverage:
         """Test that MCP tools can be initialized"""
         from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
         
-        with patch('task_mcp.interface.consolidated_mcp_tools_v2.JsonTaskRepository'), \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator'), \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.TaskApplicationService'), \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.CursorRulesTools'):
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.JsonTaskRepository'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.TaskApplicationService'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.CursorRulesTools'):
             
             tools = ConsolidatedMCPToolsV2()
             assert tools is not None

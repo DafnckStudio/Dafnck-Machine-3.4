@@ -9,6 +9,7 @@ from datetime import datetime
 
 from ...domain import Task, AutoRuleGenerator
 from .legacy.rules_generator import RulesGenerator
+from ...domain.enums.agent_roles import get_supported_roles as get_all_supported_roles
 
 
 def _get_project_root() -> Path:
@@ -71,36 +72,8 @@ class FileAutoRuleGenerator(AutoRuleGenerator):
         # If we are here, it's either not a test env or full generation is forced
         logging.info("Attempting to generate comprehensive rules.")
         
-        # Import the original working system
-        from pathlib import Path
-        import os
-        from datetime import datetime
-        
         # Get the project root directory
-        current_file = Path(__file__).resolve()
-        project_root = current_file
-        
-        # Navigate up to find the project root (where cursor_agent directory exists)
-        # Add safety counter to prevent infinite loops
-        max_iterations = 10
-        iteration_count = 0
-        while project_root.parent != project_root and iteration_count < max_iterations:
-            if (project_root / "cursor_agent" / "src").exists():
-                break
-            project_root = project_root.parent
-            iteration_count += 1
-        
-        # If we couldn't find the project root, use a fallback
-        if iteration_count >= max_iterations:
-            logging.warning("Could not find project root, using simple rules fallback")
-            self._generate_simple_rules(task)
-            return True
-        
-        cursor_agent_src = project_root / "cursor_agent" / "src"
-        
-        if cursor_agent_src.exists():
-            sys.path.insert(0, str(cursor_agent_src))
-        
+        project_root = _get_project_root()
         logging.info(f"Project root found at: {project_root}")
 
         # Import the migrated rule generation system
@@ -158,7 +131,7 @@ class FileAutoRuleGenerator(AutoRuleGenerator):
         logging.info(f"Task context created for task ID: {task_context.id}")
         
         # Load role information using the original role manager
-        lib_dir = project_root / "cursor_agent" / "yaml-lib"
+        lib_dir = project_root / "dhafnck_mcp_main" / "yaml-lib"
         role_manager = RoleManager(lib_dir)
         assignee = primary_assignee
         
@@ -183,6 +156,7 @@ class FileAutoRuleGenerator(AutoRuleGenerator):
                     def __init__(self, name):
                         self.name = name
                         self.persona = "Expert developer"
+                        self.persona_icon = "❓"
                         self.primary_focus = "Implementation"
                         self.rules = ["Write clean, maintainable code", "Follow best practices"]
                         self.context_instructions = ["Focus on code quality"]
@@ -197,17 +171,12 @@ class FileAutoRuleGenerator(AutoRuleGenerator):
         logging.info("Project context analyzed.")
         
         # Generate rules using the original rules generator
-        rules_generator = RulesGenerator(project_root / "cursor_agent" / "yaml-lib")
-        rules_content = rules_generator.build_rules_content(
-            task=task_context,
-            role=agent_role,
-            project_context=project_context
-        )
-        logging.info("Rules content built successfully.")
+        rules_generator = RulesGenerator(project_root / "dhafnck_mcp_main" / "yaml-lib")
+        generated_rules = rules_generator.build_rules_content(task_context, agent_role, project_context)
         
         # Write to file
         with open(self._output_path, 'w', encoding='utf-8') as f:
-            f.write(rules_content)
+            f.write(generated_rules)
         
         logging.info(f"Successfully generated comprehensive rules for task {task_dict['id']}")
         return True
@@ -277,23 +246,16 @@ class FileAutoRuleGenerator(AutoRuleGenerator):
         return all(field in task_data for field in required_fields)
     
     def get_supported_roles(self) -> list[str]:
-        """Get list of supported agent roles by scanning the yaml-lib directory."""
-        project_root = _get_project_root()
-        yaml_lib_dir = project_root / "cursor_agent" / "yaml-lib"
-        
-        if not yaml_lib_dir.is_dir():
+        """Get a list of all supported agent roles"""
+        try:
+            # Use the enum helper function to get all roles
+            return get_all_supported_roles()
+        except Exception as e:
+            logging.error(f"Failed to get supported roles: {e}")
             return []
-            
-        supported_roles = []
-        for item in yaml_lib_dir.iterdir():
-            if item.is_dir():
-                # Assuming directory name is the role name
-                supported_roles.append(item.name)
-                
-        return sorted(supported_roles)
     
     def get_role_details(self, role: str) -> Dict[str, Any]:
-        """Get detailed information for a specific role"""
+        """Get details for a specific role"""
         return self._rules_generator.get_role_details(role)
 
     def generate(self, task: "Task", project_context: Dict[str, Any], agent_role: Any) -> str:

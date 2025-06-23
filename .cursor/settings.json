@@ -1,5 +1,9 @@
 {
-  "mcp.enabledInAllSessions": true,
-  "mcp.autoStart": true,
-  "ai.enableMcpServers": true
+  "mcp.enabled": true,
+  "mcp.servers": {
+    "task_management": {
+      "enabled": true,
+      "autoStart": true
+    }
+  }
 }

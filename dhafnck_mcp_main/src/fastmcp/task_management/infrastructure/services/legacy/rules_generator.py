@@ -312,9 +312,11 @@ class RulesTemplateSystem:
             'role_persona': role_definition or role.persona,
             'role_primary_focus': when_to_use or role.primary_focus,
             'output_format': role.output_format,
+            'persona': role.persona,
+            'persona_icon': role.persona_icon or '',
             
             # YAML frontmatter
-            'description': f'Dynamic AI Agent Rules for {display_name}',
+            'description': f'Dynamic AI Agent Rules for {role.persona_icon or ""} {display_name}'.strip(),
             'globs': job_desc.get('globs', ['**/*']),
             
             # Context summary

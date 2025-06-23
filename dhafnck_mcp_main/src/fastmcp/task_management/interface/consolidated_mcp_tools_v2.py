@@ -346,7 +346,16 @@ class ConsolidatedMCPToolsV2:
         projects_file_path: Optional[str] = None
     ):
         # Initialize repositories and services
-        self._task_repository = task_repository or JsonTaskRepository()
+        # Use environment variable for tasks file path if available
+        if task_repository is None:
+            tasks_file_path = os.environ.get('TASK_MANAGEMENT_TASKS_PATH')
+            if tasks_file_path:
+                self._task_repository = JsonTaskRepository(file_path=tasks_file_path)
+            else:
+                self._task_repository = JsonTaskRepository()
+        else:
+            self._task_repository = task_repository
+            
         self._auto_rule_generator = auto_rule_generator or FileAutoRuleGenerator()
         
         # Initialize application service with dependencies

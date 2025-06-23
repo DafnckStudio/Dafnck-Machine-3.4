@@ -68,6 +68,7 @@ class AgentRole:
     context_instructions: List[str]
     tools_guidance: List[str]
     output_format: str
+    persona_icon: Optional[str] = None
 
 
 @dataclass

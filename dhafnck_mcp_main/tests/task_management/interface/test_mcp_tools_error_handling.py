@@ -226,7 +226,7 @@ class TestMCPToolsErrorHandling:
     def test_do_next_with_no_tasks(self, consolidated_tools):
         """Test do_next when no tasks are available"""
         # Mock the use case to raise an exception instead of returning a complex object
-        with patch('task_mcp.interface.consolidated_mcp_tools_v2.DoNextUseCase') as mock_use_case_class:
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.DoNextUseCase') as mock_use_case_class:
             mock_use_case = Mock()
             mock_use_case.execute.side_effect = Exception("No tasks available")
             mock_use_case_class.return_value = mock_use_case
@@ -281,9 +281,9 @@ class TestMCPToolsErrorHandling:
 
     def test_call_agent_with_invalid_name(self, consolidated_tools):
         """Test calling agent with invalid name"""
-        with patch('task_mcp.interface.consolidated_mcp_tools_v2.CallAgentUseCase') as mock_use_case_class:
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.CallAgentUseCase') as mock_use_case_class:
             mock_use_case = Mock()
-            mock_use_case.execute.side_effect = FileNotFoundError("Agent configuration not found")
+            mock_use_case.execute.side_effect = ValueError("Agent not found")
             mock_use_case_class.return_value = mock_use_case
             
             # Recreate tools to use the mocked use case
@@ -291,7 +291,7 @@ class TestMCPToolsErrorHandling:
             
             # This should be tested through the actual tool call mechanism
             # For now, test the use case directly
-            with pytest.raises(FileNotFoundError):
+            with pytest.raises(ValueError):
                 mock_use_case.execute("nonexistent_agent")
 
     def test_auto_rule_generation_failure(self, consolidated_tools):
