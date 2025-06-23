@@ -163,7 +163,7 @@ Exposes the `dhafnck_mcp` command with various subcommands for server management
 - Parameter substitution
 - Prompt validation and formatting
 
-### 5. Task Management Integration (`src/fastmcp/dhafnck_mcp/`)
+### 5. Task Management Integration (`src/fastmcp/task_management/`)
 **Purpose**: Complete task management system with Domain-Driven Design (DDD) architecture
 
 This is a fully integrated task management system that follows DDD principles and exposes its functionality through MCP tools.

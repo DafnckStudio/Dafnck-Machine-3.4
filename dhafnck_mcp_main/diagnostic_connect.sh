@@ -23,7 +23,7 @@ PROJECT_ROOT="/home/daihungpham/agentic-project"
 DHAFNCK_MCP_DIR="$PROJECT_ROOT/dhafnck_mcp_main"
 VENV_PATH="$DHAFNCK_MCP_DIR/.venv"
 PYTHON_PATH="$VENV_PATH/bin/python"
-SERVER_SCRIPT="$DHAFNCK_MCP_DIR/src/fastmcp/dhafnck_mcp/interface/consolidated_mcp_server.py"
+SERVER_SCRIPT="$DHAFNCK_MCP_DIR/src/fastmcp/task_management/interface/consolidated_mcp_server.py"
 TASKS_JSON_PATH="$PROJECT_ROOT/.cursor/rules/tasks/tasks.json"
 BACKUP_PATH="$PROJECT_ROOT/.cursor/rules/tasks/backup"
 
@@ -388,48 +388,52 @@ async def test_mcp_protocol():
                 for attr in required_attrs:
                     if hasattr(first_tool, attr):
                         value = getattr(first_tool, attr)
-                        print(f"   ✅ {attr}: {type(value)} = {str(value)[:50]}{'...' if len(str(value)) > 50 else ''}")
+                        if [ ${#value} -gt 50 ]; then
+                            echo -e "   ✅ $attr: ${value:0:50}..."
+                        else
+                            echo -e "   ✅ $attr: $value"
+                        fi
                     else:
-                        print(f"   ❌ Missing required attribute: {attr}")
+                        echo -e "   ❌ Missing required attribute: $attr"
                         
                 # Check input schema
                 if hasattr(first_tool, 'inputSchema'):
                     schema = first_tool.inputSchema
-                    print(f"   ✅ inputSchema: {type(schema)}")
+                    echo -e "   ✅ inputSchema: ${type(schema)}"
                     if hasattr(schema, 'type'):
-                        print(f"      Schema type: {schema.type}")
+                        echo -e "      Schema type: ${schema.type}"
                     if hasattr(schema, 'properties'):
                         props = schema.properties
-                        print(f"      Properties: {len(props) if props else 0} fields")
+                        echo -e "      Properties: ${len(props) if props else 0} fields"
                 else:
-                    print(f"   ❌ Missing inputSchema")
+                    echo -e "   ❌ Missing inputSchema"
             
             # Test tool call simulation
-            print("\n🔧 Testing tool call simulation...")
+            echo -e "\n🔧 Testing tool call simulation..."
             try:
                 # Try to call a safe tool
                 result = await mcp_instance._mcp_call_tool('manage_project', {'action': 'list'})
-                print(f"✅ Tool call successful: {type(result)}")
-                print(f"✅ Result format: {len(result) if hasattr(result, '__len__') else 'N/A'} items")
+                echo -e "✅ Tool call successful: ${type(result)}"
+                echo -e "✅ Result format: ${len(result) if hasattr(result, '__len__') else 'N/A'} items"
             except Exception as e:
-                print(f"⚠️  Tool call failed (may be expected): {e}")
+                echo -e "⚠️  Tool call failed (may be expected): $e"
             
-            print("\n🎯 MCP PROTOCOL TEST SUMMARY:")
-            print("=" * 40)
-            print(f"✅ MCP server ready: YES")
-            print(f"✅ Tools endpoint: {len(mcp_tools)} tools")
-            print(f"✅ Tool format: {'VALID' if mcp_tools and hasattr(mcp_tools[0], 'name') else 'INVALID'}")
-            print(f"✅ Protocol compliance: {'GOOD' if len(mcp_tools) > 0 else 'ISSUES'}")
+            echo -e "\n🎯 MCP PROTOCOL TEST SUMMARY:"
+            echo "=" * 40
+            echo -e "✅ MCP server ready: YES"
+            echo -e "✅ Tools endpoint: $len(mcp_tools) tools"
+            echo -e "✅ Tool format: '${VALID if mcp_tools and hasattr(mcp_tools[0], 'name') else 'INVALID'}'"
+            echo -e "✅ Protocol compliance: '${GOOD if len(mcp_tools) > 0 else 'ISSUES'}'"
             
             return True
             
         except Exception as e:
-            print(f"❌ MCP protocol test failed: {e}")
+            echo -e "❌ MCP protocol test failed: $e"
             traceback.print_exc()
             return False
         
     except Exception as e:
-        print(f"❌ Critical MCP protocol error: {e}")
+        echo -e "❌ Critical MCP protocol error: $e"
         traceback.print_exc()
         return False
 
@@ -496,7 +500,7 @@ try:
     with open('$config_path', 'r') as f:
         config = json.load(f)
     tm_config = config.get('mcpServers', {}).get('dhafnck_mcp', {})
-    print(tm_config.get('command', ''))
+    echo -e '     Command: $tm_config.get(\"command\", \"NOT SET\")'
 except:
     pass
 " 2>/dev/null)
@@ -542,21 +546,21 @@ async def test_response_time():
         tools = await mcp_instance._mcp_list_tools()
         list_time = time.time() - start_time
         
-        print(f"✅ Import time: {import_time:.3f}s")
-        print(f"✅ Tool list time: {list_time:.3f}s")
-        print(f"✅ Total response time: {import_time + list_time:.3f}s")
-        print(f"✅ Tools available: {len(tools)}")
+        echo -e "✅ Import time: $import_time.3f s"
+        echo -e "✅ Tool list time: $list_time.3f s"
+        echo -e "✅ Total response time: $import_time + $list_time.3f s"
+        echo -e "✅ Tools available: $len(tools)"
         
-        if import_time + list_time < 2.0:
-            print("✅ Response time: EXCELLENT (< 2s)")
-        elif import_time + list_time < 5.0:
-            print("⚠️  Response time: ACCEPTABLE (< 5s)")
+        if $import_time + $list_time < 2.0:
+            echo -e "✅ Response time: EXCELLENT (< 2s)"
+        elif $import_time + $list_time < 5.0:
+            echo -e "⚠️  Response time: ACCEPTABLE (< 5s)"
         else:
-            print("❌ Response time: SLOW (> 5s)")
+            echo -e "❌ Response time: SLOW (> 5s)"
             
         return True
     except Exception as e:
-        print(f"❌ Response test failed: {e}")
+        echo -e "❌ Response test failed: $e"
         return False
 
 if __name__ == "__main__":
@@ -581,7 +585,7 @@ EOF
     echo -e "  🔍 WSL path mapping check:"
     if echo "$PYTHON_PATH" | grep -q "/mnt/c"; then
         echo -e "     ⚠️  Python path uses Windows mount - may cause issues"
-    else
+    else:
         echo -e "     ✅ Python path uses native WSL paths"
     fi
     
@@ -600,7 +604,11 @@ EOF
     for var in "${env_vars[@]}"; do
         local value=$(printenv "$var" 2>/dev/null)
         if [ -n "$value" ]; then
-            echo -e "     ✅ $var: ${value:0:50}${value:50:1:+...}"
+            if [ ${#value} -gt 50 ]; then
+                echo -e "     ✅ $var: ${value:0:50}..."
+            else
+                echo -e "     ✅ $var: $value"
+            fi
         else
             echo -e "     ❌ $var: Not set"
         fi
@@ -635,19 +643,19 @@ async def generate_summary():
         tools = await mcp_instance.get_tools()
         mcp_tools = await mcp_instance._mcp_list_tools()
         
-        print("🎯 FINAL TOOL SUMMARY:")
-        print("=" * 50)
-        print(f"📊 Server Status: {'OPERATIONAL' if tools else 'FAILED'}")
-        print(f"📊 Total Tools: {len(tools)}")
-        print(f"📊 MCP Tools: {len(mcp_tools)}")
-        print(f"📊 Server Name: {mcp_instance.name}")
+        echo -e "🎯 FINAL TOOL SUMMARY:"
+        echo "=" * 50
+        echo -e "📊 Server Status: '${OPERATIONAL if tools else 'FAILED'}'"
+        echo -e "📊 Total Tools: $len(tools)"
+        echo -e "📊 MCP Tools: $len(mcp_tools)"
+        echo -e "📊 Server Name: $mcp_instance.name"
         
-        print("\n📋 Available Tools:")
+        echo -e "\n📋 Available Tools:"
         for i, (name, tool) in enumerate(tools.items(), 1):
             desc = ""
             if hasattr(tool, 'description'):
                 desc = tool.description[:60] + "..." if len(tool.description) > 60 else tool.description
-            print(f"  {i:2d}. {name:<20} - {desc}")
+            echo -e "  $i. $name - $desc"
         
         # Tool categories
         categories = {
@@ -658,21 +666,21 @@ async def generate_summary():
             'Validation': ['validate_tasks_json']
         }
         
-        print("\n📂 Tool Categories:")
+        echo -e "\n📂 Tool Categories:"
         for category, tool_names in categories.items():
             found = [name for name in tool_names if name in tools]
             missing = [name for name in tool_names if name not in tools]
             status = "✅" if len(found) == len(tool_names) else "⚠️" if found else "❌"
-            print(f"  {status} {category}: {len(found)}/{len(tool_names)} tools")
+            echo -e "  $status $category: $len(found)/$len(tool_names) tools"
             if missing:
-                print(f"     Missing: {', '.join(missing)}")
+                echo -e "     Missing: $', '.join(missing)"
         
-        print(f"\n🎯 Overall Status: {'READY FOR CURSOR' if len(tools) >= 10 else 'NEEDS ATTENTION'}")
+        echo -e "\n🎯 Overall Status: '${READY FOR CURSOR if len(tools) >= 10 else 'NEEDS ATTENTION'}'"
         
         return len(tools) >= 10
         
     except Exception as e:
-        print(f"❌ Summary generation failed: {e}")
+        echo -e "❌ Summary generation failed: $e"
         return False
 
 if __name__ == "__main__":
@@ -793,36 +801,36 @@ with open('$config_file', 'r') as f:
     
 if 'mcpServers' in config and 'dhafnck_mcp' in config['mcpServers']:
     tm_config = config['mcpServers']['dhafnck_mcp']
-    print(f'     Command: {tm_config.get(\"command\", \"NOT SET\")}')
-    print(f'     Args: {tm_config.get(\"args\", \"NOT SET\")}')
-    print(f'     CWD: {tm_config.get(\"cwd\", \"NOT SET\")}')
-    print(f'     Env vars: {len(tm_config.get(\"env\", {}))} variables')
+    echo -e '     Command: $tm_config.get(\"command\", \"NOT SET\")'
+    echo -e '     Args: $tm_config.get(\"args\", \"NOT SET\")'
+    echo -e '     CWD: $tm_config.get(\"cwd\", \"NOT SET\")'
+    echo -e '     Env vars: $len(tm_config.get(\"env\", {}))} variables'
     
     # Validate paths
     import os
     command = tm_config.get('command', '')
     if os.path.exists(command):
-        print(f'     ✅ Command path exists: {command}')
+        echo -e '     ✅ Command path exists: $command'
     else:
-        print(f'     ❌ Command path missing: {command}')
+        echo -e '     ❌ Command path missing: $command'
         
     cwd = tm_config.get('cwd', '')
     if os.path.exists(cwd):
-        print(f'     ✅ Working directory exists: {cwd}')
+        echo -e '     ✅ Working directory exists: $cwd'
     else:
-        print(f'     ❌ Working directory missing: {cwd}')
+        echo -e '     ❌ Working directory missing: $cwd'
         
     # Check environment variables
     env = tm_config.get('env', {})
     for key, value in env.items():
-        print(f'     🌍 {key}={value}')
+        echo -e '     🌍 $key=$value'
         if key.endswith('_PATH') and value:
             if os.path.exists(value):
-                print(f'        ✅ Path exists: {value}')
+                echo -e '        ✅ Path exists: $value'
             else:
-                print(f'        ❌ Path missing: {value}')
+                echo -e '        ❌ Path missing: $value'
 else:
-    print('     ❌ dhafnck_mcp not found in mcpServers')
+    echo -e '     ❌ dhafnck_mcp not found in mcpServers'
 " 2>/dev/null || echo -e "     ❌ ${RED}Error parsing configuration${NC}"
     else
         echo -e "  ❌ ${RED}dhafnck_mcp server not found in config${NC}"
@@ -1073,24 +1081,24 @@ async def quick_test():
         os.environ['TASKS_JSON_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
         os.environ['TASK_JSON_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
         
-        print("🔄 Loading server...")
+        echo -e "🔄 Loading server..."
         from fastmcp.task_management.interface.consolidated_mcp_server import mcp_instance
         
-        print("🔧 Testing tools...")
+        echo -e "🔧 Testing tools..."
         tools = await mcp_instance._mcp_list_tools()
         
-        print(f"✅ SUCCESS: {len(tools)} tools available")
-        print("📋 Tools:", ", ".join([t.name for t in tools[:5]]) + ("..." if len(tools) > 5 else ""))
+        echo -e "✅ SUCCESS: $len(tools) tools available"
+        echo -e "📋 Tools: $', '.join([t.name for t in tools[:5]]) + ($'...' if len(tools) > 5 else '')"
         
         return len(tools) > 0
         
     except Exception as e:
-        print(f"❌ FAILED: {e}")
+        echo -e "❌ FAILED: $e"
         return False
 
 if __name__ == "__main__":
     success = asyncio.run(quick_test())
-    print(f"\n{'🎉 TOOLS WORKING!' if success else '❌ TOOLS NOT WORKING'}")
+    echo -e "\n{'🎉 TOOLS WORKING!' if success else '❌ TOOLS NOT WORKING'}"
     sys.exit(0 if success else 1)
 EOF
 

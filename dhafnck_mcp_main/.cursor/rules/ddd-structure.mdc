@@ -22,7 +22,7 @@ The **fastmcp** task management system follows Domain-Driven Design principles w
 
 ## 📁 Layer Structure
 
-### Domain Layer (`src/fastmcp/dhafnck_mcp/domain/`)
+### Domain Layer (`src/fastmcp/task_management/domain/`)
 **Core business logic and rules - No external dependencies**
 
 ```
@@ -63,7 +63,7 @@ domain/
 - **TaskTree**: Workstream organization for parallel development
 - **WorkSession**: Session tracking for productivity and analytics
 
-### Application Layer (`src/fastmcp/dhafnck_mcp/application/`)
+### Application Layer (`src/fastmcp/task_management/application/`)
 **Use cases and application services - Orchestrates domain logic**
 
 ```
@@ -97,7 +97,7 @@ application/
 - **manage_dependencies**: Task relationship and dependency management
 - **call_agent**: Agent integration and role-based task assignment
 
-### Infrastructure Layer (`src/fastmcp/dhafnck_mcp/infrastructure/`)
+### Infrastructure Layer (`src/fastmcp/task_management/infrastructure/`)
 **External concerns and persistence - Implements domain interfaces**
 
 ```
@@ -118,7 +118,7 @@ infrastructure/
 - **Agent Loader**: YAML-based agent configuration and capability loading
 - **Cursor Integration**: Deep integration with Cursor IDE and rules system
 
-### Interface Layer (`src/fastmcp/dhafnck_mcp/interface/`)
+### Interface Layer (`src/fastmcp/task_management/interface/`)
 **MCP integration and external interfaces - Exposes functionality via MCP protocol**
 
 ```

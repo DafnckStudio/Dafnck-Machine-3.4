@@ -29,7 +29,7 @@ For your convenience, here is the required configuration:
     "dhafnck_mcp": {
       "command": "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
       "args": [
-        "/home/daihungpham/agentic-project/dhafnck_mcp_main/src/fastmcp/dhafnck_mcp/interface/consolidated_mcp_server.py"
+        "/home/daihungpham/agentic-project/dhafnck_mcp_main/src/fastmcp/task_management/interface/consolidated_mcp_server.py"
       ],
       "cwd": "/home/daihungpham/agentic-project/dhafnck_mcp_main",
       "env": {
@@ -72,7 +72,7 @@ If the server is running correctly, you should receive a response indicating tha
 You can also use the MCP Inspector to test the server connection. Run the following command in your terminal from the project root:
 
 ```bash
-DANGEROUSLY_OMIT_AUTH=true npx @modelcontextprotocol/inspector .venv/bin/python src/fastmcp/dhafnck_mcp/interface/consolidated_mcp_server.py
+DANGEROUSLY_OMIT_AUTH=true npx @modelcontextprotocol/inspector .venv/bin/python src/fastmcp/task_management/interface/consolidated_mcp_server.py
 ```
 
 This will launch a web interface (usually at `http://127.0.0.1:6274/#tools`) where you can see all the registered tools and interact with them.
