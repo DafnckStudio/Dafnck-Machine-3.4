@@ -32,29 +32,63 @@ class TestFindProjectRoot:
             cursor_agent_dir = project_root / "cursor_agent"
             cursor_agent_dir.mkdir(parents=True)
             
-            # Mock the current file location
-            with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.Path') as mock_path:
-                mock_path.return_value.parent = project_root / "some" / "nested" / "dir"
-                mock_path.return_value.parent.parent = project_root / "some" / "nested"
-                mock_path.return_value.parent.parent.parent = project_root / "some"
-                mock_path.return_value.parent.parent.parent.parent = project_root
-                
-                # Mock the exists check
-                def mock_exists():
-                    return True
-                (project_root / "cursor_agent").exists = mock_exists
+            # Mock the current file location to be deep inside the project
+            nested_file = project_root / "some" / "nested" / "dir" / "file.py"
+            
+            with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.os.path.abspath') as mock_abspath:
+                mock_abspath.return_value = str(nested_file)
                 
                 result = find_project_root()
                 assert isinstance(result, Path)
+                # Should find the project root that contains cursor_agent
+                assert result == project_root
 
     def test_find_project_root_fallback(self):
         """Test fallback when project root not found"""
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.Path') as mock_path:
-            # Mock path traversal that never finds cursor_agent
-            mock_path.return_value.parent = mock_path.return_value  # Simulate reaching root
+        # Mock os.path.abspath to control what paths are used
+        with patch('os.path.abspath') as mock_abspath:
+            # Set up the abspath calls - first for __file__, then for '.'
+            mock_abspath.side_effect = ['/some/deep/nested/file.py', '/current/directory']
             
-            result = find_project_root()
-            assert isinstance(result, Path)
+            # Mock Path to control the traversal behavior
+            with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.Path') as mock_path_class:
+                # Create mock path instances
+                def create_mock_path(path_str):
+                    mock_path = Mock()
+                    mock_path.name = path_str.split('/')[-1] if path_str != '/' else 'root'
+                    
+                    # Simulate filesystem root behavior
+                    if path_str == '/':
+                        mock_path.parent = mock_path  # Root's parent is itself
+                    else:
+                        parent_path = '/'.join(path_str.split('/')[:-1]) or '/'
+                        mock_path.parent = create_mock_path(parent_path)
+                    
+                    # Mock the / operator for checking cursor_agent subdirectory
+                    def mock_truediv(self, other):
+                        if other == 'cursor_agent':
+                            subdir_mock = Mock()
+                            subdir_mock.exists.return_value = False  # cursor_agent not found
+                            return subdir_mock
+                        return Mock()
+                    
+                    mock_path.__truediv__ = mock_truediv
+                    return mock_path
+                
+                # Set up the mock to return appropriate path objects
+                def mock_path_constructor(path_str):
+                    if path_str == '/current/directory':
+                        # Return a real Path object for the fallback case
+                        return Path('/current/directory')
+                    else:
+                        # Return mock for traversal
+                        return create_mock_path(path_str)
+                
+                mock_path_class.side_effect = mock_path_constructor
+                
+                result = find_project_root()
+                assert isinstance(result, Path)
+                assert str(result) == '/current/directory'
 
     def test_ensure_brain_dir(self):
         """Test brain directory creation"""

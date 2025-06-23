@@ -673,8 +673,18 @@ class ConsolidatedMCPToolsV2:
                         return {"success": True, "action": "delete"}
                     else:
                         return {"success": False, "action": "delete", "error": f"Task with ID {task_id} not found."}
+                elif action == "complete":
+                    return self._handle_complete_task(task_id)
+                elif action == "list":
+                    return self._handle_list_tasks(status, priority, assignees, labels, limit)
+                elif action == "search":
+                    return self._handle_search_tasks(query, limit)
+                elif action == "next":
+                    return self._handle_do_next()
+                elif action.endswith("_dependency"):
+                    return self._handle_dependency_operations(action, task_id, dependency_data)
                 else:
-                    return {"success": False, "error": f"Invalid core action: {action}"}
+                    return {"success": False, "error": f"Invalid task action: {action}"}
             except Exception as e:
                 logging.error(f"Error in core task operation '{action}': {traceback.format_exc()}")
                 if "generate_rules_for_task" in traceback.format_exc():

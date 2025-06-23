@@ -179,6 +179,7 @@ class TestE2EUserJourneys:
         # 6. Complete the main task
         complete_task_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "complete", "task_id": task_id})
         complete_task_response = json.loads(complete_task_response_list[0].text)
+        print(f"DEBUG: complete_task_response = {complete_task_response}")
         assert complete_task_response["success"]
 
         # 7. Verify the task is marked as 'done'
