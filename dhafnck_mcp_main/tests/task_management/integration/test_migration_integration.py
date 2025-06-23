@@ -333,67 +333,68 @@ class TestMigrationIntegration:
     def test_subtask_api_endpoints_functional(self, mcp_tools_instance):
         """Test all subtask management API endpoints work correctly after migration."""
         mcp_tools = mcp_tools_instance
-        
+    
         # First create a parent task
-        task_response = mcp_tools._handle_core_task_operations(
+        task_response = mcp_tools.manage_task(
             action="create",
-            task_id=None,
             title="Parent Task for Subtasks",
             description="Parent task to test subtask functionality",
             status="todo",
             priority="medium",
-            details=None,
-            estimated_effort=None,
-            assignees=None,
             labels=["subtask-test"],
-            due_date=None,
-            project_id=None,
-            force_full_generation=False
         )
         assert task_response["success"] is True
         parent_task_id = task_response["task"]["id"]
-        
+    
         # Test ADD_SUBTASK
-        add_subtask_response = mcp_tools._handle_subtask_operations(
+        add_subtask_response = mcp_tools.manage_subtask(
             action="add_subtask",
             task_id=parent_task_id,
             subtask_data={"title": "First subtask", "description": "Test subtask creation"}
         )
         assert add_subtask_response["success"] is True
         subtask_id = add_subtask_response["result"]["subtask"]["id"]
-        
+    
         # Test LIST_SUBTASKS
-        list_subtasks_response = mcp_tools._handle_subtask_operations(
+        list_subtasks_response = mcp_tools.manage_subtask(
             action="list_subtasks",
-            task_id=parent_task_id,
-            subtask_data=None
+            task_id=parent_task_id
         )
         assert list_subtasks_response["success"] is True
         assert len(list_subtasks_response["result"]["subtasks"]) >= 1
-        
+    
         # Test UPDATE_SUBTASK
-        update_subtask_response = mcp_tools._handle_subtask_operations(
+        update_subtask_response = mcp_tools.manage_subtask(
             action="update_subtask",
             task_id=parent_task_id,
-            subtask_data={"subtask_id": subtask_id, "title": "Updated subtask title"}
+            subtask_data={"subtask_id": subtask_id, "title": "Updated Subtask Title"}
         )
         assert update_subtask_response["success"] is True
-        
+        assert update_subtask_response["result"]["subtask"]["title"] == "Updated Subtask Title"
+    
         # Test COMPLETE_SUBTASK
-        complete_subtask_response = mcp_tools._handle_subtask_operations(
+        complete_subtask_response = mcp_tools.manage_subtask(
             action="complete_subtask",
             task_id=parent_task_id,
             subtask_data={"subtask_id": subtask_id}
         )
         assert complete_subtask_response["success"] is True
-        
+    
         # Test REMOVE_SUBTASK
-        remove_subtask_response = mcp_tools._handle_subtask_operations(
+        remove_subtask_response = mcp_tools.manage_subtask(
             action="remove_subtask",
             task_id=parent_task_id,
             subtask_data={"subtask_id": subtask_id}
         )
         assert remove_subtask_response["success"] is True
+    
+        # Verify subtask is removed
+        final_list_response = mcp_tools.manage_subtask(
+            action="list_subtasks",
+            task_id=parent_task_id
+        )
+        assert final_list_response["success"] is True
+        assert len(final_list_response["result"]["subtasks"]) == 0
 
     # ================================
     # 4. DOMAIN LOGIC TESTING

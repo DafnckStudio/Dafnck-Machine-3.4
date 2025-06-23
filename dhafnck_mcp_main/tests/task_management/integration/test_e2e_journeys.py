@@ -83,55 +83,53 @@ class TestE2EUserJourneys:
         including subtask management.
         """
         # 1. Create a new task
-        create_task_response = mcp_tools._handle_core_task_operations(
+        create_task_response = mcp_tools.manage_task(
             action="create",
             title="E2E Full Lifecycle Task",
             description="A task to test the full lifecycle.",
             priority="high",
-            labels=["e2e-test", "lifecycle"],
-            task_id=None, status=None, details=None, estimated_effort=None, assignees=None, due_date=None
+            labels=["e2e-test", "lifecycle"]
         )
         assert create_task_response["success"]
         task_id = create_task_response["task"]["id"]
-
+    
         # 2. Get the task to verify creation
-        get_task_response = mcp_tools._handle_core_task_operations(
-            action="get", task_id=task_id, title=None, description=None, status=None, priority=None, details=None, estimated_effort=None, assignees=None, labels=None, due_date=None
+        get_task_response = mcp_tools.manage_task(
+            action="get", task_id=task_id
         )
         assert get_task_response["success"]
         assert get_task_response["task"]["title"] == "E2E Full Lifecycle Task"
         assert get_task_response["task"]["status"] == "todo"
-
+    
         # 3. Update the task status
-        update_task_response = mcp_tools._handle_core_task_operations(
+        update_task_response = mcp_tools.manage_task(
             action="update",
             task_id=task_id,
-            status="in_progress",
-            title=None, description=None, priority=None, details=None, estimated_effort=None, assignees=None, labels=None, due_date=None
+            status="in_progress"
         )
         assert update_task_response["success"]
         assert update_task_response["task"]["status"] == "in_progress"
-
+    
         # 4. Add a subtask
-        add_subtask_response = mcp_tools._handle_subtask_operations(
+        add_subtask_response = mcp_tools.manage_subtask(
             action="add",
             task_id=task_id,
             subtask_data={"title": "First subtask"}
         )
         assert add_subtask_response["success"]
         subtask_id = add_subtask_response["result"]["subtask"]["id"]
-
+    
         # 5. Complete the subtask
-        complete_subtask_response = mcp_tools._handle_subtask_operations(
+        complete_subtask_response = mcp_tools.manage_subtask(
             action="complete",
             task_id=task_id,
             subtask_data={"subtask_id": subtask_id}
         )
         assert complete_subtask_response["success"]
-        
+    
         # Verify subtask is complete
-        list_subtasks_response = mcp_tools._handle_subtask_operations(
-            action="list", task_id=task_id, subtask_data=None
+        list_subtasks_response = mcp_tools.manage_subtask(
+            action="list", task_id=task_id
         )
         assert list_subtasks_response["success"]
         completed_subtask = next(st for st in list_subtasks_response["result"]["subtasks"] if st["id"] == subtask_id)

@@ -617,96 +617,28 @@ class ConsolidatedMCPToolsV2:
             task_id: Optional[str] = None,
             subtask_data: Optional[Dict[str, Any]] = None
         ) -> Dict[str, Any]:
-            """🔧 SUBTASK MANAGEMENT TOOL - Complete subtask lifecycle management with intelligent automation
+            """Manages subtasks for a given task, including creation, completion, updates, removal, and listing.
 
-            ✨ INSTANT CONTEXT: Handles the entire subtask lifecycle for tasks, including creation, completion, updating, removal, and listing of subtasks. Integrates with the main task management system for progress tracking and reporting.
-            🎯 HUMAN USAGE: Developers breaking down complex work, project managers tracking granular progress, team members updating subtask status
-            🤖 AI USAGE: Subtask creation, progress updates, completion, and management as part of larger task workflows
-
-            📋 SUBTASK LIFECYCLE ACTIONS:
-            ➕ ADD_SUBTASK: Break down a task into granular items
-            • Input: action="add_subtask", task_id="20250618001", subtask_data={"title": "Write unit tests"}
-            • Output: New subtask added with automatic progress recalculation
-            • AI Context: "I'm breaking down complex work into manageable pieces"
-            ✅ COMPLETE_SUBTASK: Mark individual subtask as done
-            • Input: action="complete_subtask", task_id="20250618001", subtask_data={"subtask_id": 1}
-            • Output: Subtask completed with parent task progress updated
-            • AI Context: "I'm marking specific subtask as completed"
-            📝 UPDATE_SUBTASK: Modify subtask properties
-            • Input: action="update_subtask", task_id="20250618001", subtask_data={"subtask_id": 1, "title": "Refactor tests"}
-            • Output: Subtask updated
-            • AI Context: "I'm updating subtask details"
-            ❌ REMOVE_SUBTASK: Remove a subtask from a task
-            • Input: action="remove_subtask", task_id="20250618001", subtask_data={"subtask_id": 1}
-            • Output: Subtask removed, progress recalculated
-            • AI Context: "I'm removing a subtask from the task"
-            📋 LIST_SUBTASKS: Show all subtasks with progress overview
-            • Input: action="list_subtasks", task_id="20250618001"
-            • Output: All subtasks with completion status and overall progress percentage
-            • AI Context: "I need overview of all subtasks and completion progress"
-
-            ---
-            PARAMETER REQUIREMENTS BY ACTION:
-            - action (str, required): The operation to perform. One of: add_subtask, complete_subtask, update_subtask, remove_subtask, list_subtasks
-            - task_id (str, required): The parent task ID
-            - subtask_data (dict, required/optional):
-                • (required) for: add_subtask (must include title), complete_subtask (must include subtask_id), update_subtask (must include subtask_id), remove_subtask (must include subtask_id)
-                • (optional) for: list_subtasks
-            ---
-            ENUMS:
-            - status: ['todo', 'in_progress', 'blocked', 'review', 'testing', 'done', 'cancelled']
-            ---
-            WHY USE THIS:
-            • Enables granular breakdown of tasks for better progress tracking
-            • Automates subtask progress calculation and parent task updates
-            • Maintains a complete audit trail and visibility into subtask completion
-            • Supports agile workflows and iterative development
-            ---
-            EXAMPLE USE CASES:
-            - Breaking down a feature implementation into coding, testing, and documentation subtasks
-            - Tracking progress on a multi-step bugfix
-            - Managing review and refactor steps as subtasks of a main task
-            ---
-            OUTPUT STRUCTURE:
-            - add_subtask: {"success": True, "action": "add_subtask", "subtask": {...}}
-            - complete_subtask: {"success": True, "action": "complete_subtask", "result": {...}}
-            - update_subtask: {"success": True, "action": "update_subtask", "result": {...}}
-            - remove_subtask: {"success": True, "action": "remove_subtask", "result": {...}}
-            - list_subtasks: {"success": True, "action": "list_subtasks", "subtasks": [...]}
+            Args:
+                action (str): The subtask action to perform (e.g., 'add', 'complete', 'list').
+                task_id (Optional[str]): The ID of the parent task.
+                subtask_data (Optional[Dict[str, Any]]): Data for the subtask operation.
+            
+            Returns:
+                Dict[str, Any]: A dictionary containing the result of the operation.
             """
-            logging.info(f"Subtask operation action: {action}, task_id: {task_id}, subtask_data: {subtask_data}")
+            if task_id is None:
+                return {"success": False, "error": "task_id is required"}
+
             try:
-                if action == "add_subtask":
-                    if not subtask_data or not subtask_data.get("title"):
-                        return {"success": False, "error": "subtask_data with title is required"}
-                    
-                    return self._handle_subtask_operations("add_subtask", task_id, subtask_data)
-                    
-                elif action == "complete_subtask":
-                    if not subtask_data or "subtask_id" not in subtask_data:
-                        return {"success": False, "error": "subtask_data with subtask_id is required"}
-                    
-                    return self._handle_subtask_operations("complete_subtask", task_id, subtask_data)
-                    
-                elif action == "list_subtasks":
-                    return self._handle_subtask_operations("list_subtasks", task_id, {})
-                    
-                elif action == "update_subtask":
-                    if not subtask_data or "subtask_id" not in subtask_data:
-                        return {"success": False, "error": "subtask_data with subtask_id is required for update_subtask"}
-                    return self._handle_subtask_operations("update_subtask", task_id, subtask_data)
-
-                elif action == "remove_subtask":
-                    if not subtask_data or "subtask_id" not in subtask_data:
-                        return {"success": False, "error": "subtask_data with subtask_id is required for remove_subtask"}
-                    return self._handle_subtask_operations("remove_subtask", task_id, subtask_data)
-
-                else:
-                    return {"success": False, "error": f"Unknown subtask action: {action}"}
-                    
+                result = self._handle_subtask_operations(action, task_id, subtask_data)
+                return {"success": True, "action": action, "result": result}
+            except (ValueError, TypeError, TaskNotFoundError) as e:
+                logging.error(f"Error managing subtask: {e}")
+                return {"success": False, "error": str(e)}
             except Exception as e:
-                logging.error(f"Error handling subtask operation: {e}")
-                return {"success": False, "error": f"Subtask operation failed: {str(e)}"}
+                logging.error(f"Unexpected error in manage_subtask: {e}\\n{traceback.format_exc()}")
+                return {"success": False, "error": f"An unexpected error occurred: {e}"}
 
         # ═══════════════════════════════════════════════════════════════════
         # 🤖 AGENT MANAGEMENT - Multi-agent coordination and assignment
@@ -1164,7 +1096,7 @@ class ConsolidatedMCPToolsV2:
                     return {
                         "success": True, 
                         "action": action, 
-                        "result": response["subtask"],  # This contains the actual subtask with "id"
+                        "result": {"subtask": response["subtask"]},
                         "progress": response.get("progress", {})
                     }
                 else:
