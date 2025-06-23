@@ -604,7 +604,7 @@ class ConsolidatedMCPToolsV2:
             
             if action == "create" and not title:
                 return {"success": False, "error": "Title is required for creating a task."}
-            if labels and not all(LabelValidator.is_valid(label) for label in labels):
+            if labels and not all(LabelValidator.is_valid_label(label) for label in labels):
                 return {"success": False, "error": "Invalid label(s) provided"}
             try:
                 if action == "create":
@@ -1034,13 +1034,30 @@ class ConsolidatedMCPToolsV2:
         if not task_id:
             return {"success": False, "error": "task_id is required for completing a task"}
         
-        response = self._task_app_service.complete_task(task_id)
-        return {
-            "success": True,
-            "action": "complete",
-            "task_id": task_id,
-            "message": f"Task {task_id} and all subtasks completed successfully"
-        }
+        try:
+            response = self._task_app_service.complete_task(task_id)
+            
+            # Check if the response indicates success
+            if response.get("success", False):
+                return {
+                    "success": True,
+                    "action": "complete",
+                    "task_id": task_id,
+                    "message": response.get("message", f"Task {task_id} and all subtasks completed successfully"),
+                    "status": response.get("status"),
+                    "subtask_progress": response.get("subtask_progress")
+                }
+            else:
+                return {
+                    "success": False,
+                    "action": "complete",
+                    "task_id": task_id,
+                    "error": response.get("message", f"Failed to complete task {task_id}")
+                }
+        except TaskNotFoundError as e:
+            return {"success": False, "error": str(e)}
+        except Exception as e:
+            return {"success": False, "error": f"Failed to complete task: {str(e)}"}
 
     def _handle_list_tasks(self, status, priority, assignees, labels, limit):
         """Handle task listing with filters"""
