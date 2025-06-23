@@ -452,7 +452,7 @@ class FastMCP(Generic[LifespanResultT]):
         with fastmcp.server.context.Context(fastmcp=self) as fastmcp_ctx:
             # Create the middleware context.
             mw_context = MiddlewareContext(
-                message=mcp.types.ListToolsRequest(method="tools/list"),
+                message=mcp.types.ListToolsRequest(method="tools/list", params=None),
                 source="client",
                 type="request",
                 method="tools/list",
@@ -574,7 +574,7 @@ class FastMCP(Generic[LifespanResultT]):
         with fastmcp.server.context.Context(fastmcp=self) as fastmcp_ctx:
             # Create the middleware context.
             mw_context = MiddlewareContext(
-                message=mcp.types.ListPromptsRequest(method="prompts/list"),
+                message=mcp.types.ListPromptsRequest(method="prompts/list", params=None),
                 source="client",
                 type="request",
                 method="prompts/list",

@@ -147,7 +147,7 @@ Develop a **DDD-based MCP server with FastMCP 2.0** that provides:
 
 #### YAML Structure per Role:
 ```yaml
-# cursor_agent/yaml-lib/[role]/job_desc.yaml
+# dhafnck_mcp_main/yaml-lib/[role]/job_desc.yaml
 name: "Role Display Name"
 role: "role_key"
 persona: "Expert description"
@@ -176,7 +176,7 @@ primary_focus: "Main responsibilities"
 ```
 get_task(task_id) → TaskRetrieved Event → FileAutoRuleGenerator
                                               ↓
-Role Detection ← Task.assignee → YAML Role Loading ← cursor_agent/yaml-lib/
+Role Detection ← Task.assignee → YAML Role Loading ← dhafnck_mcp_main/yaml-lib/
                                               ↓
 Project Analysis ← ProjectAnalyzer → Structure Detection
                                               ↓
@@ -312,7 +312,7 @@ File Output → .cursor/rules/auto_rule.mdc ← Context Integration
 
 ### Current Architecture ✅ **IMPLEMENTED**
 ```
-cursor_agent/
+dhafnck_mcp_main/
 ├── src/
 │   ├── mcp_server.py              # FastMCP entry point ✅
 │   └── task_mcp/                  # DDD architecture ✅

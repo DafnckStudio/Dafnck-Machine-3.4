@@ -12,7 +12,7 @@ This document outlines the **Domain-Driven Design (DDD) architecture** for an MC
 
 ### 🏗️ DDD Architecture Layers
 
-#### 1. **Domain Layer** (`cursor_agent/src/task_mcp/domain/`)
+#### 1. **Domain Layer** (`dhafnck_mcp_main/src/task_mcp/domain/`)
 - **Entities**: Core business objects with identity and behavior
   - `Task` - Main task entity with business logic and validation
 - **Value Objects**: Immutable objects representing concepts
@@ -28,7 +28,7 @@ This document outlines the **Domain-Driven Design (DDD) architecture** for an MC
 - **Exceptions**: Domain-specific exceptions
   - `TaskNotFoundException`, `InvalidTaskStatusException`
 
-#### 2. **Application Layer** (`cursor_agent/src/task_mcp/application/`)
+#### 2. **Application Layer** (`dhafnck_mcp_main/src/task_mcp/application/`)
 - **Use Cases**: Application-specific business logic
   - `CreateTask`, `GetTask`, `UpdateTask`, `DeleteTask`, `ListTasks`, `SearchTasks`
 - **Application Services**: Orchestrate domain operations
@@ -37,7 +37,7 @@ This document outlines the **Domain-Driven Design (DDD) architecture** for an MC
   - `CreateTaskRequest`, `UpdateTaskRequest`, `ListTasksRequest`, `SearchTasksRequest`
   - `TaskResponse`, `TaskListResponse`, `SearchTasksResponse`
 
-#### 3. **Infrastructure Layer** (`cursor_agent/src/task_mcp/infrastructure/`)
+#### 3. **Infrastructure Layer** (`dhafnck_mcp_main/src/task_mcp/infrastructure/`)
 - **Repositories**: Concrete implementations of domain repositories
   - `JsonTaskRepository` - JSON file-based task storage
 - **External Services**: Integration with external systems
@@ -47,7 +47,7 @@ This document outlines the **Domain-Driven Design (DDD) architecture** for an MC
     - `RoleManager` - Manages YAML-based role system
     - `RulesGenerator` - Generates context-aware rules
 
-#### 4. **Interface Layer** (`cursor_agent/src/task_mcp/interface/`)
+#### 4. **Interface Layer** (`dhafnck_mcp_main/src/task_mcp/interface/`)
 - **MCP Server**: FastMCP-based server implementation
   - `ddd_mcp_server.py` - Server initialization and configuration
   - `mcp_tools.py` - MCP tool implementations using DDD architecture
@@ -56,7 +56,7 @@ This document outlines the **Domain-Driven Design (DDD) architecture** for an MC
 
 #### Server Implementation
 ```python
-# cursor_agent/src/mcp_server.py
+# dhafnck_mcp_main/src/mcp_server.py
 from task_mcp.interface.ddd_mcp_server import create_mcp_server
 
 def main():
@@ -66,7 +66,7 @@ def main():
 
 #### Tool Registration
 ```python
-# cursor_agent/src/task_mcp/interface/ddd_mcp_server.py
+# dhafnck_mcp_main/src/task_mcp/interface/ddd_mcp_server.py
 def create_mcp_server() -> FastMCP:
     mcp = FastMCP("Task Management DDD")
     task_tools = MCPTaskTools()
@@ -139,7 +139,7 @@ diagnostic_info()
 
 ## 🎯 Auto Rule Generation System
 
-### **YAML-Based Role System** (`cursor_agent/yaml-lib/`)
+### **YAML-Based Role System** (`dhafnck_mcp_main/yaml-lib/`)
 ```
 yaml-lib/
 ├── task_planner/
@@ -164,7 +164,7 @@ yaml-lib/
 ```
 get_task(task_id) → TaskRetrieved Event → FileAutoRuleGenerator
                                               ↓
-Role Detection ← Task.assignee → YAML Role Loading ← cursor_agent/yaml-lib/
+Role Detection ← Task.assignee → YAML Role Loading ← dhafnck_mcp_main/yaml-lib/
                                               ↓
 Project Analysis ← ProjectAnalyzer → Structure Detection
                                               ↓
@@ -211,7 +211,7 @@ Response ← DTO Mapping ← Domain Entity ← Repository
 ```
 TaskRetrieved Event → FileAutoRuleGenerator → ProjectAnalyzer
                                                       ↓
-YAML Role System ← RoleManager ← cursor_agent/yaml-lib/
+YAML Role System ← RoleManager ← dhafnck_mcp_main/yaml-lib/
                                                       ↓
 Context Generation ← RulesGenerator → Template Engine
                                                       ↓
@@ -261,7 +261,7 @@ Context Generation ← RulesGenerator → Template Engine
 
 ### YAML Role Structure
 ```yaml
-# cursor_agent/yaml-lib/[role]/job_desc.yaml
+# dhafnck_mcp_main/yaml-lib/[role]/job_desc.yaml
 name: "Senior Full-Stack Developer"
 role: "senior_developer"
 persona: "Expert programmer focused on clean, maintainable, and efficient code"
@@ -292,7 +292,7 @@ MCP Errors ← Application ← Domain Exceptions
 
 ### Current Deployment Structure
 ```
-cursor_agent/
+dhafnck_mcp_main/
 ├── src/
 │   ├── mcp_server.py              # Main entry point
 │   └── task_mcp/                  # DDD architecture
@@ -310,7 +310,7 @@ cursor_agent/
 {
   "mcpServers": {
     "task_management": {
-      "command": "/path/to/cursor_agent/start_mcp_server.sh",
+      "command": "/path/to/dhafnck_mcp_main/start_mcp_server.sh",
       "cwd": "/path/to/project"
     }
   }
@@ -319,7 +319,7 @@ cursor_agent/
 
 ### Environment Setup
 ```bash
-# cursor_agent/start_mcp_server.sh
+# dhafnck_mcp_main/start_mcp_server.sh
 #!/bin/bash
 cd "$(dirname "$0")"
 export PYTHONPATH="$(pwd)/src"
