@@ -5,7 +5,20 @@ import logging
 import sys
 import os
 from typing import Optional
+from pathlib import Path
 
+# Add the current directory to Python path for imports
+current_dir = Path(__file__).parent
+sys.path.insert(0, str(current_dir))
+
+# Ensure the logs directory exists
+os.makedirs("logs", exist_ok=True)
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 def create_main_server(name: Optional[str] = None):
     """Create and configure the main FastMCP server with task management integration"""
@@ -29,12 +42,6 @@ def create_main_server(name: Optional[str] = None):
 
 def main():
     """Main entry point for the FastMCP server with task management"""
-    # Configure logging
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
-    
     try:
         # Create server
         mcp = create_main_server()
