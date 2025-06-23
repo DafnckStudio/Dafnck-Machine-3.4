@@ -261,13 +261,13 @@ class TestMCPToolsErrorHandling:
     def test_agent_operations_with_invalid_project(self, consolidated_tools):
         """Test agent operations with invalid project"""
         # Mock the multi-agent tools to return error
-        consolidated_tools.multi_agent_tools.register_agent = Mock(
+        consolidated_tools._multi_agent_tools.register_agent = Mock(
             return_value={"success": False, "error": "Project not found"}
         )
         
         # This would be called through the actual tool interface
         # Testing the error propagation
-        result = consolidated_tools.multi_agent_tools.register_agent(
+        result = consolidated_tools._multi_agent_tools.register_agent(
             "nonexistent_project", "agent_id", "Agent Name"
         )
         

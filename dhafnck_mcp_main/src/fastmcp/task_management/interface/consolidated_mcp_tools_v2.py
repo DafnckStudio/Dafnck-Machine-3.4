@@ -1071,78 +1071,87 @@ class ConsolidatedMCPToolsV2:
 
     def _handle_list_tasks(self, status, priority, assignees, labels, limit):
         """Handle task listing with filters"""
-        request = ListTasksRequest(
-            status=status,
-            priority=priority,
-            assignees=assignees,
-            labels=labels,
-            limit=limit
-        )
-        
-        response = self._task_app_service.list_tasks(request)
-        return {
-            "success": True,
-            "tasks": [
-                {
-                    "id": task.id,
-                    "title": task.title,
-                    "description": task.description,
-                    "status": task.status,
-                    "priority": task.priority,
-                    "assignees": task.assignees,
-                    "labels": task.labels
-                }
-                for task in response.tasks
-            ],
-            "count": len(response.tasks)
-        }
+        try:
+            request = ListTasksRequest(
+                status=status,
+                priority=priority,
+                assignees=assignees,
+                labels=labels,
+                limit=limit
+            )
+            
+            response = self._task_app_service.list_tasks(request)
+            return {
+                "success": True,
+                "tasks": [
+                    {
+                        "id": task.id,
+                        "title": task.title,
+                        "description": task.description,
+                        "status": task.status,
+                        "priority": task.priority,
+                        "assignees": task.assignees,
+                        "labels": task.labels
+                    }
+                    for task in response.tasks
+                ],
+                "count": len(response.tasks)
+            }
+        except Exception as e:
+            return {"success": False, "error": f"Failed to list tasks: {str(e)}"}
 
     def _handle_search_tasks(self, query, limit):
         """Handle task search"""
         if not query:
             return {"success": False, "error": "query is required for searching tasks"}
         
-        request = SearchTasksRequest(query=query, limit=limit or 10)
-        response = self._task_app_service.search_tasks(request)
-        
-        return {
-            "success": True,
-            "tasks": [
-                {
-                    "id": task.id,
-                    "title": task.title,
-                    "description": task.description,
-                    "status": task.status,
-                    "priority": task.priority,
-                    "assignees": task.assignees,
-                    "labels": task.labels
-                }
-                for task in response.tasks
-            ],
-            "count": len(response.tasks),
-            "query": query
-        }
+        try:
+            request = SearchTasksRequest(query=query, limit=limit or 10)
+            response = self._task_app_service.search_tasks(request)
+            
+            return {
+                "success": True,
+                "tasks": [
+                    {
+                        "id": task.id,
+                        "title": task.title,
+                        "description": task.description,
+                        "status": task.status,
+                        "priority": task.priority,
+                        "assignees": task.assignees,
+                        "labels": task.labels
+                    }
+                    for task in response.tasks
+                ],
+                "count": len(response.tasks),
+                "query": query
+            }
+        except Exception as e:
+            return {"success": False, "error": f"Failed to search tasks: {str(e)}"}
 
     def _handle_do_next(self):
         """Handle next task recommendation"""
-        do_next_use_case = DoNextUseCase(self._task_repository, self._auto_rule_generator)
-        response = do_next_use_case.execute()
-        
-        if response.has_next and response.next_item:
-            return {
-                "success": True,
-                "action": "next",
-                "next_item": response.next_item,
-                "message": response.message
-            }
-        else:
-            return {
-                "success": True,
-                "action": "next",
-                "next_item": None,
-                "message": response.message,
-                "context": response.context if response.context else None
-            }
+        try:
+            do_next_use_case = DoNextUseCase(self._task_repository, self._auto_rule_generator)
+            response = do_next_use_case.execute()
+            
+            if response.has_next and response.next_item:
+                return {
+                    "success": True,
+                    "action": "next",
+                    "next_item": response.next_item,
+                    "message": response.message
+                }
+            else:
+                return {
+                    "success": True,
+                    "action": "next",
+                    "next_item": None,
+                    "message": response.message,
+                    "context": response.context if response.context else None
+                }
+        except Exception as e:
+            return {"success": False, "error": f"Failed to get next task: {str(e)}"}
 
     def _handle_dependency_operations(self, action, task_id, dependency_data=None):
         """Handle dependency operations (add, remove, get, clear, get_blocking)"""
