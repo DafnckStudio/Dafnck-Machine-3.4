@@ -26,6 +26,10 @@ def create_consolidated_mcp_server() -> FastMCP:
     return mcp
 
 
+# Create a single instance of the server to be imported by the CLI runner
+mcp_instance = create_consolidated_mcp_server()
+
+
 def main():
     """Main entry point for the consolidated MCP server"""
     # Configure logging
@@ -35,11 +39,8 @@ def main():
     )
     
     try:
-        # Create server
-        mcp = create_consolidated_mcp_server()
-        
-        # Run server
-        mcp.run()
+        # Run the pre-configured server instance
+        mcp_instance.run()
     except KeyboardInterrupt:
         logging.info("Consolidated server stopped by user")
     except Exception as e:

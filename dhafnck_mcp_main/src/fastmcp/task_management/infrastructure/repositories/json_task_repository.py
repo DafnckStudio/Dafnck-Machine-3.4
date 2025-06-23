@@ -189,11 +189,9 @@ class JsonTaskRepository(TaskRepository):
         if file_path:
             self._file_path = str(Path(file_path).resolve())
         else:
-            # Default path relative to this file
-            current_dir = Path(__file__).parent
-            # Navigate up from dhafnck_mcp_main/src/fastmcp/task_management/infrastructure/repositories
-            # to project root (agentic-project) and then down to .cursor/rules/tasks/tasks.json
-            self._file_path = str(current_dir.parent.parent.parent.parent.parent / ".cursor" / "rules" / "tasks" / "tasks.json")
+            # Default path relative to the project root
+            project_root = _get_project_root()
+            self._file_path = str(project_root / ".cursor" / "rules" / "tasks" / "tasks.json")
 
         logging.info(f"JsonTaskRepository using file_path: {self._file_path}")
 

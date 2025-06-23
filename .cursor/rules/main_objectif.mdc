@@ -3,8 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-# Main objectif : Migrate cursor_agent to dhafnck_mcp_main, assuming all functions work correctly and are covered by tests.
-
+# Main objectif : correct mcp task_management tools not detect
 **Tip: Read the logic in cursor_agent to fix issues in dhafnck_mcp_main.
 
 CONTINUE_AUTOMATIC_NEW_TASK : OFF
