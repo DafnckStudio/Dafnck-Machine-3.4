@@ -498,7 +498,7 @@ class TestTaskSubtasks:
         """Test adding subtask with minimal data"""
         result = self.task.add_subtask(title="Test Subtask")
         
-        assert result == "Test Subtask"  # Method now returns the title
+        assert result["title"] == "Test Subtask"
         assert len(self.task.subtasks) == 1
         added_subtask = self.task.subtasks[0]
         assert added_subtask["title"] == "Test Subtask"
@@ -517,7 +517,7 @@ class TestTaskSubtasks:
         """Test adding subtask with existing ID"""
         result = self.task.add_subtask(title="Test Subtask", id="custom-id")
         
-        assert result == "Test Subtask"
+        assert result["title"] == "Test Subtask"
         added_subtask = self.task.subtasks[0]
         assert added_subtask["id"] == "custom-id"
     
@@ -716,9 +716,8 @@ class TestTaskUtilityMethods:
     
     def test_is_overdue_invalid_date_format(self):
         """Test is_overdue with invalid date format"""
-        self.task.update_due_date("invalid-date")
-        
-        assert not self.task.is_overdue()
+        with pytest.raises(ValueError, match="Invalid due date format"):
+            self.task.update_due_date("invalid-date")
     
     def test_can_be_started_todo_status(self):
         """Test can_be_started with todo status"""

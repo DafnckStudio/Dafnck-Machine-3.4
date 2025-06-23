@@ -323,7 +323,7 @@ class TestTaskTreeEntity:
             }
         ]
         
-        with patch('src.task_mcp.domain.entities.task_tree.Task') as mock_task_class:
+        with patch('fastmcp.task_management.domain.entities.task_tree.Task') as mock_task_class:
             # Mock the Task.create method
             mock_subtask1 = Mock()
             mock_subtask2 = Mock()

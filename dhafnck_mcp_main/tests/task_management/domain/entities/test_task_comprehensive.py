@@ -158,8 +158,8 @@ class TestTaskEntityComprehensive:
         )
         
         # Try to complete non-existent subtask
-        with pytest.raises(ValueError, match="Subtask.*not found"):
-            task.complete_subtask("nonexistent_id")
+        result = task.complete_subtask("nonexistent_id")
+        assert result is False
 
     def test_update_subtask(self):
         """Test updating a subtask"""
@@ -191,8 +191,8 @@ class TestTaskEntityComprehensive:
         )
         
         # Try to update non-existent subtask
-        with pytest.raises(ValueError, match="Subtask.*not found"):
-            task.update_subtask("nonexistent_id", {"title": "New title"})
+        result = task.update_subtask("nonexistent_id", {"title": "New title"})
+        assert result is False
 
     def test_remove_subtask(self):
         """Test removing a subtask"""
@@ -221,8 +221,8 @@ class TestTaskEntityComprehensive:
         )
         
         # Try to remove non-existent subtask
-        with pytest.raises(ValueError, match="Subtask.*not found"):
-            task.remove_subtask("nonexistent_id")
+        result = task.remove_subtask("nonexistent_id")
+        assert result is False
 
     def test_get_subtask_by_id(self):
         """Test getting a subtask by ID"""

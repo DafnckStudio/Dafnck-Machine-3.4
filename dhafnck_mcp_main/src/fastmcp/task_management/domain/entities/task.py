@@ -633,7 +633,7 @@ class Task:
         # Return the subtask dictionary
         return subtask_data
     
-    def remove_subtask(self, subtask_id: Union[int, str]) -> None:
+    def remove_subtask(self, subtask_id: Union[int, str]) -> bool:
         """Remove a subtask by ID (supports both integer and hierarchical IDs)"""
         for i, subtask in enumerate(self.subtasks):
             current_id = subtask.get("id")
@@ -650,10 +650,10 @@ class Task:
                     new_value=removed_subtask,
                     updated_at=self.updated_at
                 ))
-                return
-        raise ValueError(f"Subtask with ID '{subtask_id}' not found")
+                return True
+        return False
     
-    def update_subtask(self, subtask_id: Union[int, str], updates: Dict[str, Any]) -> None:
+    def update_subtask(self, subtask_id: Union[int, str], updates: Dict[str, Any]) -> bool:
         """Update a subtask by ID (supports both integer and hierarchical IDs)"""
         for subtask in self.subtasks:
             current_id = subtask.get("id")
@@ -671,20 +671,20 @@ class Task:
                     new_value=subtask,
                     updated_at=self.updated_at
                 ))
-                return
-        raise ValueError(f"Subtask with ID '{subtask_id}' not found")
+                return True
+        return False
     
-    def complete_subtask(self, subtask_id: Union[int, str]) -> None:
+    def complete_subtask(self, subtask_id: Union[int, str]) -> bool:
         """Mark a subtask as completed (supports both integer and hierarchical IDs)"""
         # Handle both index-based and ID-based completion
         if isinstance(subtask_id, int) and subtask_id < len(self.subtasks):
             # Treat as index if it's a small integer within range
             self.subtasks[subtask_id]["completed"] = True
             self.updated_at = datetime.now(timezone.utc)
-            return
+            return True
         else:
             # Treat as ID - will raise ValueError if not found via update_subtask
-            self.update_subtask(subtask_id, {"completed": True})
+            return self.update_subtask(subtask_id, {"completed": True})
     
     def complete_task(self) -> None:
         """Complete the task by marking all subtasks as completed and setting status to done"""

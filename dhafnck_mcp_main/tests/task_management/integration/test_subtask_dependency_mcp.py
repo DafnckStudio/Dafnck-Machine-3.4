@@ -49,8 +49,11 @@ class TestSubtaskDependencyMCPIntegration:
         self.task1_response = self.mcp_tools._task_service.create_task(task1_request)
         self.task2_response = self.mcp_tools._task_service.create_task(task2_request)
         
-        self.task1_id = self.task1_response.id
-        self.task2_id = self.task2_response.id
+        assert self.task1_response.success is True
+        assert self.task2_response.success is True
+        
+        self.task1_id = self.task1_response.task.id
+        self.task2_id = self.task2_response.task.id
     
     def teardown_method(self):
         """Clean up test fixtures"""

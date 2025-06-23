@@ -21,6 +21,7 @@ from ..dtos import (
     ListTasksRequest,
     SearchTasksRequest,
     TaskResponse,
+    CreateTaskResponse,
     TaskListResponse,
     AddSubtaskRequest,
     UpdateSubtaskRequest,
@@ -48,7 +49,7 @@ class TaskApplicationService:
         self._manage_subtasks_use_case = ManageSubtasksUseCase(task_repository)
         self._manage_dependencies_use_case = ManageDependenciesUseCase(task_repository)
     
-    def create_task(self, request: CreateTaskRequest) -> TaskResponse:
+    def create_task(self, request: CreateTaskRequest) -> CreateTaskResponse:
         """Create a new task"""
         return self._create_task_use_case.execute(request)
     

@@ -79,12 +79,9 @@ class ManageSubtasksUseCase:
         if not task:
             raise TaskNotFoundError(f"Task {task_id} not found")
         
-        try:
-            task.remove_subtask(subtask_id)
+        success = task.remove_subtask(subtask_id)
+        if success:
             self._task_repository.save(task)
-            success = True
-        except ValueError:
-            success = False
         
         return {
             "success": success,
@@ -111,20 +108,21 @@ class ManageSubtasksUseCase:
         if request.assignee is not None:
             updates["assignee"] = request.assignee
         
-        try:
-            task.update_subtask(request.subtask_id, updates)
-            self._task_repository.save(task)
-            
-            # Find the updated subtask
-            updated_subtask = task.get_subtask(request.subtask_id)
-            
-            return SubtaskResponse(
-                task_id=str(request.task_id),
-                subtask=updated_subtask,
-                progress=task.get_subtask_progress()
-            )
-        except ValueError:
-            raise ValueError(f"Subtask {request.subtask_id} not found in task {request.task_id}")
+        success = task.update_subtask(request.subtask_id, updates)
+
+        if not success:
+             raise ValueError(f"Subtask {request.subtask_id} not found in task {request.task_id}")
+
+        self._task_repository.save(task)
+        
+        # Find the updated subtask
+        updated_subtask = task.get_subtask(request.subtask_id)
+        
+        return SubtaskResponse(
+            task_id=str(request.task_id),
+            subtask=updated_subtask,
+            progress=task.get_subtask_progress()
+        )
     
     def complete_subtask(self, task_id: Union[str, int], subtask_id: Union[str, int]) -> Dict[str, Any]:
         """Mark a subtask as completed"""
@@ -134,12 +132,9 @@ class ManageSubtasksUseCase:
         if not task:
             raise TaskNotFoundError(f"Task {task_id} not found")
         
-        try:
-            task.complete_subtask(subtask_id)
+        success = task.complete_subtask(subtask_id)
+        if success:
             self._task_repository.save(task)
-            success = True
-        except ValueError:
-            success = False
         
         return {
             "success": success,

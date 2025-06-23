@@ -6,6 +6,7 @@ from .task_dto import (
     ListTasksRequest,
     SearchTasksRequest,
     TaskResponse,
+    CreateTaskResponse,
     TaskListResponse
 )
 
@@ -19,6 +20,7 @@ __all__ = [
     "ListTasksRequest",
     "SearchTasksRequest",
     "TaskResponse",
+    "CreateTaskResponse",
     "TaskListResponse",
     "AddSubtaskRequest",
     "UpdateSubtaskRequest",
