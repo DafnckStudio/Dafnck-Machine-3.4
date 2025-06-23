@@ -1,4 +1,5 @@
 import inspect
+import os
 from pathlib import Path
 
 from fastmcp.client.auth.bearer import BearerAuth
@@ -115,15 +116,21 @@ async def test_multi_client(tmp_path: Path):
     script_path = tmp_path / "test.py"
     script_path.write_text(server_script)
 
+    # We need to get the parent of the current working directory to add it to the PYTHONPATH
+    # so that the tests can find the `fastmcp` module.
+    python_path = str(Path.cwd() / "src")
+
     config = {
         "mcpServers": {
             "test_1": {
                 "command": "python",
                 "args": [str(script_path)],
+                "env": {"PYTHONPATH": python_path},
             },
             "test_2": {
                 "command": "python",
                 "args": [str(script_path)],
+                "env": {"PYTHONPATH": python_path},
             },
         }
     }

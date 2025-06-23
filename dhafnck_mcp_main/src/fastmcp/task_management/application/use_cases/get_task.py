@@ -3,7 +3,7 @@
 from typing import Optional, Union
 
 from ...domain import TaskRepository, TaskId, AutoRuleGenerator
-from ...domain.exceptions.task_exceptions import TaskNotFoundError
+from ...domain.exceptions.task_exceptions import TaskNotFoundError, AutoRuleGenerationError
 from ...domain.events import TaskRetrieved
 from ..dtos.task_dto import TaskResponse
 from ...infrastructure.services.agent_doc_generator import generate_agent_docs, generate_docs_for_assignees
@@ -37,13 +37,19 @@ class GetTaskUseCase:
             events = task.get_events()
             for event in events:
                 if isinstance(event, TaskRetrieved):
-                    # Generate auto rules for the retrieved task
-                    self._auto_rule_generator.generate_rules_for_task(
-                        task,
-                        force_full_generation=force_full_generation
-                    )
-                    # Generate agent documentation for all unique assignees
-                    generate_docs_for_assignees(task.assignees, clear_all=False)
+                    try:
+                        # Generate auto rules for the retrieved task
+                        self._auto_rule_generator.generate_rules_for_task(
+                            task,
+                            force_full_generation=force_full_generation
+                        )
+                        # Generate agent documentation for all unique assignees
+                        generate_docs_for_assignees(task.assignees, clear_all=False)
+                    except Exception as e:
+                        raise AutoRuleGenerationError(
+                            f"Error during auto rule generation: {e}",
+                            original_exception=e
+                        )
         
         # Convert to response DTO
         return TaskResponse.from_domain(task) 

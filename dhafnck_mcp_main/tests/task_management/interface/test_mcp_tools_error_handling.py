@@ -11,7 +11,7 @@ import os
 from unittest.mock import Mock, patch, MagicMock
 
 from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2, SimpleMultiAgentTools
-from fastmcp.task_management.domain.exceptions.task_exceptions import TaskNotFoundError
+from fastmcp.task_management.domain.exceptions.task_exceptions import TaskNotFoundError, AutoRuleGenerationError
 
 
 class TestMCPToolsErrorHandling:
@@ -280,35 +280,37 @@ class TestMCPToolsErrorHandling:
         assert "not found" in result["error"].lower()
 
     def test_call_agent_with_invalid_name(self, consolidated_tools):
-        """Test calling agent with invalid name"""
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.CallAgentUseCase') as mock_use_case_class:
-            mock_use_case = Mock()
-            mock_use_case.execute.side_effect = ValueError("Agent not found")
-            mock_use_case_class.return_value = mock_use_case
-            
-            # Recreate tools to use the mocked use case
-            tools = ConsolidatedMCPToolsV2()
-            
-            # This should be tested through the actual tool call mechanism
-            # For now, test the use case directly
-            with pytest.raises(ValueError):
-                mock_use_case.execute("nonexistent_agent")
+        """Test calling an agent that does not exist"""
+        mcp = Mock()
+        mcp.tool_functions = {}
+
+        def tool_decorator(func):
+            mcp.tool_functions[func.__name__] = func
+            return func
+        
+        mcp.tool.return_value = tool_decorator
+
+        consolidated_tools.register_tools(mcp)
+        call_agent_tool = mcp.tool_functions.get('call_agent')
+        assert call_agent_tool is not None, "call_agent tool not registered"
+
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.CallAgentUseCase') as mock_use_case:
+            mock_use_case.return_value.execute.side_effect = Exception("Agent not found")
+            result = call_agent_tool(name_agent="non_existent_agent")
+        
+        assert result["success"] is False
+        assert "Agent directory not found" in result["error"]
 
     def test_auto_rule_generation_failure(self, consolidated_tools):
-        """Test when auto rule generation fails"""
-        consolidated_tools._mock_generator.generate_auto_rule.side_effect = Exception("Rule generation failed")
-        
-        # Test that operations continue even when rule generation fails
-        consolidated_tools._mock_service.create_task.return_value = {
-            "success": True,
-            "task": {"id": "task_001", "title": "Test Task"}
-        }
-        
+        """Test when auto rule generation fails during get operation"""
+        # Mock the get_task method on the service to raise the specific error
+        consolidated_tools._task_app_service.get_task.side_effect = AutoRuleGenerationError("Rule generation failed")
+
         result = consolidated_tools._handle_core_task_operations(
-            action="create",
-            task_id=None,
-            title="Test Task",
-            description="Test description",
+            action="get",
+            task_id="task_001",
+            title=None,
+            description=None,
             status=None,
             priority=None,
             details=None,
@@ -317,26 +319,60 @@ class TestMCPToolsErrorHandling:
             labels=None,
             due_date=None
         )
-        
-        # Should succeed despite rule generation failure
-        assert result["success"] is True
+
+        # Should fail gracefully
+        assert result["success"] is False
+        assert "Rule generation failed" in result["error"]
 
     def test_cursor_rules_operations_error(self, consolidated_tools):
         """Test when cursor rules operations fail"""
         # Since cursor_rules_tools doesn't exist, we'll test a different error scenario
         # Test that the consolidated tools can handle missing attributes gracefully
-        assert not hasattr(consolidated_tools, 'cursor_rules_tools')
-        
-        # This test verifies that the attribute doesn't exist, which is the current state
-        # In a real implementation, this would test actual cursor rules functionality
+        with patch.object(consolidated_tools, '_cursor_rules_tools', side_effect=AttributeError("Missing attribute")):
+            with pytest.raises(AttributeError):
+                consolidated_tools.add_rule_to_main_objectif("New rule")
 
     def test_edge_case_empty_parameters(self, consolidated_tools):
-        """Test operations with empty or None parameters"""
-        # Test with all None parameters
+        """Test edge cases with empty or None parameters"""
+        # Test creating a task with no title
         result = consolidated_tools._handle_core_task_operations(
             action="create",
             task_id=None,
-            title=None,  # Invalid - title is required
+            title=None,
+            description=None,
+            status=None,
+            priority=None,
+            details=None,
+            estimated_effort=None,
+            assignees=None,
+            labels=None,
+            due_date=None
+        )
+        assert result["success"] is False, "Creating task with no title should fail"
+        
+        # Test updating a task with no task_id
+        result_update = consolidated_tools._handle_core_task_operations(
+            action="update",
+            task_id=None,
+            title="A Title",
+            description=None,
+            status=None,
+            priority=None,
+            details=None,
+            estimated_effort=None,
+            assignees=None,
+            labels=None,
+            due_date=None
+        )
+        assert result_update["success"] is False, "Updating task with no task_id should fail"
+        assert "required" in result_update["error"]
+
+    def test_invalid_action_parameters(self, consolidated_tools):
+        """Test invalid action parameter"""
+        result = consolidated_tools._handle_core_task_operations(
+            action="invalid_action",
+            task_id=None,
+            title=None,
             description=None,
             status=None,
             priority=None,
@@ -347,26 +383,5 @@ class TestMCPToolsErrorHandling:
             due_date=None
         )
         
-        # Should handle missing required parameters
         assert result["success"] is False
-        assert "error" in result
-
-    def test_invalid_action_parameters(self, consolidated_tools):
-        """Test with invalid action parameters"""
-        result = consolidated_tools._handle_core_task_operations(
-            action="invalid_action",
-            task_id=None,
-            title="Test Task",
-            description="Test description",
-            status=None,
-            priority=None,
-            details=None,
-            estimated_effort=None,
-            assignees=None,
-            labels=None,
-            due_date=None
-        )
-        
-        # Should handle invalid actions
-        assert result["success"] is False
-        assert "error" in result 
+        assert "invalid" in result["error"].lower() 

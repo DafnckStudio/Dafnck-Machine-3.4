@@ -37,7 +37,6 @@ def mcp_tools():
         ),
     ],
 )
-@pytest.mark.skip(reason="Label validation needs to be fixed")
 def test_create_task_edge_cases(mcp_tools, test_name, task_data, expected_error_msg):
     """Test creating a task with various edge cases."""
     result = mcp_tools._handle_core_task_operations(

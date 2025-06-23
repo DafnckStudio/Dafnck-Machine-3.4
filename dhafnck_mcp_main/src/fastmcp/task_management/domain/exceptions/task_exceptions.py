@@ -27,4 +27,12 @@ class InvalidTaskTransitionError(TaskDomainError):
     def __init__(self, current_status: str, target_status: str):
         self.current_status = current_status
         self.target_status = target_status
-        super().__init__(f"Cannot transition from '{current_status}' to '{target_status}'") 
+        super().__init__(f"Cannot transition from '{current_status}' to '{target_status}'")
+
+
+class AutoRuleGenerationError(TaskDomainError):
+    """Raised when auto rule generation fails"""
+
+    def __init__(self, message: str, original_exception: Exception = None):
+        self.original_exception = original_exception
+        super().__init__(message) 

@@ -34,7 +34,7 @@ from fastmcp.task_management.infrastructure import JsonTaskRepository, FileAutoR
 from fastmcp.task_management.interface.cursor_rules_tools import CursorRulesTools
 from fastmcp.task_management.domain.enums import CommonLabel, EstimatedEffort, AgentRole, LabelValidator
 from fastmcp.task_management.domain.enums.agent_roles import resolve_legacy_role
-from fastmcp.task_management.domain.exceptions import TaskNotFoundError
+from fastmcp.task_management.domain.exceptions import TaskNotFoundError, AutoRuleGenerationError
 from fastmcp.task_management.domain.repositories.task_repository import TaskRepository
 from fastmcp.task_management.domain.services.auto_rule_generator import AutoRuleGenerator
 from fastmcp.task_management.infrastructure.services.agent_converter import AgentConverter
@@ -529,184 +529,38 @@ class ConsolidatedMCPToolsV2:
             limit: int = None,
             force_full_generation: bool = False
         ) -> Dict[str, Any]:
-            """📋 TASK LIFECYCLE HUB - Core Task Management with Intelligent Automation
-
-            ✨ INSTANT CONTEXT: Handles the entire core task lifecycle, including creation, retrieval, updating, deletion, completion, listing, searching, and intelligent next-task recommendation. Integrates with the MCP system for project and agent coordination.
-            🎯 HUMAN USAGE: Developers managing work items, project managers tracking progress, team members updating status
-            🤖 AI USAGE: Task creation, context loading, progress updates, work prioritization, and recommendation
-
-            📋 CORE TASK LIFECYCLE ACTIONS:
-            🆕 CREATE: Initialize new work item with full metadata
-            • Input: action="create", title="Implement user authentication", priority="high"
-            • Output: Complete task object with auto-generated ID and timestamps
-            • AI Context: "I'm creating a new work item for development tracking"
-            🔍 GET: Load complete task details + auto-generate AI context
-            • Input: action="get", task_id="20250618001"
-            • Output: Full task object + auto-generated .cursor/rules/auto_rule.mdc
-            • AI Context: "I'm loading task context for focused development work"
-            ✏️ UPDATE: Modify any task properties with selective updates
-            • Input: action="update", task_id="20250618001", status="in_progress", assignee="@developer"
-            • Output: Updated task object with preserved unchanged fields
-            • AI Context: "I'm updating task progress and assignment information"
-            🗑️ DELETE: Permanently remove task and all associated data
-            • Input: action="delete", task_id="20250618001"
-            • Output: Confirmation of complete task removal including subtasks and dependencies
-            • AI Context: "I'm permanently removing this task and cleaning up all references"
-            ✅ COMPLETE: Finish task and auto-complete all subtasks
-            • Input: action="complete", task_id="20250618001"
-            • Output: Task marked done, all subtasks completed, dependent tasks unblocked
-            • AI Context: "I'm marking task as complete and handling all cleanup"
-            📋 LIST: Filter and discover tasks by multiple criteria
-            • Input: action="list", status="in_progress", priority="high", assignee="@me"
-            • Output: Filtered task list matching all specified criteria
-            • AI Context: "I'm finding tasks matching specific criteria for work planning"
-            🔍 SEARCH: Semantic search across all task content
-            • Input: action="search", query="authentication API security", limit=5
-            • Output: Relevance-ranked tasks matching search terms
-            • AI Context: "I'm finding tasks related to specific topics or requirements"
-            🎯 NEXT: Get intelligent work recommendation
-            • Input: action="next"
-            • Output: Optimal next task based on priorities, dependencies, and capacity
-            • AI Context: "I need intelligent recommendation for what to work on next"
-
-            ---
-            PARAMETER REQUIREMENTS BY ACTION:
-            - action (str, required): The operation to perform. One of: create, get, update, delete, complete, list, search, next
-            - task_id (str, required/optional):
-                • (required) for: get, update, delete, complete
-                • (optional) for: create, list, search, next
-            - title (str, required/optional):
-                • (required) for: create
-                • (optional) for: update
-            - description, status, priority, details, estimated_effort, assignees, labels, due_date: as before
-            - query (str, required for search)
-            - limit (int, optional)
-            ---
-            ENUMS:
-            - status: ['todo', 'in_progress', 'blocked', 'review', 'testing', 'done', 'cancelled']
-            - priority: ['low', 'medium', 'high', 'urgent', 'critical']
-            - estimated_effort: ['quick', 'short', 'small', 'medium', 'large', 'xlarge', 'epic', 'massive']
-            - assignees (AgentRole): [see AgentRole enum]
-            - labels (CommonLabel): [see CommonLabel enum]
-            ---
-            WHY USE THIS:
-            • Eliminates manual task tracking and status management overhead
-            • Provides automatic context generation for focused development work
-            • Handles complex task relationships and prioritization
-            • Enables intelligent work recommendation and progress tracking
-            • Maintains complete audit trail and progress visibility
-            ---
-            EXAMPLE USE CASES:
-            - Creating and managing feature, bugfix, or documentation tasks
-            - Updating task status and assignments during a sprint
-            - Searching for tasks by keyword, label, or assignee
-            - Getting the next recommended task for a developer
-            ---
-            OUTPUT STRUCTURE:
-            - create: {"success": True, "action": "create", "task": {...}}
-            - get: {"success": True, "action": "get", "task": {...}}
-            - update: {"success": True, "action": "update", "task": {...}}
-            - delete: {"success": True, "action": "delete", "message": ...}
-            - complete: {"success": True, "action": "complete", "task_id": ..., "message": ...}
-            - list: {"success": True, "tasks": [...], "count": ...}
-            - search: {"success": True, "tasks": [...], "count": ..., "query": ...}
-            - next: {"success": True, "action": "next", "recommended_task": {...}, "reasoning": ..., "message": ...}
-            
-            ---
-            NOTE: Subtask and dependency actions are now handled by the separate manage_subtask and dependency management tools.
             """
-            # ═══════════════════════════════════════════════════════════════════
-            # Route to the appropriate handler based on action
-            # ═══════════════════════════════════════════════════════════════════
+            Unified tool to manage tasks, subtasks, and dependencies.
+            Dispatches to appropriate handler based on action.
+            """
+            logger.debug(f"Received task management action: {action}")
+
+            core_actions = ["create", "get", "update", "delete", "complete"]
+            list_search_actions = ["list", "search", "next"]
+            dependency_actions = ["add_dependency", "remove_dependency"]
+
+            if action in core_actions:
+                return self._handle_core_task_operations(
+                    action=action, task_id=task_id, title=title, description=description,
+                    status=status, priority=priority, details=details,
+                    estimated_effort=estimated_effort, assignees=assignees,
+                    labels=labels, due_date=due_date, project_id=project_id,
+                    force_full_generation=force_full_generation
+                )
             
-            if action == "create" and not title:
-                return {"success": False, "error": "Title is required for creating a task."}
-            if labels and not all(LabelValidator.is_valid_label(label) for label in labels):
-                return {"success": False, "error": "Invalid label(s) provided"}
-            try:
-                if action == "create":
-                    request = CreateTaskRequest(
-                        title=title,
-                        description=description,
-                        project_id=project_id,
-                        status=status,
-                        priority=priority,
-                        details=details,
-                        estimated_effort=estimated_effort,
-                        assignees=assignees,
-                        labels=labels,
-                        due_date=due_date
-                    )
-                    response = self._task_app_service.create_task(request)
-                    logging.info(f"Create task response: {response}")
-                    if response.success:
-                        return {
-                            "success": True,
-                            "action": "create",
-                            "task": asdict(response.task) if response.task else None
-                        }
-                    else:
-                        return {
-                            "success": False,
-                            "action": "create",
-                            "error": response.message
-                        }
-                elif action == "get":
-                    task_response = self._task_app_service.get_task(task_id, generate_rules=True, force_full_generation=force_full_generation)
-                    if task_response:
-                        return {
-                            "success": True,
-                            "action": "get",
-                            "task": asdict(task_response)
-                        }
-                    else:
-                        return {"success": False, "action": "get", "error": f"Task with ID {task_id} not found."}
-                elif action == "update":
-                    request = UpdateTaskRequest(
-                        task_id=task_id,
-                        title=title,
-                        description=description,
-                        status=status,
-                        priority=priority,
-                        details=details,
-                        estimated_effort=estimated_effort,
-                        assignees=assignees,
-                        labels=labels,
-                        due_date=due_date
-                    )
-                    task_response = self._task_app_service.update_task(request)
-                    if task_response and task_response.success:
-                        return {
-                            "success": True,
-                            "action": "update",
-                            "task": asdict(task_response.task)
-                        }
-                    
-                    error_message = task_response.message if task_response else f"Task with ID {task_id} not found."
-                    return {"success": False, "action": "update", "error": error_message}
-                elif action == "delete":
-                    success = self._task_app_service.delete_task(task_id)
-                    if success:
-                        return {"success": True, "action": "delete"}
-                    else:
-                        return {"success": False, "action": "delete", "error": f"Task with ID {task_id} not found."}
-                elif action == "complete":
-                    return self._handle_complete_task(task_id)
-                elif action == "list":
-                    return self._handle_list_tasks(status, priority, assignees, labels, limit)
-                elif action == "search":
-                    return self._handle_search_tasks(query, limit)
-                elif action == "next":
-                    return self._handle_do_next()
-                elif action.endswith("_dependency"):
-                    return self._handle_dependency_operations(action, task_id, dependency_data)
-                else:
-                    return {"success": False, "error": f"Invalid task action: {action}"}
-            except Exception as e:
-                logging.error(f"Error in core task operation '{action}': {traceback.format_exc()}")
-                if "generate_rules_for_task" in traceback.format_exc():
-                    return {"success": False, "error": f"Error during auto rule generation: {e}"}
-                return {"success": False, "error": str(e)}
+            elif action in list_search_actions:
+                return self._handle_list_search_next(
+                    action=action, status=status, priority=priority, assignees=assignees,
+                    labels=labels, limit=limit, query=query
+                )
+
+            elif action in dependency_actions:
+                return self._handle_dependency_operations(
+                    action=action, task_id=task_id, dependency_data=dependency_data
+                )
+            
+            else:
+                return {"success": False, "error": f"Invalid task action: {action}"}
 
         @mcp.tool()
         def manage_subtask(
@@ -973,7 +827,11 @@ class ConsolidatedMCPToolsV2:
             Returns:
                 Dict with agent information and combined content from all YAML files
             """
-            return self._call_agent_use_case.execute(name_agent)
+            try:
+                return self._call_agent_use_case.execute(name_agent)
+            except Exception as e:
+                logging.error(f"Error getting agent metadata from YAML for {name_agent}: {e}")
+                return {"success": False, "error": f"Failed to get agent metadata: {e}"}
 
         logger.info("Finished registering all tools.")
 
@@ -983,141 +841,156 @@ class ConsolidatedMCPToolsV2:
     
     def _handle_core_task_operations(self, action, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date, project_id=None, force_full_generation=False):
         """Helper to manage core CRUD operations for tasks"""
+        logger.debug(f"Handling task action '{action}' with task_id '{task_id}'")
+
+        if labels:
+            try:
+                labels = LabelValidator.validate_labels(labels)
+            except ValueError as e:
+                return {"success": False, "error": f"Invalid label(s) provided: {e}"}
+
         try:
             if action == "create":
-                # Ensure description is not None for create action
-                request = CreateTaskRequest(
-                    title=title,
-                    description=description,
-                    project_id=project_id,
-                    status=status,
-                    priority=priority,
-                    details=details,
-                    estimated_effort=estimated_effort,
-                    assignees=assignees,
-                    labels=labels,
-                    due_date=due_date
-                )
-                response = self._task_app_service.create_task(request)
-                logging.info(f"Create task response: {response}")
-
-                is_success = False
-                task_data = None
-                error_message = 'Unknown error'
-
-                if isinstance(response, dict):
-                    is_success = response.get('success', False)
-                    task_data = response.get('task')
-                    error_message = response.get('error', 'Unknown error')
-                else:  # Assumes object
-                    is_success = getattr(response, 'success', False)
-                    task_data = getattr(response, 'task', None)
-                    error_message = getattr(response, 'message', 'Unknown error')
-
-                if is_success:
-                    return {
-                        "success": True,
-                        "action": "create",
-                        "task": asdict(task_data) if task_data and not isinstance(task_data, dict) else task_data
-                    }
-                else:
-                    return {
-                        "success": False,
-                        "action": "create",
-                        "error": error_message
-                    }
+                return self._core_create_task(title, description, project_id, status, priority, details, estimated_effort, assignees, labels, due_date)
+            elif action == "update":
+                return self._core_update_task(task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date)
             elif action == "get":
                 task_response = self._task_app_service.get_task(task_id, generate_rules=True, force_full_generation=force_full_generation)
                 if task_response:
-                    return {
-                        "success": True,
-                        "action": "get",
-                        "task": asdict(task_response)
-                    }
+                    return {"success": True, "action": "get", "task": asdict(task_response)}
                 else:
                     return {"success": False, "action": "get", "error": f"Task with ID {task_id} not found."}
-            elif action == "update":
-                request = UpdateTaskRequest(
-                    task_id=task_id,
-                    title=title,
-                    description=description,
-                    status=status,
-                    priority=priority,
-                    details=details,
-                    estimated_effort=estimated_effort,
-                    assignees=assignees,
-                    labels=labels,
-                    due_date=due_date
-                )
-                response = self._task_app_service.update_task(request)
-
-                is_success = False
-                task_data = None
-                error_message = f"Task with ID {task_id} not found."
-
-                if isinstance(response, dict):
-                    is_success = response.get('success', False)
-                    task_data = response.get('task')
-                    error_message = response.get('error', error_message)
-                elif response:  # Assumes object
-                    is_success = getattr(response, 'success', False)
-                    task_data = getattr(response, 'task', None)
-                    error_message = getattr(response, 'message', error_message)
-
-                if is_success:
-                    return {
-                        "success": True,
-                        "action": "update",
-                        "task": asdict(task_data) if task_data and not isinstance(task_data, dict) else task_data
-                    }
-                
-                return {"success": False, "action": "update", "error": error_message}
             elif action == "delete":
                 success = self._task_app_service.delete_task(task_id)
                 if success:
                     return {"success": True, "action": "delete"}
                 else:
                     return {"success": False, "action": "delete", "error": f"Task with ID {task_id} not found."}
+            elif action == "complete":
+                return self._handle_complete_task(task_id)
             else:
                 return {"success": False, "error": f"Invalid core action: {action}"}
-        except Exception as e:
-            logging.error(f"Error in core task operation '{action}': {traceback.format_exc()}")
-            if "generate_rules_for_task" in traceback.format_exc():
-                return {"success": False, "error": f"Error during auto rule generation: {e}"}
-            return {"success": False, "error": str(e)}
-
-    def _handle_complete_task(self, task_id):
-        """Helper to handle task completion"""
-        if not task_id:
-            return {"success": False, "error": "task_id is required for completing a task"}
-        
-        try:
-            response = self._task_app_service.complete_task(task_id)
-            
-            # Check if the response indicates success
-            if response.get("success", False):
-                return {
-                    "success": True,
-                    "action": "complete",
-                    "task_id": task_id,
-                    "message": response.get("message", f"Task {task_id} and all subtasks completed successfully"),
-                    "status": response.get("status"),
-                    "subtask_progress": response.get("subtask_progress")
-                }
-            else:
-                return {
-                    "success": False,
-                    "action": "complete",
-                    "task_id": task_id,
-                    "error": response.get("message", f"Failed to complete task {task_id}")
-                }
         except TaskNotFoundError as e:
             return {"success": False, "error": str(e)}
+        except ValueError as e:
+            # Catches validation errors for labels, etc.
+            return {"success": False, "error": str(e)}
+        except AutoRuleGenerationError as e:
+            logger.warning(f"Auto rule generation failed: {e}")
+            return {"success": False, "error": str(e)}
         except Exception as e:
-            return {"success": False, "error": f"Failed to complete task: {str(e)}"}
+            logger.error(f"An unexpected error occurred in _handle_core_task_operations: {e}\n{traceback.format_exc()}")
+            return {"success": False, "error": f"An unexpected error occurred: {str(e)}"}
+
+    def _core_create_task(self, title, description, project_id, status, priority, details, estimated_effort, assignees, labels, due_date):
+        if not title:
+            return {"success": False, "error": "Title is required for creating a task."}
+        
+        request = CreateTaskRequest(
+            title=title,
+            description=description,
+            project_id=project_id,
+            status=status,
+            priority=priority,
+            details=details,
+            estimated_effort=estimated_effort,
+            assignees=assignees,
+            labels=labels,
+            due_date=due_date
+        )
+        response = self._task_app_service.create_task(request)
+        logging.info(f"Create task response: {response}")
+
+        is_success = getattr(response, 'success', False)
+        task_data = getattr(response, 'task', None)
+        error_message = getattr(response, 'message', 'Unknown error')
+
+        if is_success:
+            return {
+                "success": True,
+                "action": "create",
+                "task": asdict(task_data) if task_data and not isinstance(task_data, dict) else task_data
+            }
+        else:
+            return {
+                "success": False,
+                "action": "create",
+                "error": error_message
+            }
+
+    def _core_update_task(self, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date):
+        """Core logic to update a task."""
+        if task_id is None:
+            return {"success": False, "error": "Task ID is required for update action"}
+        
+        try:
+            if labels:
+                labels = LabelValidator.validate_labels(labels)
+        except ValueError as e:
+            return {"success": False, "error": f"Invalid label(s) provided: {e}"}
+
+        request = UpdateTaskRequest(
+            task_id=task_id,
+            title=title,
+            description=description,
+            status=status,
+            priority=priority,
+            details=details,
+            estimated_effort=estimated_effort,
+            assignees=assignees,
+            labels=labels,
+            due_date=due_date
+        )
+        response = self._task_app_service.update_task(request)
+
+        is_success = False
+        task_data = None
+        error_message = f"Task with ID {task_id} not found."
+
+        if response:
+            is_success = getattr(response, 'success', False)
+            task_data = getattr(response, 'task', None)
+            error_message = getattr(response, 'message', error_message)
+
+        if is_success:
+            return {
+                "success": True,
+                "action": "update",
+                "task_id": task_id,
+                "task": asdict(task_data) if task_data and not isinstance(task_data, dict) else task_data
+            }
+        
+        return {"success": False, "action": "update", "error": error_message}
+
+    def _handle_complete_task(self, task_id):
+        """Handle completing a task"""
+        if not task_id:
+            return {"success": False, "error": "task_id is required for completing a task"}
+        try:
+            response = self._task_app_service.complete_task(task_id)
+            if response.get("success"):
+                response["action"] = "complete"
+            return response
+        except TaskNotFoundError:
+            return {"success": False, "error": f"Task with ID {task_id} not found."}
+        except Exception as e:
+            logger.error(f"Error completing task {task_id}: {e}")
+            return {"success": False, "error": str(e)}
+
+    def _handle_list_search_next(self, action, status, priority, assignees, labels, limit, query):
+        """Handle list, search, and next actions."""
+        if action == "list":
+            return self._handle_list_tasks(status, priority, assignees, labels, limit)
+        elif action == "search":
+            return self._handle_search_tasks(query, limit)
+        elif action == "next":
+            return self._handle_do_next()
+        else:
+            # This case should not be reached due to the dispatching in manage_task
+            return {"success": False, "error": "Invalid action for list/search/next"}
 
     def _handle_list_tasks(self, status, priority, assignees, labels, limit):
-        """Handle task listing with filters"""
+        """Handles listing tasks with optional filters."""
         try:
             request = ListTasksRequest(
                 status=status,

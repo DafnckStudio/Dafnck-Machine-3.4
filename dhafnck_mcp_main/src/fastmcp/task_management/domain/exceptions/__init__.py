@@ -1,8 +1,10 @@
 """Domain Exceptions"""
 
-from .task_exceptions import TaskNotFoundError, InvalidTaskStateError
+from .task_exceptions import TaskNotFoundError, InvalidTaskStateError, InvalidTaskTransitionError, AutoRuleGenerationError
 
 __all__ = [
     "TaskNotFoundError",
-    "InvalidTaskStateError"
+    "InvalidTaskStateError",
+    "InvalidTaskTransitionError",
+    "AutoRuleGenerationError"
 ] 
