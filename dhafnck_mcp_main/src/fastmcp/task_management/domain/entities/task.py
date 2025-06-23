@@ -633,7 +633,7 @@ class Task:
         # Return the subtask dictionary
         return subtask_data
     
-    def remove_subtask(self, subtask_id: Union[int, str]) -> bool:
+    def remove_subtask(self, subtask_id: Union[int, str]) -> None:
         """Remove a subtask by ID (supports both integer and hierarchical IDs)"""
         for i, subtask in enumerate(self.subtasks):
             current_id = subtask.get("id")
@@ -650,11 +650,10 @@ class Task:
                     new_value=removed_subtask,
                     updated_at=self.updated_at
                 ))
-                return True
-        # Return False for non-existent subtasks instead of raising error
-        return False
+                return
+        raise ValueError(f"Subtask with ID '{subtask_id}' not found")
     
-    def update_subtask(self, subtask_id: Union[int, str], updates: Dict[str, Any]) -> bool:
+    def update_subtask(self, subtask_id: Union[int, str], updates: Dict[str, Any]) -> None:
         """Update a subtask by ID (supports both integer and hierarchical IDs)"""
         for subtask in self.subtasks:
             current_id = subtask.get("id")
@@ -672,21 +671,20 @@ class Task:
                     new_value=subtask,
                     updated_at=self.updated_at
                 ))
-                return True
-        # Return False for non-existent subtasks instead of raising error
-        return False
+                return
+        raise ValueError(f"Subtask with ID '{subtask_id}' not found")
     
-    def complete_subtask(self, subtask_id: Union[int, str]) -> bool:
+    def complete_subtask(self, subtask_id: Union[int, str]) -> None:
         """Mark a subtask as completed (supports both integer and hierarchical IDs)"""
         # Handle both index-based and ID-based completion
         if isinstance(subtask_id, int) and subtask_id < len(self.subtasks):
             # Treat as index if it's a small integer within range
             self.subtasks[subtask_id]["completed"] = True
             self.updated_at = datetime.now(timezone.utc)
-            return True
+            return
         else:
-            # Treat as ID - returns False if not found
-            return self.update_subtask(subtask_id, {"completed": True})
+            # Treat as ID - will raise ValueError if not found via update_subtask
+            self.update_subtask(subtask_id, {"completed": True})
     
     def complete_task(self) -> None:
         """Complete the task by marking all subtasks as completed and setting status to done"""

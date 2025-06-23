@@ -137,20 +137,17 @@ class TestTaskEntityCoverageImprovement:
         assert retrieved["title"] == "Test Subtask"
         
         # Test update_subtask
-        success = task_entity.update_subtask(subtask_id, {"title": "Updated Subtask"})
-        assert success
+        task_entity.update_subtask(subtask_id, {"title": "Updated Subtask"})
         updated = task_entity.get_subtask(subtask_id)
         assert updated["title"] == "Updated Subtask"
         
         # Test complete_subtask
-        success = task_entity.complete_subtask(subtask_id)
-        assert success
+        task_entity.complete_subtask(subtask_id)
         completed = task_entity.get_subtask(subtask_id)
         assert completed["completed"] is True
         
         # Test remove_subtask
-        success = task_entity.remove_subtask(subtask_id)
-        assert success
+        task_entity.remove_subtask(subtask_id)
         assert len(task_entity.subtasks) == 0
     
     @pytest.mark.unit

@@ -79,9 +79,12 @@ class ManageSubtasksUseCase:
         if not task:
             raise TaskNotFoundError(f"Task {task_id} not found")
         
-        success = task.remove_subtask(subtask_id)
-        if success:
+        try:
+            task.remove_subtask(subtask_id)
             self._task_repository.save(task)
+            success = True
+        except ValueError:
+            success = False
         
         return {
             "success": success,
@@ -108,8 +111,8 @@ class ManageSubtasksUseCase:
         if request.assignee is not None:
             updates["assignee"] = request.assignee
         
-        success = task.update_subtask(request.subtask_id, updates)
-        if success:
+        try:
+            task.update_subtask(request.subtask_id, updates)
             self._task_repository.save(task)
             
             # Find the updated subtask
@@ -120,7 +123,7 @@ class ManageSubtasksUseCase:
                 subtask=updated_subtask,
                 progress=task.get_subtask_progress()
             )
-        else:
+        except ValueError:
             raise ValueError(f"Subtask {request.subtask_id} not found in task {request.task_id}")
     
     def complete_subtask(self, task_id: Union[str, int], subtask_id: Union[str, int]) -> Dict[str, Any]:
@@ -131,9 +134,12 @@ class ManageSubtasksUseCase:
         if not task:
             raise TaskNotFoundError(f"Task {task_id} not found")
         
-        success = task.complete_subtask(subtask_id)
-        if success:
+        try:
+            task.complete_subtask(subtask_id)
             self._task_repository.save(task)
+            success = True
+        except ValueError:
+            success = False
         
         return {
             "success": success,
