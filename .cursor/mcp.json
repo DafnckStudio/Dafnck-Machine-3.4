@@ -7,7 +7,9 @@
       ],
       "cwd": "/home/daihungpham/agentic-project",
       "env": {
-        "PYTHONPATH": "/home/daihungpham/agentic-project/dhafnck_mcp_main/src"
+        "PYTHONPATH": "/home/daihungpham/agentic-project/dhafnck_mcp_main/src",
+        "TASKS_JSON_PATH": "/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json",
+        "TASKS_JSON_BACKUP_PATH": "/home/daihungpham/agentic-project/.cursor/rules/tasks/backup"
       }
     }
   }
