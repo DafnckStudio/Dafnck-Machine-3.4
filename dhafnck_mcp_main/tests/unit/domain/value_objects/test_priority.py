@@ -1,4 +1,8 @@
-"""Unit tests for Priority value object"""
+"""
+This is the canonical and only maintained unit test suite for the Priority value object.
+All unit tests for Priority should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 
 import pytest
 from fastmcp.task_management.domain.value_objects.priority import Priority

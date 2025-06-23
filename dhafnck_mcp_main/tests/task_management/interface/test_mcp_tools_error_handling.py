@@ -1,4 +1,8 @@
-"""Comprehensive error handling tests for MCP tools to improve coverage from 52% to 75%+"""
+"""
+This is the canonical and only maintained test suite for MCP tools error handling in task management.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 
 import sys
 import os

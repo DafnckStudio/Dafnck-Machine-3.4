@@ -1,4 +1,8 @@
-"""Comprehensive tests for TaskTree domain entity to improve coverage."""
+"""
+This is the canonical and only maintained test suite for TaskTree entity.
+All CRUD, validation, and edge-case tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 
 import sys
 import os

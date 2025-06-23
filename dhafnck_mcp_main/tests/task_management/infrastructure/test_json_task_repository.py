@@ -1,4 +1,8 @@
-"""Comprehensive tests for JsonTaskRepository"""
+"""
+This is the canonical and only maintained test suite for JsonTaskRepository.
+All CRUD, search, statistics, and edge-case tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 
 import sys
 import os
@@ -513,6 +517,12 @@ class TestJsonTaskRepository:
         repo2 = JsonTaskRepository(file_path=temp_tasks_file)
         tasks = repo2.find_all()
         assert tasks == []  # Should start fresh after corruption
+    
+    def test_repository_uses_env_var_path(self, temp_tasks_file):
+        """Test that JsonTaskRepository uses TASK_MANAGEMENT_TASKS_PATH env var if set."""
+        os.environ["TASK_MANAGEMENT_TASKS_PATH"] = temp_tasks_file
+        repo = JsonTaskRepository()
+        assert repo._file_path == os.path.abspath(temp_tasks_file)
 
 
 if __name__ == "__main__":

@@ -1,3 +1,8 @@
+"""
+This is the canonical and only maintained test suite for tool argument transformation and proxying.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 import re
 from dataclasses import dataclass
 from typing import Annotated, Any

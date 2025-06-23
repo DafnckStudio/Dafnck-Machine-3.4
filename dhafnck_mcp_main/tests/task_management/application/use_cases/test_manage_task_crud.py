@@ -1,5 +1,7 @@
 """
-Integration tests for the manage_task tool's CRUD operations.
+This is the canonical and only maintained test suite for the MCP task CRUD tool interface.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
 """
 
 import pytest

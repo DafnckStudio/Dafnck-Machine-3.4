@@ -1,6 +1,7 @@
 """
-Comprehensive test suite for DoNext use case to improve coverage from 53% to >90%
-Covers all execution paths, edge cases, and business logic validation
+This is the canonical and only maintained test suite for the DoNext use case.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
 """
 import sys
 import os

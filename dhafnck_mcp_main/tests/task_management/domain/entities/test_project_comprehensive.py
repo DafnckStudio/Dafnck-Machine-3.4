@@ -1,6 +1,7 @@
 """
-Comprehensive test suite for Project entity to improve coverage from 39% to >90%
-Covers all methods, properties, edge cases, and business logic validation
+This is the canonical and only maintained test suite for Project entity.
+All CRUD, validation, and edge-case tests should be added here.
+Redundant or duplicate tests in other files have been removed.
 """
 import sys
 import os

@@ -1,4 +1,8 @@
 """
+This is the canonical and only maintained test suite for migration integration tests in task management.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+
 Migration Integration Tests - Task Management Module
 Validates comprehensive migration to FastMCP framework
 

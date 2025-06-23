@@ -1,3 +1,8 @@
+"""
+This is the canonical and only maintained test suite for end-to-end journey integration tests in task management.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))

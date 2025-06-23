@@ -1,7 +1,7 @@
 """
-Unit Test: Business Rules Testing
-Task 2.2 - Business Rules and Domain Invariants Validation
-Duration: 1.5 hours
+This is the canonical and only maintained test suite for all domain business rules/services.
+All business rule, invariant, and edge-case tests should be added here.
+Redundant or duplicate tests in other files have been removed.
 """
 
 import pytest

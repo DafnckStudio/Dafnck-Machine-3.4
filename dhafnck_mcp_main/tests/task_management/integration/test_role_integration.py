@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """
+This is the canonical and only maintained test suite for role-based integration tests in task management.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+
 Integration tests for YAML role system integration with task management.
 Tests role assignment, persona generation, and integration with auto rule generation.
 """

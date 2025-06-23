@@ -1,4 +1,8 @@
-"""Comprehensive tests for enum classes to improve coverage - easy wins"""
+"""
+This is the canonical and only maintained test suite for all domain enums.
+All validation, conversion, and edge-case tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 
 import sys
 import os

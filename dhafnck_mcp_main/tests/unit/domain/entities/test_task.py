@@ -1,4 +1,8 @@
-"""Unit tests for Task domain entity"""
+"""
+This is the canonical and only maintained unit test suite for the Task domain entity.
+All unit tests for Task should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 
 import pytest
 from datetime import datetime

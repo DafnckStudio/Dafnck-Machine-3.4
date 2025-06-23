@@ -1,4 +1,8 @@
-"""Integration Tests for Subtask and Dependency MCP Tools"""
+"""
+This is the canonical and only maintained test suite for subtask dependency MCP integration tests in task management.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 
 import sys
 import os

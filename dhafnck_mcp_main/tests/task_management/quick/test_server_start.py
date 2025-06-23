@@ -1,7 +1,7 @@
 """
-Quick Test: MCP Server Startup Validation
-Task 1.1 - MCP Server Startup Testing (Part 2)
-Duration: < 30 seconds
+This is the canonical and only maintained quick test suite for server start validation in task management.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
 """
 
 import pytest

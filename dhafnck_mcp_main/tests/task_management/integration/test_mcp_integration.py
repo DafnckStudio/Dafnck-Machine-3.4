@@ -1,7 +1,7 @@
 """
-Integration Test: MCP Server Integration
-Task 1 - MCP Server Core Functionality Testing (Integration)
-Duration: 2-3 minutes
+This is the canonical and only maintained test suite for MCP integration tests in task management.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
 """
 
 import pytest

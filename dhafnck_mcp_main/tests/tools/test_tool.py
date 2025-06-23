@@ -1,3 +1,8 @@
+"""
+This is the canonical and only maintained test suite for the Tool class and function tool registration.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 import pytest
 from mcp.types import (
     AudioContent,

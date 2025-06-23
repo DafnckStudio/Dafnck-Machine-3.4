@@ -1,3 +1,8 @@
+"""
+This is the canonical and only maintained test suite for the ToolManager class and tool management.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 import json
 import logging
 import uuid

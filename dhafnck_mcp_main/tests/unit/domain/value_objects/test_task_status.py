@@ -1,4 +1,8 @@
-"""Unit tests for TaskStatus value object"""
+"""
+This is the canonical and only maintained unit test suite for the TaskStatus value object.
+All unit tests for TaskStatus should be added here.
+Redundant or duplicate tests in other files have been removed.
+"""
 
 import pytest
 from fastmcp.task_management.domain.value_objects.task_status import TaskStatus

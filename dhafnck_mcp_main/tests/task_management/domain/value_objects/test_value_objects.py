@@ -1,7 +1,7 @@
 """
-Unit Test: Value Objects Testing
-Task 2.1 - Domain Value Objects Validation
-Duration: Part of 1.5 hours
+This is the canonical and only maintained test suite for all domain value objects.
+All validation, conversion, and edge-case tests should be added here.
+Redundant or duplicate tests in other files have been removed.
 """
 
 import pytest

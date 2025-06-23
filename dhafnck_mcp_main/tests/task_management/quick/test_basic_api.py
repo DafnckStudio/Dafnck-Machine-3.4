@@ -1,7 +1,7 @@
 """
-Quick Test: Basic API Response Validation
-Task 1.3 - Basic CRUD Operations Testing (Part 1)
-Duration: < 30 seconds
+This is the canonical and only maintained quick test suite for basic API validation in task management.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
 """
 
 import pytest

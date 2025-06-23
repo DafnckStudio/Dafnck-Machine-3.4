@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """
+This is the canonical and only maintained test suite for multi-agent orchestration workflow integration tests in task management.
+All validation, edge-case, and integration tests should be added here.
+Redundant or duplicate tests in other files have been removed.
+
 Comprehensive tests for Multi-Agent Orchestration Workflows
 Tests end-to-end orchestration scenarios and complex workflows
 """
