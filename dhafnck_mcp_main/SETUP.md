@@ -18,7 +18,7 @@ The file is located at `~/.cursor/mcp.json`. This is in your home directory, und
 
 ### Step 2: Add the server configuration
 
-Open `~/.cursor/mcp.json` in a text editor. It will contain a JSON object. You need to add the `task_management` server configuration to this object.
+Open `~/.cursor/mcp.json` in a text editor. It will contain a JSON object. You need to add the `dhafnck_mcp` server configuration to this object.
 
 Copy the entire content of the `mcp_config.json` file from this project and merge it into your `~/.cursor/mcp.json` file.
 
@@ -26,10 +26,10 @@ For your convenience, here is the required configuration:
 
 ```json
 {
-    "task_management": {
+    "dhafnck_mcp": {
       "command": "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
       "args": [
-        "/home/daihungpham/agentic-project/dhafnck_mcp_main/src/fastmcp/task_management/interface/consolidated_mcp_server.py"
+        "/home/daihungpham/agentic-project/dhafnck_mcp_main/src/fastmcp/dhafnck_mcp/interface/consolidated_mcp_server.py"
       ],
       "cwd": "/home/daihungpham/agentic-project/dhafnck_mcp_main",
       "env": {
@@ -40,7 +40,7 @@ For your convenience, here is the required configuration:
 ```
 
 **Important**: 
-- If your `mcp.json` file already has other servers configured, simply add `task_management` as a new key to the main JSON object.
+- If your `mcp.json` file already has other servers configured, simply add `dhafnck_mcp` as a new key to the main JSON object.
 - The paths in this configuration are absolute and specific to the username `daihungpham`. If you are running this on a different machine or with a different username, you will need to update the paths accordingly.
 
 ## 3. Verification
@@ -56,7 +56,7 @@ To ensure that Cursor picks up the new configuration, it's best to restart the a
 The `dhafnck_mcp` server comes with a built-in diagnostic tool. To use it, open an AI chat in Cursor and send the following message:
 
 ```
-@task_management
+@dhafnck_mcp
 ```
 
 Then, in a new message, call the `manage_project` tool with the `diagnostic` action:
@@ -72,7 +72,7 @@ If the server is running correctly, you should receive a response indicating tha
 You can also use the MCP Inspector to test the server connection. Run the following command in your terminal from the project root:
 
 ```bash
-DANGEROUSLY_OMIT_AUTH=true npx @modelcontextprotocol/inspector .venv/bin/python src/fastmcp/task_management/interface/consolidated_mcp_server.py
+DANGEROUSLY_OMIT_AUTH=true npx @modelcontextprotocol/inspector .venv/bin/python src/fastmcp/dhafnck_mcp/interface/consolidated_mcp_server.py
 ```
 
 This will launch a web interface (usually at `http://127.0.0.1:6274/#tools`) where you can see all the registered tools and interact with them.

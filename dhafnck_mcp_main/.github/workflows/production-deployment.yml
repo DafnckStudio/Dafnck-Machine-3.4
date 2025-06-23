@@ -53,7 +53,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           uv run pytest \
-            --cov=src/fastmcp/task_management \
+            --cov=src/fastmcp/dhafnck_mcp \
             --cov-report=term-missing \
             --cov-report=json \
             --cov-report=html \

@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 import pytest
 import logging
 from unittest.mock import Mock, patch, MagicMock
-from fastmcp.task_management.interface.consolidated_mcp_server import (
+from fastmcp.dhafnck_mcp.interface.consolidated_mcp_server import (
     create_consolidated_mcp_server,
     main
 )
@@ -17,8 +17,8 @@ from fastmcp.task_management.interface.consolidated_mcp_server import (
 class TestConsolidatedMCPServer:
     """Test the consolidated MCP server functionality"""
     
-    @patch('fastmcp.task_management.interface.consolidated_mcp_server.FastMCP')
-    @patch('fastmcp.task_management.interface.consolidated_mcp_server.ConsolidatedMCPToolsV2')
+    @patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_server.FastMCP')
+    @patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_server.ConsolidatedMCPToolsV2')
     def test_create_consolidated_mcp_server(self, mock_tools_class, mock_fastmcp_class):
         """Test creating the consolidated MCP server"""
         # Setup mocks
@@ -41,8 +41,8 @@ class TestConsolidatedMCPServer:
         # Verify the MCP instance is returned
         assert result == mock_mcp
     
-    @patch('fastmcp.task_management.interface.consolidated_mcp_server.mcp_instance')
-    @patch('fastmcp.task_management.interface.consolidated_mcp_server.logging')
+    @patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_server.mcp_instance')
+    @patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_server.logging')
     def test_main_success(self, mock_logging, mock_mcp_instance):
         """Test main function successful execution"""
         # Setup mocks
@@ -57,8 +57,8 @@ class TestConsolidatedMCPServer:
         # Verify server run was called
         mock_mcp_instance.run.assert_called_once()
     
-    @patch('fastmcp.task_management.interface.consolidated_mcp_server.mcp_instance')
-    @patch('fastmcp.task_management.interface.consolidated_mcp_server.logging')
+    @patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_server.mcp_instance')
+    @patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_server.logging')
     def test_main_keyboard_interrupt(self, mock_logging, mock_mcp_instance):
         """Test main function handles KeyboardInterrupt gracefully"""
         # Setup mocks
@@ -76,8 +76,8 @@ class TestConsolidatedMCPServer:
         # Verify info message was logged
         mock_logging.info.assert_called_once_with("Consolidated server stopped by user")
     
-    @patch('fastmcp.task_management.interface.consolidated_mcp_server.mcp_instance')
-    @patch('fastmcp.task_management.interface.consolidated_mcp_server.logging')
+    @patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_server.mcp_instance')
+    @patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_server.logging')
     def test_main_generic_exception(self, mock_logging, mock_mcp_instance):
         """Test main function handles generic exceptions"""
         # Setup mocks
@@ -103,18 +103,18 @@ class TestConsolidatedMCPServer:
         """Test that the module imports successfully without sys.path modification"""
         # The consolidated_mcp_server module uses proper package imports
         # and doesn't need sys.path modification
-        import fastmcp.task_management.interface.consolidated_mcp_server
+        import fastmcp.dhafnck_mcp.interface.consolidated_mcp_server
         
         # Verify the module has the expected functions
-        assert hasattr(fastmcp.task_management.interface.consolidated_mcp_server, 'create_consolidated_mcp_server')
-        assert hasattr(fastmcp.task_management.interface.consolidated_mcp_server, 'main')
+        assert hasattr(fastmcp.dhafnck_mcp.interface.consolidated_mcp_server, 'create_consolidated_mcp_server')
+        assert hasattr(fastmcp.dhafnck_mcp.interface.consolidated_mcp_server, 'main')
         
         # If we get here, the import succeeded without sys.path manipulation
         assert True
     
     def test_module_docstring(self):
         """Test that the module has proper documentation"""
-        import fastmcp.task_management.interface.consolidated_mcp_server as module
+        import fastmcp.dhafnck_mcp.interface.consolidated_mcp_server as module
         
         assert module.__doc__ is not None
         assert "Consolidated DDD-based MCP Server with Multi-Agent Support" in module.__doc__ 

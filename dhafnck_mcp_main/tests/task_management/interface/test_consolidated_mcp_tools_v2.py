@@ -17,17 +17,17 @@ from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 from datetime import datetime, timezone
 
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import (
+from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import (
     ConsolidatedMCPToolsV2,
     SimpleMultiAgentTools,
     find_project_root,
     ensure_brain_dir
 )
-from fastmcp.task_management.infrastructure import InMemoryTaskRepository, FileAutoRuleGenerator
-from fastmcp.task_management.domain.entities.task import Task
-from fastmcp.task_management.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
-from fastmcp.task_management.domain.value_objects.priority import Priority, PriorityLevel
-from fastmcp.task_management.domain.enums import AgentRole
+from fastmcp.dhafnck_mcp.infrastructure import InMemoryTaskRepository, FileAutoRuleGenerator
+from fastmcp.dhafnck_mcp.domain.entities.task import Task
+from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
+from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority, PriorityLevel
+from fastmcp.dhafnck_mcp.domain.enums import AgentRole
 
 
 class TestFindProjectRoot:
@@ -44,7 +44,7 @@ class TestFindProjectRoot:
             # Mock the current file location to be deep inside the project
             nested_file = project_root / "some" / "nested" / "dir" / "file.py"
             
-            with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.os.path.abspath') as mock_abspath:
+            with patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.os.path.abspath') as mock_abspath:
                 mock_abspath.return_value = str(nested_file)
                 
                 result = find_project_root()
@@ -60,7 +60,7 @@ class TestFindProjectRoot:
             mock_abspath.side_effect = ['/some/deep/nested/file.py', '/current/directory']
             
             # Mock Path to control the traversal behavior
-            with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.Path') as mock_path_class:
+            with patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.Path') as mock_path_class:
                 # Create mock path instances
                 def create_mock_path(path_str):
                     mock_path = Mock()
@@ -104,7 +104,7 @@ class TestFindProjectRoot:
         with tempfile.TemporaryDirectory() as temp_dir:
             brain_dir = os.path.join(temp_dir, "brain")
             
-            with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.BRAIN_DIR', brain_dir):
+            with patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.BRAIN_DIR', brain_dir):
                 ensure_brain_dir()
                 assert os.path.exists(brain_dir)
 
@@ -135,8 +135,8 @@ class TestSimpleMultiAgentTools:
     
     def test_init_with_default_paths(self):
         """Test initialization with default paths"""
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.BRAIN_DIR', '/tmp/brain'):
-            with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.PROJECTS_FILE', '/tmp/projects.json'):
+        with patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.BRAIN_DIR', '/tmp/brain'):
+            with patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.PROJECTS_FILE', '/tmp/projects.json'):
                 tools = SimpleMultiAgentTools()
                 assert tools._brain_dir == '/tmp/brain'
                 assert tools._projects_file == '/tmp/projects.json'
@@ -383,8 +383,8 @@ class TestConsolidatedMCPToolsV2:
     
     def test_init_with_default_dependencies(self):
         """Test initialization with default dependencies"""
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo:
-            with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_generator:
+        with patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo:
+            with patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_generator:
                 mock_repo.return_value = Mock()
                 mock_generator.return_value = Mock()
                 

@@ -1,8 +1,8 @@
 {
-    "task_management": {
+    "dhafnck_mcp": {
       "command": "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
       "args": [
-        "/home/daihungpham/agentic-project/dhafnck_mcp_main/src/fastmcp/task_management/interface/consolidated_mcp_server.py"
+        "/home/daihungpham/agentic-project/dhafnck_mcp_main/src/fastmcp/dhafnck_mcp/interface/consolidated_mcp_server.py"
       ],
       "cwd": "/home/daihungpham/agentic-project/dhafnck_mcp_main",
       "env": {

@@ -17,12 +17,12 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
-from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
-from fastmcp.task_management.interface.mcp_tools import MCPTaskTools
-from fastmcp.task_management.domain.entities.task import Task
-from fastmcp.task_management.domain.value_objects.task_id import TaskId
-from fastmcp.task_management.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
-from fastmcp.task_management.domain.value_objects.priority import Priority, PriorityLevel
+from fastmcp.dhafnck_mcp.interface.ddd_mcp_server import create_mcp_server
+from fastmcp.dhafnck_mcp.interface.mcp_tools import MCPTaskTools
+from fastmcp.dhafnck_mcp.domain.entities.task import Task
+from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
+from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority, PriorityLevel
 
 
 @pytest.fixture
@@ -42,7 +42,7 @@ def sample_config():
     """Sample configuration for tests."""
     return {
         "server": {
-            "name": "task_management",
+            "name": "dhafnck_mcp",
             "version": "1.0.0"
         },
         "storage": {
@@ -50,7 +50,7 @@ def sample_config():
             "path": ".cursor/rules/tasks/tasks.json"
         },
         "features": {
-            "task_management": True,
+            "dhafnck_mcp": True,
             "rule_generation": True,
             "yaml_roles": True
         }

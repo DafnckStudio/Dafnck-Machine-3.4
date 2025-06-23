@@ -12,11 +12,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 import pytest
 from datetime import datetime
 from unittest.mock import Mock, patch
-from fastmcp.task_management.domain.entities.task_tree import TaskTree
-from fastmcp.task_management.domain.entities.task import Task
-from fastmcp.task_management.domain.value_objects.task_id import TaskId
-from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
-from fastmcp.task_management.domain.value_objects.priority import Priority
+from fastmcp.dhafnck_mcp.domain.entities.task_tree import TaskTree
+from fastmcp.dhafnck_mcp.domain.entities.task import Task
+from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
 
 
 class TestTaskTreeEntity:
@@ -302,7 +302,7 @@ class TestTaskTreeEntity:
         
         # Mock datetime.now to return a later time
         future_time = initial_updated.replace(microsecond=initial_updated.microsecond + 1000)
-        with patch('fastmcp.task_management.domain.entities.task_tree.datetime') as mock_datetime:
+        with patch('fastmcp.dhafnck_mcp.domain.entities.task_tree.datetime') as mock_datetime:
             mock_datetime.now.return_value = future_time
             self.task_tree.resume_tree()
         
@@ -339,7 +339,7 @@ class TestTaskTreeEntity:
             }
         ]
         
-        with patch('fastmcp.task_management.domain.entities.task_tree.Task') as mock_task_class:
+        with patch('fastmcp.dhafnck_mcp.domain.entities.task_tree.Task') as mock_task_class:
             # Mock the Task.create method
             mock_subtask1 = Mock()
             mock_subtask2 = Mock()

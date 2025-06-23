@@ -9,7 +9,7 @@ import sys
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
 
 @pytest.fixture
 def mcp_tools():

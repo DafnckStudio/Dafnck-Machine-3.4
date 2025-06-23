@@ -7,13 +7,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 
 import pytest
 from datetime import datetime
-from fastmcp.task_management.domain import Task, TaskId, TaskStatus, Priority
-from fastmcp.task_management.application.use_cases.manage_dependencies import (
+from fastmcp.dhafnck_mcp.domain import Task, TaskId, TaskStatus, Priority
+from fastmcp.dhafnck_mcp.application.use_cases.manage_dependencies import (
     ManageDependenciesUseCase, 
     AddDependencyRequest
 )
-from fastmcp.task_management.infrastructure.repositories.json_task_repository import InMemoryTaskRepository
-from fastmcp.task_management.domain.exceptions import TaskNotFoundError
+from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import InMemoryTaskRepository
+from fastmcp.dhafnck_mcp.domain.exceptions import TaskNotFoundError
 
 
 class TestDependencyManagement:

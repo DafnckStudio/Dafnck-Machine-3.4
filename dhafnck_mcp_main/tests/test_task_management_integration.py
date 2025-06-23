@@ -43,8 +43,8 @@ def task_management_tools(temp_project_dir):
     sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
     
     try:
-        from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
-        from fastmcp.task_management.infrastructure import InMemoryTaskRepository, FileAutoRuleGenerator
+        from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+        from fastmcp.dhafnck_mcp.infrastructure import InMemoryTaskRepository, FileAutoRuleGenerator
         
         # Create test projects file
         projects_file = temp_project_dir / "projects.json"

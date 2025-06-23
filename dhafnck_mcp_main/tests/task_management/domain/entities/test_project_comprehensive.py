@@ -12,9 +12,9 @@ import pytest
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from fastmcp.task_management.domain.entities.project import Project
-from fastmcp.task_management.domain.entities.task_tree import TaskTree
-from fastmcp.task_management.domain.entities.agent import Agent
+from fastmcp.dhafnck_mcp.domain.entities.project import Project
+from fastmcp.dhafnck_mcp.domain.entities.task_tree import TaskTree
+from fastmcp.dhafnck_mcp.domain.entities.agent import Agent
 
 
 class TestProjectEntityComprehensive:

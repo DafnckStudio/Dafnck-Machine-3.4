@@ -5,7 +5,7 @@ Redundant or duplicate tests in other files have been removed.
 """
 
 import pytest
-from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
+from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
 
 
 def test_create_valid_status():

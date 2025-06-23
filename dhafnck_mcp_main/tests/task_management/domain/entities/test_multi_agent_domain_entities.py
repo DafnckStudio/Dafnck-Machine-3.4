@@ -13,14 +13,14 @@ from unittest.mock import Mock, patch
 # Add the src directory to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
-from fastmcp.task_management.domain.entities.project import Project
-from fastmcp.task_management.domain.entities.agent import Agent, AgentCapability, AgentStatus
-from fastmcp.task_management.domain.entities.task_tree import TaskTree
-from fastmcp.task_management.domain.entities.work_session import WorkSession, SessionStatus
-from fastmcp.task_management.domain.entities.task import Task
-from fastmcp.task_management.domain.value_objects.task_id import TaskId
-from fastmcp.task_management.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
-from fastmcp.task_management.domain.value_objects.priority import Priority, PriorityLevel
+from fastmcp.dhafnck_mcp.domain.entities.project import Project
+from fastmcp.dhafnck_mcp.domain.entities.agent import Agent, AgentCapability, AgentStatus
+from fastmcp.dhafnck_mcp.domain.entities.task_tree import TaskTree
+from fastmcp.dhafnck_mcp.domain.entities.work_session import WorkSession, SessionStatus
+from fastmcp.dhafnck_mcp.domain.entities.task import Task
+from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
+from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority, PriorityLevel
 
 
 class TestProjectEntity:

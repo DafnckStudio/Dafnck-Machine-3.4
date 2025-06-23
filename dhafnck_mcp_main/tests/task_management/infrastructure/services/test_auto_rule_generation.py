@@ -14,14 +14,14 @@ from pathlib import Path
 import shutil
 
 # Import domain and infrastructure classes
-from fastmcp.task_management.domain.entities.task import Task
-from fastmcp.task_management.domain.value_objects.task_id import TaskId
-from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
-from fastmcp.task_management.domain.value_objects.priority import Priority
-from fastmcp.task_management.domain.events.task_events import TaskRetrieved
-from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
-from fastmcp.task_management.application.use_cases.get_task import GetTaskUseCase
-from fastmcp.task_management.domain.exceptions import TaskNotFoundError
+from fastmcp.dhafnck_mcp.domain.entities.task import Task
+from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
+from fastmcp.dhafnck_mcp.domain.events.task_events import TaskRetrieved
+from fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
+from fastmcp.dhafnck_mcp.application.use_cases.get_task import GetTaskUseCase
+from fastmcp.dhafnck_mcp.domain.exceptions import TaskNotFoundError
 
 
 class TestAutoRuleGeneration:

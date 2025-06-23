@@ -14,7 +14,7 @@ from unittest.mock import Mock, patch, mock_open
 
 import pytest
 
-from fastmcp.task_management.infrastructure.services.legacy.project_analyzer.file_operations import FileOperations
+from fastmcp.dhafnck_mcp.infrastructure.services.legacy.project_analyzer.file_operations import FileOperations
 
 
 class TestFileOperations:

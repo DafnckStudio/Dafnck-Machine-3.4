@@ -55,7 +55,7 @@ dhafnck_mcp_main/
 │       ├── 📁 prompts/            # MCP Prompt templates
 │       ├── 📁 utilities/          # Shared utilities and types
 │       ├── 📁 contrib/            # Community contributions
-│       └── 📁 task_management/    # Integrated task management (DDD architecture)
+│       └── 📁 dhafnck_mcp/    # Integrated task management (DDD architecture)
 │           ├── 📁 domain/         # Domain layer (business logic)
 │           │   ├── 📁 entities/   # Core business entities (Task, Agent, Project, TaskTree)
 │           │   ├── 📁 value_objects/ # Domain value objects (TaskId, Status, Priority)
@@ -88,7 +88,7 @@ dhafnck_mcp_main/
 │   ├── 📁 prompts/                # MCP prompts tests
 │   ├── 📁 utilities/              # Utilities tests
 │   ├── 📁 contrib/                # Community contributions tests
-│   ├── 📁 task_management/        # Task management integration tests
+│   ├── 📁 dhafnck_mcp/        # Task management integration tests
 │   ├── 📁 test_servers/           # Test server implementations
 │   ├── 📁 unit/                   # Isolated unit tests
 │   └── 📁 deprecated/             # Legacy test preservation
@@ -163,13 +163,13 @@ Exposes the `dhafnck_mcp` command with various subcommands for server management
 - Parameter substitution
 - Prompt validation and formatting
 
-### 5. Task Management Integration (`src/fastmcp/task_management/`)
+### 5. Task Management Integration (`src/fastmcp/dhafnck_mcp/`)
 **Purpose**: Complete task management system with Domain-Driven Design (DDD) architecture
 
 This is a fully integrated task management system that follows DDD principles and exposes its functionality through MCP tools.
 
 ```
-task_management/
+dhafnck_mcp/
 ├── 📁 domain/                     # Domain layer (business logic)
 │   ├── 📁 entities/               # Core business entities
 │   │   ├── 📄 task.py             # Task entity with business rules
@@ -237,7 +237,7 @@ tests/
 ├── 📁 prompts/                    # MCP prompts tests
 ├── 📁 utilities/                  # Utilities tests
 ├── 📁 contrib/                    # Community contributions tests
-├── 📁 task_management/            # Task management specific tests
+├── 📁 dhafnck_mcp/            # Task management specific tests
 ├── 📁 test_servers/               # Test server implementations
 ├── 📁 unit/                       # Isolated unit tests
 └── 📁 deprecated/                 # Legacy test preservation
@@ -433,7 +433,7 @@ if __name__ == "__main__":
 ### Task Management Integration
 ```python
 from fastmcp import FastMCP
-from fastmcp.task_management import TaskManager
+from fastmcp.dhafnck_mcp import TaskManager
 
 # Create MCP server with task management
 app = FastMCP("task-server")

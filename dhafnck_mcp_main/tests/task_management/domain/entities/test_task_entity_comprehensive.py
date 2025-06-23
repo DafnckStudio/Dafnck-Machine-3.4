@@ -13,10 +13,10 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock, patch
 
-from fastmcp.task_management.domain.entities.task import Task
-from fastmcp.task_management.domain.value_objects import TaskId, TaskStatus, Priority
-from fastmcp.task_management.domain.events.task_events import TaskCreated, TaskUpdated, TaskDeleted, TaskRetrieved
-from fastmcp.task_management.application.use_cases.get_task import GetTaskUseCase
+from fastmcp.dhafnck_mcp.domain.entities.task import Task
+from fastmcp.dhafnck_mcp.domain.value_objects import TaskId, TaskStatus, Priority
+from fastmcp.dhafnck_mcp.domain.events.task_events import TaskCreated, TaskUpdated, TaskDeleted, TaskRetrieved
+from fastmcp.dhafnck_mcp.application.use_cases.get_task import GetTaskUseCase
 
 
 class TestTaskCreation:

@@ -7,7 +7,7 @@ Redundant or duplicate tests in other files have been removed.
 import pytest
 from datetime import datetime
 
-from fastmcp.task_management.domain.value_objects.task_id import TaskId
+from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
 
 
 class TestTaskIdCreation:

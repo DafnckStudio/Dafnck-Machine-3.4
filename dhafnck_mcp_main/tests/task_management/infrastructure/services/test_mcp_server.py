@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 
 # Import the module under test
 import fastmcp.server.main_server as mcp_server
-from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
+from fastmcp.dhafnck_mcp.interface.ddd_mcp_server import create_mcp_server
 
 
 class TestMCPServerLoggingSetup:
@@ -209,7 +209,7 @@ class TestMCPServerIntegration:
         from pathlib import Path
         
         # Test that we can import the DDD server
-        from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
+        from fastmcp.dhafnck_mcp.interface.ddd_mcp_server import create_mcp_server
         
         # Verify create_mcp_server is callable
         assert callable(create_mcp_server)

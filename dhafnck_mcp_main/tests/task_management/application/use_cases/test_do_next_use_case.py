@@ -14,11 +14,11 @@ from datetime import datetime
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
-from fastmcp.task_management.application.use_cases.do_next import DoNextUseCase, DoNextResponse
-from fastmcp.task_management.domain.entities.task import Task
-from fastmcp.task_management.domain.value_objects.task_id import TaskId
-from fastmcp.task_management.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
-from fastmcp.task_management.domain.value_objects.priority import Priority, PriorityLevel
+from fastmcp.dhafnck_mcp.application.use_cases.do_next import DoNextUseCase, DoNextResponse
+from fastmcp.dhafnck_mcp.domain.entities.task import Task
+from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
+from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority, PriorityLevel
 
 
 class TestDoNextResponse:
@@ -58,7 +58,7 @@ class TestDoNextUseCase:
         self.use_case = DoNextUseCase(self.mock_repository, self.mock_auto_rule_generator)
         
         # Patch datetime to control task ID generation
-        self.patcher = patch('fastmcp.task_management.domain.value_objects.task_id.datetime')
+        self.patcher = patch('fastmcp.dhafnck_mcp.domain.value_objects.task_id.datetime')
         self.mock_datetime = self.patcher.start()
         self.mock_datetime.now.return_value = datetime(2025, 6, 20)
 
@@ -180,7 +180,7 @@ class TestDoNextUseCase:
         task = self.create_task(1, "Task with Subtasks", TaskStatusEnum.TODO, PriorityLevel.HIGH, None, subtasks)
         task.assignees = ["@coding_agent"]
         self.mock_repository.find_all.return_value = [task]
-        with patch("fastmcp.task_management.application.use_cases.do_next.generate_docs_for_assignees") as mock_gen:
+        with patch("fastmcp.dhafnck_mcp.application.use_cases.do_next.generate_docs_for_assignees") as mock_gen:
             result = self.use_case.execute()
             assert mock_gen.call_count > 0, f"generate_docs_for_assignees was not called. Calls: {mock_gen.call_args_list}"
         assert result.has_next is True
@@ -197,7 +197,7 @@ class TestDoNextUseCase:
         task = self.create_task(1, "Task with Subtasks", TaskStatusEnum.TODO, PriorityLevel.HIGH, None, subtasks)
         task.assignees = ["@coding_agent"]
         self.mock_repository.find_all.return_value = [task]
-        with patch("fastmcp.task_management.application.use_cases.do_next.generate_docs_for_assignees") as mock_gen:
+        with patch("fastmcp.dhafnck_mcp.application.use_cases.do_next.generate_docs_for_assignees") as mock_gen:
             result = self.use_case.execute()
             assert mock_gen.call_count > 0, f"generate_docs_for_assignees was not called. Calls: {mock_gen.call_args_list}"
         assert result.has_next is True
@@ -255,7 +255,7 @@ class TestDoNextPrivateMethods:
         self.mock_auto_rule_generator = Mock()
         self.use_case = DoNextUseCase(self.mock_repository, self.mock_auto_rule_generator)
         # Patch datetime to control task ID generation
-        self.patcher = patch('fastmcp.task_management.domain.value_objects.task_id.datetime')
+        self.patcher = patch('fastmcp.dhafnck_mcp.domain.value_objects.task_id.datetime')
         self.mock_datetime = self.patcher.start()
         self.mock_datetime.now.return_value = datetime(2025, 6, 20)
 

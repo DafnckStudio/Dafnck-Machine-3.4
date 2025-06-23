@@ -1,6 +1,6 @@
 {
     "mcpServers": {
-        "task_management": {
+        "dhafnck_mcp": {
             "command": "/home/daihungpham/agentic-project/cursor_agent/.venv/bin/python",
             "args": ["/home/daihungpham/agentic-project/cursor_agent/src/task_mcp/interface/consolidated_mcp_server.py"],
             "cwd": "/home/daihungpham/agentic-project/cursor_agent",

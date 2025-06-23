@@ -35,7 +35,7 @@ export TASK_JSON_BACKUP_PATH="/home/daihungpham/agentic-project/.cursor/rules/ta
 
 python -c "
 try:
-    from fastmcp.task_management.interface.consolidated_mcp_server import mcp_instance
+    from fastmcp.dhafnck_mcp.interface.consolidated_mcp_server import mcp_instance
     print('   ✅ MCP server imported successfully')
     print(f'   ✅ Server name: {mcp_instance.name}')
 except Exception as e:

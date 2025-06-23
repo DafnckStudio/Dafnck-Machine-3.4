@@ -3,7 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-# Main objectif : correct mcp task_management tools not detect
+# Main objectif : correct mcp dhafnck_mcp tools not detect
 **Tip: Read the logic in cursor_agent to fix issues in dhafnck_mcp_main.
 
 CONTINUE_AUTOMATIC_NEW_TASK : OFF
@@ -57,13 +57,13 @@ run terminal commande →
 ### Ensures context files is relative with task and subtask
 [contextmaster.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/contextmaster.mdc) : ALWAYS trigger after complete task or subtask
 
-## Use MCP Server task_management when possible 
+## Use MCP Server dhafnck_mcp when possible 
 MUST follow [Task_Management_Workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/Task_Management_Workflow.mdc)
 
 see [Task_Management_MCP_Server_Documentation.mdc](mdc:cursor_agent/.cursor/rules/Task_Management_MCP_Server_Documentation.mdc) for more details
 
-- ALWAYS use the task_management MCP server for task operations
-- Use task_management MCP to manage [tasks.json](mdc:.cursor/rules/tasks/tasks.json)
+- ALWAYS use the dhafnck_mcp MCP server for task operations
+- Use dhafnck_mcp MCP to manage [tasks.json](mdc:.cursor/rules/tasks/tasks.json)
 - ALWAYS use the MCP server first; NEVER access `.cursor/rules/tasks/tasks.json` directly unless the user requests it (AI does not have permission)
 
 ## 🎯 **AUTO_RULE.MDC GENERATION AUTOMATIC** 

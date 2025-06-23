@@ -19,10 +19,10 @@ class TestTaskBusinessRules:
     @pytest.fixture
     def valid_task(self):
         """Create a valid task for testing."""
-        from fastmcp.task_management.domain.entities.task import Task
-        from fastmcp.task_management.domain.value_objects.task_id import TaskId
-        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
-        from fastmcp.task_management.domain.value_objects.priority import Priority
+        from fastmcp.dhafnck_mcp.domain.entities.task import Task
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
         
         return Task.create(
             id=TaskId.from_int(1),
@@ -36,7 +36,7 @@ class TestTaskBusinessRules:
     @pytest.mark.business_rules
     def test_task_status_transition_rules(self, valid_task):
         """Test task status transition business rules."""
-        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
         
         # Rule: TODO can transition to IN_PROGRESS or CANCELLED
         assert valid_task.status.can_transition_to("in_progress")
@@ -76,7 +76,7 @@ class TestTaskBusinessRules:
     @pytest.mark.business_rules
     def test_task_cancelled_state_rules(self, valid_task):
         """Test cancelled task business rules."""
-        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
         
         # Move to CANCELLED
         valid_task.update_status(TaskStatus.cancelled())
@@ -94,7 +94,7 @@ class TestTaskBusinessRules:
     @pytest.mark.business_rules
     def test_task_blocked_state_rules(self, valid_task):
         """Test blocked task business rules."""
-        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
         
         # Move to IN_PROGRESS first
         valid_task.update_status(TaskStatus.in_progress())
@@ -122,10 +122,10 @@ class TestTaskBusinessRules:
         # Rule: Title cannot exceed 200 characters
         long_title = "x" * 201
         with pytest.raises(ValueError, match="Task title cannot exceed 200 characters"):
-            from fastmcp.task_management.domain.entities.task import Task
-            from fastmcp.task_management.domain.value_objects.task_id import TaskId
-            from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
-            from fastmcp.task_management.domain.value_objects.priority import Priority
+            from fastmcp.dhafnck_mcp.domain.entities.task import Task
+            from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+            from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+            from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
             
             Task(
                 id=TaskId.from_int(2),
@@ -149,10 +149,10 @@ class TestTaskBusinessRules:
         # Rule: Description cannot exceed 1000 characters
         long_description = "x" * 1001
         with pytest.raises(ValueError, match="Task description cannot exceed 1000 characters"):
-            from fastmcp.task_management.domain.entities.task import Task
-            from fastmcp.task_management.domain.value_objects.task_id import TaskId
-            from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
-            from fastmcp.task_management.domain.value_objects.priority import Priority
+            from fastmcp.dhafnck_mcp.domain.entities.task import Task
+            from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+            from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+            from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
             
             Task(
                 id=TaskId.from_int(2),
@@ -166,7 +166,7 @@ class TestTaskBusinessRules:
     @pytest.mark.business_rules
     def test_task_dependency_rules(self, valid_task):
         """Test task dependency business rules."""
-        from fastmcp.task_management.domain.value_objects.task_id import TaskId
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
         
         # Rule: Task cannot depend on itself
         with pytest.raises(ValueError, match="Task cannot depend on itself"):
@@ -225,7 +225,7 @@ class TestTaskBusinessRules:
         assert valid_task.is_overdue()
         
         # Rule: Completed task is never overdue regardless of due date
-        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
         valid_task.update_status(TaskStatus.in_progress())
         valid_task.update_status(TaskStatus.review())
         valid_task.update_status(TaskStatus.done())
@@ -235,7 +235,7 @@ class TestTaskBusinessRules:
     @pytest.mark.business_rules
     def test_task_can_be_started_rules(self, valid_task):
         """Test task can be started business rules."""
-        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
         
         # Rule: TODO tasks can be started
         assert valid_task.can_be_started()
@@ -250,9 +250,9 @@ class TestTaskBusinessRules:
         assert not valid_task.can_be_started()
         
         # Rule: CANCELLED tasks cannot be started (must be reopened first)
-        from fastmcp.task_management.domain.entities.task import Task
-        from fastmcp.task_management.domain.value_objects.task_id import TaskId
-        from fastmcp.task_management.domain.value_objects.priority import Priority
+        from fastmcp.dhafnck_mcp.domain.entities.task import Task
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
         
         cancelled_task = Task(
             id=TaskId.from_int(2),
@@ -267,7 +267,7 @@ class TestTaskBusinessRules:
     @pytest.mark.business_rules
     def test_priority_ordering_rules(self):
         """Test priority ordering business rules."""
-        from fastmcp.task_management.domain.value_objects.priority import Priority
+        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
         
         # Rule: Priority ordering follows business importance
         low = Priority.low()
@@ -310,7 +310,7 @@ class TestTaskBusinessRules:
     @pytest.mark.business_rules
     def test_domain_event_generation_rules(self, valid_task):
         """Test domain event generation business rules."""
-        from fastmcp.task_management.domain.events.task_events import TaskUpdated, TaskRetrieved, TaskDeleted
+        from fastmcp.dhafnck_mcp.domain.events.task_events import TaskUpdated, TaskRetrieved, TaskDeleted
         
         # Clear any existing events
         valid_task.get_events()
@@ -338,8 +338,8 @@ class TestTaskBusinessRules:
     @pytest.mark.business_rules
     def test_task_creation_defaults_rules(self):
         """Test task creation default values business rules."""
-        from fastmcp.task_management.domain.entities.task import Task
-        from fastmcp.task_management.domain.value_objects.task_id import TaskId
+        from fastmcp.dhafnck_mcp.domain.entities.task import Task
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
         
         # Rule: Factory method should set default status and priority
         task = Task.create(
@@ -357,9 +357,9 @@ class TestTaskBusinessRules:
     @pytest.mark.business_rules
     def test_value_object_immutability_rules(self):
         """Test value object immutability business rules."""
-        from fastmcp.task_management.domain.value_objects.task_id import TaskId
-        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
-        from fastmcp.task_management.domain.value_objects.priority import Priority
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
         
         # Rule: Value objects should be immutable (frozen dataclasses)
         task_id = TaskId.from_int(1)
@@ -378,7 +378,7 @@ class TestTaskBusinessRules:
     @pytest.mark.business_rules
     def test_task_id_validation_rules(self):
         """Test TaskId validation business rules."""
-        from fastmcp.task_management.domain.value_objects.task_id import TaskId
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
         
         # Rule: TaskId must follow YYYYMMDDXXX format
         valid_id = "20250618001"

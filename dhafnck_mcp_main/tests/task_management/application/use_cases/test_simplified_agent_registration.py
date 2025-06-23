@@ -20,7 +20,7 @@ import pytest
 import json
 from unittest.mock import patch, Mock
 
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import SimpleMultiAgentTools
+from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import SimpleMultiAgentTools
 
 
 class TestSimplifiedAgentRegistration:

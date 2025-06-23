@@ -3,7 +3,7 @@ from unittest.mock import patch, Mock
 import logging
 
 # Import server creation and main functions from both server implementations
-from fastmcp.task_management.interface.ddd_mcp_server import main as ddd_main, create_mcp_server as create_ddd_server
+from fastmcp.dhafnck_mcp.interface.ddd_mcp_server import main as ddd_main, create_mcp_server as create_ddd_server
 from fastmcp.server.main_server import main as main_server_main, create_main_server
 from fastmcp import FastMCP
 
@@ -27,7 +27,7 @@ class TestMCPServers:
         mock_mcp_instance = Mock()
         mock_mcp_instance.run.side_effect = Exception("Test server crash")
 
-        with patch('fastmcp.task_management.interface.ddd_mcp_server.create_mcp_server', return_value=mock_mcp_instance), \
+        with patch('fastmcp.dhafnck_mcp.interface.ddd_mcp_server.create_mcp_server', return_value=mock_mcp_instance), \
              patch('logging.error') as mock_log_error:
             
             with pytest.raises(Exception, match="Test server crash"):
@@ -67,7 +67,7 @@ class TestMCPServers:
         mock_mcp_instance = Mock()
         mock_mcp_instance.run.side_effect = KeyboardInterrupt()
 
-        with patch('fastmcp.task_management.interface.ddd_mcp_server.create_mcp_server', return_value=mock_mcp_instance), \
+        with patch('fastmcp.dhafnck_mcp.interface.ddd_mcp_server.create_mcp_server', return_value=mock_mcp_instance), \
              patch('logging.info') as mock_log_info:
             
             # main should catch KeyboardInterrupt and exit gracefully

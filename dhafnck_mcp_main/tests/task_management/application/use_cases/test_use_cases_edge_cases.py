@@ -9,18 +9,18 @@ import pytest
 from unittest.mock import Mock, patch
 from datetime import datetime
 
-from fastmcp.task_management.application.use_cases.complete_task import CompleteTaskUseCase
-from fastmcp.task_management.application.use_cases.create_task import CreateTaskUseCase
-from fastmcp.task_management.application.use_cases.delete_task import DeleteTaskUseCase
-from fastmcp.task_management.application.use_cases.list_tasks import ListTasksUseCase
-from fastmcp.task_management.application.use_cases.update_task import UpdateTaskUseCase
-from fastmcp.task_management.application.use_cases.manage_subtasks import ManageSubtasksUseCase, AddSubtaskRequest, UpdateSubtaskRequest
-from fastmcp.task_management.application.dtos.task_dto import CreateTaskRequest, UpdateTaskRequest, ListTasksRequest, TaskResponse, UpdateTaskResponse
-from fastmcp.task_management.domain.exceptions.task_exceptions import TaskNotFoundError
-from fastmcp.task_management.domain.entities.task import Task
-from fastmcp.task_management.domain.value_objects.task_id import TaskId
-from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
-from fastmcp.task_management.domain.value_objects.priority import Priority
+from fastmcp.dhafnck_mcp.application.use_cases.complete_task import CompleteTaskUseCase
+from fastmcp.dhafnck_mcp.application.use_cases.create_task import CreateTaskUseCase
+from fastmcp.dhafnck_mcp.application.use_cases.delete_task import DeleteTaskUseCase
+from fastmcp.dhafnck_mcp.application.use_cases.list_tasks import ListTasksUseCase
+from fastmcp.dhafnck_mcp.application.use_cases.update_task import UpdateTaskUseCase
+from fastmcp.dhafnck_mcp.application.use_cases.manage_subtasks import ManageSubtasksUseCase, AddSubtaskRequest, UpdateSubtaskRequest
+from fastmcp.dhafnck_mcp.application.dtos.task_dto import CreateTaskRequest, UpdateTaskRequest, ListTasksRequest, TaskResponse, UpdateTaskResponse
+from fastmcp.dhafnck_mcp.domain.exceptions.task_exceptions import TaskNotFoundError
+from fastmcp.dhafnck_mcp.domain.entities.task import Task
+from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
 
 
 class TestCompleteTaskEdgeCases:

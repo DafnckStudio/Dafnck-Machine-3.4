@@ -309,7 +309,7 @@ dhafnck_mcp_main/
 ```json
 {
   "mcpServers": {
-    "task_management": {
+    "dhafnck_mcp": {
       "command": "/path/to/dhafnck_mcp_main/start_mcp_server.sh",
       "cwd": "/path/to/project"
     }

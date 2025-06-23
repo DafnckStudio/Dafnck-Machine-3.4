@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 def test_mcp_server_can_be_created():
     """Test that MCP server can be created."""
     try:
-        from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
+        from fastmcp.dhafnck_mcp.interface.ddd_mcp_server import create_mcp_server
         
         server = create_mcp_server()
         assert server is not None
@@ -33,7 +33,7 @@ def test_mcp_server_can_be_created():
 def test_mcp_server_has_required_methods():
     """Test that MCP server has all required methods."""
     try:
-        from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
+        from fastmcp.dhafnck_mcp.interface.ddd_mcp_server import create_mcp_server
         
         server = create_mcp_server()
         
@@ -52,7 +52,7 @@ def test_mcp_server_has_required_methods():
 def test_mcp_tools_registration():
     """Test that MCP tools can be registered."""
     try:
-        from fastmcp.task_management.interface.mcp_tools import MCPTaskTools
+        from fastmcp.dhafnck_mcp.interface.mcp_tools import MCPTaskTools
         
         tools = MCPTaskTools()
         assert tools is not None
@@ -70,7 +70,7 @@ def test_mcp_tools_registration():
 def test_server_configuration_loading():
     """Test that server can load basic configuration."""
     try:
-        from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
+        from fastmcp.dhafnck_mcp.interface.ddd_mcp_server import create_mcp_server
         
         server = create_mcp_server()
         
@@ -89,7 +89,7 @@ def test_server_configuration_loading():
 def test_task_repository_can_be_instantiated():
     """Test that task repository can be instantiated."""
     try:
-        from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+        from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository
         
         repo = JsonTaskRepository()
         assert repo is not None
@@ -107,10 +107,10 @@ def test_task_repository_can_be_instantiated():
 def test_application_services_can_be_instantiated():
     """Test that application services can be instantiated."""
     try:
-        from fastmcp.task_management.application.services.task_application_service import TaskApplicationService
-        from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+        from fastmcp.dhafnck_mcp.application.services.task_application_service import TaskApplicationService
+        from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository
         
-        from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
+        from fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
         
         repo = JsonTaskRepository()
         auto_rule_gen = FileAutoRuleGenerator()
@@ -132,10 +132,10 @@ def test_application_services_can_be_instantiated():
 def test_domain_entities_can_be_created():
     """Test that domain entities can be created with basic validation."""
     try:
-        from fastmcp.task_management.domain.entities.task import Task
-        from fastmcp.task_management.domain.value_objects.task_id import TaskId
-        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
-        from fastmcp.task_management.domain.value_objects.priority import Priority, PriorityLevel
+        from fastmcp.dhafnck_mcp.domain.entities.task import Task
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
+        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority, PriorityLevel
         
         # Test basic entity creation using new TaskId format
         task_id = TaskId.from_int(1)

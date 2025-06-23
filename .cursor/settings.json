@@ -1,7 +1,7 @@
 {
   "mcp.enabled": true,
   "mcp.servers": {
-    "task_management": {
+    "dhafnck_mcp": {
       "enabled": true,
       "autoStart": true
     }

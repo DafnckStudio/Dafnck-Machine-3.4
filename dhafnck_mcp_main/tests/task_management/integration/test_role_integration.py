@@ -22,8 +22,8 @@ project_root = current_file.parent.parent.parent.parent
 src_dir = project_root / "src"
 sys.path.insert(0, str(src_dir))
 
-from fastmcp.task_management.infrastructure.services.legacy.role_manager import RoleManager
-from fastmcp.task_management.infrastructure.services.legacy.models import AgentRole
+from fastmcp.dhafnck_mcp.infrastructure.services.legacy.role_manager import RoleManager
+from fastmcp.dhafnck_mcp.infrastructure.services.legacy.models import AgentRole
 
 
 class TestRoleIntegration:

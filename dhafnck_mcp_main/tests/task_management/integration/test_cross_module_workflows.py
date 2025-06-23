@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 
 
 import pytest
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import (
+from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import (
     ConsolidatedMCPToolsV2,
 )
 

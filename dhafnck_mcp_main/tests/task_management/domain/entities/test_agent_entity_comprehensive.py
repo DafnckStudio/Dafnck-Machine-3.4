@@ -13,7 +13,7 @@ import pytest
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
 import time
-from fastmcp.task_management.domain.entities.agent import (
+from fastmcp.dhafnck_mcp.domain.entities.agent import (
     Agent,
     AgentStatus,
     AgentCapability

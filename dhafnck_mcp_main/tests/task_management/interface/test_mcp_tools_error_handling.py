@@ -14,8 +14,8 @@ import tempfile
 import os
 from unittest.mock import Mock, patch, MagicMock
 
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2, SimpleMultiAgentTools
-from fastmcp.task_management.domain.exceptions.task_exceptions import TaskNotFoundError, AutoRuleGenerationError
+from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2, SimpleMultiAgentTools
+from fastmcp.dhafnck_mcp.domain.exceptions.task_exceptions import TaskNotFoundError, AutoRuleGenerationError
 
 
 class TestMCPToolsErrorHandling:
@@ -38,9 +38,9 @@ class TestMCPToolsErrorHandling:
     @pytest.fixture
     def consolidated_tools(self, temp_projects_file):
         """Create ConsolidatedMCPToolsV2 instance with mocked dependencies"""
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo_class, \
-             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_generator_class, \
-             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.TaskApplicationService') as mock_service_class:
+        with patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo_class, \
+             patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_generator_class, \
+             patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.TaskApplicationService') as mock_service_class:
             
             mock_repo = Mock()
             mock_generator = Mock()
@@ -230,7 +230,7 @@ class TestMCPToolsErrorHandling:
     def test_do_next_with_no_tasks(self, consolidated_tools):
         """Test do_next when no tasks are available"""
         # Mock the use case to raise an exception instead of returning a complex object
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.DoNextUseCase') as mock_use_case_class:
+        with patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.DoNextUseCase') as mock_use_case_class:
             mock_use_case = Mock()
             mock_use_case.execute.side_effect = Exception("No tasks available")
             mock_use_case_class.return_value = mock_use_case
@@ -298,7 +298,7 @@ class TestMCPToolsErrorHandling:
         call_agent_tool = mcp.tool_functions.get('call_agent')
         assert call_agent_tool is not None, "call_agent tool not registered"
 
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.CallAgentUseCase') as mock_use_case:
+        with patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.CallAgentUseCase') as mock_use_case:
             mock_use_case.return_value.execute.side_effect = Exception("Agent not found")
             result = call_agent_tool(name_agent="non_existent_agent")
         

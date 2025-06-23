@@ -6,12 +6,12 @@ alwaysApply: false
 # Domain-Driven Design Architecture
 
 **Project**: dhafnck_mcp_main - fastmcp Task Management Integration  
-**Package**: fastmcp.task_management - DDD-based task management system  
+**Package**: fastmcp.dhafnck_mcp - DDD-based task management system  
 **Last Updated**: 2025-01-18  
 
 ## 🏗️ DDD Architecture Overview
 
-The **fastmcp** task management system follows Domain-Driven Design principles with clean layer separation for maintainability, testability, and extensibility. The implementation is fully integrated into the fastmcp framework as `fastmcp.task_management` with comprehensive MCP tool exposure through a consolidated architecture.
+The **fastmcp** task management system follows Domain-Driven Design principles with clean layer separation for maintainability, testability, and extensibility. The implementation is fully integrated into the fastmcp framework as `fastmcp.dhafnck_mcp` with comprehensive MCP tool exposure through a consolidated architecture.
 
 **Key Architecture Principles:**
 - **Clean Layer Separation**: Domain → Application → Infrastructure → Interface
@@ -22,7 +22,7 @@ The **fastmcp** task management system follows Domain-Driven Design principles w
 
 ## 📁 Layer Structure
 
-### Domain Layer (`src/fastmcp/task_management/domain/`)
+### Domain Layer (`src/fastmcp/dhafnck_mcp/domain/`)
 **Core business logic and rules - No external dependencies**
 
 ```
@@ -63,7 +63,7 @@ domain/
 - **TaskTree**: Workstream organization for parallel development
 - **WorkSession**: Session tracking for productivity and analytics
 
-### Application Layer (`src/fastmcp/task_management/application/`)
+### Application Layer (`src/fastmcp/dhafnck_mcp/application/`)
 **Use cases and application services - Orchestrates domain logic**
 
 ```
@@ -97,7 +97,7 @@ application/
 - **manage_dependencies**: Task relationship and dependency management
 - **call_agent**: Agent integration and role-based task assignment
 
-### Infrastructure Layer (`src/fastmcp/task_management/infrastructure/`)
+### Infrastructure Layer (`src/fastmcp/dhafnck_mcp/infrastructure/`)
 **External concerns and persistence - Implements domain interfaces**
 
 ```
@@ -118,7 +118,7 @@ infrastructure/
 - **Agent Loader**: YAML-based agent configuration and capability loading
 - **Cursor Integration**: Deep integration with Cursor IDE and rules system
 
-### Interface Layer (`src/fastmcp/task_management/interface/`)
+### Interface Layer (`src/fastmcp/dhafnck_mcp/interface/`)
 **MCP integration and external interfaces - Exposes functionality via MCP protocol**
 
 ```
@@ -185,7 +185,7 @@ tests/
 ├── 📄 test_task_management_integration.py      # Main integration tests (527 lines)
 ├── 📄 test_task_management_integration_working.py # Working integration tests (592 lines)
 ├── 📄 test_simple_integration.py               # Simple integration tests (143 lines)
-├── 📁 task_management/                         # Task management specific tests
+├── 📁 dhafnck_mcp/                         # Task management specific tests
 │   ├── 📄 test_domain_entities.py              # Domain entity unit tests
 │   ├── 📄 test_use_cases.py                    # Use case integration tests
 │   ├── 📄 test_mcp_integration.py              # MCP tool functionality tests
@@ -360,7 +360,7 @@ tests/
 
 ## 🏛️ Architecture Summary
 
-The **fastmcp.task_management** system demonstrates a mature Domain-Driven Design implementation fully integrated with the fastmcp framework. It provides:
+The **fastmcp.dhafnck_mcp** system demonstrates a mature Domain-Driven Design implementation fully integrated with the fastmcp framework. It provides:
 
 - **Clean Architecture**: Proper layer separation with inward-only dependencies
 - **MCP Integration**: Native AI assistant integration through comprehensive MCP tools

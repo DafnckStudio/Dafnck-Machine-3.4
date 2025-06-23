@@ -22,7 +22,7 @@ This is an agentic project with task management capabilities using MCP (Model Co
 - Always use absolute paths when creating/updating files
 
 ### Task Management
-- **MANDATORY: Use MCP task_management server for ALL task operations**
+- **MANDATORY: Use MCP dhafnck_mcp server for ALL task operations**
 - Use `manage_task` tool with MCP protocol - never direct database access
 - Task data located at: `.cursor/rules/tasks/tasks.json`
 - Follow workflow in: `.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc`
@@ -47,7 +47,7 @@ This is an agentic project with task management capabilities using MCP (Model Co
 - Auto-generated rules: `.cursor/rules/auto_rule.mdc`
 
 ## MCP Servers
-- `task_management` - Custom task management server (REQUIRED for all task operations)
+- `dhafnck_mcp` - Custom task management server (REQUIRED for all task operations)
 - `sequential-thinking` - Enhanced reasoning
 - `github` - GitHub integration
 

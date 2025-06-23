@@ -5,7 +5,7 @@ Redundant or duplicate tests in other files have been removed.
 """
 
 import pytest
-from fastmcp.task_management.domain.value_objects.priority import Priority
+from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
 
 
 def test_create_valid_priority():
