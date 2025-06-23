@@ -1,14 +1,14 @@
 {
-    "mcpServers": {
-        "dhafnck_mcp": {
-            "command": "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
-            "args": ["-m", "fastmcp.task_management.interface.consolidated_mcp_server"],
-            "cwd": "/home/daihungpham/agentic-project/dhafnck_mcp_main",
-            "env": {
-              "PYTHONPATH": "/home/daihungpham/agentic-project/dhafnck_mcp_main/src",
-              "TASKS_JSON_PATH": "/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json",
-              "TASK_JSON_BACKUP_PATH": "/home/daihungpham/agentic-project/.cursor/rules/tasks/backup"
-            }
-          }
+  "mcpServers": {
+    "dhafnck_mcp": {
+      "command": "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
+      "args": [
+        "/home/daihungpham/agentic-project/dhafnck_mcp_main/src/fastmcp/task_management/interface/consolidated_mcp_server.py"
+      ],
+      "cwd": "/home/daihungpham/agentic-project",
+      "env": {
+        "PYTHONPATH": "/home/daihungpham/agentic-project/dhafnck_mcp_main/src"
+      }
     }
-} 
+  }
+}
