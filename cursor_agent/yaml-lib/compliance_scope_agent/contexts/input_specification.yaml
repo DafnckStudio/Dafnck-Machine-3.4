@@ -1,6 +1,0 @@
-input_specification:
-  type: Object with projectName (string), industry (string), geography (array of strings), dataTypes (array of strings), userDemographics (array of strings). All fields required.
-  format: 'JSON. Example: {"projectName":"HealthDataCloud","industry":"Healthcare SaaS","geography":["US","EU"],"dataTypes":["PHI","PII"],"userDemographics":["patients","doctors"]}'
-  example: Example example for inputSpec
-  schema: Example schema for inputSpec
-  validationRules: Example validationRules for inputSpec

@@ -1,4 +1,0 @@
-health_check:
-  enabled: true
-  interval: daily
-  actions: Test platform connectivity, data collection, and moderation system status. Log and report failures to devops-agent and health-monitor-agent.

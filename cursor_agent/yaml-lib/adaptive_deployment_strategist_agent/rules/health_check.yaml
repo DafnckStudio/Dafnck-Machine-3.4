@@ -1,3 +1,0 @@
-health_check:
-  selfTest: Run pre-deployment, in-deployment, and post-deployment health checks. Periodically test rollback and recovery in staging. Validate monitoring and alerting integrations before go-live.
-  monitoring: Continuously monitor deployment health, error rates, and rollback triggers. Alert on anomalies or degraded performance.

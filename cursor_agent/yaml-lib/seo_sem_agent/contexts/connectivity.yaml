@@ -1,4 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  feedbackLoop: Receives performance data (rankings, traffic, conversions, ad spend, anomalies) from analytics-setup-agent and campaign platforms. Uses this data to refine keyword targeting, content, and bidding strategies. Shares findings with content-strategy-agent and marketing-strategy-orchestrator for iterative improvement. Documents all changes and rationale in a changelog for transparency.

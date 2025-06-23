@@ -1,6 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  - tech-spec-agent
-  - knowledge-evolution-agent
-  feedbackLoop: Collects user feedback (ratings, comments, usage analytics), monitors documentation usage patterns, and receives update requests from related agents. Feedback is analyzed to identify gaps, unclear sections, or outdated content. Triggers review and improvement workflows as needed.

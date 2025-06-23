@@ -1,3 +1,0 @@
-health_check:
-  interval: daily
-  actions: Run self-diagnostics on test coverage, tool availability, and recent error logs. Report status to health-monitor-agent and orchestrator.

@@ -1,6 +1,0 @@
-output_specification:
-  type: Object containing testCases (array), traceabilityMatrix (object), testDataSpecs (array), coverageReport (object)
-  format: 'JSON or structured object. testCases: array of objects with id, title, requirementId, steps, expectedResult, preconditions, testData, priority. traceabilityMatrix: mapping of requirements to test cases. testDataSpecs: array of data sets. coverageReport: summary of coverage and gaps. Example: see customInstructions.'
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: Example example for outputSpec

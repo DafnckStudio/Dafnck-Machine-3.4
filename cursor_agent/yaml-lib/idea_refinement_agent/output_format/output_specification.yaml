@@ -1,6 +1,0 @@
-output_specification:
-  type: 'Object containing: ideaId (string), refinedDocumentation (string), changeLog (array of {change, source, timestamp}), validationStatus (string), nextSteps (array of string)'
-  format: 'JSON object. Required fields: ideaId, refinedDocumentation, validationStatus. Optional: changeLog, nextSteps. All outputs validated for completeness and consistency. Example in customInstructions.'
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: Example example for outputSpec

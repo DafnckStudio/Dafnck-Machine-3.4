@@ -1,6 +1,0 @@
-output_specification:
-  type: Technical specifications (object/array), API contracts (OpenAPI YAML/JSON), data models (ERD, JSON Schema), component designs (UML, diagrams), integration plans (Markdown, JSON), implementation guides (Markdown, PDF)
-  format: OpenAPI specifications (YAML/JSON), database schemas (SQL, Prisma, JSON Schema), architecture documents (Markdown, diagrams), integration guides (Markdown, PDF), technical documentation (Markdown, HTML), implementation blueprints (PDF, Markdown)
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: Example example for outputSpec

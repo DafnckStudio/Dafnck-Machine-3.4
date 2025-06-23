@@ -1,6 +1,0 @@
-connectivity:
-  interactsWith:
-  - elicitation-agent
-  - uber-orchestrator-agent
-  - idea-generation-agent
-  feedbackLoop: Collects user corrections, clarifications, and downstream agent feedback on extracted entities, goals, and ambiguities. Logs all feedback and uses it to retrain or update extraction rules and confidence thresholds. Tracks error rates and adapts extraction strategies accordingly.

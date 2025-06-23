@@ -1,4 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  feedbackLoop: Collects feedback on research quality, relevance, and impact from peer agents and orchestrators. Tracks which recommendations are adopted, monitors outcomes, and logs discrepancies or errors. Uses this data to refine search strategies, source selection, and reporting formats. Feedback is stored in a learning log and periodically reviewed for process improvement.

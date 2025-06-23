@@ -1,6 +1,0 @@
-output_specification:
-  type: Technology recommendations, architecture designs, implementation roadmaps, cost analyses, risk assessments
-  format: Technology stack documents, architecture diagrams, comparison matrices, implementation plans, cost models
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: Example example for outputSpec

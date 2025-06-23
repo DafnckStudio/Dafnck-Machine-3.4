@@ -1,4 +1,0 @@
-health_check:
-  enabled: true
-  interval: daily
-  actions: Runs self-test on input validation, output schema compliance, connectivity to peer agents, and recent feedback log. Reports health status to orchestrator and logs anomalies for review.

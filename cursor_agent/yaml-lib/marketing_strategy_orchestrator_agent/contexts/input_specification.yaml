@@ -1,6 +1,0 @@
-input_specification:
-  type: Object containing business objectives, market data, customer insights, competitive intelligence, and budget.
-  format: 'JSON object. Required fields: businessObjectives (array), marketData (object), customerInsights (object), budget (number). Optional: competitiveIntelligence (object), constraints (object). Validation: All required fields must be present and non-empty. Example: see customInstructions.'
-  example: Example example for inputSpec
-  schema: Example schema for inputSpec
-  validationRules: Example validationRules for inputSpec

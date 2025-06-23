@@ -1,6 +1,0 @@
-output_specification:
-  type: Market research reports, competitive analyses, audience profiles, trend reports
-  format: 'Markdown or JSON report with sections: Executive Summary, Market Size, Competitors, Audience, Trends, Recommendations, Methodology, Limitations. Include data visualizations if possible.'
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: See Output Example in customInstructions.

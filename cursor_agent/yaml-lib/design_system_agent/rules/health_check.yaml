@@ -1,3 +1,0 @@
-health_check:
-  enabled: true
-  description: Runs periodic self-tests on design tokens, component exports, documentation, and accessibility. Reports health status and alerts on critical failures. Health report is included in output.

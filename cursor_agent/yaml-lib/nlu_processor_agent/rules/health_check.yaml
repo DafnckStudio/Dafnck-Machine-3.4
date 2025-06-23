@@ -1,2 +1,0 @@
-health_check:
-  selfTest: Runs periodic and on-demand test cases using known input/output pairs. Reports health status, last successful run, and error rates. Alerts orchestrator agent if health degrades or test failures increase.

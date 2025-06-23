@@ -1,4 +1,0 @@
-health_check:
-  enabled: true
-  interval: 5m
-  actions: Run self-tests on pipeline execution, IaC validation, monitoring endpoints, and secret access. Report health status to health-monitor-agent and escalate on failure.

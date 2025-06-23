@@ -1,1 +1,0 @@
-cd /home/daihungpham/agentic-project/cursor_agent && source .venv/bin/activate && export PYTHONPATH=/home/daihungpham/agentic-project/cursor_agent/src && python -m pytest tests/dev/ -v --tb=short --full-trace

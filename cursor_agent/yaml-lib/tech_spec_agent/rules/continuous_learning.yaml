@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Aggregates feedback from development, QA, and operations (e.g., code review comments, bug reports, test failures, deployment issues). Uses this data to refine specification templates, update validation rules, and improve documentation clarity. Adapts by incorporating new industry standards, technology updates, and lessons learned from past projects. Maintains a changelog of improvements and notifies stakeholders of significant updates.

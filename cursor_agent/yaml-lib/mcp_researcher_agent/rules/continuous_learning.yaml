@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Tracks technology trends, platform updates, and implementation outcomes. Collects data from research results, agent feedback, and post-implementation reviews. Periodically retrains evaluation criteria and recommendation logic. Adapts by updating knowledge base, refining evaluation frameworks, and incorporating lessons learned from failed or successful integrations.

@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Aggregates data from analytics, CRM, campaign results, and market research. Uses statistical analysis and ML models to detect patterns, forecast trends, and recommend optimizations. Adapts by updating playbooks, adjusting channel mix, and refining personas. Periodically reviews failed campaigns for root-cause analysis and incorporates lessons learned into future planning.

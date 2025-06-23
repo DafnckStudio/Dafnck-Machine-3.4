@@ -1,4 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  feedbackLoop: Collects user testing data, stakeholder feedback, and automated test results. Logs all feedback in documentation. Uses feedback to refine prototypes, update documentation, and inform future iterations. Maintains a feedback history for traceability.

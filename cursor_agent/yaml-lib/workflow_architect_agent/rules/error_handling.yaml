@@ -1,2 +1,0 @@
-error_handling:
-  strategy: On failure or unexpected input, logs the issue, attempts auto-correction if possible, and notifies relevant agents (e.g., task-planning-agent for missing dependencies). If critical, escalates to human operator. For missing dependencies, suggests alternatives or requests clarification. Maintains a health status indicator and triggers self-test routines if anomalies are detected.

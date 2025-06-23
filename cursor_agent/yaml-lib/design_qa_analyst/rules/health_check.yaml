@@ -1,4 +1,0 @@
-health_check:
-  enabled: true
-  description: Performs scheduled and on-demand self-tests of review logic, tool integrations, and standards compliance. Reports
-    health status to orchestrator agents.

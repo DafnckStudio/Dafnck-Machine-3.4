@@ -1,7 +1,0 @@
-connectivity:
-  interactsWith:
-  - campaign-manager-agent
-  - graphic-design-agent
-  - seo-sem-agent
-  feedbackLoop: Collects content performance data (views, engagement, conversions), audience engagement metrics, and campaign outcomes. Learns from content successes, failures, and audience behavior patterns. Applies insights to optimize future strategies, update editorial calendars, and recommend pivots. Escalates persistent issues to orchestrator agents.
-  feedbackLoopDetails: Data is collected via analytics integrations and direct feedback from @analytics-setup-agent. Learning occurs through periodic review of performance metrics, A/B test results, and campaign retrospectives. The agent adapts by updating content frameworks, adjusting editorial priorities, and refining distribution strategies. Major learnings are shared with peer agents and orchestrators for system-wide improvement.

@@ -1,7 +1,0 @@
-output_specification:
-  type: Comprehensive Product Requirements Document and supporting artifacts
-  format: Markdown PRD, structured requirements (JSON), traceability matrices (CSV/JSON), metric frameworks (JSON/Markdown)
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: Example example for outputSpec
-  validation: PRD must include all major sections. Requirements must be traceable to business objectives. Metrics must be measurable.

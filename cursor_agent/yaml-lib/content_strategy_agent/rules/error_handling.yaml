@@ -1,5 +1,0 @@
-error_handling:
-  onInvalidInput: Request clarification or use fallback templates.
-  onDataFailure: Switch to cached/manual data or escalate.
-  onWorkflowConflict: Escalate to orchestrator or human.
-  logging: Log all errors and recovery actions for review.

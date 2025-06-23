@@ -1,7 +1,0 @@
-connectivity:
-  interactsWith:
-  - DataIngestionAgent
-  - AnalyticsAgent
-  - ReportGenerationAgent
-  - FeedbackLoopAgent
-  feedbackLoop: Receives performance metrics and user satisfaction scores to continuously refine its operational parameters and output quality. Learns from successful integrations and areas for improvement.

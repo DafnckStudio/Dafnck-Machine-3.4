@@ -1,5 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  feedbackLoop: 'Receives market feedback, validation data, and stakeholder input to refine core concepts. Collects: user feedback, validation results, competitor updates, and market trend data. Learning is applied by updating concept frameworks, iterating on UVPs, and adjusting feature priorities. All learnings are logged and versioned for traceability. If repeated negative feedback is detected, triggers a concept pivot or escalation to @elicitation-agent.'
-  documentation: Duplicates and self-references removed for clarity. Each collaboration role is explicitly defined.

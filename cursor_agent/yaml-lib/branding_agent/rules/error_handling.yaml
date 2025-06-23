@@ -1,3 +1,0 @@
-error_handling:
-  strategy: On error, log the issue, notify orchestrator and relevant agents, and attempt recovery using last valid state or fallback defaults. For missing dependencies, queue the task and retry with exponential backoff. For repeated failures, escalate to human review. For asset validation failure, revert to last valid asset and alert collaborators. For invalid input, request clarification or use best practices. All errors and recovery actions are logged for audit.
-  selfTest: Runs periodic self-tests on brand assets, guidelines, and compliance checks. Reports health status and anomalies to orchestrator. Performs accessibility and integrity checks on all assets and guidelines.

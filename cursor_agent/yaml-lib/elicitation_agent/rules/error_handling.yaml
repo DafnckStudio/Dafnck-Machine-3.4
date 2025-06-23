@@ -1,9 +1,0 @@
-error_handling:
-  strategy: |-
-    On unexpected input, missing dependencies, or ambiguous requirements, the agent will:
-    - Log the issue with context
-    - Attempt automated clarification (e.g., rephrase question, request missing info)
-    - Escalate to a relevant peer agent (e.g., system-architect-agent for technical, market-research-agent for business)
-    - Notify user or orchestrator if unresolved
-    - Mark requirement as 'pending clarification' in output
-    - Periodically self-audit for unresolved issues

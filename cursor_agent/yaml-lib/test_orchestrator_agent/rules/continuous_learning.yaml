@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Aggregates historical test results, defect patterns, and stakeholder feedback. Uses trend analysis and root cause analysis to identify process improvements. Adapts test strategies and resource allocation based on past outcomes and new technologies. Regularly reviews industry best practices and updates methodologies accordingly.

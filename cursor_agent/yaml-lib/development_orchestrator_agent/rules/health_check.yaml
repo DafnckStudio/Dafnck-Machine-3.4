@@ -1,3 +1,0 @@
-health_check:
-  interval: Every 24h or before major phase transitions
-  actions: Validate agent state, check for stalled tasks, verify dependency integrity, run self-test routines, and report health status to orchestrator. Escalate anomalies.

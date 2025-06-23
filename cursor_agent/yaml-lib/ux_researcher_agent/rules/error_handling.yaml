@@ -1,3 +1,0 @@
-error_handling:
-  strategy: On input validation failure, return detailed error with missing/invalid fields. On research tool failure, switch to manual/alternative methods and log incident. On missing dependencies (e.g., analytics), notify stakeholders and use fallback research. On conflicting findings, escalate for review. All errors are logged in the research repository for audit.
-  healthCheck: Runs selfTest on research validity, data freshness, and tool integration at regular intervals. Reports health status to orchestrator agents. If healthCheck fails, triggers alert and attempts auto-remediation or requests human intervention.

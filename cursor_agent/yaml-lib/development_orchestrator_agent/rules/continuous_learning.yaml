@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Aggregates metrics (velocity, quality, satisfaction, incident frequency) from each sprint and release. Uses trend analysis and anomaly detection to identify improvement areas. Updates orchestration strategies, fallback plans, and communication protocols based on outcomes. Adapts to new technologies and workflow changes by integrating best practices from peer agents and external sources.

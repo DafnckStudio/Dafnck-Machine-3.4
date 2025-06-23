@@ -1,7 +1,0 @@
-connectivity:
-  interactsWith:
-  - marketing-strategy-orchestrator
-  - coding-agent
-  - analytics-setup-agent
-  feedbackLoop: Receives performance data (experiment results, user analytics, funnel metrics) from growth experiments and user behavior analytics to refine growth strategies. Learns from both successful and failed experiments. Feedback is logged, analyzed for patterns, and used to update experiment templates, prioritization logic, and fallback strategies. Shares learnings with related agents for cross-pollination.
-  selfReference: No self-reference required; removed for clarity.

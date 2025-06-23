@@ -1,4 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  feedbackLoop: Receives idea refinement requests and research inputs to produce enhanced concepts. Collects feedback on refinement outcomes, tracks change logs, and monitors validation status. Uses this data to adjust refinement strategies, prioritize information sources, and escalate unresolved issues to relevant agents or human overseers.

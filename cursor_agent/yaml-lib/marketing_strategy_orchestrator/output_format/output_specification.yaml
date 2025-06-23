@@ -1,4 +1,0 @@
-output_specification:
-  format: 'JSON object. Fields: strategy (string), channels (array), campaigns (array of objects), KPIs (array), teamAssignments
-    (array of objects), performanceReports (array, optional). Validation: strategy, channels, and campaigns must be present.
-    Example: see customInstructions.'

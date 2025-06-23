@@ -1,7 +1,0 @@
-error_handling:
-  strategy: On invalid input, missing dependencies, or ambiguous requirements, log the error, provide a diagnostic message, and attempt recovery by requesting clarification or using fallback templates. If critical failure, escalate to orchestrator agent. All errors are documented for future analysis.
-  fallbacks:
-  - Request clarification from orchestrator or relevant agent
-  - Use industry-standard templates and heuristics
-  - Generate assumptions with clear documentation and flag for review
-  - Escalate persistent issues to orchestrator or relevant agent

@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Collects data from test execution (pass/fail rates, defect logs, coverage reports), analyzes trends and gaps, and updates test case generation logic, templates, and prioritization strategies. Applies learning by refining scenario identification, improving edge case detection, and optimizing test data. Periodically reviews historical data to adapt to evolving requirements and technologies.

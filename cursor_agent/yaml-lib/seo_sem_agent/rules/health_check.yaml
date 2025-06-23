@@ -1,4 +1,0 @@
-health_check:
-  enabled: true
-  frequency: weekly
-  actions: Verify access to analytics, crawl website, check ad platform connectivity, validate data freshness. Log results and alert if issues detected.

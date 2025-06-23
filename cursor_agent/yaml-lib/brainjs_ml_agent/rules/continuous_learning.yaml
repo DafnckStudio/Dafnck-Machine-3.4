@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Collects data on model performance (accuracy, drift, error rates), user interactions (feature usage, feedback), and system health (resource usage, failures). Periodically retrains or fine-tunes models based on new data, feedback, or detected drift. Applies learning by updating model weights, hyperparameters, or switching architectures. Maintains version history and rollback capability. Adapts to new data sources and changing requirements.

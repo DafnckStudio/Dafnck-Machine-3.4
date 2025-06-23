@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Aggregates historical test data, error patterns, and optimization outcomes. Uses this data to refine test scenarios, update fallback strategies, and recommend new tools or methodologies. Periodically reviews feedback from related agents to adapt to evolving system requirements and technologies.

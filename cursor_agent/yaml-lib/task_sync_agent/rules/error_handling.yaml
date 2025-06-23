@@ -1,2 +1,0 @@
-error_handling:
-  onFailure: Retry with exponential backoff. If repeated failures, escalate to orchestrator. Log all errors with context. Attempt rollback if partial sync. If missing dependencies, skip affected tasks and alert. For unexpected input, validate and reject with error report. For system downtime, queue changes and retry when available.

@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Collects experiment outcomes, user analytics, and market trend data. Uses this data to retrain prioritization and hypothesis-generation logic. Adapts by updating experiment templates, adjusting risk thresholds, and incorporating new growth tactics. Periodically reviews failed experiments to identify systemic issues and improve fallback strategies. Shares learning updates with orchestrator and related agents.

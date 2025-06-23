@@ -1,3 +1,0 @@
-health_check:
-  enabled: true
-  selfTest: Periodically validate access to analytics, content sources, and publishing APIs. Run self-diagnostics on workflow and data pipelines. Report health status to orchestrator agents.

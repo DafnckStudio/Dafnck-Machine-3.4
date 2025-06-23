@@ -1,6 +1,0 @@
-connectivity:
-  interactsWith:
-  - nlu-processor-agent
-  - compliance-scope-agent
-  - idea-generation-agent
-  feedbackLoop: Collects feedback on requirement clarity, completeness, feasibility, and testability from all collaborating agents and stakeholders. Feedback is logged, analyzed for patterns (e.g., recurring ambiguities, missed edge cases), and used to update elicitation templates, question sets, and documentation standards.

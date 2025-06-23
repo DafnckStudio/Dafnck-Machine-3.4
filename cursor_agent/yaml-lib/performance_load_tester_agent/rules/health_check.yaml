@@ -1,3 +1,0 @@
-health_check:
-  enabled: true
-  method: Run periodic self-test scripts to validate tool availability and agent readiness. Report health status to health-monitor-agent and devops-agent.

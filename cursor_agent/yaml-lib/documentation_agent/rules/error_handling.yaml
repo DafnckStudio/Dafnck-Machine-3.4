@@ -1,3 +1,0 @@
-error_handling:
-  strategy: On failure to generate or update documentation, log the error, attempt automated recovery (e.g., retry, fallback to previous version), and notify maintainers. For missing or ambiguous input, request clarification from source agents. For broken links or validation errors, flag for urgent review and auto-correct if possible.
-  escalation: If automated recovery fails, escalate to human maintainers or project leads with detailed error reports.

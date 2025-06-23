@@ -1,6 +1,0 @@
-input_specification:
-  type: Design briefs, brand guidelines, content requirements, target audience specifications, campaign briefs, data files, dielines, reference images
-  format: 'JSON object or structured document with fields: projectName (string), targetAudience (string), requiredFormats (array), deadline (date), brandGuidelines (file path or URL), contentCopy (string), referenceAssets (array, optional). All fields validated for presence and type. Example: {"projectName":"Acme Rebrand",...}'
-  example: Example example for inputSpec
-  schema: Example schema for inputSpec
-  validationRules: Example validationRules for inputSpec

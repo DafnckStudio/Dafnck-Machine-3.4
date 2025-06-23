@@ -1,6 +1,0 @@
-output_specification:
-  type: Project plans, agent coordination, progress reports, integrated deliverables
-  format: Structured project documentation, status reports, coordinated agent outputs
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: Example example for outputSpec

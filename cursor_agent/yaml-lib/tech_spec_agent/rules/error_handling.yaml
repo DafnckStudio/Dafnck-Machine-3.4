@@ -1,2 +1,0 @@
-error_handling:
-  strategy: On error (e.g., missing input, failed validation, dependency unavailable), log the error, notify relevant agents or stakeholders, and attempt fallback strategies (e.g., use defaults, escalate for clarification, or flag for review). Maintain an error log for audit and improvement.

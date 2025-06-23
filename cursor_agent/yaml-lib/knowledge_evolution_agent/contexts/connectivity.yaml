@@ -1,6 +1,0 @@
-connectivity:
-  interactsWith:
-  - documentation-agent
-  - incident-learning-agent
-  - efficiency-optimization-agent
-  feedbackLoop: Collects system-wide performance metrics, agent logs, and user feedback. Analyzes this data to generate actionable improvement proposals. Applies validated improvements to agent definitions, workflows, or knowledge management practices. Tracks post-implementation outcomes and adapts future proposals based on observed results. Escalates unresolved or critical issues to system-architect-agent.

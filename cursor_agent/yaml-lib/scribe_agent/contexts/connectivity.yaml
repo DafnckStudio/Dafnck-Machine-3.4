@@ -1,4 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  feedbackLoop: Collects usage analytics (views, edits, search queries), direct user/agent feedback, and error reports. Feedback is analyzed to identify gaps, unclear sections, or outdated content. Actionable insights are used to update documentation, templates, and agent behavior. Feedback is also shared with related agents for cross-improvement.

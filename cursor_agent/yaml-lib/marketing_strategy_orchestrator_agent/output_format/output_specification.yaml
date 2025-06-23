@@ -1,6 +1,0 @@
-output_specification:
-  type: Object containing marketing strategies, campaign plans, performance reports, and coordination directives.
-  format: 'JSON object. Fields: strategy (string), channels (array), campaigns (array of objects), KPIs (array), teamAssignments (array of objects), performanceReports (array, optional). Validation: strategy, channels, and campaigns must be present. Example: see customInstructions.'
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: Example example for outputSpec

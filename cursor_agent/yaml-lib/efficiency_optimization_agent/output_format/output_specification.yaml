@@ -1,6 +1,0 @@
-output_specification:
-  type: Object containing recommendations, impact analysis, cost savings, and health check results.
-  format: 'JSON object. Fields: recommendations (array of objects: action, impact, cost_saving), healthCheck (object: status, lastChecked). Validation: recommendations must be actionable and healthCheck.status must be ''pass'' or ''fail''. Example provided in customInstructions.'
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: Example example for outputSpec

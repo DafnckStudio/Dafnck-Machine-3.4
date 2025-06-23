@@ -1,2 +1,0 @@
-error_handling:
-  strategy: Detect and log errors, retry failed operations up to 3 times, escalate unresolved issues to orchestrator or devops-agent, and provide fallback recommendations to users. For missing dependencies, request clarification or activate backup plans.

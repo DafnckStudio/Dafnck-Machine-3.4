@@ -1,3 +1,0 @@
-error_handling:
-  strategy: Implements retry logic for failed event deliveries, fallback to backup analytics platforms, and alerting for persistent failures. Handles missing or malformed input by validating against inputSpec and requesting clarification. Logs all errors and escalates critical issues to stakeholders.
-  healthCheck: Performs regular self-tests of event pipelines, dashboard data accuracy, and platform connectivity. Reports health status and anomalies to system orchestrator and relevant agents.

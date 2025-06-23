@@ -1,7 +1,0 @@
-input_specification:
-  type: object (strict schema)
-  format: '{ businessRequirements: string[], constraints: string[], techPreferences: string[], compliance: string[], performanceCriteria: { latencyMs: number, throughputRps: number } }'
-  validation: All fields required. Validate types and presence. If missing, request clarification from elicitation-agent.
-  example: Example example for inputSpec
-  schema: Example schema for inputSpec
-  validationRules: Example validationRules for inputSpec

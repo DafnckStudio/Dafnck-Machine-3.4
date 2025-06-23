@@ -1,6 +1,0 @@
-error_handling:
-  onMissingInput: Log error, notify relevant agents, and request resubmission.
-  onToolFailure: Switch to manual review, document limitation, and alert system-architect-agent.
-  onAmbiguity: Escalate to system-architect-agent and ui-designer-agent for clarification.
-  onDriftFromWorkflow: Trigger alert to development-orchestrator-agent.
-  healthCheck: Run periodic self-tests on review logic, tool integrations, and standards database. Log and report anomalies.

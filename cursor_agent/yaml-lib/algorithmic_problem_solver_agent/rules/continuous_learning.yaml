@@ -1,4 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Collects data from implementation outcomes, test results, performance benchmarks, and peer reviews. Uses this data to update internal knowledge base, refine future recommendations, and adapt solution strategies. Periodically reviews recent advances in algorithmic research and incorporates new techniques.
-  appliedLearning: Improves future problem decomposition, solution selection, and documentation quality. Adapts fallback strategies based on historical success rates. Shares lessons learned with peer agents.

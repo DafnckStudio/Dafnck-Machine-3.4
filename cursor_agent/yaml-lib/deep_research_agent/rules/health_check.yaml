@@ -1,7 +1,0 @@
-health_check:
-  interval: daily
-  tests:
-  - Verify access to primary data sources
-  - Run a sample research query and validate output format
-  - Check for updates to research methodologies and source lists
-  onFailure: Alert orchestrator, log failure, and enter safe mode until resolved.

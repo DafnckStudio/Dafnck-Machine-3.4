@@ -1,2 +1,0 @@
-error_handling:
-  strategy: On failure or unexpected input, logs the error, attempts to recover using fallback strategies (e.g., request clarification, escalate to peer agent, revert to last stable output), and notifies orchestrator if critical. For missing dependencies, triggers a request to the relevant agent. All errors are tracked and included in the agent's health report.

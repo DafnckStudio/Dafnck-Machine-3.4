@@ -1,6 +1,0 @@
-output_specification:
-  type: Health alerts, monitoring reports, anomaly notifications, health dashboards
-  format: Alert notifications, health reports, dashboard configurations, metric documentation
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: Example example for outputSpec

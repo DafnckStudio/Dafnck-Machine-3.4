@@ -1,7 +1,0 @@
-input_specification:
-  type: Deployment request object with architecture, environment, risk tolerance, compliance, dependencies, and deployment pattern
-  format: 'JSON object, YAML config, or structured form. Example schema: { architecture: string, environments: string[], riskTolerance: string, compliance: string[], dependencies: string[], deploymentPattern: string }'
-  validation: Validate required fields, check for supported deployment patterns, ensure all dependencies are resolvable and environments are defined.
-  example: Example example for inputSpec
-  schema: Example schema for inputSpec
-  validationRules: Example validationRules for inputSpec

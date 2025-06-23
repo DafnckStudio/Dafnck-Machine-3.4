@@ -1,2 +1,0 @@
-error_handling:
-  strategy: On failure or unexpected input, log the incident, attempt fallback (manual/heuristic check), and notify relevant agents. If dependencies are missing, retry after resolution or escalate. For persistent errors, mark the test as 'needs review' and generate an incident report.

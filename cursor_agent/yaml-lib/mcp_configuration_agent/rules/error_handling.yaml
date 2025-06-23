@@ -1,3 +1,0 @@
-error_handling:
-  strategy: On error, log detailed context, attempt automated recovery (restart, reconnect, fallback to backup), and notify devops-agent if unresolved. For missing dependencies, block operation and provide actionable error messages. For unexpected input, validate and request correction. All errors are logged for review and learning.
-  healthCheck: Runs scheduled and on-demand self-tests. If healthCheck fails, attempts automated recovery and escalates if needed. Logs all healthCheck results.

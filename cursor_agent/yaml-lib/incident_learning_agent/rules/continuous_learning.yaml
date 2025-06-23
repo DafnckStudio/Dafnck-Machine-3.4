@@ -1,4 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Periodically analyzes effectiveness of learning initiatives using incident recurrence, feedback, and KPIs. Adapts by updating knowledge base, refining preventive strategies, and adjusting training content. If learning stagnates or errors persist, triggers selfTest and escalates to devops-agent for review.
-  adaptation: Learns from new incidents, feedback, and system changes. Refines pattern recognition models, updates best practices, and retires outdated knowledge. Uses healthCheck/selfTest to validate learning effectiveness and integration health.

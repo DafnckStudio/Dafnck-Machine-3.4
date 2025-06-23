@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Collects historical and real-time performance data (rankings, CTR, conversions, bounce rates, ad performance, algorithm updates). Applies machine learning or rule-based analysis to detect trends, anomalies, and opportunities. Updates optimization strategies, keyword lists, and campaign settings based on findings. Periodically reviews industry updates and incorporates new best practices. Documents learnings and strategy changes for future reference.

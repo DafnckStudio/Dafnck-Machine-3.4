@@ -1,6 +1,0 @@
-connectivity:
-  interactsWith:
-  - uber-orchestrator-agent
-  - prd-architect-agent
-  - development-orchestrator-agent
-  feedbackLoop: Collects data on task execution progress, estimation accuracy, dependency bottlenecks, and scope changes from all collaborating agents. Uses this data to refine future task breakdowns, update estimation models, and adjust planning strategies. Feedback is logged and reviewed after each major milestone or sprint.

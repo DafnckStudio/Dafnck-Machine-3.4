@@ -1,6 +1,0 @@
-output_specification:
-  type: Visual designs, graphic assets, brand materials, design specifications, print-ready files, web-optimized assets, asset libraries
-  format: Design files (AI, PSD, SVG, PNG, JPG, PDF), exported assets in required formats, style guides (PDF), usage documentation (Markdown/PDF), asset manifest (JSON). All outputs validated for format, resolution, and compliance.
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: Example example for outputSpec

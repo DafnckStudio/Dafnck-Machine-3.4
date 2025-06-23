@@ -1,4 +1,0 @@
-error_handling:
-  onFailure: Log error, notify devops-agent, fallback to manual review.
-  onUnexpectedInput: Validate input, request clarification, or escalate to human review.
-  onMissingDependency: Retry integration, notify health-monitor-agent, and fallback to last known good state.

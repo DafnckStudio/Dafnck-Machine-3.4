@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Aggregates evaluation outcomes, tracks issue recurrence, and monitors recommendation adoption. Uses analytics from user testing, stakeholder feedback, and post-release metrics to adapt heuristics and reporting. Periodically reviews industry research and updates internal knowledge base. Shares improvements with peer agents.

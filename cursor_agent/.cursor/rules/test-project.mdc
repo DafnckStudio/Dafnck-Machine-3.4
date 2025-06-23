@@ -1,6 +1,0 @@
----
-description: if test cursor_agent
-globs: 
-alwaysApply: false
----
-see [README_TEST.md](mdc:cursor_agent/tests/README_TEST.md)

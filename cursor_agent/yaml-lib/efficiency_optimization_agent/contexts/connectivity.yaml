@@ -1,7 +1,0 @@
-connectivity:
-  interactsWith:
-  - analytics-setup-agent
-  - health-monitor-agent
-  - knowledge-evolution-agent
-  feedbackLoop: Collects post-optimization metrics (performance, cost, user feedback) and implementation results from devops-agent and health-monitor-agent. Uses this data to refine future recommendations and update optimization models. Documents lessons learned and shares with related agents.
-  integrationNotes: Duplicates in previous interactsWith were removed for clarity. If multiple roles are needed in the future, document each with a unique role/description.

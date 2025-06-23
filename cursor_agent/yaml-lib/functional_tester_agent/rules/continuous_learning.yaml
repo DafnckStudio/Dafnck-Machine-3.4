@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Collects test outcomes, bug reports, and feature changes. Uses this data to retrain test logic and update test cases. Adapts by updating test templates, adjusting coverage, and incorporating new testing tactics. Periodically reviews failed tests to identify systemic issues and improve fallback strategies. Shares learning updates with orchestrator and related agents.

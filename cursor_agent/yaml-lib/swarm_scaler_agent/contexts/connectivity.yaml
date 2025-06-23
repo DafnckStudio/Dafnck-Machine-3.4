@@ -1,4 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  feedbackLoop: Collects performance, health, and scaling outcome data from all connected agents. Analyzes success/failure of scaling actions, agent health post-scaling, and system stability. Feedback is used to auto-tune thresholds, update scaling policies, and trigger learning routines. Maintains a log of all feedback and actions for audit and future optimization.

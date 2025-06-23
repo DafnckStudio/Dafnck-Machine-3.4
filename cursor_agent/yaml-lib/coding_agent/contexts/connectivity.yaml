@@ -1,6 +1,0 @@
-connectivity:
-  interactsWith:
-  - development-orchestrator-agent
-  - code-reviewer-agent
-  - tech-spec-agent
-  feedbackLoop: Receives feedback from code-reviewer-agent (code quality), functional-tester-agent (test results), devops-agent (deployment issues), and system-architect-agent (integration/architecture). Feedback is logged, analyzed, and used to update coding patterns, refactor code, and improve documentation. Maintains a feedback log for continuous improvement.

@@ -1,4 +1,0 @@
-health_check:
-  enabled: true
-  interval: on startup and before each major phase
-  selfTest: Runs validation of configuration, connectivity to key agents, and checks for missing dependencies. Reports status to orchestrator.

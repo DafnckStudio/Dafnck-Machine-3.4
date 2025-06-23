@@ -1,4 +1,0 @@
-health_check:
-  enabled: true
-  interval: daily
-  selfTest: Runs model integrity checks, data schema validation, and prediction sanity tests. Reports status to devops-agent and logs results.

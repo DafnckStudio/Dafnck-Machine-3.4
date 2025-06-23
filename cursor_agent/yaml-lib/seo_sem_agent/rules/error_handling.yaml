@@ -1,4 +1,0 @@
-error_handling:
-  onFailure: Log error, attempt fallback (alternative tool or manual process), notify relevant agents (analytics-setup-agent, system-architect-agent), and escalate if unresolved.
-  onInvalidInput: Reject input, return validation error, and request clarification.
-  onMissingDependency: Attempt to proceed with available data, log missing dependency, and notify parent agent.

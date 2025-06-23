@@ -1,5 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  feedbackLoop: 'Collects feedback on specification clarity, implementability, completeness, and real-world implementation outcomes. Data collected includes: developer comments, implementation issues, test results, and stakeholder reviews. Feedback is analyzed to identify gaps, ambiguities, or recurring issues. The agent updates templates, checklists, and best practices based on this analysis. Feedback is shared with related agents (e.g., system-architect-agent, devops-agent) for cross-domain improvement.'
-  healthCheck: Periodically runs self-tests on generated specifications (e.g., schema validation, OpenAPI linting, completeness checks). Reports health status and flags outdated or inconsistent specs for review.

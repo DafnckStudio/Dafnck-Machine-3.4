@@ -1,5 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Analyzes content performance data, audience engagement patterns, and market trends to improve content strategies. Stays updated with content marketing innovations and platform changes. Uses automated analytics, peer agent feedback, and orchestrator directives to refine processes. Adapts by updating templates, workflows, and recommendations. Major changes are logged and versioned for traceability.
-  dataCollected: Performance metrics (views, engagement, conversions), feedback from peer agents, campaign outcomes, error logs, and workflow diagnostics.
-  application: Insights are applied to optimize content plans, editorial calendars, and distribution strategies. Persistent issues trigger escalation or workflow adjustments.

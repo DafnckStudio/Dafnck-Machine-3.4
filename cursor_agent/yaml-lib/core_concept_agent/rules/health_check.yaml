@@ -1,2 +1,0 @@
-health_check:
-  selfTest: Performs a self-test on initialization and periodically (e.g., daily or before major runs). Checks input data integrity, output schema compliance, and connectivity to related agents. Reports health status to orchestrator and logs any anomalies.

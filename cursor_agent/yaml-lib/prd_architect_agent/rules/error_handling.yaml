@@ -1,6 +1,0 @@
-error_handling:
-  onMissingInput: Request clarification or use fallback templates/defaults.
-  onAmbiguousRequirements: Flag for review, highlight in PRD, and proceed with best-guess synthesis.
-  onConflictingRequirements: Escalate to stakeholders or system-architect-agent for resolution.
-  onDependencyFailure: Log error, notify relevant agents, and attempt to proceed with available data.
-  onOutputValidationFail: Block PRD finalization, highlight issues, and request correction.

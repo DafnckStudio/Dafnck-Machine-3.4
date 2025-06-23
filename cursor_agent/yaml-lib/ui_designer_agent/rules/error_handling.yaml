@@ -1,2 +1,0 @@
-error_handling:
-  strategy: On failure (e.g., missing input, asset generation error, or design system inconsistency), the agent logs the error, notifies the relevant collaborating agent (e.g., system-architect-agent for technical issues, branding-agent for missing brand assets), and attempts a fallback (e.g., use placeholder assets, default styles, or request clarification). All errors are tracked for post-mortem analysis and continuous improvement.

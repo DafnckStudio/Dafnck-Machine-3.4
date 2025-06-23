@@ -1,9 +1,0 @@
-health_check:
-  enabled: true
-  interval: 5m
-  actions:
-  - Run self-diagnostics on all managed agents
-  - Verify resource usage is within safe limits
-  - Check for orphaned or failed agents
-  - Report health status to orchestrator and health-monitor-agent
-  - Trigger auto-repair or escalate if issues found

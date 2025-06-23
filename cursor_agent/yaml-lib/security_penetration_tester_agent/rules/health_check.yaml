@@ -1,2 +1,0 @@
-health_check:
-  selfTest: Runs a self-diagnostic on startup and before major actions. Checks for data availability, dependency status, and recent error logs. Reports health status to orchestrator.

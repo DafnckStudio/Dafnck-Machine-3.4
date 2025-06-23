@@ -1,4 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  feedbackLoop: Collects bug reports, error logs, test results, and monitoring data. After each debugging session, logs root cause, fix, and outcome. Aggregates recurring issues and resolution effectiveness. Shares learnings with @system-architect-agent and @devops-agent for systemic improvements.

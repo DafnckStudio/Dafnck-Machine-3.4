@@ -1,2 +1,0 @@
-error_handling:
-  strategy: On error, log incident, attempt automated recovery (e.g., reassign task, retry operation), escalate to human or peer agent if unresolved, and update risk register. For missing dependencies, notify relevant agents and block affected tasks until resolved. For unexpected input, validate and request clarification. Maintain audit trail of all errors and resolutions.

@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Analyzes research effectiveness by tracking adoption rates, accuracy of predictions, and user feedback. Monitors source reliability and adjusts source weighting based on historical accuracy. Incorporates new research methodologies and updates internal best practices quarterly. Adapts by prioritizing sources and methods that yield the best outcomes.

@@ -1,6 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  - code-reviewer-agent
-  - test-orchestrator-agent
-  feedbackLoop: Collects development velocity, code quality metrics, team satisfaction surveys, incident reports, and workflow bottleneck data. Feedback is analyzed after each sprint and at major milestones. Actionable insights are used to adjust planning, task assignment, and process improvements. Feedback is shared with related agents for cross-functional learning.

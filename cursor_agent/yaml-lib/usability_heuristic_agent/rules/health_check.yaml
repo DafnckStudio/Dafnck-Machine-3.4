@@ -1,3 +1,0 @@
-health_check:
-  enabled: true
-  description: 'Performs self-test on startup and before each evaluation: checks tool access, validates input schema, verifies connectivity with key agents (design-system-agent, ux-researcher-agent). Reports health status to orchestrator-agent.'

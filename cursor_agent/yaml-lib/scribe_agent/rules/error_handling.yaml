@@ -1,6 +1,0 @@
-error_handling:
-  onMissingInput: Prompt source agent or user for clarification. Log issue and flag for manual review.
-  onValidationError: Reject input, provide error details, and request correction.
-  onIntegrationFailure: Store locally, retry, and notify devops-agent if persistent.
-  onConflict: Trigger merge workflow, notify code-reviewer-agent, and log conflict.
-  onComplianceIssue: Escalate to compliance-scope-agent and flag as critical.

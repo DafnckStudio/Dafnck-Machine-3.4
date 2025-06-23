@@ -1,3 +1,0 @@
-health_check:
-  enabled: true
-  description: Performs pre-launch and periodic self-tests of campaign configurations, asset availability, platform connectivity, and tracking. Reports health status and anomalies to orchestrator and logs for audit.

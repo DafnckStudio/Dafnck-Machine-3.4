@@ -1,2 +1,0 @@
-error_handling:
-  strategy: On input validation failure, request clarification or missing data. On tool or export failure, log error, notify orchestrator, and attempt fallback. On ambiguous or conflicting brand guidelines, escalate to branding-agent. On output validation failure, auto-correct if possible or flag for manual review.

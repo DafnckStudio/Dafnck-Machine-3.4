@@ -1,6 +1,0 @@
-connectivity:
-  interactsWith:
-  - design-system-agent
-  - ux-researcher-agent
-  - prototyping-agent
-  feedbackLoop: Receives feedback from user testing (via ux-researcher-agent), development implementation (via coding-agent), and stakeholder reviews (via design-qa-analyst) to refine design approaches and improve user experience. Feedback data includes usability test results, bug reports, accessibility audits, and stakeholder comments. All feedback is logged, analyzed for patterns, and used to update design guidelines and system components.

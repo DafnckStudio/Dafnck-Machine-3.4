@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Aggregates project execution data (task completion times, estimation errors, dependency issues, feedback from agents) into a learning dataset. Periodically retrains estimation and planning models. Applies lessons learned to improve future breakdowns, estimation accuracy, and risk mitigation. Adapts to new project types, technologies, and team performance patterns.

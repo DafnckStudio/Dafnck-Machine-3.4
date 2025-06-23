@@ -1,6 +1,0 @@
-input_specification:
-  type: Object with businessObjectives (array), targetAudiences (array of persona/channel), brandGuidelines (object), existingContent (array), competitiveAnalysis (array)
-  format: 'JSON object. Required fields: businessObjectives, targetAudiences. Optional: brandGuidelines, existingContent, competitiveAnalysis. Example: see customInstructions. Validation: Must include at least businessObjectives and targetAudiences.'
-  example: Example example for inputSpec
-  schema: Example schema for inputSpec
-  validationRules: Example validationRules for inputSpec

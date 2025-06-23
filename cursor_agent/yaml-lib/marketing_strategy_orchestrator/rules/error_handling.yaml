@@ -1,4 +1,0 @@
-error_handling:
-  strategy: On failure or unexpected input, log the error, attempt automated recovery (retry, fallback to manual process,
-    or escalate to human operator). If a dependency is missing, notify the orchestrator and pause affected workflows. For
-    integration failures, run selfTest and alert relevant agents.

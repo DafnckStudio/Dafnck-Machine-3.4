@@ -1,9 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Analyzes video performance metrics, audience engagement patterns, and platform algorithm changes. Incorporates new best practices, updates templates, and adapts production techniques based on analytics and industry trends. Regularly reviews failed or underperforming videos to identify root causes and implement corrective actions.
-  dataSources:
-  - platform analytics APIs
-  - user feedback
-  - industry reports
-  - internal performance logs
-  adaptation: Updates production checklists, asset libraries, and editing workflows. Suggests new content formats or strategies when trends shift. Flags recurring issues for deeper review.

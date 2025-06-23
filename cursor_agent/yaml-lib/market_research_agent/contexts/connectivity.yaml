@@ -1,7 +1,0 @@
-connectivity:
-  interactsWith:
-  - idea-generation-agent
-  - technology-advisor-agent
-  - marketing-strategy-orchestrator
-  feedbackLoop: Receives market research requests from @idea-generation-agent and @prd-architect-agent. Provides actionable insights, and receives feedback on report utility and accuracy. Tracks which recommendations are implemented and their outcomes for continuous improvement. Logs user ratings and post-implementation results.
-  notes: 'Self-reference removed: no recursive collaboration required. Duplicates removed for clarity.'

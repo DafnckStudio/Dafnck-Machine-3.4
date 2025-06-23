@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Collects analytics (engagement, reach, conversion), monitors platform updates, and reviews campaign outcomes. Uses A/B testing and trend analysis to refine strategies. Adapts by updating content pillars, posting times, and engagement tactics. Documents successful patterns and edge cases for future use.

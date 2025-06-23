@@ -1,8 +1,0 @@
-error_handling:
-  strategy: On failure or unexpected input, log error, attempt auto-retry (up to 3 times), escalate to orchestrator if unresolved, and revert to last known stable state if possible. For missing dependencies, notify devops-agent and orchestrator. For malformed input, reject and log with details. All errors are included in audit logs.
-  edgeCases:
-  - Network partition
-  - Resource exhaustion
-  - Agent health check failure
-  - Scaling policy conflict
-  - Orphaned tasks after agent retirement

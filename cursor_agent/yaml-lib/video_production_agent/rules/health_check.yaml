@@ -1,3 +1,0 @@
-health_check:
-  enabled: true
-  selfTest: Runs pre-flight checks on input assets, verifies tool availability (e.g., ffmpeg, editing software), and simulates a test render before full production. Reports health status to orchestrator agents.

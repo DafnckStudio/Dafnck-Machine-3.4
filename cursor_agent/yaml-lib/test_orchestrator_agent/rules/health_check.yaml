@@ -1,3 +1,0 @@
-health_check:
-  enabled: true
-  method: 'Periodic self-test: run a known passing test suite, verify environment readiness, and check connectivity with all peer agents. Report health status to @health-monitor-agent and log anomalies.'

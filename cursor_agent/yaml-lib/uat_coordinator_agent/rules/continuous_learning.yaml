@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Aggregates UAT execution data (participation, feedback, issue logs, satisfaction). Applies machine learning to identify improvement areas. Updates playbooks, templates, and communication strategies. Periodically reviews outcomes with orchestrator agents and incorporates new best practices.

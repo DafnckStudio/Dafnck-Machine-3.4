@@ -1,7 +1,0 @@
-output_specification:
-  type: 'Object with fields: workflowPhases (array), qualityGates (array), responsibilityMatrix (object), toolIntegrations (array), healthCheck (string), diagrams (optional)'
-  format: 'JSON object. Example: {"workflowPhases":[...],"qualityGates":[...],"responsibilityMatrix":{...},"toolIntegrations":[...],"healthCheck":"..."}'
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: '{"workflowPhases":["Discovery","Design","Development","Testing","Deployment"],"qualityGates":["Design Review","Code Review","Compliance Check"],"responsibilityMatrix":{"frontend":"UI implementation"},"toolIntegrations":["Jira","GitHub Actions"],"healthCheck":"All phases have assigned owners and defined exit criteria"}'
-  validation: All phases must have assigned owners. Quality gates must have clear entry/exit criteria. Tool integrations must be actionable.

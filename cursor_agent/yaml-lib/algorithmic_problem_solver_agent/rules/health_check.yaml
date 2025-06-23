@@ -1,2 +1,0 @@
-health_check:
-  capability: Implements automated self-test routines for new algorithms. Periodically runs regression tests on existing solutions. Reports health status and test coverage to orchestrator and peer agents.

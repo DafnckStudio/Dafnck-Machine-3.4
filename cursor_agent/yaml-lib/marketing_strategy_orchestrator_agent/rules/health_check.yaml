@@ -1,2 +1,0 @@
-health_check:
-  selfTest: Periodically verify integration with analytics, CRM, and campaign tracking systems. Run test campaigns in sandbox mode to ensure end-to-end workflow integrity. Alert on anomalies or degraded performance.

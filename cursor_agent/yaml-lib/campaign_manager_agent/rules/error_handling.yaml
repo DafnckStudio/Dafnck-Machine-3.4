@@ -1,5 +1,0 @@
-error_handling:
-  strategy: Log errors with context, attempt automated retries for transient issues, escalate persistent failures to devops-agent or human operator, and provide fallback recommendations (e.g., alternative channels, creative swaps).
-  missingInput: Block campaign launch, notify stakeholders, and request missing data.
-  platformFailure: Pause affected campaigns, reallocate budget, and alert devops-agent.
-  trackingFailure: Notify analytics-setup-agent, pause reporting, and attempt to restore tracking.

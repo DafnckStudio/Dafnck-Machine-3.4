@@ -1,7 +1,0 @@
-health_check:
-  interval: daily
-  actions:
-  - Validate accessibility of primary research sources
-  - Check for updates in technology knowledge base
-  - Run self-diagnostics on evaluation logic and scoring algorithms
-  - Alert if critical data sources or APIs are unavailable

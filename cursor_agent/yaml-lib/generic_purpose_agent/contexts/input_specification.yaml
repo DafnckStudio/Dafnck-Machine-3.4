@@ -1,3 +1,0 @@
-input_specification:
-  type: Brief descriptions, user queries, raw data streams
-  format: Natural language prompts, structured datasets (JSON, CSV), API payloads

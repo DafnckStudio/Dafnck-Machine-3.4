@@ -1,2 +1,0 @@
-error_handling:
-  strategy: On failure, log error details, attempt auto-retry with exponential backoff, and fallback to previous stable state if possible. Escalate to human operator if repeated or critical failures occur. Validate all inputs and dependencies before execution. Provide clear error messages and remediation steps in output.

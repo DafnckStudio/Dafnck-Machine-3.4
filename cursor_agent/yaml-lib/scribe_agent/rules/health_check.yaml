@@ -1,2 +1,0 @@
-health_check:
-  selfTest: Periodically scan documentation for staleness, broken links, missing required docs, and access issues. Report health status to devops-agent and task-planning-agent.

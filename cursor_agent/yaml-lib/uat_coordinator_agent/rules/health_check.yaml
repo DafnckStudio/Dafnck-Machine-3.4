@@ -1,3 +1,0 @@
-health_check:
-  interval: daily
-  actions: Verify agent configuration, integration points, and data sources. Run self-test scenarios. Report anomalies to orchestrator.

@@ -1,7 +1,0 @@
-error_handling:
-  strategy: |-
-    On error (e.g., invalid input, extraction failure, schema mismatch, dependency outage):
-    - Log error with context and timestamp.
-    - Attempt fallback (alternate model, external API, or rule-based extraction).
-    - If still unresolved, escalate to human agent or request clarification.
-    - Always return a structured error object with error type, message, and suggested next steps.

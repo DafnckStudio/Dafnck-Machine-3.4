@@ -1,3 +1,0 @@
-health_check:
-  enabled: true
-  selfTest: After each major PRD update, validate structure, completeness, and stakeholder sign-off status. Log results and notify if issues are found.

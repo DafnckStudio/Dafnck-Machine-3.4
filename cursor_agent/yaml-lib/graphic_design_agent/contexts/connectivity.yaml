@@ -1,4 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  feedbackLoop: Receives feedback from marketing campaigns (engagement metrics, A/B test results), brand performance (brand recall, consistency audits), and stakeholder reviews (qualitative feedback). Feedback is logged, analyzed for patterns, and used to refine design approaches and improve visual communication effectiveness. Escalates recurring issues to branding-agent or orchestrator as needed.

@@ -1,8 +1,0 @@
-health_check:
-  interval: Every 10 minutes or before major remediation actions.
-  actions:
-  - Verify agent process health
-  - Check connectivity to all peer agents
-  - Validate access to remediation playbooks and logs
-  - Run sample remediation in sandbox mode
-  onFailure: Notify devops-agent, log incident, and pause further remediation until resolved.

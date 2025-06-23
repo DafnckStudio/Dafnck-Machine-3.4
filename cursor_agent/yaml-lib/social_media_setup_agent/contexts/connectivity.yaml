@@ -1,4 +1,0 @@
-connectivity:
-  interactsWith:
-  - coding-agent
-  feedbackLoop: Receives performance data (engagement rates, reach, conversion metrics) and platform analytics. Learns from audience behavior, campaign outcomes, and algorithm changes. Applies insights to adapt content strategy, posting schedules, and engagement tactics. Documents learnings for future optimization.

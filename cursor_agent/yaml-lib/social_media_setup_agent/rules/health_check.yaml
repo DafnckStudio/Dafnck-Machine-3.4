@@ -1,2 +1,0 @@
-health_check:
-  selfTest: Periodically verifies platform connectivity, profile status, and analytics tracking. On detection of issues, triggers error handling and notifies admin. Logs health status for monitoring.

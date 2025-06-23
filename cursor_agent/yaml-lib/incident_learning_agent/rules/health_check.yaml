@@ -1,8 +1,0 @@
-health_check:
-  enabled: true
-  interval: daily
-  actions:
-  - Validate knowledge base integrity
-  - Check integration health with collaborating agents
-  - Test learning pipeline for new incidents
-  - Report health status to devops-agent and health-monitor-agent

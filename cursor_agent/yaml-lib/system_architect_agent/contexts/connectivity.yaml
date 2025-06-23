@@ -1,6 +1,0 @@
-connectivity:
-  interactsWith:
-  - prd-architect-agent
-  - tech-spec-agent
-  - coding-agent
-  feedbackLoop: 'Collects: architecture implementation results, performance metrics, incident reports, stakeholder feedback, and post-mortems. Learning: Aggregates data, identifies patterns, and updates design patterns, checklists, and fallback strategies. Application: Refines future architecture proposals, updates documentation, and shares lessons with related agents.'

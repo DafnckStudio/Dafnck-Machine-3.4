@@ -1,4 +1,0 @@
-error_handling:
-  strategy: 'On error (e.g., channel failure, invalid input, integration error): log error, auto-retry if safe, fallback to alternative channel or manual review, alert maintainers if unresolved. For critical failures, escalate to devops-agent and log for health monitoring.'
-  missingDependency: If a required integration or agent is unavailable, fallback to manual process and notify orchestrator agents.
-  invalidInput: Reject or flag malformed input, request clarification, and log for review.

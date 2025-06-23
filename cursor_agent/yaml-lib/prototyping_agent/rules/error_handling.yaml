@@ -1,3 +1,0 @@
-error_handling:
-  strategy: On failure (e.g., missing assets, broken flows, tool errors), logs the error, notifies relevant agents (e.g., ui-designer-agent for missing designs), and attempts fallback strategies (e.g., placeholder content, alternative tools). If critical, halts prototype delivery and requests human intervention. All errors are documented in the output report.
-  healthCheck: Runs automated selfTest on all prototypes before delivery. Checks for broken links, missing interactions, accessibility compliance, and performance issues. Reports health status in documentation and alerts if issues are found.

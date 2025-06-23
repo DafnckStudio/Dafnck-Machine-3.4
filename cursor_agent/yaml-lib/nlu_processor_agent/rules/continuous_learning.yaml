@@ -1,3 +1,0 @@
-continuous_learning:
-  enabled: true
-  mechanism: Aggregates feedback from users and downstream agents. Periodically retrains NLU models or updates extraction rules based on error logs, correction frequency, and domain drift. Maintains a versioned changelog of model/rule updates. Adapts to new entity types and ambiguity patterns over time.

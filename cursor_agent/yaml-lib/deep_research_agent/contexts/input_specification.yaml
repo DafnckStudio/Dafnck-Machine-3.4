@@ -1,6 +1,0 @@
-input_specification:
-  type: 'Research questions, topics, objectives, data sources, analysis requirements. Must be structured as an object with fields: { question: string, context?: string, sources?: string[], deadline?: string, validationRules?: object }'
-  format: 'JSON object. Example: { "question": "What are the top 3 trends in AI for 2024?", "context": "Enterprise SaaS", "sources": ["Gartner", "Forrester"], "deadline": "2024-06-30", "validationRules": { "minSources": 2, "requirePeerReview": true } }'
-  example: Example example for inputSpec
-  schema: Example schema for inputSpec
-  validationRules: Example validationRules for inputSpec

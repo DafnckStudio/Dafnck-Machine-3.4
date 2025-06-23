@@ -1,7 +1,0 @@
-output_specification:
-  type: object (strict schema)
-  format: '{ architectureStyle: string, components: { name: string, tech: string }[], integrationPlan: object, deployment: object, compliance: string[], diagrams: string[] }'
-  schema: Example schema for outputSpec
-  validationRules: Example validationRules for outputSpec
-  example: Example example for outputSpec
-  validation: All fields required. Validate that architectureStyle matches one of the supported patterns. Components must have name and tech. Diagrams must be generated for each major component and integration.
