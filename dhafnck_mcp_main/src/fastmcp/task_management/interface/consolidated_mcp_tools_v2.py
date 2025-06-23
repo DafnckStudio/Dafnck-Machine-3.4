@@ -24,6 +24,7 @@ from fastmcp.task_management.application import (
     UpdateTaskRequest,
     ListTasksRequest,
     SearchTasksRequest,
+    AddDependencyRequest,
     DoNextUseCase,
     CallAgentUseCase
 )
@@ -38,6 +39,21 @@ from fastmcp.task_management.infrastructure.services.agent_converter import Agen
 from fastmcp.task_management.domain.entities.project import Project as ProjectEntity
 from fastmcp.task_management.domain.entities.task_tree import TaskTree as TaskTreeEntity
 from fastmcp.task_management.domain.services.orchestrator import Orchestrator
+from ..application.dtos import (
+    CreateTaskRequest,
+    UpdateTaskRequest,
+    ListTasksRequest,
+    SearchTasksRequest,
+    TaskResponse,
+    CreateTaskResponse,
+    TaskListResponse,
+    AddSubtaskRequest,
+    UpdateSubtaskRequest,
+    SubtaskResponse,
+    AddDependencyRequest,
+    DependencyResponse
+)
+from ..domain.entities.task import Task
 
 BRAIN_DIR = os.path.join(os.path.dirname(__file__), '../../../.cursor/rules/brain')
 PROJECTS_FILE = os.path.join(BRAIN_DIR, 'projects.json')
@@ -586,30 +602,84 @@ class ConsolidatedMCPToolsV2:
             # Route to the appropriate handler based on action
             # ═══════════════════════════════════════════════════════════════════
             
-            core_actions = ["create", "get", "update", "delete"]
-            if action in core_actions:
-                return self._handle_core_task_operations(
-                    action, task_id, title, description, status, priority,
-                    details, estimated_effort, assignees, labels, due_date,
-                    project_id=project_id, force_full_generation=force_full_generation
-                )
-            elif action == "complete":
-                return self._handle_complete_task(task_id)
-            
-            elif action == "list":
-                return self._handle_list_tasks(status, priority, assignees, labels, limit)
-            
-            elif action == "search":
-                return self._handle_search_tasks(query, limit)
-            
-            elif action == "next":
-                return self._handle_do_next()
-            
-            elif action.endswith("_dependency"):
-                return self._handle_dependency_operations(action, task_id, dependency_data)
-
-            else:
-                return {"success": False, "error": f"Invalid task action: {action}"}
+            if action == "create" and not title:
+                return {"success": False, "error": "Title is required for creating a task."}
+            if labels and not all(LabelValidator.is_valid(label) for label in labels):
+                return {"success": False, "error": "Invalid label(s) provided"}
+            try:
+                if action == "create":
+                    request = CreateTaskRequest(
+                        title=title,
+                        description=description,
+                        project_id=project_id,
+                        status=status,
+                        priority=priority,
+                        details=details,
+                        estimated_effort=estimated_effort,
+                        assignees=assignees,
+                        labels=labels,
+                        due_date=due_date
+                    )
+                    response = self._task_app_service.create_task(request)
+                    logging.info(f"Create task response: {response}")
+                    if response.success:
+                        return {
+                            "success": True,
+                            "action": "create",
+                            "task": asdict(response.task) if response.task else None
+                        }
+                    else:
+                        return {
+                            "success": False,
+                            "action": "create",
+                            "error": response.message
+                        }
+                elif action == "get":
+                    task_response = self._task_app_service.get_task(task_id, generate_rules=True, force_full_generation=force_full_generation)
+                    if task_response:
+                        return {
+                            "success": True,
+                            "action": "get",
+                            "task": asdict(task_response)
+                        }
+                    else:
+                        return {"success": False, "action": "get", "error": f"Task with ID {task_id} not found."}
+                elif action == "update":
+                    request = UpdateTaskRequest(
+                        task_id=task_id,
+                        title=title,
+                        description=description,
+                        status=status,
+                        priority=priority,
+                        details=details,
+                        estimated_effort=estimated_effort,
+                        assignees=assignees,
+                        labels=labels,
+                        due_date=due_date
+                    )
+                    task_response = self._task_app_service.update_task(request)
+                    if task_response and task_response.success:
+                        return {
+                            "success": True,
+                            "action": "update",
+                            "task": asdict(task_response.task)
+                        }
+                    
+                    error_message = task_response.message if task_response else f"Task with ID {task_id} not found."
+                    return {"success": False, "action": "update", "error": error_message}
+                elif action == "delete":
+                    success = self._task_app_service.delete_task(task_id)
+                    if success:
+                        return {"success": True, "action": "delete"}
+                    else:
+                        return {"success": False, "action": "delete", "error": f"Task with ID {task_id} not found."}
+                else:
+                    return {"success": False, "error": f"Invalid core action: {action}"}
+            except Exception as e:
+                logging.error(f"Error in core task operation '{action}': {traceback.format_exc()}")
+                if "generate_rules_for_task" in traceback.format_exc():
+                    return {"success": False, "error": f"Error during auto rule generation: {e}"}
+                return {"success": False, "error": str(e)}
 
         @mcp.tool()
         def manage_subtask(
@@ -885,6 +955,7 @@ class ConsolidatedMCPToolsV2:
         """Internal handler for core task CRUD operations."""
         try:
             if action == "create":
+                # Ensure description is not None for create action
                 request = CreateTaskRequest(
                     title=title,
                     description=description,
@@ -1054,7 +1125,7 @@ class ConsolidatedMCPToolsV2:
             if action == "add_dependency":
                 if not dependency_data or "dependency_id" not in dependency_data:
                     return {"success": False, "error": "dependency_data with dependency_id is required"}
-                from task_mcp.application.use_cases.manage_dependencies import AddDependencyRequest
+                
                 request = AddDependencyRequest(task_id=task_id, dependency_id=dependency_data["dependency_id"])
                 response = self._task_app_service.add_dependency(request)
                 return {"success": response.success, "action": "add_dependency", "task_id": response.task_id, "dependencies": response.dependencies, "message": response.message}
@@ -1077,7 +1148,7 @@ class ConsolidatedMCPToolsV2:
         except Exception as e:
             return {"success": False, "error": f"Dependency operation failed: {str(e)}"}
 
-    def _handle_subtask_operations(self, action, task_id, subtask_data):
+    def _handle_subtask_operations(self, action, task_id, subtask_data=None):
         """Handle subtask operations"""
         logging.info(f"Subtask operation action: {action}, task_id: {task_id}, subtask_data: {subtask_data}")
         if not task_id:
