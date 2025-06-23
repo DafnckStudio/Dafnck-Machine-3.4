@@ -383,12 +383,12 @@ class ConsolidatedMCPToolsV2:
         @mcp.tool()
         def manage_project(
             action: str,
-            project_id: Optional[str] = None,
-            name: Optional[str] = None,
-            description: Optional[str] = None,
-            tree_id: Optional[str] = None,
-            tree_name: Optional[str] = None,
-            tree_description: Optional[str] = None
+            project_id: str = None,
+            name: str = None,
+            description: str = None,
+            tree_id: str = None,
+            tree_name: str = None,
+            tree_description: str = None
         ) -> Dict[str, Any]:
             """🏗️ PROJECT ORCHESTRATION HUB - Complete multi-agent project lifecycle management
 
@@ -505,20 +505,20 @@ class ConsolidatedMCPToolsV2:
         @mcp.tool()
         def manage_task(
             action: str,
-            task_id: Optional[str] = None,
-            project_id: Optional[str] = None,
-            title: Optional[str] = None,
-            description: Optional[str] = None,
-            status: Optional[str] = None,
-            priority: Optional[str] = None,
-            details: Optional[str] = None,
-            estimated_effort: Optional[str] = None,
-            assignees: Optional[List[str]] = None,
-            labels: Optional[List[str]] = None,
-            due_date: Optional[str] = None,
-            dependency_data: Optional[Dict[str, Any]] = None,
-            query: Optional[str] = None,
-            limit: Optional[int] = None,
+            task_id: str = None,
+            project_id: str = None,
+            title: str = None,
+            description: str = None,
+            status: str = None,
+            priority: str = None,
+            details: str = None,
+            estimated_effort: str = None,
+            assignees: List[str] = None,
+            labels: List[str] = None,
+            due_date: str = None,
+            dependency_data: Dict[str, Any] = None,
+            query: str = None,
+            limit: int = None,
             force_full_generation: bool = False
         ) -> Dict[str, Any]:
             """📋 TASK LIFECYCLE HUB - Core Task Management with Intelligent Automation
@@ -703,8 +703,8 @@ class ConsolidatedMCPToolsV2:
         @mcp.tool()
         def manage_subtask(
             action: str,
-            task_id: Optional[str] = None,
-            subtask_data: Optional[Dict[str, Any]] = None
+            task_id: str = None,
+            subtask_data: Dict[str, Any] = None
         ) -> Dict[str, Any]:
             """Manages subtasks for a given task, including creation, completion, updates, removal, and listing.
 
@@ -736,11 +736,11 @@ class ConsolidatedMCPToolsV2:
         @mcp.tool()
         def manage_agent(
             action: str,
-            project_id: Optional[str] = None,
-            agent_id: Optional[str] = None,
-            name: Optional[str] = None,
-            call_agent: Optional[str] = None,
-            tree_id: Optional[str] = None
+            project_id: str = None,
+            agent_id: str = None,
+            name: str = None,
+            call_agent: str = None,
+            tree_id: str = None
         ) -> Dict[str, Any]:
             """🤖 AGENT COORDINATION HUB - Multi-agent team management and intelligent assignment
 
