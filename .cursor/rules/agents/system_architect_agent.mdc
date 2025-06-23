@@ -142,8 +142,6 @@
 - health_check:
     - enabled: True
     - method: Periodic self-test of architecture models, validation of design outputs, and health endpoint exposure. Reports status to health-monitor-agent.
-## Tools
-
 ## Output_Format
 
 ### output_specification
