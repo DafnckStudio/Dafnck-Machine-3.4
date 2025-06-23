@@ -152,7 +152,7 @@ class TestE2EUserJourneys:
         )
         add_subtask_response = json.loads(add_subtask_response_list[0].text)
         assert add_subtask_response["success"]
-        subtask_id = add_subtask_response["result"]["result"]["subtask"]["id"]
+        subtask_id = add_subtask_response["result"]["subtask"]["id"]
     
         # 5. Complete the subtask
         complete_subtask_response_list = await mcp_server_instance._mcp_call_tool(
@@ -173,7 +173,7 @@ class TestE2EUserJourneys:
         )
         list_subtasks_response = json.loads(list_subtasks_response_list[0].text)
         assert list_subtasks_response["success"]
-        completed_subtask = next(st for st in list_subtasks_response["result"]["result"] if st["id"] == subtask_id)
+        completed_subtask = next(st for st in list_subtasks_response["result"] if st["id"] == subtask_id)
         assert completed_subtask["completed"]
 
         # 6. Complete the main task

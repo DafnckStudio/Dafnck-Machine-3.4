@@ -12,11 +12,30 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
 
 @pytest.fixture
-def mcp_tools():
-    """Fixture to provide an instance of ConsolidatedMCPToolsV2."""
-    tools = ConsolidatedMCPToolsV2()
-    # You might want to use a temporary, clean task file for these tests
-    # For now, we rely on the default test tasks file, assuming a known state or cleaning it up.
+def mcp_tools(temp_tasks_file):
+    """Fixture to provide an instance of ConsolidatedMCPToolsV2 with temporary task file."""
+    from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+    from fastmcp.task_management.application.services.task_application_service import TaskApplicationService
+    from fastmcp.task_management.application.use_cases.create_task import CreateTaskUseCase
+    from fastmcp.task_management.application.use_cases.get_task import GetTaskUseCase
+    from fastmcp.task_management.application.use_cases.update_task import UpdateTaskUseCase
+    from fastmcp.task_management.application.use_cases.delete_task import DeleteTaskUseCase
+    from fastmcp.task_management.application.use_cases.list_tasks import ListTasksUseCase
+    from fastmcp.task_management.application.use_cases.complete_task import CompleteTaskUseCase
+    from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
+    
+    # Create repository with temporary file
+    repository = JsonTaskRepository(str(temp_tasks_file))
+    
+    # Create auto rule generator
+    auto_rule_generator = FileAutoRuleGenerator()
+    
+    # Create tools with custom dependencies (it creates TaskApplicationService internally)
+    tools = ConsolidatedMCPToolsV2(
+        task_repository=repository,
+        auto_rule_generator=auto_rule_generator
+    )
+    
     return tools
 
 def create_test_task(mcp_tools, title="A test task"):

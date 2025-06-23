@@ -712,7 +712,7 @@ class ConsolidatedMCPToolsV2:
 
             try:
                 result = self._handle_subtask_operations(action, task_id, subtask_data)
-                return {"success": True, "action": action, "result": result}
+                return result
             except (ValueError, TypeError, TaskNotFoundError) as e:
                 logging.error(f"Error managing subtask: {e}")
                 return {"success": False, "error": str(e)}
@@ -1185,17 +1185,19 @@ class ConsolidatedMCPToolsV2:
             response = self._task_app_service.manage_subtasks(task_id, action, subtask_data or {})
             logging.info(f"Subtask operation result: {response}")
             
-            # For add_subtask, flatten the response structure for compatibility
+            # Always wrap response data in a "result" key for consistency
             if action in ["add_subtask", "add"]:
                 if isinstance(response, dict) and "subtask" in response:
                     # The response is a SubtaskResponse dict with structure:
                     # {"task_id": "...", "subtask": {...}, "progress": {...}}
-                    # We want to return the subtask data directly
+                    # Wrap the subtask data in a "result" key for consistency
                     return {
                         "success": True, 
                         "action": action, 
-                        "result": {"subtask": response["subtask"]},
-                        "progress": response.get("progress", {})
+                        "result": {
+                            "subtask": response["subtask"],
+                            "progress": response.get("progress", {})
+                        }
                     }
                 else:
                     return {"success": True, "action": action, "result": response}
@@ -1203,11 +1205,11 @@ class ConsolidatedMCPToolsV2:
                 if isinstance(response, dict) and "subtasks" in response:
                     # The response is a dict with structure:
                     # {"task_id": "...", "subtasks": [...], "progress": {...}}
-                    # We want to return the subtasks directly
+                    # Wrap the subtasks array in a "result" key for consistency
                     return {
                         "success": True, 
                         "action": action, 
-                        "result": response["subtasks"],  # Extract the subtasks array
+                        "result": response["subtasks"],  # Return subtasks array as result
                         "progress": response.get("progress", {})
                     }
                 else:

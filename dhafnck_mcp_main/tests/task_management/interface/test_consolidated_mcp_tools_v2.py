@@ -367,10 +367,10 @@ class TestConsolidatedMCPToolsV2:
             projects_file_path=temp_projects_file
         )
         
-        assert tools.task_repository == task_repository
-        assert tools.auto_rule_generator == auto_rule_generator
-        assert isinstance(tools.multi_agent_tools, SimpleMultiAgentTools)
-        assert isinstance(tools.cursor_rules_tools, object)  # CursorRulesTools instance
+        assert tools._task_repository == task_repository
+        assert tools._auto_rule_generator == auto_rule_generator
+        assert isinstance(tools._multi_agent_tools, SimpleMultiAgentTools)
+        assert isinstance(tools._cursor_rules_tools, object)  # CursorRulesTools instance
     
     def test_init_with_default_dependencies(self):
         """Test initialization with default dependencies"""
@@ -381,8 +381,8 @@ class TestConsolidatedMCPToolsV2:
                 
                 tools = ConsolidatedMCPToolsV2()
                 
-                assert tools.task_repository is not None
-                assert tools.auto_rule_generator is not None
+                assert tools._task_repository is not None
+                assert tools._auto_rule_generator is not None
     
     def test_register_tools(self, consolidated_tools, mock_mcp):
         """Test tool registration with FastMCP"""
@@ -666,7 +666,7 @@ class TestConsolidatedMCPToolsV2:
         
         assert result["success"] is True
         assert result["action"] == "add_subtask"
-        assert result["subtask"]["title"] == "Subtask 1"
+        assert result["result"]["subtask"]["title"] == "Subtask 1"
     
     def test_handle_subtask_operations_list(self, consolidated_tools):
         """Test listing subtasks"""
@@ -693,7 +693,7 @@ class TestConsolidatedMCPToolsV2:
         
         assert result["success"] is True
         assert result["action"] == "list_subtasks"
-        assert len(result["subtasks"]) >= 1
+        assert len(result["result"]) >= 1
     
     def test_handle_dependency_operations_add(self, consolidated_tools):
         """Test adding task dependency"""
@@ -809,7 +809,7 @@ class TestIntegrationScenarios:
             action="list_subtasks", task_id=task_id, subtask_data=None
         )
         assert subtasks_result["success"] is True
-        assert len(subtasks_result["subtasks"]) == 2
+        assert len(subtasks_result["result"]) == 2
         
         # Update task
         update_result = consolidated_tools._handle_core_task_operations(

@@ -387,16 +387,22 @@ class JsonTaskRepository(TaskRepository):
         
         highest_daily_index = 0
         for task in tasks:
-            task_id = task["id"]
-            if task_id.startswith(today_str):
+            task_id = str(task["id"])  # Convert to string to handle both int and str IDs
+            if task_id.startswith(today_str) and len(task_id) == 11 and '.' not in task_id:
                 try:
-                    daily_index = int(task_id[8:])
+                    # Only consider the 3-digit sequence part (positions 8-10)
+                    daily_index = int(task_id[8:11])
                     if daily_index > highest_daily_index:
                         highest_daily_index = daily_index
                 except (ValueError, IndexError):
                     continue
         
         new_daily_index = highest_daily_index + 1
+        
+        # Check if we've exceeded the maximum tasks per day (999)
+        if new_daily_index > 999:
+            raise ValueError(f"Maximum tasks per day (999) exceeded for date {today_str}")
+        
         new_id_str = f"{today_str}{new_daily_index:03d}"
         
         return TaskId(new_id_str)
