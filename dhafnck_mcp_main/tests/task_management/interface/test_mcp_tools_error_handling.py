@@ -29,9 +29,9 @@ class TestMCPToolsErrorHandling:
     @pytest.fixture
     def consolidated_tools(self, temp_projects_file):
         """Create ConsolidatedMCPToolsV2 instance with mocked dependencies"""
-        with patch('task_mcp.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo_class, \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_generator_class, \
-             patch('task_mcp.interface.consolidated_mcp_tools_v2.TaskApplicationService') as mock_service_class:
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo_class, \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_generator_class, \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.TaskApplicationService') as mock_service_class:
             
             mock_repo = Mock()
             mock_generator = Mock()
@@ -146,7 +146,7 @@ class TestMCPToolsErrorHandling:
     def test_task_operations_with_repository_errors(self, consolidated_tools):
         """Test task operations when repository raises errors"""
         # Test task creation with repository error
-        consolidated_tools._mock_service.create_task.side_effect = Exception("Database error")
+        consolidated_tools._task_app_service.create_task.side_effect = Exception("Database error")
         
         result = consolidated_tools._handle_core_task_operations(
             action="create",

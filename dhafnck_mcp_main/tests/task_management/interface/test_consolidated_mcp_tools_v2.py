@@ -716,7 +716,7 @@ class TestConsolidatedMCPToolsV2:
         result = consolidated_tools._handle_dependency_operations(
             action="add_dependency",
             task_id=task2_id,
-            dependency_data={"depends_on": task1_id}
+            dependency_data={"dependency_id": task1_id}
         )
         
         assert result["success"] is True
@@ -771,13 +771,13 @@ class TestIntegrationScenarios:
     def test_complete_task_workflow(self, consolidated_tools):
         """Test complete workflow: create project, agents, tasks, subtasks"""
         # Create project
-        project_result = consolidated_tools.multi_agent_tools.create_project(
+        project_result = consolidated_tools._multi_agent_tools.create_project(
             "workflow_test", "Workflow Test Project", "Testing complete workflow"
         )
         assert project_result["success"] is True
         
         # Register agent
-        agent_result = consolidated_tools.multi_agent_tools.register_agent(
+        agent_result = consolidated_tools._multi_agent_tools.register_agent(
             "workflow_test", "dev_agent", "Developer Agent", "@coding_agent"
         )
         assert agent_result["success"] is True
@@ -837,17 +837,17 @@ class TestIntegrationScenarios:
     def test_multi_project_scenario(self, consolidated_tools):
         """Test scenario with multiple projects and cross-project operations"""
         # Create multiple projects
-        proj1_result = consolidated_tools.multi_agent_tools.create_project(
+        proj1_result = consolidated_tools._multi_agent_tools.create_project(
             "proj1", "Project 1", "First project"
         )
-        proj2_result = consolidated_tools.multi_agent_tools.create_project(
+        proj2_result = consolidated_tools._multi_agent_tools.create_project(
             "proj2", "Project 2", "Second project"
         )
         assert proj1_result["success"] is True
         assert proj2_result["success"] is True
         
         # List projects
-        list_result = consolidated_tools.multi_agent_tools.list_projects()
+        list_result = consolidated_tools._multi_agent_tools.list_projects()
         assert list_result["success"] is True
         assert list_result["count"] == 2
         
@@ -891,7 +891,7 @@ class TestIntegrationScenarios:
         
         # Test dependency operations with invalid data
         dep_result = consolidated_tools._handle_dependency_operations(
-            action="add_dependency", task_id="nonexistent", dependency_data={"depends_on": "also_nonexistent"}
+            action="add_dependency", task_id="nonexistent", dependency_data={"dependency_id": "also_nonexistent"}
         )
         assert dep_result["success"] is False
 

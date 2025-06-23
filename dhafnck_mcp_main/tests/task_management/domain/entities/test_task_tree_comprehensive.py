@@ -285,10 +285,17 @@ class TestTaskTreeEntity:
     
     def test_resume_tree(self):
         """Test resuming work on the tree"""
+        from unittest.mock import patch
+        from datetime import datetime
+        
         self.task_tree.pause_tree()
         initial_updated = self.task_tree.updated_at
         
-        self.task_tree.resume_tree()
+        # Mock datetime.now to return a later time
+        future_time = initial_updated.replace(microsecond=initial_updated.microsecond + 1000)
+        with patch('fastmcp.task_management.domain.entities.task_tree.datetime') as mock_datetime:
+            mock_datetime.now.return_value = future_time
+            self.task_tree.resume_tree()
         
         assert self.task_tree.status == "active"
         assert self.task_tree.updated_at > initial_updated
