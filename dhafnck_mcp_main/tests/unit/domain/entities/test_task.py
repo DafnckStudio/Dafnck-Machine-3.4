@@ -7,9 +7,9 @@ Redundant or duplicate tests in other files have been removed.
 import pytest
 from datetime import datetime
 
-from fastmcp.dhafnck_mcp.domain.entities.task import Task
-from fastmcp.dhafnck_mcp.domain.value_objects import TaskId, TaskStatus, Priority
-from fastmcp.dhafnck_mcp.domain.events.task_events import TaskCreated, TaskUpdated
+from fastmcp.task_management.domain.entities.task import Task
+from fastmcp.task_management.domain.value_objects import TaskId, TaskStatus, Priority
+from fastmcp.task_management.domain.events.task_events import TaskCreated, TaskUpdated
 
 
 class TestTaskCreation:

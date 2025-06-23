@@ -4,8 +4,8 @@ All CRUD, search, and statistics tests should be added here.
 """
 
 import pytest
-from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import InMemoryTaskRepository
-from fastmcp.dhafnck_mcp.domain import Task, TaskId, TaskStatus, Priority
+from fastmcp.task_management.infrastructure.repositories.json_task_repository import InMemoryTaskRepository
+from fastmcp.task_management.domain import Task, TaskId, TaskStatus, Priority
 
 class TestInMemoryTaskRepository:
     @pytest.fixture

@@ -61,4 +61,4 @@ alwaysApply: false
 ## Deprecated/Legacy Fields
 - Do not use: agentAssignment, projectContext, orchestrationMetrics, workSession, contextFile, or any camelCase fields.
 
-For more, see [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc).
+For more, see [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/dhafnck_mcp_workflow.mdc).

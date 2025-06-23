@@ -8,7 +8,7 @@ from fastmcp import FastMCP
 
 # Package imports - no need for sys.path manipulation with proper package structure
 
-from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
 
 
 def create_consolidated_mcp_server() -> FastMCP:

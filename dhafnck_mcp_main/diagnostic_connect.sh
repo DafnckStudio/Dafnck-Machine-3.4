@@ -83,7 +83,7 @@ from pathlib import Path
 sys.path.insert(0, '/home/daihungpham/agentic-project/dhafnck_mcp_main/src')
 
 try:
-    from fastmcp.dhafnck_mcp.interface.consolidated_mcp_server import mcp_instance
+    from fastmcp.task_management.interface.consolidated_mcp_server import mcp_instance
     print("✅ Import successful")
     
     async def test_tools():
@@ -158,7 +158,7 @@ async def comprehensive_tool_test():
     
     try:
         print("🔄 Importing server module...")
-        from fastmcp.dhafnck_mcp.interface.consolidated_mcp_server import mcp_instance
+        from fastmcp.task_management.interface.consolidated_mcp_server import mcp_instance
         print("✅ Server module imported successfully")
         print(f"📊 Server name: {mcp_instance.name}")
         print(f"📊 Server type: {type(mcp_instance)}")
@@ -364,7 +364,7 @@ async def test_mcp_protocol():
     
     try:
         print("🔄 Testing MCP protocol communication...")
-        from fastmcp.dhafnck_mcp.interface.consolidated_mcp_server import mcp_instance
+        from fastmcp.task_management.interface.consolidated_mcp_server import mcp_instance
         
         # Test MCP initialize simulation
         print("\n🔧 Simulating MCP initialize...")
@@ -535,7 +535,7 @@ async def test_response_time():
         os.environ['TASK_JSON_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
         
         start_time = time.time()
-        from fastmcp.dhafnck_mcp.interface.consolidated_mcp_server import mcp_instance
+        from fastmcp.task_management.interface.consolidated_mcp_server import mcp_instance
         import_time = time.time() - start_time
         
         start_time = time.time()
@@ -629,7 +629,7 @@ async def generate_summary():
         os.environ['TASKS_JSON_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
         os.environ['TASK_JSON_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
         
-        from fastmcp.dhafnck_mcp.interface.consolidated_mcp_server import mcp_instance
+        from fastmcp.task_management.interface.consolidated_mcp_server import mcp_instance
         
         # Get all tools
         tools = await mcp_instance.get_tools()
@@ -894,7 +894,7 @@ compare_paths() {
 test_manual_startup() {
     echo -e "\n${BLUE}🚀 Testing manual server startup${NC}"
     
-    local startup_cmd="cd '$DHAFNCK_MCP_DIR' && source .venv/bin/activate && PYTHONPATH='$DHAFNCK_MCP_DIR/src' TASKS_JSON_PATH='$TASKS_JSON_PATH' TASK_JSON_BACKUP_PATH='$BACKUP_PATH' python -m fastmcp.dhafnck_mcp.interface.consolidated_mcp_server"
+    local startup_cmd="cd '$DHAFNCK_MCP_DIR' && source .venv/bin/activate && PYTHONPATH='$DHAFNCK_MCP_DIR/src' TASKS_JSON_PATH='$TASKS_JSON_PATH' TASK_JSON_BACKUP_PATH='$BACKUP_PATH' python -m fastmcp.task_management.interface.consolidated_mcp_server"
     
     echo -e "  🔧 Startup command:"
     echo -e "     $startup_cmd"
@@ -971,7 +971,7 @@ provide_recommendations() {
         echo -e "  7. 🔌 Check MCP server status in Cursor: Ctrl+Shift+P > 'MCP'"
         echo -e "  8. 📋 Verify MCP configuration is loaded: check Cursor settings"
         echo -e "\n${CYAN}Advanced troubleshooting:${NC}"
-        echo -e "  • Check if server starts manually: cd $DHAFNCK_MCP_DIR && source .venv/bin/activate && python -m fastmcp.dhafnck_mcp.interface.consolidated_mcp_server"
+        echo -e "  • Check if server starts manually: cd $DHAFNCK_MCP_DIR && source .venv/bin/activate && python -m fastmcp.task_management.interface.consolidated_mcp_server"
         echo -e "  • Test with minimal config: temporarily disable other MCP servers"
         echo -e "  • Verify WSL integration: ensure Cursor can access WSL paths"
         echo -e "  • Check permissions: ls -la $PYTHON_PATH"
@@ -1074,7 +1074,7 @@ async def quick_test():
         os.environ['TASK_JSON_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
         
         print("🔄 Loading server...")
-        from fastmcp.dhafnck_mcp.interface.consolidated_mcp_server import mcp_instance
+        from fastmcp.task_management.interface.consolidated_mcp_server import mcp_instance
         
         print("🔧 Testing tools...")
         tools = await mcp_instance._mcp_list_tools()

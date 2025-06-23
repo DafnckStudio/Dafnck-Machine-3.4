@@ -8,7 +8,7 @@ alwaysApply: false
 3. [Task Object Structure & JSON Schema](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_object_structure.mdc)
 4. [Project Object Structure & JSON Schema](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/project_object_structure.mdc)
 5. [Agent Object Structure & JSON Schema](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/agent_object_structure.mdc)
-6. [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc)
+6. [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/dhafnck_mcp_workflow.mdc)
 7. [Agent Auto-Switch Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/agent_auto_switch_workflow.mdc)
 8. [Task ID System](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_id_system.mdc)
 9. [Quick Start & Tutorials](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/quick_start.mdc)

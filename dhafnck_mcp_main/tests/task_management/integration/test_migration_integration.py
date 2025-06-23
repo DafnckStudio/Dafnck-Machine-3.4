@@ -31,14 +31,14 @@ from unittest.mock import Mock, patch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
 # Import migrated components
-from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
-from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository, InMemoryTaskRepository
-from fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
-from fastmcp.dhafnck_mcp.domain.entities.task import Task
-from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
-from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
-from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
-from fastmcp.dhafnck_mcp.interface.ddd_mcp_server import create_mcp_server
+from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository, InMemoryTaskRepository
+from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
+from fastmcp.task_management.domain.entities.task import Task
+from fastmcp.task_management.domain.value_objects.task_id import TaskId
+from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
+from fastmcp.task_management.domain.value_objects.priority import Priority
+from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
 from fastmcp import FastMCP
 
 

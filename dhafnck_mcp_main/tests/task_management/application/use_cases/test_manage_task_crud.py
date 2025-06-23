@@ -11,20 +11,20 @@ import sys
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
-from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
 
 @pytest.fixture
 def mcp_tools(temp_tasks_file):
     """Fixture to provide an instance of ConsolidatedMCPToolsV2 with temporary task file."""
-    from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository
-    from fastmcp.dhafnck_mcp.application.services.task_application_service import TaskApplicationService
-    from fastmcp.dhafnck_mcp.application.use_cases.create_task import CreateTaskUseCase
-    from fastmcp.dhafnck_mcp.application.use_cases.get_task import GetTaskUseCase
-    from fastmcp.dhafnck_mcp.application.use_cases.update_task import UpdateTaskUseCase
-    from fastmcp.dhafnck_mcp.application.use_cases.delete_task import DeleteTaskUseCase
-    from fastmcp.dhafnck_mcp.application.use_cases.list_tasks import ListTasksUseCase
-    from fastmcp.dhafnck_mcp.application.use_cases.complete_task import CompleteTaskUseCase
-    from fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
+    from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+    from fastmcp.task_management.application.services.task_application_service import TaskApplicationService
+    from fastmcp.task_management.application.use_cases.create_task import CreateTaskUseCase
+    from fastmcp.task_management.application.use_cases.get_task import GetTaskUseCase
+    from fastmcp.task_management.application.use_cases.update_task import UpdateTaskUseCase
+    from fastmcp.task_management.application.use_cases.delete_task import DeleteTaskUseCase
+    from fastmcp.task_management.application.use_cases.list_tasks import ListTasksUseCase
+    from fastmcp.task_management.application.use_cases.complete_task import CompleteTaskUseCase
+    from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
     
     # Create repository with temporary file
     repository = JsonTaskRepository(str(temp_tasks_file))

@@ -16,7 +16,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
 # Use the new consolidated tools
-from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
 
 
 class TestMCPIntegration:
@@ -56,8 +56,8 @@ class TestMCPIntegration:
             original_cwd = os.getcwd()
             os.chdir(temp_project_structure)
             
-            from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository
-            from fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
+            from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+            from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
             
             # Initialize real components
             repository = JsonTaskRepository()
@@ -78,10 +78,10 @@ class TestMCPIntegration:
             assert hasattr(mcp_tools, 'register_tools')
             
             # Test basic repository functionality
-            from fastmcp.dhafnck_mcp.domain.entities.task import Task
-            from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
-            from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
-            from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
+            from fastmcp.task_management.domain.entities.task import Task
+            from fastmcp.task_management.domain.value_objects.task_id import TaskId
+            from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
+            from fastmcp.task_management.domain.value_objects.priority import Priority
             
             # Create a test task
             task_id = repository.get_next_id()
@@ -133,11 +133,11 @@ class TestMCPIntegration:
             original_cwd = os.getcwd()
             os.chdir(temp_project_structure)
             
-            from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository
-            from fastmcp.dhafnck_mcp.domain.entities.task import Task
-            from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
-            from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
-            from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
+            from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+            from fastmcp.task_management.domain.entities.task import Task
+            from fastmcp.task_management.domain.value_objects.task_id import TaskId
+            from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
+            from fastmcp.task_management.domain.value_objects.priority import Priority
             
             # Initialize repository
             repository = JsonTaskRepository()
@@ -195,14 +195,14 @@ class TestMCPIntegration:
             original_cwd = os.getcwd()
             os.chdir(temp_project_structure)
             
-            from fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
-            from fastmcp.dhafnck_mcp.domain.entities.task import Task
-            from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
-            from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
-            from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
-            from fastmcp.dhafnck_mcp.application.use_cases.get_task import GetTaskUseCase
-            from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository
-            from fastmcp.dhafnck_mcp.application.dtos.task_dto import TaskResponse
+            from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
+            from fastmcp.task_management.domain.entities.task import Task
+            from fastmcp.task_management.domain.value_objects.task_id import TaskId
+            from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
+            from fastmcp.task_management.domain.value_objects.priority import Priority
+            from fastmcp.task_management.application.use_cases.get_task import GetTaskUseCase
+            from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+            from fastmcp.task_management.application.dtos.task_dto import TaskResponse
 
             # Initialize components
             repository = JsonTaskRepository()
@@ -249,8 +249,8 @@ class TestMCPIntegration:
             original_cwd = os.getcwd()
             os.chdir(temp_project_structure)
             
-            from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository
-            from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+            from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+            from fastmcp.task_management.domain.value_objects.task_id import TaskId
             
             repository = JsonTaskRepository()
             
@@ -272,9 +272,9 @@ class TestMCPIntegration:
             original_cwd = os.getcwd()
             os.chdir(temp_project_structure)
 
-            from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository
-            from fastmcp.dhafnck_mcp.domain.entities.task import Task
-            from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+            from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+            from fastmcp.task_management.domain.entities.task import Task
+            from fastmcp.task_management.domain.value_objects.task_id import TaskId
             
             # First instance
             repo1 = JsonTaskRepository()

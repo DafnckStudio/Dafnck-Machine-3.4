@@ -15,7 +15,7 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from fastmcp.dhafnck_mcp.interface.cursor_rules_tools import CursorRulesTools, _get_project_root
+from fastmcp.task_management.interface.cursor_rules_tools import CursorRulesTools, _get_project_root
 
 
 class TestGetProjectRoot:
@@ -69,8 +69,8 @@ class TestCursorRulesTools:
     @pytest.fixture
     def cursor_rules_tools(self, temp_project_root):
         """Create CursorRulesTools instance with mocked project root"""
-        with patch('fastmcp.dhafnck_mcp.interface.cursor_rules_tools._get_project_root', return_value=temp_project_root):
-            with patch('fastmcp.dhafnck_mcp.infrastructure.services.FileAutoRuleGenerator'):
+        with patch('fastmcp.task_management.interface.cursor_rules_tools._get_project_root', return_value=temp_project_root):
+            with patch('fastmcp.task_management.infrastructure.services.FileAutoRuleGenerator'):
                 return CursorRulesTools()
 
     @pytest.fixture
@@ -95,8 +95,8 @@ class TestCursorRulesTools:
 
     def test_init(self, temp_project_root):
         """Test CursorRulesTools initialization"""
-        with patch('fastmcp.dhafnck_mcp.interface.cursor_rules_tools._get_project_root', return_value=temp_project_root):
-            with patch('fastmcp.dhafnck_mcp.infrastructure.services.FileAutoRuleGenerator') as mock_generator:
+        with patch('fastmcp.task_management.interface.cursor_rules_tools._get_project_root', return_value=temp_project_root):
+            with patch('fastmcp.task_management.infrastructure.services.FileAutoRuleGenerator') as mock_generator:
                 tools = CursorRulesTools()
                 
                 assert tools._project_root == temp_project_root

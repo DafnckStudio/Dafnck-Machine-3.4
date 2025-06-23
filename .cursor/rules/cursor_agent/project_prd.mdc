@@ -221,7 +221,7 @@ File Output → .cursor/rules/auto_rule.mdc ← Context Integration
     "version": "1.0.0",
     "totalTasksGenerated": 9,
     "transformationType": "MCP_SERVER_DEVELOPMENT",
-    "coreFeatures": ["MCP_Protocol_Implementation", "Task_Management_Tools", ...]
+    "coreFeatures": ["MCP_Protocol_Implementation", "dhafnck_mcp_Tools", ...]
   },
   "tasks": [...]
 }

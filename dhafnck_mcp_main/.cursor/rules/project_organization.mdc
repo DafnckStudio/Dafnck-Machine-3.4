@@ -75,8 +75,8 @@ dhafnck_mcp_main/
 │               └── 📄 mcp_tools.py # MCP tool implementations
 ├── 📁 tests/                      # Comprehensive test suite
 │   ├── 📄 conftest.py             # Pytest configuration and fixtures
-│   ├── 📄 test_task_management_integration.py # Main integration tests
-│   ├── 📄 test_task_management_integration_working.py # Working integration tests
+│   ├── 📄 test_dhafnck_mcp_integration.py # Main integration tests
+│   ├── 📄 test_dhafnck_mcp_integration_working.py # Working integration tests
 │   ├── 📄 test_simple_integration.py # Simple integration tests
 │   ├── 📄 test_examples.py        # Example tests
 │   ├── 📁 auth/                   # Authentication system tests
@@ -120,7 +120,7 @@ dhafnck_mcp_main/
 ├── 📁 .venv/                      # Python virtual environment
 ├── 📁 .github/                    # GitHub workflows and templates
 ├── 📁 htmlcov/                    # Coverage reports (main)
-├── 📁 htmlcov_task_management/    # Task management coverage reports
+├── 📁 htmlcov_dhafnck_mcp/    # Task management coverage reports
 ├── 📁 .pytest_cache/             # Pytest cache
 └── 📁 __pycache__/               # Python bytecode cache
 ```
@@ -224,8 +224,8 @@ Extensible architecture for community contributions and custom implementations.
 ```
 tests/
 ├── 📄 conftest.py                 # Pytest configuration and fixtures
-├── 📄 test_task_management_integration.py # Main integration tests
-├── 📄 test_task_management_integration_working.py # Working integration tests
+├── 📄 test_dhafnck_mcp_integration.py # Main integration tests
+├── 📄 test_dhafnck_mcp_integration_working.py # Working integration tests
 ├── 📄 test_simple_integration.py  # Simple integration tests
 ├── 📄 test_examples.py            # Example validation tests
 ├── 📁 auth/                       # Authentication system tests
@@ -433,7 +433,7 @@ if __name__ == "__main__":
 ### Task Management Integration
 ```python
 from fastmcp import FastMCP
-from fastmcp.dhafnck_mcp import TaskManager
+from fastmcp.task_management import TaskManager
 
 # Create MCP server with task management
 app = FastMCP("task-server")

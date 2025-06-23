@@ -36,15 +36,15 @@ def mock_fastmcp_server():
 
 
 @pytest.fixture
-def task_management_tools(temp_project_dir):
+def dhafnck_mcp_tools(temp_project_dir):
     """Initialize ConsolidatedMCPToolsV2 with test configuration"""
     # Import the module first, before any mocking
     import sys
     sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
     
     try:
-        from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
-        from fastmcp.dhafnck_mcp.infrastructure import InMemoryTaskRepository, FileAutoRuleGenerator
+        from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+        from fastmcp.task_management.infrastructure import InMemoryTaskRepository, FileAutoRuleGenerator
         
         # Create test projects file
         projects_file = temp_project_dir / "projects.json"
@@ -71,23 +71,23 @@ class TestTaskManagementIntegration:
 class TestCoreTaskManagementTools:
     """Test core task management functionality"""
     
-    def test_manage_task_tool_registration(self, mock_fastmcp_server, task_management_tools):
+    def test_manage_task_tool_registration(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test that manage_task tool is properly registered"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         assert "manage_task" in mock_fastmcp_server.tools
         assert callable(mock_fastmcp_server.tools["manage_task"])
     
-    def test_manage_subtask_tool_registration(self, mock_fastmcp_server, task_management_tools):
+    def test_manage_subtask_tool_registration(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test that manage_subtask tool is properly registered"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         assert "manage_subtask" in mock_fastmcp_server.tools
         assert callable(mock_fastmcp_server.tools["manage_subtask"])
     
-    def test_task_creation_workflow(self, mock_fastmcp_server, task_management_tools):
+    def test_task_creation_workflow(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test complete task creation workflow"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Test task creation
         create_result = mock_fastmcp_server.tools["manage_task"](
@@ -112,9 +112,9 @@ class TestCoreTaskManagementTools:
         assert get_result["success"] is True
         assert get_result["task"]["id"] == task_id
     
-    def test_subtask_management_workflow(self, mock_fastmcp_server, task_management_tools):
+    def test_subdhafnck_mcp_workflow(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test subtask creation and management"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Create parent task
         task_result = mock_fastmcp_server.tools["manage_task"](
@@ -152,16 +152,16 @@ class TestCoreTaskManagementTools:
 class TestProjectManagementTools:
     """Test project management and orchestration functionality"""
     
-    def test_manage_project_tool_registration(self, mock_fastmcp_server, task_management_tools):
+    def test_manage_project_tool_registration(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test that manage_project tool is properly registered"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         assert "manage_project" in mock_fastmcp_server.tools
         assert callable(mock_fastmcp_server.tools["manage_project"])
     
-    def test_project_creation_workflow(self, mock_fastmcp_server, task_management_tools):
+    def test_project_creation_workflow(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test complete project creation and management workflow"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Create project
         create_result = mock_fastmcp_server.tools["manage_project"](
@@ -191,9 +191,9 @@ class TestProjectManagementTools:
         assert list_result["success"] is True
         assert len(list_result["projects"]) >= 1
     
-    def test_task_tree_management(self, mock_fastmcp_server, task_management_tools):
+    def test_task_tree_management(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test task tree creation and management"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Create project first
         mock_fastmcp_server.tools["manage_project"](
@@ -228,23 +228,23 @@ class TestProjectManagementTools:
 class TestMultiAgentCoordinationTools:
     """Test multi-agent coordination functionality"""
     
-    def test_manage_agent_tool_registration(self, mock_fastmcp_server, task_management_tools):
+    def test_manage_agent_tool_registration(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test that manage_agent tool is properly registered"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         assert "manage_agent" in mock_fastmcp_server.tools
         assert callable(mock_fastmcp_server.tools["manage_agent"])
     
-    def test_call_agent_tool_registration(self, mock_fastmcp_server, task_management_tools):
+    def test_call_agent_tool_registration(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test that call_agent tool is properly registered"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         assert "call_agent" in mock_fastmcp_server.tools
         assert callable(mock_fastmcp_server.tools["call_agent"])
     
-    def test_agent_registration_workflow(self, mock_fastmcp_server, task_management_tools):
+    def test_agent_registration_workflow(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test agent registration and assignment workflow"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Create project
         mock_fastmcp_server.tools["manage_project"](
@@ -287,9 +287,9 @@ class TestMultiAgentCoordinationTools:
 class TestRulesAndContextManagementTools:
     """Test rules and context management functionality"""
     
-    def test_cursor_rules_tools_registration(self, mock_fastmcp_server, task_management_tools):
+    def test_cursor_rules_tools_registration(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test that cursor rules tools are properly registered"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         expected_tools = [
             "update_auto_rule",
@@ -307,9 +307,9 @@ class TestRulesAndContextManagementTools:
 class TestIntegrationWorkflows:
     """Test complete integration workflows"""
     
-    def test_complete_task_workflow(self, mock_fastmcp_server, task_management_tools):
+    def test_complete_task_workflow(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test complete task management workflow from creation to completion"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Create task
         create_result = mock_fastmcp_server.tools["manage_task"](
@@ -365,9 +365,9 @@ class TestIntegrationWorkflows:
         
         assert get_result["task"]["status"] == "done"
     
-    def test_project_orchestration_workflow(self, mock_fastmcp_server, task_management_tools):
+    def test_project_orchestration_workflow(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test project orchestration and dashboard functionality"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Create project
         mock_fastmcp_server.tools["manage_project"](
@@ -406,9 +406,9 @@ class TestIntegrationWorkflows:
 class TestErrorHandlingAndEdgeCases:
     """Test error handling and edge cases"""
     
-    def test_invalid_task_operations(self, mock_fastmcp_server, task_management_tools):
+    def test_invalid_task_operations(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test error handling for invalid task operations"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Try to get non-existent task
         get_result = mock_fastmcp_server.tools["manage_task"](
@@ -419,9 +419,9 @@ class TestErrorHandlingAndEdgeCases:
         assert get_result["success"] is False
         assert "error" in get_result
     
-    def test_invalid_project_operations(self, mock_fastmcp_server, task_management_tools):
+    def test_invalid_project_operations(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test error handling for invalid project operations"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Try to get non-existent project
         get_result = mock_fastmcp_server.tools["manage_project"](
@@ -432,9 +432,9 @@ class TestErrorHandlingAndEdgeCases:
         assert get_result["success"] is False
         assert "error" in get_result
     
-    def test_invalid_agent_operations(self, mock_fastmcp_server, task_management_tools):
+    def test_invalid_agent_operations(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test error handling for invalid agent operations"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Try to register agent to non-existent project
         register_result = mock_fastmcp_server.tools["manage_agent"](
@@ -451,9 +451,9 @@ class TestErrorHandlingAndEdgeCases:
 class TestPerformanceAndScalability:
     """Test performance and scalability aspects"""
     
-    def test_bulk_task_operations(self, mock_fastmcp_server, task_management_tools):
+    def test_bulk_task_operations(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test performance with bulk task operations"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Create multiple tasks
         task_ids = []
@@ -475,9 +475,9 @@ class TestPerformanceAndScalability:
         assert list_result["success"] is True
         assert len(list_result["tasks"]) >= 10
     
-    def test_complex_project_structure(self, mock_fastmcp_server, task_management_tools):
+    def test_complex_project_structure(self, mock_fastmcp_server, dhafnck_mcp_tools):
         """Test complex project structures with multiple trees and agents"""
-        task_management_tools.register_tools(mock_fastmcp_server)
+        dhafnck_mcp_tools.register_tools(mock_fastmcp_server)
         
         # Create project
         mock_fastmcp_server.tools["manage_project"](

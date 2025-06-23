@@ -6,12 +6,12 @@ alwaysApply: false
 # Domain-Driven Design Architecture
 
 **Project**: dhafnck_mcp_main - fastmcp Task Management Integration  
-**Package**: fastmcp.dhafnck_mcp - DDD-based task management system  
+**Package**: fastmcp.task_management - DDD-based task management system  
 **Last Updated**: 2025-01-18  
 
 ## 🏗️ DDD Architecture Overview
 
-The **fastmcp** task management system follows Domain-Driven Design principles with clean layer separation for maintainability, testability, and extensibility. The implementation is fully integrated into the fastmcp framework as `fastmcp.dhafnck_mcp` with comprehensive MCP tool exposure through a consolidated architecture.
+The **fastmcp** task management system follows Domain-Driven Design principles with clean layer separation for maintainability, testability, and extensibility. The implementation is fully integrated into the fastmcp framework as `fastmcp.task_management` with comprehensive MCP tool exposure through a consolidated architecture.
 
 **Key Architecture Principles:**
 - **Clean Layer Separation**: Domain → Application → Infrastructure → Interface
@@ -182,8 +182,8 @@ interface/
 ### Test Coverage Strategy
 ```
 tests/
-├── 📄 test_task_management_integration.py      # Main integration tests (527 lines)
-├── 📄 test_task_management_integration_working.py # Working integration tests (592 lines)
+├── 📄 test_dhafnck_mcp_integration.py      # Main integration tests (527 lines)
+├── 📄 test_dhafnck_mcp_integration_working.py # Working integration tests (592 lines)
 ├── 📄 test_simple_integration.py               # Simple integration tests (143 lines)
 ├── 📁 dhafnck_mcp/                         # Task management specific tests
 │   ├── 📄 test_domain_entities.py              # Domain entity unit tests
@@ -360,7 +360,7 @@ tests/
 
 ## 🏛️ Architecture Summary
 
-The **fastmcp.dhafnck_mcp** system demonstrates a mature Domain-Driven Design implementation fully integrated with the fastmcp framework. It provides:
+The **fastmcp.task_management** system demonstrates a mature Domain-Driven Design implementation fully integrated with the fastmcp framework. It provides:
 
 - **Clean Architecture**: Proper layer separation with inward-only dependencies
 - **MCP Integration**: Native AI assistant integration through comprehensive MCP tools

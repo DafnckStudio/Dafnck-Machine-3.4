@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 
 import pytest
 from unittest.mock import Mock, patch
-from fastmcp.dhafnck_mcp.infrastructure.services.legacy.project_analyzer import (
+from fastmcp.task_management.infrastructure.services.legacy.project_analyzer import (
     ProjectAnalyzer,
     ProjectAnalysisResult,
     ProjectAnalysisConfig,
@@ -42,7 +42,7 @@ class TestProjectAnalyzerFacade:
     
     def test_all_exports_defined(self):
         """Test that __all__ contains all expected exports"""
-        from fastmcp.dhafnck_mcp.infrastructure.services.legacy import project_analyzer
+        from fastmcp.task_management.infrastructure.services.legacy import project_analyzer
         
         expected_exports = [
             'ProjectAnalyzer',
@@ -81,7 +81,7 @@ class TestProjectAnalyzerFacade:
     
     def test_can_import_all_exports(self):
         """Test that all exports can be imported successfully"""
-        from fastmcp.dhafnck_mcp.infrastructure.services.legacy.project_analyzer import (
+        from fastmcp.task_management.infrastructure.services.legacy.project_analyzer import (
             ProjectAnalyzer,
             ProjectAnalysisResult,
             ProjectAnalysisConfig,
@@ -113,7 +113,7 @@ class TestProjectAnalyzerFacade:
     
     def test_module_docstring(self):
         """Test that the module has proper documentation"""
-        import fastmcp.dhafnck_mcp.infrastructure.services.legacy.project_analyzer as module
+        import fastmcp.task_management.infrastructure.services.legacy.project_analyzer as module
         
         assert module.__doc__ is not None
         assert (
@@ -121,7 +121,7 @@ class TestProjectAnalyzerFacade:
             "Project analyzer module exports." in module.__doc__
         )
     
-    @patch('fastmcp.dhafnck_mcp.infrastructure.services.legacy.project_analyzer.ProjectAnalyzer')
+    @patch('fastmcp.task_management.infrastructure.services.legacy.project_analyzer.ProjectAnalyzer')
     def test_project_analyzer_can_be_instantiated(self, mock_analyzer):
         """Test that ProjectAnalyzer can be instantiated through the facade"""
         # Mock the ProjectAnalyzer class
@@ -129,7 +129,7 @@ class TestProjectAnalyzerFacade:
         mock_analyzer.return_value = mock_instance
         
         # Import and instantiate
-        from fastmcp.dhafnck_mcp.infrastructure.services.legacy.project_analyzer import ProjectAnalyzer
+        from fastmcp.task_management.infrastructure.services.legacy.project_analyzer import ProjectAnalyzer
         
         analyzer = ProjectAnalyzer()
         

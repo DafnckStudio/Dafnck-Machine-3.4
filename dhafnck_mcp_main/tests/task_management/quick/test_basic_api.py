@@ -17,10 +17,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 def test_basic_task_creation_structure():
     """Test basic task creation structure without persistence."""
     try:
-        from fastmcp.dhafnck_mcp.domain.entities.task import Task
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
-        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority, PriorityLevel
+        from fastmcp.task_management.domain.entities.task import Task
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
+        from fastmcp.task_management.domain.value_objects.priority import Priority, PriorityLevel
         
         # Test creating a basic task structure using new TaskId format
         task_id = TaskId.from_int(999)
@@ -54,7 +54,7 @@ def test_basic_task_creation_structure():
 def test_task_status_transitions():
     """Test basic task status transition validation."""
     try:
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
+        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
         
         # Test all valid status values
         valid_statuses = [
@@ -78,7 +78,7 @@ def test_task_status_transitions():
 def test_priority_levels():
     """Test basic priority level validation."""
     try:
-        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority, PriorityLevel
+        from fastmcp.task_management.domain.value_objects.priority import Priority, PriorityLevel
         
         # Test all valid priority levels
         valid_priorities = [
@@ -102,7 +102,7 @@ def test_priority_levels():
 def test_task_id_validation():
     """Test basic task ID validation with new format."""
     try:
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         # Test valid task IDs using from_int method for backward compatibility
         valid_int_ids = [1, 100, 999]
@@ -127,12 +127,12 @@ def test_task_id_validation():
 def test_use_case_instantiation():
     """Test that use cases can be instantiated with mock repository."""
     try:
-        from fastmcp.dhafnck_mcp.application.use_cases.create_task import CreateTaskUseCase
-        from fastmcp.dhafnck_mcp.application.use_cases.get_task import GetTaskUseCase
-        from fastmcp.dhafnck_mcp.application.use_cases.list_tasks import ListTasksUseCase
-        from fastmcp.dhafnck_mcp.application.use_cases.update_task import UpdateTaskUseCase
-        from fastmcp.dhafnck_mcp.application.use_cases.delete_task import DeleteTaskUseCase
-        from fastmcp.dhafnck_mcp.application.use_cases.search_tasks import SearchTasksUseCase
+        from fastmcp.task_management.application.use_cases.create_task import CreateTaskUseCase
+        from fastmcp.task_management.application.use_cases.get_task import GetTaskUseCase
+        from fastmcp.task_management.application.use_cases.list_tasks import ListTasksUseCase
+        from fastmcp.task_management.application.use_cases.update_task import UpdateTaskUseCase
+        from fastmcp.task_management.application.use_cases.delete_task import DeleteTaskUseCase
+        from fastmcp.task_management.application.use_cases.search_tasks import SearchTasksUseCase
         from unittest.mock import Mock
         
         # Mock repository and auto rule generator for testing
@@ -162,7 +162,7 @@ def test_use_case_instantiation():
 def test_dto_structure():
     """Test basic DTO structure validation."""
     try:
-        from fastmcp.dhafnck_mcp.application.dtos.task_dto import CreateTaskRequest, UpdateTaskRequest, TaskResponse
+        from fastmcp.task_management.application.dtos.task_dto import CreateTaskRequest, UpdateTaskRequest, TaskResponse
         
         # Test CreateTaskRequest
         create_dto = CreateTaskRequest(
@@ -199,8 +199,8 @@ def test_dto_structure():
 def test_domain_events_structure():
     """Test basic domain events structure."""
     try:
-        from fastmcp.dhafnck_mcp.domain.events.task_events import TaskCreated, TaskUpdated, TaskRetrieved, TaskDeleted
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.events.task_events import TaskCreated, TaskUpdated, TaskRetrieved, TaskDeleted
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         from datetime import datetime
         
         task_id = TaskId.from_int(1)

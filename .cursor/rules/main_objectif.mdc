@@ -58,9 +58,9 @@ run terminal commande →
 [contextmaster.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/contextmaster.mdc) : ALWAYS trigger after complete task or subtask
 
 ## Use MCP Server dhafnck_mcp when possible 
-MUST follow [Task_Management_Workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/Task_Management_Workflow.mdc)
+MUST follow [dhafnck_mcp_Workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/dhafnck_mcp_Workflow.mdc)
 
-see [Task_Management_MCP_Server_Documentation.mdc](mdc:cursor_agent/.cursor/rules/Task_Management_MCP_Server_Documentation.mdc) for more details
+see [dhafnck_mcp_MCP_Server_Documentation.mdc](mdc:cursor_agent/.cursor/rules/dhafnck_mcp_MCP_Server_Documentation.mdc) for more details
 
 - ALWAYS use the dhafnck_mcp MCP server for task operations
 - Use dhafnck_mcp MCP to manage [tasks.json](mdc:.cursor/rules/tasks/tasks.json)

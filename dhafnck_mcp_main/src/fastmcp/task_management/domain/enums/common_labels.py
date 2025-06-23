@@ -64,7 +64,7 @@ class CommonLabel(Enum):
     # AI/ML Specific
     AI_AGENT = "ai-agent"
     MCP = "mcp"
-    TASK_MANAGEMENT = "task-management"
+    dhafnck_mcp = "task-management"
     AUTO_GENERATION = "auto-generation"
     RULE_GENERATION = "rule-generation"
     
@@ -128,7 +128,7 @@ class CommonLabel(Enum):
             # AI/ML Specific
             self.AI_AGENT: ["agent", "ai", "artificial intelligence", "bot"],
             self.MCP: ["mcp", "model context protocol", "protocol"],
-            self.TASK_MANAGEMENT: ["task management", "task", "project", "workflow"],
+            self.dhafnck_mcp: ["task management", "task", "project", "workflow"],
             self.AUTO_GENERATION: ["auto generation", "generate", "automatic"],
             self.RULE_GENERATION: ["rule generation", "rules", "auto rule"],
         }
@@ -162,7 +162,7 @@ class CommonLabel(Enum):
     @classmethod
     def get_ai_labels(cls) -> List[str]:
         """Get AI/ML specific labels"""
-        return [cls.AI_AGENT.value, cls.MCP.value, cls.TASK_MANAGEMENT.value,
+        return [cls.AI_AGENT.value, cls.MCP.value, cls.dhafnck_mcp.value,
                 cls.AUTO_GENERATION.value, cls.RULE_GENERATION.value]
     
     @classmethod

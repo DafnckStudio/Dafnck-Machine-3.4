@@ -12,9 +12,9 @@ import shutil
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
-from fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
-from fastmcp.dhafnck_mcp.domain.entities.task import Task
-from fastmcp.dhafnck_mcp.domain.value_objects import TaskId, TaskStatus, Priority
+from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
+from fastmcp.task_management.domain.entities.task import Task
+from fastmcp.task_management.domain.value_objects import TaskId, TaskStatus, Priority
 
 
 class TestFileAutoRuleGenerator:
@@ -50,7 +50,7 @@ class TestFileAutoRuleGenerator:
     
     def test_init_with_default_path(self):
         """Test initialization with default path"""
-        with patch('fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator._get_project_root') as mock_root:
+        with patch('fastmcp.task_management.infrastructure.services.file_auto_rule_generator._get_project_root') as mock_root:
             mock_root.return_value = Path(self.temp_dir)
             generator = FileAutoRuleGenerator()
             expected_path = os.path.join(self.temp_dir, ".cursor", "rules", "auto_rule.mdc")
@@ -58,7 +58,7 @@ class TestFileAutoRuleGenerator:
     
     def test_init_with_relative_path(self):
         """Test initialization with relative path"""
-        with patch('fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator._get_project_root') as mock_root:
+        with patch('fastmcp.task_management.infrastructure.services.file_auto_rule_generator._get_project_root') as mock_root:
             mock_root.return_value = Path(self.temp_dir)
             generator = FileAutoRuleGenerator("relative/path/auto_rule.mdc")
             expected_path = os.path.join(self.temp_dir, "relative", "path", "auto_rule.mdc")

@@ -13,9 +13,9 @@ import pytest
 import tempfile
 import os
 from pathlib import Path
-from fastmcp.dhafnck_mcp.interface.mcp_tools import MCPTaskTools
-from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository
-from fastmcp.dhafnck_mcp.domain import TaskId
+from fastmcp.task_management.interface.mcp_tools import MCPTaskTools
+from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+from fastmcp.task_management.domain import TaskId
 
 
 @pytest.mark.integration
@@ -34,8 +34,8 @@ class TestSubtaskDependencyMCPIntegration:
         self.mcp_tools._task_repository = JsonTaskRepository(self.temp_file.name)
         
         # Recreate the task service with the new repository
-        from fastmcp.dhafnck_mcp.application.services.task_application_service import TaskApplicationService
-        from fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
+        from fastmcp.task_management.application.services.task_application_service import TaskApplicationService
+        from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
         
         auto_rule_generator = FileAutoRuleGenerator()
         self.mcp_tools._task_service = TaskApplicationService(
@@ -44,7 +44,7 @@ class TestSubtaskDependencyMCPIntegration:
         )
         
         # Create test tasks using proper DTOs
-        from fastmcp.dhafnck_mcp.application.dtos.task_dto import CreateTaskRequest
+        from fastmcp.task_management.application.dtos.task_dto import CreateTaskRequest
         
         task1_request = CreateTaskRequest(
             title="Test Task 1",
@@ -79,7 +79,7 @@ class TestSubtaskDependencyMCPIntegration:
         }
         
         # Call the actual use case (simulating MCP tool behavior)
-        from fastmcp.dhafnck_mcp.application.use_cases.manage_subtasks import AddSubtaskRequest
+        from fastmcp.task_management.application.use_cases.manage_subtasks import AddSubtaskRequest
         request = AddSubtaskRequest(**result)
         response = self.mcp_tools._task_service.add_subtask(request)
         
@@ -93,7 +93,7 @@ class TestSubtaskDependencyMCPIntegration:
     def test_subtask_workflow_integration(self):
         """Test complete subtask workflow through MCP tools"""
         # Add subtask
-        from fastmcp.dhafnck_mcp.application.use_cases.manage_subtasks import AddSubtaskRequest
+        from fastmcp.task_management.application.use_cases.manage_subtasks import AddSubtaskRequest
         add_request = AddSubtaskRequest(
             task_id=self.task1_id,
             title="Integration Test Subtask",
@@ -103,7 +103,7 @@ class TestSubtaskDependencyMCPIntegration:
         subtask_id = add_response.subtask["id"]
         
         # Update subtask
-        from fastmcp.dhafnck_mcp.application.use_cases.manage_subtasks import UpdateSubtaskRequest
+        from fastmcp.task_management.application.use_cases.manage_subtasks import UpdateSubtaskRequest
         update_request = UpdateSubtaskRequest(
             task_id=self.task1_id,
             subtask_id=subtask_id,
@@ -133,7 +133,7 @@ class TestSubtaskDependencyMCPIntegration:
     def test_add_dependency_mcp_tool(self):
         """Test add_dependency MCP tool"""
         # Call the dependency use case
-        from fastmcp.dhafnck_mcp.application.use_cases.manage_dependencies import AddDependencyRequest
+        from fastmcp.task_management.application.use_cases.manage_dependencies import AddDependencyRequest
         request = AddDependencyRequest(
             task_id=self.task1_id,
             dependency_id=self.task2_id
@@ -148,7 +148,7 @@ class TestSubtaskDependencyMCPIntegration:
     def test_dependency_workflow_integration(self):
         """Test complete dependency workflow through MCP tools"""
         # Add dependency
-        from fastmcp.dhafnck_mcp.application.use_cases.manage_dependencies import AddDependencyRequest
+        from fastmcp.task_management.application.use_cases.manage_dependencies import AddDependencyRequest
         add_request = AddDependencyRequest(
             task_id=self.task1_id,
             dependency_id=self.task2_id
@@ -191,7 +191,7 @@ class TestSubtaskDependencyMCPIntegration:
     def test_mixed_subtasks_and_dependencies(self):
         """Test tasks with both subtasks and dependencies"""
         # Add dependency
-        from fastmcp.dhafnck_mcp.application.use_cases.manage_dependencies import AddDependencyRequest
+        from fastmcp.task_management.application.use_cases.manage_dependencies import AddDependencyRequest
         dep_request = AddDependencyRequest(
             task_id=self.task1_id,
             dependency_id=self.task2_id
@@ -199,7 +199,7 @@ class TestSubtaskDependencyMCPIntegration:
         self.mcp_tools._task_service.add_dependency(dep_request)
         
         # Add subtasks
-        from fastmcp.dhafnck_mcp.application.use_cases.manage_subtasks import AddSubtaskRequest
+        from fastmcp.task_management.application.use_cases.manage_subtasks import AddSubtaskRequest
         subtask1_request = AddSubtaskRequest(
             task_id=self.task1_id,
             title="Subtask 1"
@@ -238,8 +238,8 @@ class TestSubtaskDependencyMCPIntegration:
     def test_persistence_across_operations(self):
         """Test that subtasks and dependencies persist across repository operations"""
         # Add subtask and dependency
-        from fastmcp.dhafnck_mcp.application.use_cases.manage_subtasks import AddSubtaskRequest
-        from fastmcp.dhafnck_mcp.application.use_cases.manage_dependencies import AddDependencyRequest
+        from fastmcp.task_management.application.use_cases.manage_subtasks import AddSubtaskRequest
+        from fastmcp.task_management.application.use_cases.manage_dependencies import AddDependencyRequest
         
         subtask_request = AddSubtaskRequest(
             task_id=self.task1_id,
@@ -269,7 +269,7 @@ class TestSubtaskDependencyMCPIntegration:
     def test_error_handling_integration(self):
         """Test error handling in MCP tools integration"""
         # Test adding subtask to non-existent task
-        from fastmcp.dhafnck_mcp.application.use_cases.manage_subtasks import AddSubtaskRequest
+        from fastmcp.task_management.application.use_cases.manage_subtasks import AddSubtaskRequest
         invalid_request = AddSubtaskRequest(
             task_id=999,
             title="Invalid Subtask"
@@ -279,7 +279,7 @@ class TestSubtaskDependencyMCPIntegration:
             self.mcp_tools._task_service.add_subtask(invalid_request)
         
         # Test adding dependency to non-existent task
-        from fastmcp.dhafnck_mcp.application.use_cases.manage_dependencies import AddDependencyRequest
+        from fastmcp.task_management.application.use_cases.manage_dependencies import AddDependencyRequest
         invalid_dep_request = AddDependencyRequest(
             task_id=999,
             dependency_id=self.task2_id

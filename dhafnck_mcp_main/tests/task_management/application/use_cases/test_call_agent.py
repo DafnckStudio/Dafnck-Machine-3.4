@@ -13,7 +13,7 @@ from pathlib import Path
 from unittest.mock import patch, mock_open, MagicMock
 import yaml
 
-from fastmcp.dhafnck_mcp.application.use_cases.call_agent import CallAgentUseCase
+from fastmcp.task_management.application.use_cases.call_agent import CallAgentUseCase
 
 
 class TestCallAgentUseCase:
@@ -51,7 +51,7 @@ job_desc:
 
     def test_execute_success_with_valid_agent(self, call_agent_use_case, temp_agent_dir):
         """Test successful execution with valid agent"""
-        with patch('fastmcp.dhafnck_mcp.application.use_cases.call_agent.generate_docs_for_assignees') as mock_generate:
+        with patch('fastmcp.task_management.application.use_cases.call_agent.generate_docs_for_assignees') as mock_generate:
             result = call_agent_use_case.execute("test_agent")
             
             assert result["success"] is True
@@ -107,7 +107,7 @@ rules:
         
         call_agent_use_case = CallAgentUseCase(temp_agent_dir)
         
-        with patch('fastmcp.dhafnck_mcp.application.use_cases.call_agent.generate_docs_for_assignees'):
+        with patch('fastmcp.task_management.application.use_cases.call_agent.generate_docs_for_assignees'):
             result = call_agent_use_case.execute("nested_agent")
             
             assert result["success"] is True
@@ -127,7 +127,7 @@ rules:
         
         call_agent_use_case = CallAgentUseCase(temp_agent_dir)
         
-        with patch('fastmcp.dhafnck_mcp.application.use_cases.call_agent.generate_docs_for_assignees'):
+        with patch('fastmcp.task_management.application.use_cases.call_agent.generate_docs_for_assignees'):
             result = call_agent_use_case.execute("invalid_agent")
             
             # Should still succeed but with error info in the content
@@ -136,7 +136,7 @@ rules:
 
     def test_execute_with_docs_generation_failure(self, call_agent_use_case):
         """Test execution when docs generation fails"""
-        with patch('fastmcp.dhafnck_mcp.application.use_cases.call_agent.generate_docs_for_assignees') as mock_generate:
+        with patch('fastmcp.task_management.application.use_cases.call_agent.generate_docs_for_assignees') as mock_generate:
             mock_generate.side_effect = Exception("Docs generation failed")
             
             result = call_agent_use_case.execute("test_agent")
@@ -185,7 +185,7 @@ simple: "just a string"
         
         call_agent_use_case = CallAgentUseCase(temp_agent_dir)
         
-        with patch('fastmcp.dhafnck_mcp.application.use_cases.call_agent.generate_docs_for_assignees'):
+        with patch('fastmcp.task_management.application.use_cases.call_agent.generate_docs_for_assignees'):
             result = call_agent_use_case.execute("varied_agent")
             
             assert result["success"] is True
@@ -212,7 +212,7 @@ simple: "just a string"
         call_agent_use_case = CallAgentUseCase(temp_agent_dir)
         
         with patch('yaml.safe_load', side_effect=yaml.YAMLError("YAML error")):
-            with patch('fastmcp.dhafnck_mcp.application.use_cases.call_agent.generate_docs_for_assignees'):
+            with patch('fastmcp.task_management.application.use_cases.call_agent.generate_docs_for_assignees'):
                 result = call_agent_use_case.execute("error_agent")
                 
                 # Should still succeed with error info
@@ -221,7 +221,7 @@ simple: "just a string"
     def test_execute_logs_debug_info(self, call_agent_use_case, caplog):
         """Test that debug information is logged"""
         caplog.set_level(logging.DEBUG)
-        with patch('fastmcp.dhafnck_mcp.application.use_cases.call_agent.generate_docs_for_assignees'):
+        with patch('fastmcp.task_management.application.use_cases.call_agent.generate_docs_for_assignees'):
             result = call_agent_use_case.execute("test_agent")
             
             assert "Looking for agent in:" in caplog.text
@@ -238,7 +238,7 @@ simple: "just a string"
         
         call_agent_use_case = CallAgentUseCase(temp_agent_dir)
         
-        with patch('fastmcp.dhafnck_mcp.application.use_cases.call_agent.generate_docs_for_assignees'):
+        with patch('fastmcp.task_management.application.use_cases.call_agent.generate_docs_for_assignees'):
             result = call_agent_use_case.execute("empty_yaml_agent")
             
             # Should handle empty YAML gracefully

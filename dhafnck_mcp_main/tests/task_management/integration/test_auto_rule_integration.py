@@ -17,10 +17,10 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 # Import MCP and application classes
-from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
-from fastmcp.dhafnck_mcp.application.services.task_application_service import TaskApplicationService
-from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository
-from fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
+from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.application.services.task_application_service import TaskApplicationService
+from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
 
 
 class TestAutoRuleIntegration:

@@ -11,9 +11,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 
 import pytest
 
-from fastmcp.dhafnck_mcp.domain.enums.agent_roles import AgentRole
-from fastmcp.dhafnck_mcp.domain.enums.common_labels import CommonLabel
-from fastmcp.dhafnck_mcp.domain.enums.estimated_effort import EstimatedEffort, EffortLevel
+from fastmcp.task_management.domain.enums.agent_roles import AgentRole
+from fastmcp.task_management.domain.enums.common_labels import CommonLabel
+from fastmcp.task_management.domain.enums.estimated_effort import EstimatedEffort, EffortLevel
 
 
 class TestAgentRoleEnum:

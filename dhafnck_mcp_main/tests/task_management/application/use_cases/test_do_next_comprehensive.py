@@ -12,16 +12,16 @@ import pytest
 from unittest.mock import Mock, patch
 from datetime import datetime, timezone
 
-from fastmcp.dhafnck_mcp.application.use_cases.do_next import DoNextUseCase
-from fastmcp.dhafnck_mcp.domain.entities.task import Task
-from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
-from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
-from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
-from fastmcp.dhafnck_mcp.domain.enums.agent_roles import AgentRole
-from fastmcp.dhafnck_mcp.domain.enums.common_labels import CommonLabel
-from fastmcp.dhafnck_mcp.domain.enums.estimated_effort import EffortLevel
-from fastmcp.dhafnck_mcp.domain.repositories.task_repository import TaskRepository
-from fastmcp.dhafnck_mcp.domain.services.auto_rule_generator import AutoRuleGenerator
+from fastmcp.task_management.application.use_cases.do_next import DoNextUseCase
+from fastmcp.task_management.domain.entities.task import Task
+from fastmcp.task_management.domain.value_objects.task_id import TaskId
+from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
+from fastmcp.task_management.domain.value_objects.priority import Priority
+from fastmcp.task_management.domain.enums.agent_roles import AgentRole
+from fastmcp.task_management.domain.enums.common_labels import CommonLabel
+from fastmcp.task_management.domain.enums.estimated_effort import EffortLevel
+from fastmcp.task_management.domain.repositories.task_repository import TaskRepository
+from fastmcp.task_management.domain.services.auto_rule_generator import AutoRuleGenerator
 
 
 class TestDoNextUseCaseComprehensive:

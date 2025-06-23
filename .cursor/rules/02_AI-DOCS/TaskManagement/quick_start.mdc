@@ -47,4 +47,4 @@ manage_project({ action: "list" })
 manage_agent({ action: "list", project_id: "demo_proj" })
 ```
 
-For more, see [Task Management Workflow](/.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc).
+For more, see [Task Management Workflow](/.cursor/rules/02_AI-DOCS/TaskManagement/dhafnck_mcp_workflow.mdc).

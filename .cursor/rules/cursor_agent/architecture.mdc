@@ -229,7 +229,7 @@ Context Generation ← RulesGenerator → Template Engine
     "source": "MCP server for task management and auto rule generation",
     "totalTasksGenerated": 9,
     "transformationType": "MCP_SERVER_DEVELOPMENT",
-    "coreFeatures": ["MCP_Protocol_Implementation", "Task_Management_Tools", ...],
+    "coreFeatures": ["MCP_Protocol_Implementation", "dhafnck_mcp_Tools", ...],
     "last_modified": "ISO_timestamp"
   },
   "tasks": [

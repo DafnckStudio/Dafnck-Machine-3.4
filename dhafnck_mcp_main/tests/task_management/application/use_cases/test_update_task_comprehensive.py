@@ -14,15 +14,15 @@ from unittest.mock import Mock, patch
 from datetime import datetime, timezone
 import time
 
-from fastmcp.dhafnck_mcp.application.use_cases.update_task import UpdateTaskUseCase
-from fastmcp.dhafnck_mcp.application.dtos.task_dto import UpdateTaskRequest
-from fastmcp.dhafnck_mcp.infrastructure import InMemoryTaskRepository
-from fastmcp.dhafnck_mcp.domain.entities.task import Task
-from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
-from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
-from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority, PriorityLevel
-from fastmcp.dhafnck_mcp.domain.enums import AgentRole
-from fastmcp.dhafnck_mcp.domain.exceptions import TaskNotFoundError
+from fastmcp.task_management.application.use_cases.update_task import UpdateTaskUseCase
+from fastmcp.task_management.application.dtos.task_dto import UpdateTaskRequest
+from fastmcp.task_management.infrastructure import InMemoryTaskRepository
+from fastmcp.task_management.domain.entities.task import Task
+from fastmcp.task_management.domain.value_objects.task_id import TaskId
+from fastmcp.task_management.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
+from fastmcp.task_management.domain.value_objects.priority import Priority, PriorityLevel
+from fastmcp.task_management.domain.enums import AgentRole
+from fastmcp.task_management.domain.exceptions import TaskNotFoundError
 
 
 class TestUpdateTaskUseCase:

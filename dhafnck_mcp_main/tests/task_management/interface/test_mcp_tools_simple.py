@@ -13,7 +13,7 @@ from unittest.mock import Mock, patch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
 # Use the new consolidated tools
-from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
 
 class TestMCPToolsSimple:
     """Simplified test cases for MCP Tools functionality."""
@@ -21,10 +21,10 @@ class TestMCPToolsSimple:
     @pytest.fixture
     def tools(self):
         """Fixture to create a mocked instance of ConsolidatedMCPToolsV2"""
-        with patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.JsonTaskRepository'), \
-             patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator'), \
-             patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.TaskApplicationService'), \
-             patch('fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2.CursorRulesTools'):
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.JsonTaskRepository'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.TaskApplicationService'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.CursorRulesTools'):
             
             yield ConsolidatedMCPToolsV2()
 
@@ -73,7 +73,7 @@ class TestMCPToolsSimple:
     @pytest.mark.mcp
     def test_task_service_basic_functionality(self, tools):
         """Test that the task service has basic functionality."""
-        from fastmcp.dhafnck_mcp.application.dtos.task_dto import CreateTaskRequest
+        from fastmcp.task_management.application.dtos.task_dto import CreateTaskRequest
         
         # Test that we can create a task request
         request = CreateTaskRequest(

@@ -28,4 +28,4 @@ alwaysApply: false
 - Document any custom fields or advanced patterns clearly.
 - Keep the documentation in `/ .cursor/rules/02_AI-DOCS/TaskManagement/` up to date with real usage.
 
-For more, see [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc).
+For more, see [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/dhafnck_mcp_workflow.mdc).

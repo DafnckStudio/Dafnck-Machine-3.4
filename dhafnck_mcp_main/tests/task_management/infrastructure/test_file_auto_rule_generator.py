@@ -11,12 +11,12 @@ import os
 from pathlib import Path
 from unittest.mock import Mock, patch, mock_open
 
-from fastmcp.dhafnck_mcp.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
-from fastmcp.dhafnck_mcp.domain.entities.task import Task
-from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
-from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority, PriorityLevel
-from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
-from fastmcp.dhafnck_mcp.domain.enums import AgentRole
+from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
+from fastmcp.task_management.domain.entities.task import Task
+from fastmcp.task_management.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
+from fastmcp.task_management.domain.value_objects.priority import Priority, PriorityLevel
+from fastmcp.task_management.domain.value_objects.task_id import TaskId
+from fastmcp.task_management.domain.enums import AgentRole
 
 
 class TestFileAutoRuleGenerator:

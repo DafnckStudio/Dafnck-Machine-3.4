@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 
 import pytest
 from unittest.mock import Mock, patch
-from fastmcp.dhafnck_mcp.infrastructure.services.legacy.project_analyzer.context_generator import ContextGenerator
+from fastmcp.task_management.infrastructure.services.legacy.project_analyzer.context_generator import ContextGenerator
 
 
 class TestContextGenerator:

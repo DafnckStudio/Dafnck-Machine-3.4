@@ -25,7 +25,7 @@ This is an agentic project with task management capabilities using MCP (Model Co
 - **MANDATORY: Use MCP dhafnck_mcp server for ALL task operations**
 - Use `manage_task` tool with MCP protocol - never direct database access
 - Task data located at: `.cursor/rules/tasks/tasks.json`
-- Follow workflow in: `.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc`
+- Follow workflow in: `.cursor/rules/02_AI-DOCS/TaskManagement/dhafnck_mcp_workflow.mdc`
 
 ### Testing
 - Virtual environment: `dhafnck_mcp_main/.venv`

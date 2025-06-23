@@ -20,7 +20,7 @@ from dataclasses import asdict
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-from fastmcp.dhafnck_mcp.application import (
+from fastmcp.task_management.application import (
     TaskApplicationService,
     CreateTaskRequest,
     UpdateTaskRequest,
@@ -30,17 +30,17 @@ from fastmcp.dhafnck_mcp.application import (
     DoNextUseCase,
     CallAgentUseCase
 )
-from fastmcp.dhafnck_mcp.infrastructure import JsonTaskRepository, FileAutoRuleGenerator, InMemoryTaskRepository
-from fastmcp.dhafnck_mcp.interface.cursor_rules_tools import CursorRulesTools
-from fastmcp.dhafnck_mcp.domain.enums import CommonLabel, EstimatedEffort, AgentRole, LabelValidator
-from fastmcp.dhafnck_mcp.domain.enums.agent_roles import resolve_legacy_role
-from fastmcp.dhafnck_mcp.domain.exceptions import TaskNotFoundError, AutoRuleGenerationError
-from fastmcp.dhafnck_mcp.domain.repositories.task_repository import TaskRepository
-from fastmcp.dhafnck_mcp.domain.services.auto_rule_generator import AutoRuleGenerator
-from fastmcp.dhafnck_mcp.infrastructure.services.agent_converter import AgentConverter
-from fastmcp.dhafnck_mcp.domain.entities.project import Project as ProjectEntity
-from fastmcp.dhafnck_mcp.domain.entities.task_tree import TaskTree as TaskTreeEntity
-from fastmcp.dhafnck_mcp.domain.services.orchestrator import Orchestrator
+from fastmcp.task_management.infrastructure import JsonTaskRepository, FileAutoRuleGenerator, InMemoryTaskRepository
+from fastmcp.task_management.interface.cursor_rules_tools import CursorRulesTools
+from fastmcp.task_management.domain.enums import CommonLabel, EstimatedEffort, AgentRole, LabelValidator
+from fastmcp.task_management.domain.enums.agent_roles import resolve_legacy_role
+from fastmcp.task_management.domain.exceptions import TaskNotFoundError, AutoRuleGenerationError
+from fastmcp.task_management.domain.repositories.task_repository import TaskRepository
+from fastmcp.task_management.domain.services.auto_rule_generator import AutoRuleGenerator
+from fastmcp.task_management.infrastructure.services.agent_converter import AgentConverter
+from fastmcp.task_management.domain.entities.project import Project as ProjectEntity
+from fastmcp.task_management.domain.entities.task_tree import TaskTree as TaskTreeEntity
+from fastmcp.task_management.domain.services.orchestrator import Orchestrator
 from ..application.dtos import (
     CreateTaskRequest,
     UpdateTaskRequest,

@@ -15,7 +15,7 @@ import shutil
 from pathlib import Path
 from unittest.mock import patch
 
-from fastmcp.dhafnck_mcp.application.use_cases.call_agent import CallAgentUseCase
+from fastmcp.task_management.application.use_cases.call_agent import CallAgentUseCase
 
 
 def test_call_agent_use_case_can_be_instantiated():
@@ -61,7 +61,7 @@ def test_call_agent_use_case_calls_generate_docs():
     use_case = CallAgentUseCase(cursor_agent_dir)
     
     # Mock the generate_docs_for_assignees function
-    with patch('fastmcp.dhafnck_mcp.application.use_cases.call_agent.generate_docs_for_assignees') as mock_generate:
+    with patch('fastmcp.task_management.application.use_cases.call_agent.generate_docs_for_assignees') as mock_generate:
         # Mock the agent directory to exist and have YAML files
         with patch.object(Path, 'exists', return_value=True), \
              patch.object(Path, 'is_dir', return_value=True), \
@@ -86,7 +86,7 @@ def test_call_agent_use_case_calls_generate_docs():
 
 def test_call_agent_use_case_integration_with_consolidated_tools():
     """Test that CallAgentUseCase integrates correctly with ConsolidatedMCPToolsV2"""
-    from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+    from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
     
     tools = ConsolidatedMCPToolsV2()
     

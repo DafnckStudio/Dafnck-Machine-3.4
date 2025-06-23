@@ -2,7 +2,7 @@
     "mcpServers": {
         "dhafnck_mcp": {
             "command": "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
-            "args": ["-m", "fastmcp.dhafnck_mcp.interface.consolidated_mcp_server"],
+            "args": ["-m", "fastmcp.task_management.interface.consolidated_mcp_server"],
             "cwd": "/home/daihungpham/agentic-project/dhafnck_mcp_main",
             "env": {
               "PYTHONPATH": "/home/daihungpham/agentic-project/dhafnck_mcp_main/src",

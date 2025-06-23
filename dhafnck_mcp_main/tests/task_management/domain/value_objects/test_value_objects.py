@@ -19,7 +19,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_creation_with_integer(self):
         """Test TaskId creation with integer value."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         task_id = TaskId.from_int(1)
         assert task_id.value.endswith('001')  # YYYYMMDD001 format
@@ -30,7 +30,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_creation_with_string(self):
         """Test TaskId creation with string value (YYYYMMDDXXX format)."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         # Use valid YYYYMMDDXXX format
         task_id = TaskId("20250618001")
@@ -41,7 +41,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_validation_none_value(self):
         """Test TaskId validation fails with None value."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         with pytest.raises(ValueError, match="Task ID cannot be None"):
             TaskId(None)
@@ -50,7 +50,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_validation_empty_string(self):
         """Test TaskId validation fails with empty string."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         with pytest.raises(ValueError, match="Task ID cannot be empty or whitespace"):
             TaskId("")
@@ -59,7 +59,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_validation_negative_integer(self):
         """Test TaskId validation fails with negative integer."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         with pytest.raises(ValueError):
             TaskId.from_int(-1)
@@ -68,7 +68,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_validation_zero_integer(self):
         """Test TaskId validation fails with zero integer."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         with pytest.raises(ValueError):
             TaskId.from_int(0)
@@ -77,7 +77,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_validation_invalid_type(self):
         """Test TaskId validation fails with invalid type."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         with pytest.raises(ValueError):
             TaskId("invalid-format")
@@ -86,7 +86,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_factory_methods(self):
         """Test TaskId factory methods."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         # From string (valid YYYYMMDDXXX format)
         task_id_str = TaskId.from_string("20250618042")
@@ -100,7 +100,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_string_to_int_conversion(self):
         """Test TaskId string to int conversion."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         # Valid YYYYMMDDXXX format can be converted to sequence number
         task_id = TaskId("20250618123")
@@ -114,7 +114,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_properties(self):
         """Test TaskId properties for date, sequence, and subtask info."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         # Main task ID
         main_task = TaskId("20250618123")
@@ -135,7 +135,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_subtask_conversion(self):
         """Test subtask ID conversion to integer."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         # Subtask should combine main and sub sequence numbers
         subtask = TaskId("20250618123.456")
@@ -146,7 +146,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_parent_task_error(self):
         """Test error when getting parent task ID from main task."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         main_task = TaskId("20250618123")
         with pytest.raises(ValueError, match="Cannot get parent task ID for main task"):
@@ -156,7 +156,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_generate_new(self):
         """Test generating new task IDs."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         from datetime import datetime
         
         TaskId.reset_counter()
@@ -179,7 +179,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_generate_subtask(self):
         """Test generating subtask IDs."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         parent = TaskId("20250618123")
         
@@ -197,7 +197,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_generate_subtask_error(self):
         """Test error when creating subtask of subtask."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         subtask = TaskId("20250618123.001")
         with pytest.raises(ValueError, match="Cannot create subtask of a subtask"):
@@ -207,7 +207,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_validation_edge_cases(self):
         """Test TaskId validation edge cases."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         # Test invalid date in YYYYMMDDXXX format
         with pytest.raises(ValueError):
@@ -221,7 +221,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_from_int_validation(self):
         """Test TaskId.from_int validation."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
         # Test non-integer input
         with pytest.raises(ValueError, match="Value must be an integer"):
@@ -235,7 +235,7 @@ class TestTaskId:
     @pytest.mark.domain
     def test_task_id_max_sequences(self):
         """Test maximum sequences per day and per task."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         from datetime import datetime
         
         TaskId.reset_counter()
@@ -264,7 +264,7 @@ class TestTaskStatus:
     @pytest.mark.domain
     def test_task_status_creation_valid_values(self):
         """Test TaskStatus creation with valid values."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
         
         valid_statuses = ["todo", "in_progress", "blocked", "review", "testing", "done", "cancelled"]
         
@@ -277,7 +277,7 @@ class TestTaskStatus:
     @pytest.mark.domain
     def test_task_status_validation_empty_value(self):
         """Test TaskStatus validation fails with empty value."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
         
         with pytest.raises(ValueError, match="Task status cannot be empty"):
             TaskStatus("")
@@ -286,7 +286,7 @@ class TestTaskStatus:
     @pytest.mark.domain
     def test_task_status_validation_invalid_value(self):
         """Test TaskStatus validation fails with invalid value."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
         
         with pytest.raises(ValueError, match="Invalid task status"):
             TaskStatus("invalid_status")
@@ -295,7 +295,7 @@ class TestTaskStatus:
     @pytest.mark.domain
     def test_task_status_factory_methods(self):
         """Test TaskStatus factory methods."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
         
         assert str(TaskStatus.todo()) == "todo"
         assert str(TaskStatus.in_progress()) == "in_progress"
@@ -309,7 +309,7 @@ class TestTaskStatus:
     @pytest.mark.domain
     def test_task_status_state_checks(self):
         """Test TaskStatus state checking methods."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
         
         todo_status = TaskStatus.todo()
         assert todo_status.is_todo()
@@ -330,7 +330,7 @@ class TestTaskStatus:
     @pytest.mark.domain
     def test_task_status_valid_transitions(self):
         """Test TaskStatus valid transitions."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_status import TaskStatus
+        from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
         
         todo_status = TaskStatus.todo()
         assert todo_status.can_transition_to("in_progress")
@@ -361,7 +361,7 @@ class TestPriority:
     @pytest.mark.domain
     def test_priority_creation_valid_values(self):
         """Test Priority creation with valid values."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
+        from fastmcp.task_management.domain.value_objects.priority import Priority
         
         valid_priorities = ["low", "medium", "high", "urgent", "critical"]
         
@@ -374,7 +374,7 @@ class TestPriority:
     @pytest.mark.domain
     def test_priority_validation_empty_value(self):
         """Test Priority validation fails with empty value."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
+        from fastmcp.task_management.domain.value_objects.priority import Priority
         
         with pytest.raises(ValueError, match="Priority cannot be empty"):
             Priority("")
@@ -383,7 +383,7 @@ class TestPriority:
     @pytest.mark.domain
     def test_priority_validation_invalid_value(self):
         """Test Priority validation fails with invalid value."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
+        from fastmcp.task_management.domain.value_objects.priority import Priority
         
         with pytest.raises(ValueError, match="Invalid priority"):
             Priority("invalid_priority")
@@ -392,7 +392,7 @@ class TestPriority:
     @pytest.mark.domain
     def test_priority_factory_methods(self):
         """Test Priority factory methods."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
+        from fastmcp.task_management.domain.value_objects.priority import Priority
         
         assert str(Priority.low()) == "low"
         assert str(Priority.medium()) == "medium"
@@ -404,7 +404,7 @@ class TestPriority:
     @pytest.mark.domain
     def test_priority_ordering_comparison(self):
         """Test Priority ordering and comparison."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
+        from fastmcp.task_management.domain.value_objects.priority import Priority
         
         low = Priority.low()
         medium = Priority.medium()
@@ -424,7 +424,7 @@ class TestPriority:
     @pytest.mark.domain
     def test_priority_order_property(self):
         """Test Priority order property."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
+        from fastmcp.task_management.domain.value_objects.priority import Priority
         
         assert Priority.low().order == 1
         assert Priority.medium().order == 2
@@ -436,7 +436,7 @@ class TestPriority:
     @pytest.mark.domain
     def test_priority_state_checks(self):
         """Test Priority state checking methods."""
-        from fastmcp.dhafnck_mcp.domain.value_objects.priority import Priority
+        from fastmcp.task_management.domain.value_objects.priority import Priority
         
         critical = Priority.critical()
         assert critical.is_critical()
@@ -458,8 +458,8 @@ class TestDomainEvents:
     @pytest.mark.domain
     def test_task_created_event(self):
         """Test TaskCreated domain event."""
-        from fastmcp.dhafnck_mcp.domain.events.task_events import TaskCreated
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.events.task_events import TaskCreated
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         from datetime import datetime
         
         task_id = TaskId.from_int(1)
@@ -480,8 +480,8 @@ class TestDomainEvents:
     @pytest.mark.domain
     def test_task_updated_event(self):
         """Test TaskUpdated domain event."""
-        from fastmcp.dhafnck_mcp.domain.events.task_events import TaskUpdated
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.events.task_events import TaskUpdated
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         from datetime import datetime
         
         task_id = TaskId.from_int(1)
@@ -506,8 +506,8 @@ class TestDomainEvents:
     @pytest.mark.domain
     def test_task_retrieved_event(self):
         """Test TaskRetrieved domain event."""
-        from fastmcp.dhafnck_mcp.domain.events.task_events import TaskRetrieved
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.events.task_events import TaskRetrieved
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         from datetime import datetime
         
         task_id = TaskId.from_int(1)
@@ -529,8 +529,8 @@ class TestDomainEvents:
     @pytest.mark.domain
     def test_task_deleted_event(self):
         """Test TaskDeleted domain event."""
-        from fastmcp.dhafnck_mcp.domain.events.task_events import TaskDeleted
-        from fastmcp.dhafnck_mcp.domain.value_objects.task_id import TaskId
+        from fastmcp.task_management.domain.events.task_events import TaskDeleted
+        from fastmcp.task_management.domain.value_objects.task_id import TaskId
         from datetime import datetime
         
         task_id = TaskId.from_int(1)

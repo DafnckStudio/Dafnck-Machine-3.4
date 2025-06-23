@@ -10,10 +10,10 @@ from pathlib import Path
 import shutil
 from unittest.mock import patch, Mock
 
-from fastmcp.dhafnck_mcp.infrastructure.services.agent_doc_generator import generate_agent_docs, generate_docs_for_assignees
-from fastmcp.dhafnck_mcp.application.use_cases.get_task import GetTaskUseCase
-from fastmcp.dhafnck_mcp.domain.events import TaskRetrieved
-from fastmcp.dhafnck_mcp.domain.value_objects import TaskId
+from fastmcp.task_management.infrastructure.services.agent_doc_generator import generate_agent_docs, generate_docs_for_assignees
+from fastmcp.task_management.application.use_cases.get_task import GetTaskUseCase
+from fastmcp.task_management.domain.events import TaskRetrieved
+from fastmcp.task_management.domain.value_objects import TaskId
 
 
 @pytest.fixture
@@ -47,8 +47,8 @@ def temp_agent_setup():
         yaml.dump({"name": "Design Agent", "slug": "design_agent"}, f)
 
     # Patch the constants
-    with patch('fastmcp.dhafnck_mcp.infrastructure.services.agent_doc_generator.AGENT_YAML_LIB', agent_yaml_lib_path), \
-         patch('fastmcp.dhafnck_mcp.infrastructure.services.agent_doc_generator.AGENTS_OUTPUT_DIR', agents_output_dir_path):
+    with patch('fastmcp.task_management.infrastructure.services.agent_doc_generator.AGENT_YAML_LIB', agent_yaml_lib_path), \
+         patch('fastmcp.task_management.infrastructure.services.agent_doc_generator.AGENTS_OUTPUT_DIR', agents_output_dir_path):
         yield agent_yaml_lib_path, agents_output_dir_path
 
     shutil.rmtree(temp_root)
@@ -153,7 +153,7 @@ class TestAgentDocGeneration:
         mock_repo.find_by_id.return_value = mock_task
         valid_task_id = TaskId.from_int(1)
 
-        with patch('fastmcp.dhafnck_mcp.application.use_cases.get_task.generate_docs_for_assignees') as mock_generate:
+        with patch('fastmcp.task_management.application.use_cases.get_task.generate_docs_for_assignees') as mock_generate:
             response = use_case.execute(valid_task_id)
             mock_generate.assert_called_once_with(["@coding_agent"], clear_all=False)
             assert response.id == "20240101001"
@@ -177,7 +177,7 @@ class TestAgentDocGeneration:
         mock_repo.find_by_id.return_value = mock_task
         valid_task_id = TaskId.from_int(2)
 
-        with patch('fastmcp.dhafnck_mcp.application.use_cases.get_task.generate_docs_for_assignees') as mock_generate:
+        with patch('fastmcp.task_management.application.use_cases.get_task.generate_docs_for_assignees') as mock_generate:
             response = use_case.execute(valid_task_id)
             mock_generate.assert_called_once_with([], clear_all=False)
             assert response.id == "20240101002"

@@ -10,11 +10,11 @@ import tempfile
 import os
 from datetime import datetime
 
-from fastmcp.dhafnck_mcp.application.use_cases.complete_task import CompleteTaskUseCase
-from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import JsonTaskRepository
-from fastmcp.dhafnck_mcp.domain.entities.task import Task
-from fastmcp.dhafnck_mcp.domain.value_objects import TaskId, TaskStatus, Priority
-from fastmcp.dhafnck_mcp.domain.exceptions import TaskNotFoundError
+from fastmcp.task_management.application.use_cases.complete_task import CompleteTaskUseCase
+from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
+from fastmcp.task_management.domain.entities.task import Task
+from fastmcp.task_management.domain.value_objects import TaskId, TaskStatus, Priority
+from fastmcp.task_management.domain.exceptions import TaskNotFoundError
 
 
 class TestCompleteTask:

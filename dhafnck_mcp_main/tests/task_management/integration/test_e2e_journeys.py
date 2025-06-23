@@ -12,8 +12,8 @@ import pytest
 import os
 import json
 from fastmcp import FastMCP
-from fastmcp.dhafnck_mcp.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
-from fastmcp.dhafnck_mcp.infrastructure.repositories.json_task_repository import InMemoryTaskRepository
+from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.infrastructure.repositories.json_task_repository import InMemoryTaskRepository
 
 @pytest.fixture(scope="function")
 def mcp_server_instance():
