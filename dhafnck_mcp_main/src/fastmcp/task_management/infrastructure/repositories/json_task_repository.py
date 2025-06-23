@@ -189,9 +189,14 @@ class JsonTaskRepository(TaskRepository):
         if file_path:
             self._file_path = str(Path(file_path).resolve())
         else:
-            # Default path relative to the project root
-            project_root = _get_project_root()
-            self._file_path = str(project_root / ".cursor" / "rules" / "tasks" / "tasks.json")
+            # Check environment variable first
+            env_path = os.environ.get("TASK_MANAGEMENT_TASKS_PATH")
+            if env_path:
+                self._file_path = os.path.abspath(env_path)
+            else:
+                # Default path relative to the project root
+                project_root = _get_project_root()
+                self._file_path = str(project_root / ".cursor" / "rules" / "tasks" / "tasks.json")
 
         logging.info(f"JsonTaskRepository using file_path: {self._file_path}")
 
