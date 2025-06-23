@@ -10,13 +10,20 @@ This is an agentic project with task management capabilities using MCP (Model Co
 
 ## Important Rules
 
+### MCP Protocol Priority
+- **ALWAYS USE MCP TOOLS WHEN AVAILABLE**
+- Never create CLI scripts or direct API calls when MCP tools exist
+- Use proper MCP tool calls through the protocol interface
+- Follow MCP workflow patterns defined in documentation
+
 ### Path Management
 - **USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT = ON**
 - Root path: `/home/daihungpham/agentic-project`
 - Always use absolute paths when creating/updating files
 
 ### Task Management
-- Use MCP task_management server for all task operations
+- **MANDATORY: Use MCP task_management server for ALL task operations**
+- Use `manage_task` tool with MCP protocol - never direct database access
 - Task data located at: `.cursor/rules/tasks/tasks.json`
 - Follow workflow in: `.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc`
 
@@ -40,6 +47,15 @@ This is an agentic project with task management capabilities using MCP (Model Co
 - Auto-generated rules: `.cursor/rules/auto_rule.mdc`
 
 ## MCP Servers
-- `task_management` - Custom task management server
+- `task_management` - Custom task management server (REQUIRED for all task operations)
 - `sequential-thinking` - Enhanced reasoning
 - `github` - GitHub integration
+
+## MCP Usage Guidelines
+- **FIRST PRIORITY**: Check if MCP tools are available for the task
+- **USE MCP TOOLS**: Instead of writing custom scripts or direct API calls
+- **TOOL EXAMPLES**:
+  - Task management: Use `manage_task`, `manage_project`, `manage_agent` tools
+  - Never bypass MCP by accessing JSON files directly
+  - Always follow the MCP workflow patterns
+- **DEBUGGING**: If MCP tools fail, fix the MCP server rather than bypassing it
