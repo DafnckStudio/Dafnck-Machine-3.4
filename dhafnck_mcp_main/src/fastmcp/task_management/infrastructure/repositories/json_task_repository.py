@@ -190,7 +190,7 @@ class JsonTaskRepository(TaskRepository):
             self._file_path = str(Path(file_path).resolve())
         else:
             # Check environment variable first
-            env_path = os.environ.get("TASK_MANAGEMENT_TASKS_PATH")
+            env_path = os.environ.get("TASKS_JSON_PATH")
             if env_path:
                 self._file_path = os.path.abspath(env_path)
             else:

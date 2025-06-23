@@ -320,8 +320,8 @@ async def comprehensive_tool_test():
 if __name__ == "__main__":
     # Set environment variables
     os.environ['PYTHONPATH'] = '/home/daihungpham/agentic-project/dhafnck_mcp_main/src'
-    os.environ['TASK_MANAGEMENT_TASKS_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
-    os.environ['TASK_MANAGEMENT_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
+    os.environ['TASKS_JSON_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
+    os.environ['TASK_JSON_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
     
     success = asyncio.run(comprehensive_tool_test())
     sys.exit(0 if success else 1)
@@ -436,8 +436,8 @@ async def test_mcp_protocol():
 if __name__ == "__main__":
     # Set environment variables
     os.environ['PYTHONPATH'] = '/home/daihungpham/agentic-project/dhafnck_mcp_main/src'
-    os.environ['TASK_MANAGEMENT_TASKS_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
-    os.environ['TASK_MANAGEMENT_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
+    os.environ['TASKS_JSON_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
+    os.environ['TASK_JSON_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
     
     success = asyncio.run(test_mcp_protocol())
     sys.exit(0 if success else 1)
@@ -531,8 +531,8 @@ sys.path.insert(0, '/home/daihungpham/agentic-project/dhafnck_mcp_main/src')
 async def test_response_time():
     try:
         os.environ['PYTHONPATH'] = '/home/daihungpham/agentic-project/dhafnck_mcp_main/src'
-        os.environ['TASK_MANAGEMENT_TASKS_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
-        os.environ['TASK_MANAGEMENT_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
+        os.environ['TASKS_JSON_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
+        os.environ['TASK_JSON_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
         
         start_time = time.time()
         from fastmcp.task_management.interface.consolidated_mcp_server import mcp_instance
@@ -626,8 +626,8 @@ sys.path.insert(0, '/home/daihungpham/agentic-project/dhafnck_mcp_main/src')
 async def generate_summary():
     try:
         os.environ['PYTHONPATH'] = '/home/daihungpham/agentic-project/dhafnck_mcp_main/src'
-        os.environ['TASK_MANAGEMENT_TASKS_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
-        os.environ['TASK_MANAGEMENT_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
+        os.environ['TASKS_JSON_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
+        os.environ['TASK_JSON_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
         
         from fastmcp.task_management.interface.consolidated_mcp_server import mcp_instance
         
@@ -894,7 +894,7 @@ compare_paths() {
 test_manual_startup() {
     echo -e "\n${BLUE}🚀 Testing manual server startup${NC}"
     
-    local startup_cmd="cd '$DHAFNCK_MCP_DIR' && source .venv/bin/activate && PYTHONPATH='$DHAFNCK_MCP_DIR/src' TASK_MANAGEMENT_TASKS_PATH='$TASKS_JSON_PATH' TASK_MANAGEMENT_BACKUP_PATH='$BACKUP_PATH' python -m fastmcp.task_management.interface.consolidated_mcp_server"
+    local startup_cmd="cd '$DHAFNCK_MCP_DIR' && source .venv/bin/activate && PYTHONPATH='$DHAFNCK_MCP_DIR/src' TASKS_JSON_PATH='$TASKS_JSON_PATH' TASK_JSON_BACKUP_PATH='$BACKUP_PATH' python -m fastmcp.task_management.interface.consolidated_mcp_server"
     
     echo -e "  🔧 Startup command:"
     echo -e "     $startup_cmd"
@@ -1031,7 +1031,7 @@ main() {
     
     print_section "SERVER FUNCTIONALITY TESTS"
     test_server_startup "PYTHONPATH='$DHAFNCK_MCP_DIR/src'" "Default Environment"
-    test_server_startup "PYTHONPATH='$DHAFNCK_MCP_DIR/src' TASK_MANAGEMENT_TASKS_PATH='$TASKS_JSON_PATH' TASK_MANAGEMENT_BACKUP_PATH='$BACKUP_PATH'" "Full Environment"
+    test_server_startup "PYTHONPATH='$DHAFNCK_MCP_DIR/src' TASKS_JSON_PATH='$TASKS_JSON_PATH' TASK_JSON_BACKUP_PATH='$BACKUP_PATH'" "Full Environment"
     
     test_manual_startup
     
@@ -1070,8 +1070,8 @@ sys.path.insert(0, '/home/daihungpham/agentic-project/dhafnck_mcp_main/src')
 async def quick_test():
     try:
         os.environ['PYTHONPATH'] = '/home/daihungpham/agentic-project/dhafnck_mcp_main/src'
-        os.environ['TASK_MANAGEMENT_TASKS_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
-        os.environ['TASK_MANAGEMENT_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
+        os.environ['TASKS_JSON_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json'
+        os.environ['TASK_JSON_BACKUP_PATH'] = '/home/daihungpham/agentic-project/.cursor/rules/tasks/backup'
         
         print("🔄 Loading server...")
         from fastmcp.task_management.interface.consolidated_mcp_server import mcp_instance

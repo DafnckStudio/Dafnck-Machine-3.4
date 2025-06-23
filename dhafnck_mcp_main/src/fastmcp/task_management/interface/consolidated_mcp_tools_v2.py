@@ -351,12 +351,12 @@ class ConsolidatedMCPToolsV2:
         # Initialize repositories and services
         # Use environment variable for tasks file path if available
         if task_repository is None:
-            tasks_file_path = os.environ.get('TASK_MANAGEMENT_TASKS_PATH')
+            tasks_file_path = os.environ.get('TASKS_JSON_PATH')
             if tasks_file_path:
-                logger.info(f"Found TASK_MANAGEMENT_TASKS_PATH: {tasks_file_path}")
+                logger.info(f"Found TASKS_JSON_PATH: {tasks_file_path}")
                 self._task_repository = JsonTaskRepository(file_path=tasks_file_path)
             else:
-                logger.warning("TASK_MANAGEMENT_TASKS_PATH not set, using default.")
+                logger.warning("TASKS_JSON_PATH not set, using default.")
                 self._task_repository = JsonTaskRepository()
         else:
             self._task_repository = task_repository

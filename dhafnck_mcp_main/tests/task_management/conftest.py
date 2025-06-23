@@ -102,18 +102,18 @@ def sample_tasks_data():
 
 @pytest.fixture
 def temp_tasks_file(tmp_path, sample_tasks_data):
-    """Temporary tasks.json file for tests, sets TASK_MANAGEMENT_TASKS_PATH env var."""
+    """Temporary tasks.json file for tests, sets TASKS_JSON_PATH env var."""
     tasks_file = tmp_path / "tasks.json"
     with open(tasks_file, 'w') as f:
         json.dump(sample_tasks_data, f, indent=2)
     # Set the environment variable for all code under test
-    os.environ["TASK_MANAGEMENT_TASKS_PATH"] = str(tasks_file)
+    os.environ["TASKS_JSON_PATH"] = str(tasks_file)
     return tasks_file
 
 
 @pytest.fixture
 def temp_project_dir(tmp_path, sample_tasks_data):
-    """Temporary project directory with complete structure, sets TASK_MANAGEMENT_TASKS_PATH env var."""
+    """Temporary project directory with complete structure, sets TASKS_JSON_PATH env var."""
     # Create directory structure
     cursor_rules = tmp_path / ".cursor" / "rules"
     cursor_rules.mkdir(parents=True)
@@ -129,7 +129,7 @@ def temp_project_dir(tmp_path, sample_tasks_data):
     with open(tasks_file, 'w') as f:
         json.dump(sample_tasks_data, f, indent=2)
     # Set the environment variable for all code under test
-    os.environ["TASK_MANAGEMENT_TASKS_PATH"] = str(tasks_file)
+    os.environ["TASKS_JSON_PATH"] = str(tasks_file)
     
     return tmp_path
 

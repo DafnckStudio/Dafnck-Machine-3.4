@@ -519,8 +519,8 @@ class TestJsonTaskRepository:
         assert tasks == []  # Should start fresh after corruption
     
     def test_repository_uses_env_var_path(self, temp_tasks_file):
-        """Test that JsonTaskRepository uses TASK_MANAGEMENT_TASKS_PATH env var if set."""
-        os.environ["TASK_MANAGEMENT_TASKS_PATH"] = temp_tasks_file
+        """Test that JsonTaskRepository uses TASKS_JSON_PATH env var if set."""
+        os.environ["TASKS_JSON_PATH"] = temp_tasks_file
         repo = JsonTaskRepository()
         assert repo._file_path == os.path.abspath(temp_tasks_file)
 

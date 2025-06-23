@@ -6,8 +6,8 @@
             "cwd": "/home/daihungpham/agentic-project/cursor_agent",
             "env": {
               "PYTHONPATH": "/home/daihungpham/agentic-project/cursor_agent/src",
-              "TASK_MANAGEMENT_TASKS_PATH": "/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json",
-              "TASK_MANAGEMENT_BACKUP_PATH": "/home/daihungpham/agentic-project/.cursor/rules/tasks/backup"
+              "TASKS_JSON_PATH": "/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json",
+              "TASK_JSON_BACKUP_PATH": "/home/daihungpham/agentic-project/.cursor/rules/tasks/backup"
             }
           }
       } 
