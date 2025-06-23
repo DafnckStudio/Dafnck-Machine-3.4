@@ -1,1 +1,21 @@
-[]
+{
+  "tasks": [
+    {
+      "id": "20250623001",
+      "title": "Test MCP tools functionality",
+      "description": "Testing if MCP task management tools are properly working after configuration fix",
+      "project_id": null,
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-23T15:52:22.203799+00:00",
+      "updated_at": "2025-06-23T15:52:22.203799+00:00"
+    }
+  ]
+}
