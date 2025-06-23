@@ -15,7 +15,7 @@ class TestProjectsJsonFormat:
     @pytest.fixture
     def projects_file_path(self):
         """Get the path to the actual projects.json file"""
-        return ".cursor/rules/brain/projects.json"
+        return "../cursor_agent/.cursor/rules/brain/projects.json"
     
     def test_projects_file_exists(self, projects_file_path):
         """Test that the projects.json file exists"""

@@ -52,7 +52,7 @@ class TestTaskId:
         """Test TaskId validation fails with empty string."""
         from fastmcp.task_management.domain.value_objects.task_id import TaskId
         
-        with pytest.raises(ValueError, match="Task ID cannot be empty string"):
+        with pytest.raises(ValueError, match="Task ID cannot be empty or whitespace"):
             TaskId("")
     
     @pytest.mark.unit
@@ -159,18 +159,21 @@ class TestTaskId:
         from fastmcp.task_management.domain.value_objects.task_id import TaskId
         from datetime import datetime
         
+        TaskId.reset_counter()
+
         # Generate new ID without existing IDs
         new_id = TaskId.generate_new()
         assert new_id.date_part == TaskId.from_int(1).date_part  # Same date
         assert not new_id.is_subtask
-        # Don't assert specific sequence number as it depends on existing tasks
+        # With a reset counter, the first ID should have sequence "001"
+        assert new_id.sequence_part == "001"
         assert len(new_id.sequence_part) == 3  # Should be 3 digits
         
         # Generate new ID with existing IDs using current date
         current_date = datetime.now().strftime('%Y%m%d')
         existing_ids = [f"{current_date}001", f"{current_date}002"]
-        new_id = TaskId.generate_new(existing_ids)
-        assert new_id.sequence_part == "003"
+        new_id_2 = TaskId.generate_new(existing_ids)
+        assert new_id_2.sequence_part == "003"
 
     @pytest.mark.unit
     @pytest.mark.domain
@@ -235,6 +238,8 @@ class TestTaskId:
         from fastmcp.task_management.domain.value_objects.task_id import TaskId
         from datetime import datetime
         
+        TaskId.reset_counter()
+
         current_date = datetime.now().strftime('%Y%m%d')
         
         # Create 999 existing IDs (maximum)

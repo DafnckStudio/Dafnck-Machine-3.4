@@ -27,21 +27,9 @@ class TaskId:
         
         value_str = str(self.value).strip()
         if not value_str:
-            raise ValueError("Task ID cannot be empty string")
+            raise ValueError("Task ID cannot be empty or whitespace")
         
-        # For testing purposes, allow simple string IDs that don't match the format
-        # but convert them to a valid format
         if not self._is_valid_format(value_str):
-            # Check if it's a test ID (non-numeric string)
-            if not value_str.isdigit() and len(value_str) < 20:
-                # Convert test IDs to a valid format for testing
-                # Use a fixed date and hash the string to get a sequence
-                test_date = "20250101"
-                hash_val = abs(hash(value_str)) % 999 + 1
-                converted_id = f"{test_date}{hash_val:03d}"
-                object.__setattr__(self, 'value', converted_id)
-                return
-            
             raise ValueError(f"Task ID must be in YYYYMMDDXXX or YYYYMMDDXXX.XXX format, got: {value_str}")
         
         object.__setattr__(self, 'value', value_str)
@@ -176,12 +164,7 @@ class TaskId:
         next_sequence = max(max_sequence + 1, _task_id_counter)
         
         if next_sequence > 999:
-            # Reset counter and try next day if we exceed 999 tasks per day
-            _task_id_counter = 1
-            next_day = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-            next_day = next_day.replace(day=next_day.day + 1)
-            target_date = next_day.strftime('%Y%m%d')
-            next_sequence = 1
+            raise ValueError(f"Maximum tasks per day (999) exceeded for date {target_date}")
         
         new_id = f"{target_date}{next_sequence:03d}"
         
@@ -198,6 +181,9 @@ class TaskId:
     @classmethod
     def generate_subtask(cls, parent_id: 'TaskId', existing_subtask_ids: list = None) -> 'TaskId':
         """Generate a new subtask ID in YYYYMMDDXXX.XXX format"""
+        if parent_id.is_subtask:
+            raise ValueError("Cannot create subtask of a subtask")
+
         if existing_subtask_ids is None:
             existing_subtask_ids = []
         
@@ -233,6 +219,12 @@ class TaskId:
         
         new_id = f"{parent_prefix}.{next_sequence:03d}"
         return cls(new_id)
+    
+    @classmethod
+    def reset_counter(cls):
+        """Resets the global counter for testing purposes."""
+        global _task_id_counter
+        _task_id_counter = 0
     
     @classmethod
     def generate(cls, existing_ids: list = None) -> 'TaskId':

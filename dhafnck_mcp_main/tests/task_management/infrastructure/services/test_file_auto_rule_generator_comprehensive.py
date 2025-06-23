@@ -45,7 +45,7 @@ class TestFileAutoRuleGenerator:
     
     def test_init_with_default_path(self):
         """Test initialization with default path"""
-        with patch('src.task_mcp.infrastructure.services.file_auto_rule_generator._get_project_root') as mock_root:
+        with patch('fastmcp.task_management.infrastructure.services.file_auto_rule_generator._get_project_root') as mock_root:
             mock_root.return_value = Path(self.temp_dir)
             generator = FileAutoRuleGenerator()
             expected_path = os.path.join(self.temp_dir, ".cursor", "rules", "auto_rule.mdc")
@@ -53,7 +53,7 @@ class TestFileAutoRuleGenerator:
     
     def test_init_with_relative_path(self):
         """Test initialization with relative path"""
-        with patch('src.task_mcp.infrastructure.services.file_auto_rule_generator._get_project_root') as mock_root:
+        with patch('fastmcp.task_management.infrastructure.services.file_auto_rule_generator._get_project_root') as mock_root:
             mock_root.return_value = Path(self.temp_dir)
             generator = FileAutoRuleGenerator("relative/path/auto_rule.mdc")
             expected_path = os.path.join(self.temp_dir, "relative", "path", "auto_rule.mdc")

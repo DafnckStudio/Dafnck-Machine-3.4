@@ -230,7 +230,7 @@ class TestUpdateTaskUseCase:
     def test_execute_update_nonexistent_task(self, use_case):
         """Test updating non-existent task"""
         request = UpdateTaskRequest(
-            task_id="nonexistent_id",
+            task_id="20250101999",  # Valid format, but non-existent
             title="Updated Title"
         )
         
