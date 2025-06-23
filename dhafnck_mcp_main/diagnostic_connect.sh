@@ -1022,7 +1022,7 @@ main() {
     check_path "$PYTHON_PATH" "Python Executable" "required"
     check_path "$SERVER_SCRIPT" "Server Script" "required"
     check_path "$DHAFNCK_MCP_DIR/src/fastmcp" "FastMCP Package" "required"
-    check_path "$DHAFNCK_MCP_DIR/src/fastmcp/dhafnck_mcp" "Task Management Package" "required"
+    check_path "$DHAFNCK_MCP_DIR/src/fastmcp/task_management" "Task Management Package" "required"
     
     print_section "TASK MANAGEMENT FILES"
     check_path "$TASKS_JSON_PATH" "Tasks JSON File" "required"
