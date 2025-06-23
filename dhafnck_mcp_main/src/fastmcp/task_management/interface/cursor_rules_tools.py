@@ -12,14 +12,24 @@ from ..domain.services import AutoRuleGenerator
 def _get_project_root() -> Path:
     """Get project root directory (where .cursor/rules should be)"""
     current_dir = Path(__file__).resolve()
-    # Go up until we find the directory containing cursor_agent, or are in cursor_agent
+    
+    # Look for project markers (CLAUDE.md, .cursor directory, yaml-lib directory)
     while current_dir.parent != current_dir:  # Stop at filesystem root
-        if current_dir.name == 'cursor_agent':
-            return current_dir.parent
-        if (current_dir / 'cursor_agent').exists():
+        if ((current_dir / "CLAUDE.md").exists() or 
+            (current_dir / ".cursor").is_dir() or 
+            (current_dir / "yaml-lib").is_dir() or
+            (current_dir / "dhafnck_mcp_main").is_dir()):
             return current_dir
         current_dir = current_dir.parent
-    raise FileNotFoundError("Could not find project root containing 'cursor_agent' directory.")
+        
+    # If no project markers found, assume the parent of dhafnck_mcp_main is the project root
+    current_dir = Path(__file__).resolve()
+    while current_dir.parent != current_dir:
+        if current_dir.name == "dhafnck_mcp_main":
+            return current_dir.parent
+        current_dir = current_dir.parent
+        
+    raise FileNotFoundError("Could not find project root containing expected project markers.")
 
 
 class CursorRulesTools:

@@ -12,26 +12,31 @@ class AgentDocGenerator:
     
     def __init__(self, agent_yaml_lib: Optional[Path] = None, agents_output_dir: Optional[Path] = None):
         self.project_root = self._get_project_root()
-        self.agent_yaml_lib = agent_yaml_lib or self.project_root / "cursor_agent/yaml-lib"
+        self.agent_yaml_lib = agent_yaml_lib or self.project_root / "yaml-lib"
         self.agents_output_dir = agents_output_dir or self.project_root / ".cursor/rules/agents"
-        self.convert_script = self.project_root / "cursor_agent/yaml-lib/convert_yaml_to_mdc_format.py"
+        self.convert_script = self.project_root / "yaml-lib/convert_yaml_to_mdc_format.py"
     
     def _get_project_root(self) -> Path:
-        """Find the project root directory by locating the 'cursor_agent' directory."""
+        """Find the project root directory by locating common project markers."""
         current_dir = Path(__file__).resolve()
+        
+        # Look for project markers (CLAUDE.md, .cursor directory, yaml-lib directory)
         while current_dir != current_dir.parent:
-            if (current_dir / "cursor_agent").is_dir():
+            if ((current_dir / "CLAUDE.md").exists() or 
+                (current_dir / ".cursor").is_dir() or 
+                (current_dir / "yaml-lib").is_dir() or
+                (current_dir / "dhafnck_mcp_main").is_dir()):
                 return current_dir
             current_dir = current_dir.parent
-        
-        # Fallback for when script is inside cursor_agent
-        current_dir = Path(__file__).resolve()
-        if 'cursor_agent' in current_dir.parts:
-            while current_dir.name != "cursor_agent":
-                current_dir = current_dir.parent
-            return current_dir.parent
 
-        raise FileNotFoundError("Could not find the project root containing 'cursor_agent' directory.")
+        # If no project markers found, assume the parent of dhafnck_mcp_main is the project root
+        current_dir = Path(__file__).resolve()
+        while current_dir != current_dir.parent:
+            if current_dir.name == "dhafnck_mcp_main":
+                return current_dir.parent
+            current_dir = current_dir.parent
+
+        raise FileNotFoundError("Could not find the project root. Expected to find CLAUDE.md, .cursor, yaml-lib, or dhafnck_mcp_main directory.")
     
     def clear_agents_output_dir(self):
         """Clear all files in the agents output directory"""
