@@ -332,15 +332,14 @@ class SimpleMultiAgentTools:
     def _update_project_from_entity(
         self, project_id: str, project_entity: ProjectEntity
     ) -> None:
-        """Update simplified project data from domain entity changes"""
-        # Convert agent assignments from tree_id -> agent_id back to agent_id -> [tree_ids] format
-        agent_assignments = {}
-        for tree_id, agent_id in project_entity.agent_assignments.items():
-            if agent_id not in agent_assignments:
-                agent_assignments[agent_id] = []
-            agent_assignments[agent_id].append(tree_id)
+        """Update the simplified project data from the rich domain entity"""
+        project_data = self._projects.get(project_id)
+        if not project_data:
+            return
 
-        self._projects[project_id]["agent_assignments"] = agent_assignments
+        project_data["agent_assignments"] = {
+            k: v.dict() for k, v in project_entity.agent_assignments.items()
+        }
         self._save_projects()
 
 
@@ -377,262 +376,257 @@ class ConsolidatedMCPToolsV2:
         """Expose multi-agent tools for testing"""
         return self._multi_agent_tools
 
+    def get_all_tools(self) -> list:
+        """Returns a list of all tool functions for server initialization."""
+        project_tools = [
+            self.manage_project,
+            self.manage_agent,
+        ]
+
+        task_tools = [
+            self.manage_task,
+            self.manage_subtask,
+            self.call_agent,
+        ]
+
+        cursor_rules_tools_list = self._cursor_rules_tools.get_all_tools()
+
+        return project_tools + task_tools + cursor_rules_tools_list
+
     def register_tools(self, mcp: FastMCP):
-        """Register all consolidated MCP tools in three logical categories"""
+        """Register all MCP tools with the server instance"""
 
-        # ═══════════════════════════════════════════════════════════════════
-        # 🏗️ PROJECT MANAGEMENT - High-level orchestration and coordination
-        # ═══════════════════════════════════════════════════════════════════
+        # Project management tools
+        mcp.tool(self.manage_project)
+        mcp.tool(self.manage_agent)
 
-        @mcp.tool()
-        def manage_project(
-            action: str,
-            project_id: Optional[str] = None,
-            name: Optional[str] = None,
-            description: Optional[str] = None,
-            tree_id: Optional[str] = None,
-            tree_name: Optional[str] = None,
-            tree_description: Optional[str] = None,
-        ) -> Dict[str, Any]:
-            """🏗️ PROJECT ORCHESTRATION HUB - Complete multi-agent project lifecycle management
+        # Task management tools
+        mcp.tool(self.manage_task)
+        mcp.tool(self.manage_subtask)
+        mcp.tool(self.call_agent)
 
-            ✨ INSTANT CONTEXT: Manages entire project ecosystem including task trees, cross-dependencies, and team coordination
-            🎯 HUMAN USAGE: Project managers setting up workflows, coordinating teams, monitoring progress
-            🤖 AI USAGE: Project initialization, workstream creation, orchestration status checks, progress monitoring
+        # Cursor rules tools - handled by a separate class
+        try:
+            self._cursor_rules_tools.register_tools(mcp)
+        except Exception as e:
+            logging.error(f"Failed to register CursorRulesTools: {e}")
 
-            📋 CORE ACTIONS:
-            🆕 CREATE: Initialize new multi-agent project workspace
-            • Input: action="create", project_id="my_project", name="Project Name"
-            • Output: Complete project structure with default main task tree
-            • AI Context: "I'm setting up a new project workspace for team coordination"
-            📊 GET: Retrieve comprehensive project status and structure
-            • Input: action="get", project_id="my_project"
-            • Output: Full project details, task trees, agent assignments, cross-dependencies
-            • AI Context: "I need complete project overview for decision making"
-            📋 LIST: Show all available projects in workspace
-            • Input: action="list"
-            • Output: All projects with summary stats and health indicators
-            • AI Context: "I need workspace overview to understand available projects"
-            🌳 CREATE_TREE: Add new workstream/feature branch to project
-            • Input: action="create_tree", project_id="my_project", tree_id="frontend", tree_name="Frontend Development"
-            • Output: New task tree ready for task assignment and agent coordination
-            • AI Context: "I'm creating a new development workstream for parallel work"
-            📈 GET_TREE_STATUS: Detailed progress analysis of specific workstream
-            • Input: action="get_tree_status", project_id="my_project", tree_id="frontend"
-            • Output: Tree progress, assigned agents, task completion metrics, bottlenecks
-            • AI Context: "I need detailed status of this workstream for progress reporting"
-            🚀 ORCHESTRATE: Run intelligent work assignment and load balancing
-            • Input: action="orchestrate", project_id="my_project"
-            • Output: Optimized task assignments, workload distribution, dependency resolution
-            • AI Context: "I'm optimizing work distribution across available agents"
-            📊 DASHBOARD: Comprehensive project health and orchestration overview
-            • Input: action="dashboard", project_id="my_project"
-            • Output: Complete metrics, agent utilization, bottlenecks, cross-tree dependencies
-            • AI Context: "I need full project dashboard for stakeholder reporting"
-            💡 WHY USE THIS:
-            • Eliminates manual project setup and coordination overhead
-            • Provides real-time visibility into multi-agent workflows
-            • Automatically optimizes work distribution and identifies bottlenecks
-            • Enables seamless scaling from single to multi-agent projects
+    def manage_project(
+        self,
+        action: str,
+        project_id: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tree_id: Optional[str] = None,
+        tree_name: Optional[str] = None,
+        tree_description: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """🏗️ PROJECT ORCHESTRATION HUB - Complete multi-agent project lifecycle management
 
-            ---
-            PARAMETER REQUIREMENTS BY ACTION:
-            - action (str, required): The operation to perform. One of: create, get, list, create_tree, get_tree_status, orchestrate, dashboard
-            - project_id (str, required/optional):
-                • (required) for: create, get, create_tree, get_tree_status, orchestrate, dashboard
-                • (optional) for: list
-            - name (str, required/optional):
-                • (required) for: create
-                • (optional) for: others
-            - description (Optional[str], optional):
-                • (optional) for: create
-            - tree_id (str, required/optional):
-                • (required) for: create_tree, get_tree_status
-                • (optional) for: others
-            - tree_name (str, required/optional):
-                • (required) for: create_tree
-                • (optional) for: others
-            - tree_description (Optional[str], optional):
-                • (optional) for: create_tree
-            ---
-            For each action, required parameters:
-            • create: action, project_id, name
-            • get: action, project_id
-            • list: action
-            • create_tree: action, project_id, tree_id, tree_name
-            • get_tree_status: action, project_id, tree_id
-            • orchestrate: action, project_id
-            • dashboard: action, project_id
-            ---
-            """
+        ✨ INSTANT CONTEXT: Manages entire project ecosystem including task trees, cross-dependencies, and team coordination
+        🎯 HUMAN USAGE: Project managers setting up workflows, coordinating teams, monitoring progress
+        🤖 AI USAGE: Project initialization, workstream creation, orchestration status checks, progress monitoring
 
-            if action == "create":
-                if not project_id or not name:
-                    return {
-                        "success": False,
-                        "error": "project_id and name are required for creating a project",
-                    }
-                return self._multi_agent_tools.create_project(
-                    project_id, name, description or ""
+        📋 CORE ACTIONS:
+        🆕 CREATE: Initialize new multi-agent project workspace
+        • Input: action="create", project_id="my_project", name="Project Name"
+        • Output: Complete project structure with default main task tree
+        • AI Context: "I'm setting up a new project workspace for team coordination"
+        📊 GET: Retrieve comprehensive project status and structure
+        • Input: action="get", project_id="my_project"
+        • Output: Full project details, task trees, agent assignments, cross-dependencies
+        • AI Context: "I need complete project overview for decision making"
+        📋 LIST: Show all available projects in workspace
+        • Input: action="list"
+        • Output: All projects with summary stats and health indicators
+        • AI Context: "I need workspace overview to understand available projects"
+        🌳 CREATE_TREE: Add new workstream/feature branch to project
+        • Input: action="create_tree", project_id="my_project", tree_id="frontend", tree_name="Frontend Development"
+        • Output: New task tree ready for task assignment and agent coordination
+        • AI Context: "I'm creating a new development workstream for parallel work"
+        📈 GET_TREE_STATUS: Detailed progress analysis of specific workstream
+        • Input: action="get_tree_status", project_id="my_project", tree_id="frontend"
+        • Output: Tree progress, assigned agents, task completion metrics, bottlenecks
+        • AI Context: "I need detailed status of this workstream for progress reporting"
+        🚀 ORCHESTRATE: Run intelligent work assignment and load balancing
+        • Input: action="orchestrate", project_id="my_project"
+        • Output: Optimized task assignments, workload distribution, dependency resolution
+        • AI Context: "I'm optimizing work distribution across available agents"
+        📊 DASHBOARD: Comprehensive project health and orchestration overview
+        • Input: action="dashboard", project_id="my_project"
+        • Output: Complete metrics, agent utilization, bottlenecks, cross-tree dependencies
+        • AI Context: "I need full project dashboard for stakeholder reporting"
+        💡 WHY USE THIS:
+        • Eliminates manual project setup and coordination overhead
+        • Provides real-time visibility into multi-agent workflows
+        • Automatically optimizes work distribution and identifies bottlenecks
+        • Enables seamless scaling from single to multi-agent projects
+
+        ---
+        PARAMETER REQUIREMENTS BY ACTION:
+        - action (str, required): The operation to perform. One of: create, get, list, create_tree, get_tree_status, orchestrate, dashboard
+        - project_id (str, required/optional):
+            • (required) for: create, get, create_tree, get_tree_status, orchestrate, dashboard
+            • (optional) for: list
+        - name (str, required/optional):
+            • (required) for: create
+            • (optional) for: others
+        - description (Optional[str], optional):
+            • (optional) for: create
+        - tree_id (str, required/optional):
+            • (required) for: create_tree, get_tree_status
+            • (optional) for: others
+        - tree_name (str, required/optional):
+            • (required) for: create_tree
+            • (optional) for: others
+        - tree_description (Optional[str], optional):
+            • (optional) for: create_tree
+        ---
+        For each action, required parameters:
+        • create: action, project_id, name
+        • get: action, project_id
+        • list: action
+        • create_tree: action, project_id, tree_id, tree_name
+        • get_tree_status: action, project_id, tree_id
+        • orchestrate: action, project_id
+        • dashboard: action, project_id
+        ---
+        """
+        try:
+            if action in [
+                "create",
+                "get",
+                "list",
+                "create_tree",
+                "get_tree_status",
+                "orchestrate",
+                "dashboard",
+            ]:
+                return self._multi_agent_tools.manage_project(
+                    action, project_id, name, description, tree_id, tree_name, tree_description
                 )
-
-            elif action == "get":
-                if not project_id:
-                    return {"success": False, "error": "project_id is required"}
-                return self._multi_agent_tools.get_project(project_id)
-
-            elif action == "list":
-                return self._multi_agent_tools.list_projects()
-
-            elif action == "create_tree":
-                if not all([project_id, tree_id, tree_name]):
-                    return {
-                        "success": False,
-                        "error": "project_id, tree_id, and tree_name are required",
-                    }
-                return self._multi_agent_tools.create_task_tree(
-                    project_id, tree_id, tree_name, tree_description or ""
-                )
-
-            elif action == "get_tree_status":
-                if not project_id or not tree_id:
-                    return {
-                        "success": False,
-                        "error": "project_id and tree_id are required",
-                    }
-                return self._multi_agent_tools.get_task_tree_status(project_id, tree_id)
-
-            elif action == "orchestrate":
-                if not project_id:
-                    return {"success": False, "error": "project_id is required"}
-                return self._multi_agent_tools.orchestrate_project(project_id)
-
-            elif action == "dashboard":
-                if not project_id:
-                    return {"success": False, "error": "project_id is required"}
-                return self._multi_agent_tools.get_orchestration_dashboard(project_id)
-
             else:
-                return {
-                    "success": False,
-                    "error": f"Unknown action: {action}. Available: create, get, list, create_tree, get_tree_status, orchestrate, dashboard",
-                }
+                return {"success": False, "error": f"Unknown action: {action}. Available: create, get, list, create_tree, get_tree_status, orchestrate, dashboard"}
+        except Exception as e:
+            logging.error(f"Error managing project: {e}\n{traceback.format_exc()}")
+            return {"success": False, "error": f"An unexpected error occurred: {e}"}
 
-        # ═══════════════════════════════════════════════════════════════════
-        # 📋 TASK MANAGEMENT - Granular work item lifecycle and workflow
-        # ═══════════════════════════════════════════════════════════════════
+    def manage_task(
+        self,
+        action: str,
+        task_id: Optional[str] = None,
+        project_id: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        status: Optional[str] = None,
+        priority: Optional[str] = None,
+        details: Optional[str] = None,
+        estimated_effort: Optional[str] = None,
+        assignees: Optional[List[str]] = None,
+        labels: Optional[List[str]] = None,
+        due_date: Optional[str] = None,
+        dependency_data: Optional[Dict[str, Any]] = None,
+        query: Optional[str] = None,
+        limit: Optional[int] = None,
+        force_full_generation: bool = False,
+    ) -> Dict[str, Any]:
+        """📋 TASK LIFECYCLE HUB - Core Task Management with Intelligent Automation
 
-        @mcp.tool()
-        def manage_task(
-            action: str,
-            task_id: Optional[str] = None,
-            project_id: Optional[str] = None,
-            title: Optional[str] = None,
-            description: Optional[str] = None,
-            status: Optional[str] = None,
-            priority: Optional[str] = None,
-            details: Optional[str] = None,
-            estimated_effort: Optional[str] = None,
-            assignees: Optional[List[str]] = None,
-            labels: Optional[List[str]] = None,
-            due_date: Optional[str] = None,
-            dependency_data: Optional[Dict[str, Any]] = None,
-            query: Optional[str] = None,
-            limit: Optional[int] = None,
-            force_full_generation: bool = False,
-        ) -> Dict[str, Any]:
-            """📋 TASK LIFECYCLE HUB - Core Task Management with Intelligent Automation
+        ✨ INSTANT CONTEXT: Handles the entire core task lifecycle, including creation, retrieval, updating, deletion, completion, listing, searching, and intelligent next-task recommendation. Integrates with the MCP system for project and agent coordination.
+        🎯 HUMAN USAGE: Developers managing work items, project managers tracking progress, team members updating status
+        🤖 AI USAGE: Task creation, context loading, progress updates, work prioritization, and recommendation
 
-            ✨ INSTANT CONTEXT: Handles the entire core task lifecycle, including creation, retrieval, updating, deletion, completion, listing, searching, and intelligent next-task recommendation. Integrates with the MCP system for project and agent coordination.
-            🎯 HUMAN USAGE: Developers managing work items, project managers tracking progress, team members updating status
-            🤖 AI USAGE: Task creation, context loading, progress updates, work prioritization, and recommendation
+        📋 CORE TASK LIFECYCLE ACTIONS:
+        🆕 CREATE: Initialize new work item with full metadata
+        • Input: action="create", title="Implement user authentication", priority="high"
+        • Output: Complete task object with auto-generated ID and timestamps
+        • AI Context: "I'm creating a new work item for development tracking"
+        🔍 GET: Load complete task details + auto-generate AI context
+        • Input: action="get", task_id="20250618001"
+        • Output: Full task object + auto-generated .cursor/rules/auto_rule.mdc
+        • AI Context: "I'm loading task context for focused development work"
+        ✏️ UPDATE: Modify any task properties with selective updates
+        • Input: action="update", task_id="20250618001", status="in_progress", assignee="@developer"
+        • Output: Updated task object with preserved unchanged fields
+        • AI Context: "I'm updating task progress and assignment information"
+        🗑️ DELETE: Permanently remove task and all associated data
+        • Input: action="delete", task_id="20250618001"
+        • Output: Confirmation of complete task removal including subtasks and dependencies
+        • AI Context: "I'm permanently removing this task and cleaning up all references"
+        ✅ COMPLETE: Finish task and auto-complete all subtasks
+        • Input: action="complete", task_id="20250618001"
+        • Output: Task marked done, all subtasks completed, dependent tasks unblocked
+        • AI Context: "I'm marking task as complete and handling all cleanup"
+        📋 LIST: Filter and discover tasks by multiple criteria
+        • Input: action="list", status="in_progress", priority="high", assignee="@me"
+        • Output: Filtered task list matching all specified criteria
+        • AI Context: "I'm finding tasks matching specific criteria for work planning"
+        🔍 SEARCH: Semantic search across all task content
+        • Input: action="search", query="authentication API security", limit=5
+        • Output: Relevance-ranked tasks matching search terms
+        • AI Context: "I'm finding tasks related to specific topics or requirements"
+        🎯 NEXT: Get intelligent work recommendation
+        • Input: action="next"
+        • Output: Optimal next task based on priorities, dependencies, and capacity
+        • AI Context: "I need intelligent recommendation for what to work on next"
 
-            📋 CORE TASK LIFECYCLE ACTIONS:
-            🆕 CREATE: Initialize new work item with full metadata
-            • Input: action="create", title="Implement user authentication", priority="high"
-            • Output: Complete task object with auto-generated ID and timestamps
-            • AI Context: "I'm creating a new work item for development tracking"
-            🔍 GET: Load complete task details + auto-generate AI context
-            • Input: action="get", task_id="20250618001"
-            • Output: Full task object + auto-generated .cursor/rules/auto_rule.mdc
-            • AI Context: "I'm loading task context for focused development work"
-            ✏️ UPDATE: Modify any task properties with selective updates
-            • Input: action="update", task_id="20250618001", status="in_progress", assignee="@developer"
-            • Output: Updated task object with preserved unchanged fields
-            • AI Context: "I'm updating task progress and assignment information"
-            🗑️ DELETE: Permanently remove task and all associated data
-            • Input: action="delete", task_id="20250618001"
-            • Output: Confirmation of complete task removal including subtasks and dependencies
-            • AI Context: "I'm permanently removing this task and cleaning up all references"
-            ✅ COMPLETE: Finish task and auto-complete all subtasks
-            • Input: action="complete", task_id="20250618001"
-            • Output: Task marked done, all subtasks completed, dependent tasks unblocked
-            • AI Context: "I'm marking task as complete and handling all cleanup"
-            📋 LIST: Filter and discover tasks by multiple criteria
-            • Input: action="list", status="in_progress", priority="high", assignee="@me"
-            • Output: Filtered task list matching all specified criteria
-            • AI Context: "I'm finding tasks matching specific criteria for work planning"
-            🔍 SEARCH: Semantic search across all task content
-            • Input: action="search", query="authentication API security", limit=5
-            • Output: Relevance-ranked tasks matching search terms
-            • AI Context: "I'm finding tasks related to specific topics or requirements"
-            🎯 NEXT: Get intelligent work recommendation
-            • Input: action="next"
-            • Output: Optimal next task based on priorities, dependencies, and capacity
-            • AI Context: "I need intelligent recommendation for what to work on next"
+        ---
+        PARAMETER REQUIREMENTS BY ACTION:
+        - action (str, required): The operation to perform. One of: create, get, update, delete, complete, list, search, next
+        - task_id (str, required/optional):
+            • (required) for: get, update, delete, complete
+            • (optional) for: create, list, search, next
+        - title (str, required/optional):
+            • (required) for: create
+            • (optional) for: update
+        - description, status, priority, details, estimated_effort, assignees, labels, due_date: as before
+        - query (str, required for search)
+        - limit (int, optional)
+        ---
+        ENUMS:
+        - status: ['todo', 'in_progress', 'blocked', 'review', 'testing', 'done', 'cancelled']
+        - priority: ['low', 'medium', 'high', 'urgent', 'critical']
+        - estimated_effort: ['quick', 'short', 'small', 'medium', 'large', 'xlarge', 'epic', 'massive']
+        - assignees (AgentRole): [see AgentRole enum]
+        - labels (CommonLabel): [see CommonLabel enum]
+        ---
+        WHY USE THIS:
+        • Eliminates manual task tracking and status management overhead
+        • Provides automatic context generation for focused development work
+        • Handles complex task relationships and prioritization
+        • Enables intelligent work recommendation and progress tracking
+        • Maintains complete audit trail and progress visibility
+        ---
+        EXAMPLE USE CASES:
+        - Creating and managing feature, bugfix, or documentation tasks
+        - Updating task status and assignments during a sprint
+        - Searching for tasks by keyword, label, or assignee
+        - Getting the next recommended task for a developer
+        ---
+        OUTPUT STRUCTURE:
+        - create: {"success": True, "action": "create", "task": {...}}
+        - get: {"success": True, "action": "get", "task": {...}}
+        - update: {"success": True, "action": "update", "task": {...}}
+        - delete: {"success": True, "action": "delete", "message": ...}
+        - complete: {"success": True, "action": "complete", "task_id": ..., "message": ...}
+        - list: {"success": True, "tasks": [...], "count": ...}
+        - search: {"success": True, "tasks": [...], "count": ..., "query": ...}
+        - next: {"success": True, "action": "next", "recommended_task": {...}, "reasoning": ..., "message": ...}
 
-            ---
-            PARAMETER REQUIREMENTS BY ACTION:
-            - action (str, required): The operation to perform. One of: create, get, update, delete, complete, list, search, next
-            - task_id (str, required/optional):
-                • (required) for: get, update, delete, complete
-                • (optional) for: create, list, search, next
-            - title (str, required/optional):
-                • (required) for: create
-                • (optional) for: update
-            - description, status, priority, details, estimated_effort, assignees, labels, due_date: as before
-            - query (str, required for search)
-            - limit (int, optional)
-            ---
-            ENUMS:
-            - status: ['todo', 'in_progress', 'blocked', 'review', 'testing', 'done', 'cancelled']
-            - priority: ['low', 'medium', 'high', 'urgent', 'critical']
-            - estimated_effort: ['quick', 'short', 'small', 'medium', 'large', 'xlarge', 'epic', 'massive']
-            - assignees (AgentRole): [see AgentRole enum]
-            - labels (CommonLabel): [see CommonLabel enum]
-            ---
-            WHY USE THIS:
-            • Eliminates manual task tracking and status management overhead
-            • Provides automatic context generation for focused development work
-            • Handles complex task relationships and prioritization
-            • Enables intelligent work recommendation and progress tracking
-            • Maintains complete audit trail and progress visibility
-            ---
-            EXAMPLE USE CASES:
-            - Creating and managing feature, bugfix, or documentation tasks
-            - Updating task status and assignments during a sprint
-            - Searching for tasks by keyword, label, or assignee
-            - Getting the next recommended task for a developer
-            ---
-            OUTPUT STRUCTURE:
-            - create: {"success": True, "action": "create", "task": {...}}
-            - get: {"success": True, "action": "get", "task": {...}}
-            - update: {"success": True, "action": "update", "task": {...}}
-            - delete: {"success": True, "action": "delete", "message": ...}
-            - complete: {"success": True, "action": "complete", "task_id": ..., "message": ...}
-            - list: {"success": True, "tasks": [...], "count": ...}
-            - search: {"success": True, "tasks": [...], "count": ..., "query": ...}
-            - next: {"success": True, "action": "next", "recommended_task": {...}, "reasoning": ..., "message": ...}
-
-            ---
-            NOTE: Subtask and dependency actions are now handled by the separate manage_subtask and dependency management tools.
-            """
-            # ═══════════════════════════════════════════════════════════════════
-            # Route to the appropriate handler based on action
-            # ═══════════════════════════════════════════════════════════════════
-
-            core_actions = ["create", "get", "update", "delete"]
-            if action in core_actions:
+        ---
+        NOTE: Subtask and dependency actions are now handled by the separate manage_subtask and dependency management tools.
+        """
+        try:
+            if action in [
+                "create",
+                "get",
+                "update",
+                "delete",
+                "complete",
+                "list",
+                "search",
+                "next",
+            ]:
                 return self._handle_core_task_operations(
                     action,
                     task_id,
@@ -645,463 +639,220 @@ class ConsolidatedMCPToolsV2:
                     assignees,
                     labels,
                     due_date,
-                    project_id=project_id,
-                    force_full_generation=force_full_generation,
+                    project_id,
+                    force_full_generation,
                 )
-            elif action == "complete":
-                return self._handle_complete_task(task_id)
-
-            elif action == "list":
-                return self._handle_list_tasks(
-                    status, priority, assignees, labels, limit
-                )
-
-            elif action == "search":
-                return self._handle_search_tasks(query, limit)
-
-            elif action == "next":
-                return self._handle_do_next()
-
             elif action.endswith("_dependency"):
                 return self._handle_dependency_operations(
                     action, task_id, dependency_data
                 )
-
             else:
                 return {"success": False, "error": f"Invalid task action: {action}"}
+        except Exception as e:
+            logging.error(f"Error managing task: {e}\n{traceback.format_exc()}")
+            return {"success": False, "error": f"An unexpected error occurred: {e}"}
 
-        @mcp.tool()
-        def manage_subtask(
-            action: str,
-            task_id: Optional[str] = None,
-            subtask_data: Optional[Dict[str, Any]] = None,
-        ) -> Dict[str, Any]:
-            """🔧 SUBTASK MANAGEMENT TOOL - Complete subtask lifecycle management with intelligent automation
+    def manage_subtask(
+        self,
+        action: str,
+        task_id: Optional[str] = None,
+        subtask_data: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """🔧 SUBTASK MANAGEMENT TOOL - Complete subtask lifecycle management with intelligent automation
 
-            ✨ INSTANT CONTEXT: Handles the entire subtask lifecycle for tasks, including creation, completion, updating, removal, and listing of subtasks. Integrates with the main task management system for progress tracking and reporting.
-            🎯 HUMAN USAGE: Developers breaking down complex work, project managers tracking granular progress, team members updating subtask status
-            🤖 AI USAGE: Subtask creation, progress updates, completion, and management as part of larger task workflows
+        ✨ INSTANT CONTEXT: Handles the entire subtask lifecycle for tasks, including creation, completion, updating, removal, and listing of subtasks. Integrates with the main task management system for progress tracking and reporting.
+        🎯 HUMAN USAGE: Developers breaking down complex work, project managers tracking granular progress, team members updating subtask status
+        🤖 AI USAGE: Subtask creation, progress updates, completion, and management as part of larger task workflows
 
-            📋 SUBTASK LIFECYCLE ACTIONS:
-            ➕ ADD_SUBTASK: Break down a task into granular items
-            • Input: action="add_subtask", task_id="20250618001", subtask_data={"title": "Write unit tests"}
-            • Output: New subtask added with automatic progress recalculation
-            • AI Context: "I'm breaking down complex work into manageable pieces"
-            ✅ COMPLETE_SUBTASK: Mark individual subtask as done
-            • Input: action="complete_subtask", task_id="20250618001", subtask_data={"subtask_id": 1}
-            • Output: Subtask completed with parent task progress updated
-            • AI Context: "I'm marking specific subtask as completed"
-            📝 UPDATE_SUBTASK: Modify subtask properties
-            • Input: action="update_subtask", task_id="20250618001", subtask_data={"subtask_id": 1, "title": "Refactor tests"}
-            • Output: Subtask updated
-            • AI Context: "I'm updating subtask details"
-            ❌ REMOVE_SUBTASK: Remove a subtask from a task
-            • Input: action="remove_subtask", task_id="20250618001", subtask_data={"subtask_id": 1}
-            • Output: Subtask removed, progress recalculated
-            • AI Context: "I'm removing a subtask from the task"
-            📋 LIST_SUBTASKS: Show all subtasks with progress overview
-            • Input: action="list_subtasks", task_id="20250618001"
-            • Output: All subtasks with completion status and overall progress percentage
-            • AI Context: "I need overview of all subtasks and completion progress"
+        📋 SUBTASK LIFECYCLE ACTIONS:
+        ➕ ADD_SUBTASK: Break down a task into granular items
+        • Input: action="add_subtask", task_id="20250618001", subtask_data={"title": "Write unit tests"}
+        • Output: New subtask added with automatic progress recalculation
+        • AI Context: "I'm breaking down complex work into manageable pieces"
+        ✅ COMPLETE_SUBTASK: Mark individual subtask as done
+        • Input: action="complete_subtask", task_id="20250618001", subtask_data={"subtask_id": 1}
+        • Output: Subtask completed with parent task progress updated
+        • AI Context: "I'm marking specific subtask as completed"
+        📝 UPDATE_SUBTASK: Modify subtask properties
+        • Input: action="update_subtask", task_id="20250618001", subtask_data={"subtask_id": 1, "title": "Refactor tests"}
+        • Output: Subtask updated
+        • AI Context: "I'm updating subtask details"
+        ❌ REMOVE_SUBTASK: Remove a subtask from a task
+        • Input: action="remove_subtask", task_id="20250618001", subtask_data={"subtask_id": 1}
+        • Output: Subtask removed, progress recalculated
+        • AI Context: "I'm removing a subtask from the task"
+        📋 LIST_SUBTASKS: Show all subtasks with progress overview
+        • Input: action="list_subtasks", task_id="20250618001"
+        • Output: All subtasks with completion status and overall progress percentage
+        • AI Context: "I need overview of all subtasks and completion progress"
 
-            ---
-            PARAMETER REQUIREMENTS BY ACTION:
-            - action (str, required): The operation to perform. One of: add_subtask, complete_subtask, update_subtask, remove_subtask, list_subtasks
-            - task_id (str, required): The parent task ID
-            - subtask_data (dict, required/optional):
-                • (required) for: add_subtask (must include title), complete_subtask (must include subtask_id), update_subtask (must include subtask_id), remove_subtask (must include subtask_id)
-                • (optional) for: list_subtasks
-            ---
-            ENUMS:
-            - status: ['todo', 'in_progress', 'blocked', 'review', 'testing', 'done', 'cancelled']
-            ---
-            WHY USE THIS:
-            • Enables granular breakdown of tasks for better progress tracking
-            • Automates subtask progress calculation and parent task updates
-            • Maintains a complete audit trail and visibility into subtask completion
-            • Supports agile workflows and iterative development
-            ---
-            EXAMPLE USE CASES:
-            - Breaking down a feature implementation into coding, testing, and documentation subtasks
-            - Tracking progress on a multi-step bugfix
-            - Managing review and refactor steps as subtasks of a main task
-            ---
-            OUTPUT STRUCTURE:
-            - add_subtask: {"success": True, "action": "add_subtask", "subtask": {...}}
-            - complete_subtask: {"success": True, "action": "complete_subtask", "result": {...}}
-            - update_subtask: {"success": True, "action": "update_subtask", "result": {...}}
-            - remove_subtask: {"success": True, "action": "remove_subtask", "result": {...}}
-            - list_subtasks: {"success": True, "action": "list_subtasks", "subtasks": [...]}
-            """
-            logging.info(
-                f"Subtask operation action: {action}, task_id: {task_id}, subtask_data: {subtask_data}"
-            )
-            try:
-                if action == "add_subtask":
-                    if not subtask_data or not subtask_data.get("title"):
-                        return {
-                            "success": False,
-                            "error": "subtask_data with title is required",
-                        }
-
-                    response = self._task_app_service.manage_subtasks(
-                        task_id, "add", subtask_data
-                    )
-                    return {
-                        "success": True,
-                        "action": "add_subtask",
-                        "subtask": response,
-                    }
-
-                elif action == "complete_subtask":
-                    if not subtask_data or "subtask_id" not in subtask_data:
-                        return {
-                            "success": False,
-                            "error": "subtask_data with subtask_id is required",
-                        }
-
-                    response = self._task_app_service.manage_subtasks(
-                        task_id, "complete", subtask_data
-                    )
-                    return {
-                        "success": True,
-                        "action": "complete_subtask",
-                        "result": response,
-                    }
-
-                elif action == "list_subtasks":
-                    response = self._task_app_service.manage_subtasks(
-                        task_id, "list", {}
-                    )
-                    return {
-                        "success": True,
-                        "action": "list_subtasks",
-                        "subtasks": response,
-                    }
-
-                elif action == "update_subtask":
-                    if not subtask_data or "subtask_id" not in subtask_data:
-                        return {
-                            "success": False,
-                            "error": "subtask_data with subtask_id is required for update_subtask",
-                        }
-                    response = self._task_app_service.manage_subtasks(
-                        task_id, "update", subtask_data
-                    )
-                    return {
-                        "success": True,
-                        "action": "update_subtask",
-                        "result": response,
-                    }
-
-                elif action == "remove_subtask":
-                    if not subtask_data or "subtask_id" not in subtask_data:
-                        return {
-                            "success": False,
-                            "error": "subtask_data with subtask_id is required for remove_subtask",
-                        }
-                    response = self._task_app_service.manage_subtasks(
-                        task_id, "remove", subtask_data
-                    )
-                    return {
-                        "success": True,
-                        "action": "remove_subtask",
-                        "result": response,
-                    }
-
-                else:
-                    return {
-                        "success": False,
-                        "error": f"Unknown subtask action: {action}",
-                    }
-
-            except Exception as e:
-                logging.error(f"Error handling subtask operation: {e}")
-                return {
-                    "success": False,
-                    "error": f"Subtask operation failed: {str(e)}",
-                }
-
-        # ═══════════════════════════════════════════════════════════════════
-        # 🤖 AGENT MANAGEMENT - Multi-agent coordination and assignment
-        # ═══════════════════════════════════════════════════════════════════
-
-        @mcp.tool()
-        def manage_agent(
-            action: str,
-            project_id: Optional[str] = None,
-            agent_id: Optional[str] = None,
-            name: Optional[str] = None,
-            call_agent: Optional[str] = None,
-            tree_id: Optional[str] = None,
-        ) -> Dict[str, Any]:
-            """🤖 AGENT COORDINATION HUB - Multi-agent team management and intelligent assignment
-
-            ✨ INSTANT CONTEXT: Manages AI agent teams including capability tracking, workload balancing, and intelligent task assignment
-            🎯 HUMAN USAGE: DevOps teams setting up agent pools, project managers coordinating AI workforce, capacity planning
-            🤖 AI USAGE: Agent registration, capability management, assignment optimization, workload monitoring
-
-            📋 AGENT LIFECYCLE ACTIONS:
-            🆕 REGISTER: Add new AI agent to project team
-            • Input: action="register", project_id="my_project", agent_id="frontend_expert", name="Frontend Specialist", call_agent="@coding-agent"
-            • Output: Agent profile with call_agent reference for automatic detail generation
-            • AI Context: "I'm adding a new specialized agent to the project team"
-            📊 GET: Retrieve complete agent profile and workload status
-            • Input: action="get", project_id="my_project", agent_id="frontend_expert"
-            • Output: Agent details with call_agent reference, current assignments, and status
-            • AI Context: "I need detailed information about this agent and its call reference"
-            📋 LIST: Show all agents in project with call_agent references
-            • Input: action="list", project_id="my_project"
-            • Output: Complete agent roster with call_agent references and assignments
-            • AI Context: "I need overview of all available agents and their call references"
-            ✏️ UPDATE: Modify agent call reference or name
-            • Input: action="update", project_id="my_project", agent_id="frontend_expert", call_agent="@ui-designer-agent"
-            • Output: Updated agent profile with new call_agent reference
-            • AI Context: "I'm updating agent call reference for different specialization"
-            🗑️ UNREGISTER: Remove agent from project (impacts active assignments)
-            • Input: action="unregister", project_id="my_project", agent_id="temp_agent"
-            • Output: Agent removed with impact analysis on current assignments
-            • AI Context: "I'm removing agent from project and need to handle reassignments"
-            📌 ASSIGN: Assign agent to specific task tree/workstream
-            • Input: action="assign", project_id="my_project", agent_id="frontend_expert", tree_id="ui_components"
-            • Output: Assignment created with capability validation and workload impact
-            • AI Context: "I'm assigning specialized agent to appropriate workstream"
-            ❌ UNASSIGN: Remove agent from task tree assignment
-            • Input: action="unassign", project_id="my_project", agent_id="frontend_expert", tree_id="ui_components"
-            • Output: Assignment removed with impact analysis and reassignment needs
-            • AI Context: "I'm removing agent assignment and need to handle work transition"
-            📊 GET_ASSIGNMENTS: Show complete assignment matrix
-            • Input: action="get_assignments", project_id="my_project"
-            • Output: Full mapping of agents to task trees with workload distribution
-            • AI Context: "I need complete overview of who is working on what"
-            📈 GET_WORKLOAD: Analyze agent performance and capacity utilization
-            • Input: action="get_workload", project_id="my_project", agent_id="frontend_expert"
-            • Output: Performance metrics, completion rates, capacity analysis, optimization suggestions
-            • AI Context: "I need detailed performance analysis for this agent"
-            🔄 REBALANCE: Intelligent workload redistribution across team
-            • Input: action="rebalance", project_id="my_project"
-            • Output: Optimized assignment recommendations or automatic rebalancing
-            • AI Context: "I'm optimizing work distribution across all available agents"
-            💡 WHY USE THIS:
-            • Eliminates manual agent coordination and assignment overhead
-            • Provides intelligent workload balancing and capacity optimization
-            • Enables dynamic team scaling and capability management
-            • Maintains complete visibility into agent performance and utilization
-            • Automatically prevents overloading and optimizes work distribution
-
-            ---
-            PARAMETER REQUIREMENTS BY ACTION:
-            - action (required): The operation to perform. One of: register, assign, get, list, get_assignments, unassign, update, unregister, rebalance
-            - project_id:
-                • (required) for: register, assign, get, list, get_assignments, unassign, update, unregister, rebalance
-            - agent_id:
-                • (required) for: register, assign, get, unassign, update, unregister
-                • (optional) for: list, get_assignments, rebalance
-            - name:
-                • (required) for: register
-                • (optional) for: update
-            - call_agent:
-                • (optional) for: register, update
-            - tree_id:
-                • (required) for: assign, unassign
-                • (optional) for: others
-            ---
-            For each action, required parameters:
-            • register: action, project_id, agent_id, name
-            • assign: action, project_id, agent_id, tree_id
-            • get: action, project_id, agent_id
-            • list: action, project_id
-            • get_assignments: action, project_id
-            • unassign: action, project_id, agent_id, tree_id
-            • update: action, project_id, agent_id
-            • unregister: action, project_id, agent_id
-            • rebalance: action, project_id
-            ---
-            """
-
-            if action == "register":
-                if not all([project_id, agent_id, name]):
-                    return {
-                        "success": False,
-                        "error": "project_id, agent_id, and name are required for registering an agent",
-                    }
-                return self._multi_agent_tools.register_agent(
-                    project_id=project_id,
-                    agent_id=agent_id,
-                    name=name,
-                    call_agent=call_agent,
-                )
-
-            elif action == "assign":
-                if not all([project_id, agent_id, tree_id]):
-                    return {
-                        "success": False,
-                        "error": "project_id, agent_id, and tree_id are required for assignment",
-                    }
-                return self._multi_agent_tools.assign_agent_to_tree(
-                    project_id, agent_id, tree_id
-                )
-
-            elif action == "get":
-                if not project_id or not agent_id:
-                    return {
-                        "success": False,
-                        "error": "project_id and agent_id are required",
-                    }
-                # Get agent details from project
-                project_response = self._multi_agent_tools.get_project(project_id)
-                if not project_response.get("success"):
-                    return project_response
-
-                agents = project_response.get("project", {}).get(
-                    "registered_agents", {}
-                )
-                if agent_id not in agents:
-                    return {
-                        "success": False,
-                        "error": f"Agent {agent_id} not found in project {project_id}",
-                    }
-
-                agent_data = agents[agent_id]
-                return {
-                    "success": True,
-                    "agent": agent_data,
-                    "workload_status": "Available for assignment analysis",
-                }
-
-            elif action == "list":
-                if not project_id:
-                    return {"success": False, "error": "project_id is required"}
-                project_response = self._multi_agent_tools.get_project(project_id)
-                if not project_response.get("success"):
-                    return project_response
-
-                agents = project_response.get("project", {}).get(
-                    "registered_agents", {}
-                )
-                return {"success": True, "agents": agents, "count": len(agents)}
-
-            elif action == "get_assignments":
-                if not project_id:
-                    return {"success": False, "error": "project_id is required"}
-                project_response = self._multi_agent_tools.get_project(project_id)
-                if not project_response.get("success"):
-                    return project_response
-
-                assignments = project_response.get("project", {}).get(
-                    "agent_assignments", {}
-                )
-                return {
-                    "success": True,
-                    "assignments": assignments,
-                    "assignment_count": len(assignments),
-                }
-
-            elif action == "update":
-                if not project_id or not agent_id:
-                    return {
-                        "success": False,
-                        "error": "project_id and agent_id are required",
-                    }
-
-                # Get current project
-                project_response = self._multi_agent_tools.get_project(project_id)
-                if not project_response.get("success"):
-                    return project_response
-
-                agents = project_response.get("project", {}).get(
-                    "registered_agents", {}
-                )
-                if agent_id not in agents:
-                    return {
-                        "success": False,
-                        "error": f"Agent {agent_id} not found in project {project_id}",
-                    }
-
-                # Update agent with new values
-                agent_data = agents[agent_id]
-                if name:
-                    agent_data["name"] = name
-                if call_agent:
-                    agent_data["call_agent"] = call_agent
-
-                # Save and return updated agent
-                self._multi_agent_tools._save_projects()
-                return {"success": True, "agent": agent_data}
-
-            elif action == "unregister":
-                if not project_id or not agent_id:
-                    return {
-                        "success": False,
-                        "error": "project_id and agent_id are required",
-                    }
-
-                # Get current project
-                project_response = self._multi_agent_tools.get_project(project_id)
-                if not project_response.get("success"):
-                    return project_response
-
-                project_data = project_response.get("project", {})
-                agents = project_data.get("registered_agents", {})
-
-                if agent_id not in agents:
-                    return {
-                        "success": False,
-                        "error": f"Agent {agent_id} not found in project {project_id}",
-                    }
-
-                # Remove agent and any assignments
-                removed_agent = agents.pop(agent_id)
-
-                # Remove from assignments
-                assignments = project_data.get("agent_assignments", {})
-                assignments = {k: v for k, v in assignments.items() if v != agent_id}
-                project_data["agent_assignments"] = assignments
-
-                # Save changes
-                self._multi_agent_tools._save_projects()
-                return {
-                    "success": True,
-                    "message": f"Agent {agent_id} unregistered",
-                    "removed_agent": removed_agent,
-                }
-
-            elif action == "rebalance":
-                if not project_id:
-                    return {"success": False, "error": "project_id is required"}
-                return {
-                    "success": True,
-                    "message": "Workload rebalancing analysis completed",
-                    "recommendations": [],
-                }
-
+        ---
+        PARAMETER REQUIREMENTS BY ACTION:
+        - action (str, required): The operation to perform. One of: add_subtask, complete_subtask, update_subtask, remove_subtask, list_subtasks
+        - task_id (str, required): The parent task ID
+        - subtask_data (dict, required/optional):
+            • (required) for: add_subtask (must include title), complete_subtask (must include subtask_id), update_subtask (must include subtask_id), remove_subtask (must include subtask_id)
+            • (optional) for: list_subtasks
+        ---
+        ENUMS:
+        - status: ['todo', 'in_progress', 'blocked', 'review', 'testing', 'done', 'cancelled']
+        ---
+        WHY USE THIS:
+        • Enables granular breakdown of tasks for better progress tracking
+        • Automates subtask progress calculation and parent task updates
+        • Maintains a complete audit trail and visibility into subtask completion
+        • Supports agile workflows and iterative development
+        ---
+        EXAMPLE USE CASES:
+        - Breaking down a feature implementation into coding, testing, and documentation subtasks
+        - Tracking progress on a multi-step bugfix
+        - Managing review and refactor steps as subtasks of a main task
+        ---
+        OUTPUT STRUCTURE:
+        - add_subtask: {"success": True, "action": "add_subtask", "subtask": {...}}
+        - complete_subtask: {"success": True, "action": "complete_subtask", "result": {...}}
+        - update_subtask: {"success": True, "action": "update_subtask", "result": {...}}
+        - remove_subtask: {"success": True, "action": "remove_subtask", "result": {...}}
+        - list_subtasks: {"success": True, "action": "list_subtasks", "subtasks": [...]}
+        """
+        try:
+            if action in [
+                "add_subtask",
+                "complete_subtask",
+                "list_subtasks",
+                "update_subtask",
+                "remove_subtask",
+            ]:
+                return self._handle_subtask_operations(action, task_id, subtask_data)
             else:
-                return {
-                    "success": False,
-                    "error": f"Unknown action: {action}. Available: register, assign, get, list, get_assignments, unassign, update, unregister, rebalance",
-                }
+                return {"success": False, "error": f"Unknown subtask action: {action}"}
+        except Exception as e:
+            logging.error(f"Error managing subtask: {e}")
+            return {"success": False, "error": f"An unexpected error occurred: {e}"}
 
-        # Register Cursor Rules Tools for additional functionality
-        self._cursor_rules_tools.register_tools(mcp)
+    def manage_agent(
+        self,
+        action: str,
+        project_id: Optional[str] = None,
+        agent_id: Optional[str] = None,
+        name: Optional[str] = None,
+        call_agent: Optional[str] = None,
+        tree_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """🤖 AGENT COORDINATION HUB - Multi-agent team management and intelligent assignment
 
-        # Register Agent Information Tool
-        @mcp.tool()
-        def call_agent(name_agent: str) -> Dict[str, Any]:
-            """
-            Retrieves all YAML configuration files for a specific agent.
+        ✨ INSTANT CONTEXT: Manages AI agent teams including capability tracking, workload balancing, and intelligent task assignment
+        🎯 HUMAN USAGE: DevOps teams setting up agent pools, project managers coordinating AI workforce, capacity planning
+        🤖 AI USAGE: Agent registration, capability management, assignment optimization, workload monitoring
 
-            Args:
-                name_agent: Name of the agent to retrieve information for (e.g., "coding_agent")
+        📋 AGENT LIFECYCLE ACTIONS:
+        🆕 REGISTER: Add new AI agent to project team
+        • Input: action="register", project_id="my_project", agent_id="frontend_expert", name="Frontend Specialist", call_agent="@coding-agent"
+        • Output: Agent profile with call_agent reference for automatic detail generation
+        • AI Context: "I'm adding a new specialized agent to the project team"
+        📊 GET: Retrieve complete agent profile and workload status
+        • Input: action="get", project_id="my_project", agent_id="frontend_expert"
+        • Output: Agent details with call_agent reference, current assignments, and status
+        • AI Context: "I need detailed information about this agent and its call reference"
+        📋 LIST: Show all agents in project with call_agent references
+        • Input: action="list", project_id="my_project"
+        • Output: Complete agent roster with call_agent references and assignments
+        • AI Context: "I need overview of all available agents and their call references"
+        ✏️ UPDATE: Modify agent call reference or name
+        • Input: action="update", project_id="my_project", agent_id="frontend_expert", call_agent="@ui-designer-agent"
+        • Output: Updated agent profile with new call_agent reference
+        • AI Context: "I'm updating agent call reference for different specialization"
+        🗑️ UNREGISTER: Remove agent from project (impacts active assignments)
+        • Input: action="unregister", project_id="my_project", agent_id="temp_agent"
+        • Output: Agent removed with impact analysis on current assignments
+        • AI Context: "I'm removing agent from project and need to handle reassignments"
+        📌 ASSIGN: Assign agent to specific task tree/workstream
+        • Input: action="assign", project_id="my_project", agent_id="frontend_expert", tree_id="ui_components"
+        • Output: Assignment created with capability validation and workload impact
+        • AI Context: "I'm assigning specialized agent to appropriate workstream"
+        ❌ UNASSIGN: Remove agent from task tree assignment
+        • Input: action="unassign", project_id="my_project", agent_id="frontend_expert", tree_id="ui_components"
+        • Output: Assignment removed with impact analysis and reassignment needs
+        • AI Context: "I'm removing agent assignment and need to handle work transition"
+        📊 GET_ASSIGNMENTS: Show complete assignment matrix
+        • Input: action="get_assignments", project_id="my_project"
+        • Output: Full mapping of agents to task trees with workload distribution
+        • AI Context: "I need complete overview of who is working on what"
+        📈 GET_WORKLOAD: Analyze agent performance and capacity utilization
+        • Input: action="get_workload", project_id="my_project", agent_id="frontend_expert"
+        • Output: Performance metrics, completion rates, capacity analysis, optimization suggestions
+        • AI Context: "I need detailed performance analysis for this agent"
+        🔄 REBALANCE: Intelligent workload redistribution across team
+        • Input: action="rebalance", project_id="my_project"
+        • Output: Optimized assignment recommendations or automatic rebalancing
+        • AI Context: "I'm optimizing work distribution across all available agents"
+        💡 WHY USE THIS:
+        • Eliminates manual agent coordination and assignment overhead
+        • Provides intelligent workload balancing and capacity optimization
+        • Enables dynamic team scaling and capability management
+        • Maintains complete visibility into agent performance and utilization
+        • Automatically prevents overloading and optimizes work distribution
 
-            Returns:
-                Dict with agent information and combined content from all YAML files
-            """
-            # Use the CallAgentUseCase to handle the logic and MDC generation
+        ---
+        PARAMETER REQUIREMENTS BY ACTION:
+        - action (required): The operation to perform. One of: register, assign, get, list, get_assignments, unassign, update, unregister, rebalance
+        - project_id:
+            • (required) for: register, assign, get, list, get_assignments, unassign, update, unregister, rebalance
+        - agent_id:
+            • (required) for: register, assign, get, unassign, update, unregister
+            • (optional) for: list, get_assignments, rebalance
+        - name:
+            • (required) for: register
+            • (optional) for: update
+        - call_agent:
+            • (optional) for: register, update
+        - tree_id:
+            • (required) for: assign, unassign
+            • (optional) for: others
+        ---
+        For each action, required parameters:
+        • register: action, project_id, agent_id, name
+        • assign: action, project_id, agent_id, tree_id
+        • get: action, project_id, agent_id
+        • list: action, project_id
+        • get_assignments: action, project_id
+        • unassign: action, project_id, agent_id, tree_id
+        • update: action, project_id, agent_id
+        • unregister: action, project_id, agent_id
+        • rebalance: action, project_id
+        ---
+        """
+        try:
+            if action in [
+                "register",
+                "assign",
+                "get",
+                "list",
+                "get_assignments",
+                "unassign",
+                "update",
+                "unregister",
+                "rebalance",
+            ]:
+                return self._multi_agent_tools.manage_agent(
+                    action, project_id, agent_id, name, call_agent, tree_id
+                )
+            else:
+                return {"success": False, "error": f"Unknown action: {action}. Available: register, assign, get, list, get_assignments, unassign, update, unregister, rebalance"}
+        except Exception as e:
+            logging.error(f"Error managing agent: {e}")
+            return {"success": False, "error": f"An unexpected error occurred: {e}"}
+
+    def call_agent(self, name_agent: str) -> Dict[str, Any]:
+        """
+        Calls a specific agent by its name to get its details and capabilities.
+        This tool provides a direct way to inspect an agent's configuration.
+        """
+        try:
             return self._call_agent_use_case.execute(name_agent)
-
-    # ═══════════════════════════════════════════════════════════════════
-    # 🔧 HELPER METHODS - Internal routing and operation handling
-    # ═══════════════════════════════════════════════════════════════════
+        except Exception as e:
+            logging.error(f"Error calling agent {name_agent}: {e}")
+            return {"success": False, "error": f"An unexpected error occurred: {e}"}
 
     def _handle_core_task_operations(
         self,

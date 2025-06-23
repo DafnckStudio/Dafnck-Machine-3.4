@@ -44,7 +44,7 @@ dependencies = [
     
     # MCP Server dependencies
     "mcp>=1.0.0",
-    "fastmcp>=2.8.1",
+    "fastmcp",
     
     # Code quality tools
     "radon>=6.0.1",

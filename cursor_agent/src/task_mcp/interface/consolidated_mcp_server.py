@@ -17,14 +17,17 @@ except ImportError:
 def create_consolidated_mcp_server() -> FastMCP:
     """Create and configure the consolidated MCP server with multi-agent support"""
 
-    # Initialize FastMCP server
-    mcp = FastMCP("Task Management Consolidated with Multi-Agent Support")
-
-    # Initialize and register consolidated tools v2 with reorganized structure
+    # Initialize consolidated tools first
     consolidated_tools = ConsolidatedMCPToolsV2()
-    consolidated_tools.register_tools(mcp)
 
-    # Note: Multi-agent tools are now integrated into ConsolidatedMCPToolsV2
+    # Initialize FastMCP server and pass the tools directly
+    mcp = FastMCP(
+        "Task Management Consolidated with Multi-Agent Support",
+        tools=consolidated_tools.get_all_tools(),
+    )
+
+    # The registration call is no longer needed as tools are passed in constructor
+    # consolidated_tools.register_tools(mcp)
 
     return mcp
 
