@@ -17,6 +17,8 @@ import yaml
 from dataclasses import asdict
 
 # Package imports - no need for sys.path manipulation with proper package structure
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 from fastmcp.task_management.application import (
     TaskApplicationService,
@@ -345,13 +347,16 @@ class ConsolidatedMCPToolsV2:
         auto_rule_generator: Optional[AutoRuleGenerator] = None,
         projects_file_path: Optional[str] = None
     ):
+        logger.info("Initializing ConsolidatedMCPToolsV2...")
         # Initialize repositories and services
         # Use environment variable for tasks file path if available
         if task_repository is None:
             tasks_file_path = os.environ.get('TASK_MANAGEMENT_TASKS_PATH')
             if tasks_file_path:
+                logger.info(f"Found TASK_MANAGEMENT_TASKS_PATH: {tasks_file_path}")
                 self._task_repository = JsonTaskRepository(file_path=tasks_file_path)
             else:
+                logger.warning("TASK_MANAGEMENT_TASKS_PATH not set, using default.")
                 self._task_repository = JsonTaskRepository()
         else:
             self._task_repository = task_repository
@@ -372,9 +377,11 @@ class ConsolidatedMCPToolsV2:
         
         # Initialize call agent use case
         self._call_agent_use_case = CallAgentUseCase(CURSOR_AGENT_DIR)
+        logger.info("ConsolidatedMCPToolsV2 initialized successfully.")
     
     def register_tools(self, mcp: FastMCP):
         """Register all consolidated MCP tools in three logical categories"""
+        logger.info("Registering tools in ConsolidatedMCPToolsV2...")
         
         # ═══════════════════════════════════════════════════════════════════
         # 🏗️ PROJECT MANAGEMENT - High-level orchestration and coordination
@@ -498,6 +505,7 @@ class ConsolidatedMCPToolsV2:
             else:
                 return {"success": False, "error": f"Unknown action: {action}. Available: create, get, list, create_tree, get_tree_status, orchestrate, dashboard"}
 
+        logger.info("Finished registering project management tools.")
         # ═══════════════════════════════════════════════════════════════════
         # 📋 TASK MANAGEMENT - Granular work item lifecycle and workflow
         # ═══════════════════════════════════════════════════════════════════
@@ -729,6 +737,7 @@ class ConsolidatedMCPToolsV2:
                 logging.error(f"Unexpected error in manage_subtask: {e}\\n{traceback.format_exc()}")
                 return {"success": False, "error": f"An unexpected error occurred: {e}"}
 
+        logger.info("Finished registering task management tools.")
         # ═══════════════════════════════════════════════════════════════════
         # 🤖 AGENT MANAGEMENT - Multi-agent coordination and assignment
         # ═══════════════════════════════════════════════════════════════════
@@ -959,19 +968,21 @@ class ConsolidatedMCPToolsV2:
             Retrieves all YAML configuration files for a specific agent.
             
             Args:
-                name_agent: Name of the agent to retrieve information for (e.g., "coding_agent")
+                name_agent (str): The name of the agent to call
             
             Returns:
                 Dict with agent information and combined content from all YAML files
             """
             return self._call_agent_use_case.execute(name_agent)
 
+        logger.info("Finished registering all tools.")
+
     # ═══════════════════════════════════════════════════════════════════
     # 🔧 HELPER METHODS - Internal routing and operation handling
     # ═══════════════════════════════════════════════════════════════════
     
     def _handle_core_task_operations(self, action, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date, project_id=None, force_full_generation=False):
-        """Internal handler for core task CRUD operations."""
+        """Helper to manage core CRUD operations for tasks"""
         try:
             if action == "create":
                 # Ensure description is not None for create action
