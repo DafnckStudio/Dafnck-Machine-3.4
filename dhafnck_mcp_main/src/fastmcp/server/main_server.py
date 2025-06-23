@@ -53,7 +53,7 @@ def main():
         logging.info("Server stopped by user")
     except Exception as e:
         logging.error(f"Server error: {e}")
-        raise
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -1022,6 +1022,8 @@ class ConsolidatedMCPToolsV2:
                 return {"success": False, "error": f"Invalid core action: {action}"}
         except Exception as e:
             logging.error(f"Error in core task operation '{action}': {traceback.format_exc()}")
+            if "generate_rules_for_task" in traceback.format_exc():
+                return {"success": False, "error": f"Error during auto rule generation: {e}"}
             return {"success": False, "error": str(e)}
 
     def _handle_complete_task(self, task_id):
