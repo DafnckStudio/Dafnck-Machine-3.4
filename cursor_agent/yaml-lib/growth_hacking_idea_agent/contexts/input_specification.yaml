@@ -1,0 +1,13 @@
+input_specification:
+  type: object
+  format: '{ goal: string, constraints?: string[] }'
+  schema:
+    goal: string (required)
+    constraints: string[] (optional)
+  validationRules:
+  - goal must be present and non-empty
+  - If constraints is present, it must be an array of strings
+  example:
+    goal: Increase user signups
+    constraints:
+    - No paid ads

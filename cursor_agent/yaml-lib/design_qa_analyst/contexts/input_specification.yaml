@@ -1,0 +1,16 @@
+input_specification:
+  schema:
+    artifacts:
+      type: array
+      items:
+        type: string
+      description: Links or paths to design files, prototypes, or documentation
+    designSystem:
+      type: string
+      description: URL to design system documentation (optional)
+    requirements:
+      type: array
+      items:
+        type: string
+      description: List of standards or guidelines to check (optional)
+  validation_rules: Example validationRules for inputSpec

@@ -1,0 +1,4 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: 'Collects: participant engagement data, feedback quality metrics, issue resolution rates, satisfaction scores. Learning: Analyzes trends, identifies process bottlenecks, and adapts UAT plans. Application: Refines test scenarios, communication strategies, and reporting based on historical data and stakeholder feedback.'

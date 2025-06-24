@@ -1,0 +1,2 @@
+error_handling:
+  strategy: On failure to find a solution, escalate to peer agents or request clarification. On unexpected input, validate and reject with a clear error message. On missing dependencies, log the issue and attempt to proceed with available resources. For critical errors, trigger a healthCheck/selfTest and notify orchestrator.

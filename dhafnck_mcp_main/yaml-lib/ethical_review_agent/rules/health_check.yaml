@@ -1,0 +1,4 @@
+health_check:
+  enabled: true
+  interval: daily
+  selfTest: Runs validation on input/output schemas, checks connectivity to peer agents, and verifies recent feedback loop execution. Reports status and any issues to orchestrator.

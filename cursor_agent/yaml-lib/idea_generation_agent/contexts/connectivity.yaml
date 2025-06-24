@@ -1,0 +1,4 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: Receives problem statements and market insights to generate ideas; collects feedback on idea adoption, market fit, and implementation outcomes to refine future ideation. Feedback is logged and analyzed for recurring patterns, which inform updates to ideation strategies and templates.

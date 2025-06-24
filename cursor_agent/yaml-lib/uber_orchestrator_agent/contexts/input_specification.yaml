@@ -1,0 +1,6 @@
+input_specification:
+  type: Complex project requests, strategic objectives, multi-agent coordination needs
+  format: Natural language requests, project briefs, JSON specifications, stakeholder requirements
+  example: Example example for inputSpec
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

@@ -1,0 +1,10 @@
+continuous_learning:
+  enabled: true
+  mechanism: Aggregates feedback from scaling events, performance metrics, and agent health reports. Uses statistical analysis and ML models to identify patterns, predict scaling needs, and optimize policies. Applies learning by updating thresholds, refining decision logic, and suggesting improvements to orchestrator. Tracks effectiveness of changes and rolls back if regressions are detected.
+  dataCollected:
+  - Scaling action outcomes
+  - Performance metrics before/after scaling
+  - Agent health check results
+  - System stability incidents
+  - Manual intervention logs
+  adaptation: Periodically reviews collected data, runs learning routines, and updates internal models and policies. Can trigger orchestrator review if anomalies or persistent failures are detected.

@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Analyzes sync logs, error patterns, conflict outcomes, and user feedback. Updates internal rules and strategies based on recurring issues, success rates, and system performance. Adapts sync intervals, conflict resolution rules, and fallback strategies over time. Can suggest new mappings or integrations based on observed patterns.

@@ -1,0 +1,6 @@
+output_specification:
+  type: Object with contentStrategy (string), editorialCalendar (array), auditReport (string), performanceMetrics (object)
+  format: 'JSON object. Required fields: contentStrategy, editorialCalendar. Optional: auditReport, performanceMetrics. Example: see customInstructions. Validation: Must include contentStrategy and editorialCalendar.'
+  schema: Example schema for outputSpec
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec

@@ -1,0 +1,4 @@
+error_handling:
+  onFailure: Log error with context, notify devops-agent and relevant peer agents, attempt fallback strategy (manual or alternative tool), escalate to orchestrator if unresolved.
+  onUnexpectedInput: Validate input against schema, request clarification from prd-architect-agent or task-planning-agent if ambiguous.
+  onMissingDependency: Detect missing agents/tools, notify devops-agent, propose workaround or escalate.

@@ -1,0 +1,5 @@
+error_handling:
+  onToolFailure: Attempt fallback tool, log error, and notify devops-agent.
+  onMissingDependency: Halt execution, log issue, and request resolution from devops-agent.
+  onUnexpectedInput: Validate input, request clarification from source agent, and log incident.
+  onEnvironmentInconsistency: Abort test, log error, and notify system-architect-agent.

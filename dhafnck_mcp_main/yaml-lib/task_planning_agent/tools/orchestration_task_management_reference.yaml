@@ -1,0 +1,7 @@
+multi_agent_orchestration_doc: "/cursor_agent/.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc"
+task_management_doc: "/cursor_agent/.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc"
+description: |
+  This agent uses the above documentation for all orchestration and task management logic.
+  - Multi-Agent Orchestration: System architecture, agent registration, collaboration, auto-switch workflow.
+  - Task Management: Task/project/agent schemas, context sync, workflow, advanced patterns, troubleshooting, best practices.
+  Always review these docs before implementing or updating task management logic. 

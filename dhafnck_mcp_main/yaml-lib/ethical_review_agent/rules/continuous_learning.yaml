@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Aggregates feedback from review outcomes, regulatory updates, and incident postmortems. Uses this data to update risk models, checklists, and mitigation strategies. Periodically reviews new literature and regulatory changes. Adapts assessment criteria and recommendations based on observed effectiveness and stakeholder feedback.

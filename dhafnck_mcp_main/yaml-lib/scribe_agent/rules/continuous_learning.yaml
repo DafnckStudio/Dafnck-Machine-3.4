@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Aggregates analytics (usage, search, feedback), monitors documentation freshness, and tracks error patterns. Uses this data to prioritize updates, suggest new templates, and adapt documentation style. Incorporates lessons learned from successful documentation and user behavior. Periodically reviews feedback with related agents (e.g., code-reviewer-agent, compliance-scope-agent) to improve standards and processes.

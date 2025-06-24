@@ -1,0 +1,6 @@
+connectivity:
+  interactsWith:
+  - elicitation-agent
+  - compliance-testing-agent
+  - security-auditor-agent
+  feedbackLoop: Collects audit results, regulatory updates, and implementation feedback from compliance-testing-agent, security-auditor-agent, and system-architect-agent. Uses this data to update compliance scope and documentation. Maintains a log of changes and rationale for traceability.

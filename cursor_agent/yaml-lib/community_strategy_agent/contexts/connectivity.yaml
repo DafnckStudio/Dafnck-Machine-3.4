@@ -1,0 +1,5 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: Collects engagement metrics (active users, participation rates, sentiment), user feedback (surveys, direct input), and incident reports (moderation, outages). Data is analyzed after each campaign or incident, and results are used to update strategies, engagement programs, and platform selection. Feedback is also shared with collaborating agents for cross-functional improvement.
+  documentation: Each collaboration is peer-based, with regular syncs and shared objectives. No self-references or duplicates are present.

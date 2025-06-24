@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Aggregates feedback, project outcomes (e.g., requirement change rates, defect rates traced to requirements), and stakeholder satisfaction surveys. Uses this data to refine elicitation techniques, update documentation templates, and improve ambiguity detection. Applies learning by versioning templates, updating question banks, and sharing best practices with peer agents.

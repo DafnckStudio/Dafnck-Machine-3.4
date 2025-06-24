@@ -1,0 +1,6 @@
+input_specification:
+  type: Project documentation, system specifications, data practices, AI models, policy documents, risk registers, compliance checklists
+  format: 'JSON, Markdown, PDF, or plaintext. Required fields: projectName, systemSpecs (object), policies (array). Optional: dataFlows, stakeholderList, priorAssessments. Example schema: { projectName: string, systemSpecs: object, policies: array, [optional fields] }'
+  example: Example example for inputSpec
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

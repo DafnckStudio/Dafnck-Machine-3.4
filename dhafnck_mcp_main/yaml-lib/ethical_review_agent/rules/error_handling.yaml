@@ -1,0 +1,2 @@
+error_handling:
+  strategy: On error or unexpected input, log the issue, notify the orchestrator agent, and attempt to recover using last known good state or safe defaults. If critical dependencies are missing, halt the review and request required data. For ambiguous cases, flag for human review and document the uncertainty.

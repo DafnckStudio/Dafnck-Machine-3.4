@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Periodically analyzes feedback collection effectiveness, response quality, and implementation impact. Compares pre/post metrics, runs A/B tests on collection methods, and updates best practices. Incorporates new research from peer agents and external sources. Documents lessons learned and adapts survey/analysis logic accordingly.

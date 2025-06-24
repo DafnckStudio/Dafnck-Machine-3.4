@@ -1,0 +1,21 @@
+output_specification:
+  type: Design system documentation, component libraries, design tokens, implementation guides, health report
+  format: Markdown, JSON, code files, Figma/Sketch exports, governance docs
+  schema:
+    documentation: string
+    components:
+    - name: string
+      variants:
+      - string
+      code: string
+      usage: string
+    tokens:
+      color: object
+      typography: object
+      spacing: object
+    guides:
+    - string
+    healthReport: object
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: Outputs must be syntactically valid, accessible, and pass health checks

@@ -1,0 +1,6 @@
+output_specification:
+  type: Object containing optimized profiles, content strategies, visual assets, analytics setup, and growth plans.
+  format: 'JSON object. Required fields: optimizedProfiles (array of URLs), contentCalendar (file/link), visualAssets (array), analyticsSetup (object), growthPlan (file/link). Validation: All fields required. Example: see customInstructions.'
+  schema: Example schema for outputSpec
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec

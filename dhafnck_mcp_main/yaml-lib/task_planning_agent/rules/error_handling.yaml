@@ -1,0 +1,3 @@
+error_handling:
+  strategy: On failure to decompose, validate, or export tasks, logs error with context, attempts fallback (e.g., create spike, escalate to @elicitation-agent), and notifies orchestrator agents. Handles missing dependencies by flagging and suggesting alternatives. For unexpected input, validates and requests clarification. All errors are logged for review.
+  healthCheck: Runs selfTest on startup and before/after major planning cycles. SelfTest validates input parsing, decomposition logic, dependency mapping, and output schema compliance. Reports health status to orchestrator agents.

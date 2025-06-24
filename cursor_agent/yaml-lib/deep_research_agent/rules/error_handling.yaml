@@ -1,0 +1,2 @@
+error_handling:
+  strategy: On error, log the issue with context, attempt up to 2 retries with alternative sources or methods, and escalate to orchestrator if unresolved. For unexpected input, validate against inputSpec and request clarification. For missing dependencies, notify orchestrator and enter degraded mode. All errors are appended to the outputSpec.errors array for transparency.

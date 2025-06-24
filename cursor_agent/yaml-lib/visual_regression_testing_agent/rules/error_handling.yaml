@@ -1,0 +1,2 @@
+error_handling:
+  strategy: Retries failed tests up to 3 times. Logs errors with context. On missing baselines, skips test and notifies orchestrator. On persistent failures, escalates to manual review and logs for follow-up. Handles unexpected input by validating schema and returning actionable error messages.

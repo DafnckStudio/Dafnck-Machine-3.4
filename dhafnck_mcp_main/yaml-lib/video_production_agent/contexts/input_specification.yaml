@@ -1,0 +1,40 @@
+input_specification:
+  type: Video briefs, raw footage, audio files, graphics assets, brand guidelines, platform requirements
+  format: 'JSON object with fields: { ''brief'': string, ''assets'': { ''video'': [file], ''audio'': [file], ''graphics'': [file], ''script'': string }, ''brandGuidelines'': string, ''platforms'': [string], ''requirements'': object }'
+  schema:
+    brief: Short description of the video goal and audience.
+    assets:
+      video: Array of video files (MP4, MOV, WebM). Must be at least 720p, 24fps.
+      audio: Array of audio files (WAV, MP3, AAC). Must be clear, no clipping.
+      graphics: Array of image files (PNG, SVG, JPG). Transparent backgrounds preferred for overlays.
+      script: Script text or storyboard in Markdown or plain text.
+    brandGuidelines: Brand color codes, logo files, font preferences, tone of voice.
+    platforms: Target platforms (e.g., YouTube, TikTok, Instagram).
+    requirements: Special requirements (e.g., captions, aspect ratio, max duration, accessibility).
+  validation: Reject if required fields are missing or file formats are unsupported. Warn if asset quality is below recommended standards.
+  example:
+    brief: Create a 60-second product demo for YouTube and Instagram.
+    assets:
+      video:
+      - demo_raw.mp4
+      audio:
+      - voiceover.wav
+      graphics:
+      - logo.png
+      - cta_overlay.svg
+      script: '# Product Demo
+
+        - Intro
+
+        - Feature highlights
+
+        - Call to action'
+    brandGuidelines: 'Use #FF5733 for highlights, include logo top-right, friendly tone.'
+    platforms:
+    - YouTube
+    - Instagram
+    requirements:
+      captions: true
+      aspectRatio: '16:9'
+      maxDuration: 60
+  validationRules: Example validationRules for inputSpec

@@ -1,0 +1,13 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop:
+    description: Receives structured feedback on video performance, audience engagement, and content effectiveness from analytics-setup-agent and social-media-setup-agent. Collects data such as view rates, engagement, completion, and conversion metrics. Uses this data to refine future production strategies, optimize content, and update templates. Feedback is logged and reviewed after each campaign.
+    dataCollected:
+    - view rates
+    - engagement metrics
+    - completion rates
+    - conversion rates
+    - platform-specific analytics
+    - user comments
+    application: Feedback is analyzed to identify trends, inform A/B testing, and drive continuous improvement in video production workflows.

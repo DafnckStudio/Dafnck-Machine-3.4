@@ -1,0 +1,12 @@
+connectivity:
+  interactsWith:
+  - ui-designer-agent
+  - design-system-agent
+  - usability-heuristic-agent
+  feedbackLoop: Collects feedback on research implementation impact, design decision outcomes, and user satisfaction metrics (e.g., NPS, SUS scores, analytics). Logs feedback in research repository and adapts research methods, personas, and recommendations accordingly. Escalates persistent issues to stakeholders. Regularly surveys stakeholders for satisfaction with research outputs.
+  dataCollected:
+  - Design implementation outcomes
+  - User satisfaction metrics (NPS, SUS, CSAT)
+  - Usability test results
+  - Stakeholder feedback
+  - Analytics and behavioral data

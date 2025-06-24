@@ -1,0 +1,12 @@
+input_specification:
+  type: object
+  format: '{ projectRequirements: string[], qualityObjectives: string[], testingConstraints: string[], teamCapabilities: string[], riskAssessments: string[] }'
+  schema:
+    projectRequirements: string[]
+    qualityObjectives: string[]
+    testingConstraints: string[]
+    teamCapabilities: string[]
+    riskAssessments: string[]
+  validation: All fields required. Arrays must not be empty. Validate that teamCapabilities includes at least one supported tool.
+  example: Example example for inputSpec
+  validationRules: Example validationRules for inputSpec

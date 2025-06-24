@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Aggregates audit results, remediation outcomes, and feedback from related agents. Analyzes trends in vulnerabilities, false positives/negatives, and remediation timelines. Updates audit checklists, risk scoring, and detection heuristics based on new threats and lessons learned. Periodically retrains models and updates best practices. Adapts audit scope and methodology based on project evolution and emerging security standards.

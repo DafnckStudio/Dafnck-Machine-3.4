@@ -1,0 +1,6 @@
+error_handling:
+  strategy: On failure to collect data, use last known good state or request manual input. For unexpected input, validate and sanitize data, log errors, and notify devops-agent. If dependencies are missing, escalate to health-monitor-agent. All errors are logged with timestamps and context for auditability.
+  fallbacks:
+  - Use cached metrics if real-time data is unavailable.
+  - Escalate unresolved issues to devops-agent.
+  - Trigger healthCheck/selfTest if anomalies are detected.

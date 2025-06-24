@@ -1,0 +1,7 @@
+output_specification:
+  type: Deployment strategy plan, automation scripts, risk assessment, rollback plan, monitoring config, documentation references
+  format: JSON/YAML strategy plan, Markdown runbooks, CI/CD pipeline configs, monitoring/alerting configs, rollback scripts, integration diagrams
+  schema: Example schema for outputSpec
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: Output must include strategy, steps, rollback, monitoring, and documentation references. Validate all referenced files exist and are accessible.

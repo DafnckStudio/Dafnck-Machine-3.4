@@ -1,0 +1,6 @@
+connectivity:
+  interactsWith:
+  - development-orchestrator-agent
+  - functional-tester-agent
+  - test-case-generator-agent
+  feedbackLoop: Collects test execution data (pass/fail/blocked), defect trends, test coverage metrics, and stakeholder feedback. Analyzes this data after each test cycle to refine strategies, update test plans, and improve coordination. Feedback is shared with related agents for continuous improvement.

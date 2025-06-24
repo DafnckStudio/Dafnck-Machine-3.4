@@ -1,0 +1,6 @@
+input_specification:
+  type: Object containing requirements, user stories, acceptance criteria, feature specs, API docs, UI designs
+  format: 'JSON or structured object. Required fields: requirements (array), userStories (array). Optional: acceptanceCriteria (array), featureSpecs (array), apiDocs (array), uiDesigns (array). Validation: All requirements must have id and description. User stories must have id, asA, iWant, soThat. Example: see customInstructions.'
+  example: Example example for inputSpec
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

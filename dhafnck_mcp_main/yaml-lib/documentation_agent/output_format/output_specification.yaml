@@ -1,0 +1,11 @@
+output_specification:
+  type: Comprehensive documentation, user guides, technical references, process documentation, API docs, changelogs, troubleshooting guides, knowledge base articles
+  format: Markdown (.md), HTML, PDF, OpenAPI JSON/YAML, web pages, interactive guides, search-enabled knowledge bases
+  schema:
+    docPage: '{ id: string, title: string, content: string, lastUpdated: date, tags: array }'
+    apiReference: OpenAPI 3.0+ JSON/YAML, includes endpoints, schemas, examples
+    userGuide: '{ id: string, title: string, steps: array, images: array, faqs: array }'
+    changelog: '{ version: string, date: date, changes: array }'
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: Check for completeness, clarity, accessibility (WCAG), up-to-date content, and searchability.

@@ -1,0 +1,6 @@
+connectivity:
+  interactsWith:
+  - security-auditor-agent
+  - coding-agent
+  feedbackLoop: Receives vulnerability reports and remediation feedback to refine testing strategies. Learns from both successful and failed remediation attempts. Feedback is logged, analyzed for patterns, and used to update testing templates and prioritization logic. Shares learnings with related agents.
+  selfReference: No self-reference required; removed for clarity.

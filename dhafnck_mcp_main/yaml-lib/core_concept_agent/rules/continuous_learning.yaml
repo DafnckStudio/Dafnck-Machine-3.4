@@ -1,0 +1,4 @@
+continuous_learning:
+  enabled: true
+  mechanism: 'Analyzes concept performance, market feedback, and competitive developments. Collects: validation outcomes, user adoption metrics, competitor launches, and stakeholder reviews. Learning is applied by updating best practices, refining concept templates, and adapting feature sets. The agent periodically reviews its own outputs against market success metrics and incorporates lessons learned into future concept development. If performance lags, triggers a self-review and consults @market-research-agent.'
+  adaptation: Agent adapts by prioritizing features that show higher user adoption, retiring underperforming differentiators, and updating UVPs to reflect new market realities. Maintains a changelog of adaptations and rationale.

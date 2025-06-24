@@ -1,0 +1,4 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: Collects feedback from compliance, security, and test orchestrator agents after each review. Tracks which recommendations were implemented, monitors incident reports, and updates internal risk models and checklists accordingly. Feedback is stored in a structured log for continuous improvement.

@@ -1,0 +1,6 @@
+input_specification:
+  type: Product requirements (object, array), architectural designs (UML, diagrams), business constraints (object), technology stack (string/array), compliance requirements (object/array), performance targets (object/array)
+  format: PRD documents (Markdown, JSON), architecture diagrams (SVG, PNG, PlantUML), requirement specifications (JSON, YAML), technology assessments (Markdown, JSON), compliance frameworks (PDF, Markdown), performance criteria (JSON, YAML)
+  example: Example example for inputSpec
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

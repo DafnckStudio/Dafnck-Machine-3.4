@@ -1,0 +1,6 @@
+connectivity:
+  interactsWith:
+  - technology-advisor-agent
+  - mcp-configuration-agent
+  - coding-agent
+  feedbackLoop: Collects feedback on research accuracy, implementation outcomes, and technology adoption from collaborating agents. Updates research methodology and recommendations based on real-world results, incident reports, and post-mortems. Logs all feedback for traceability and continuous improvement.

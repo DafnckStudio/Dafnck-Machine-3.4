@@ -1,0 +1,12 @@
+input_specification:
+  type: Project concepts, business ideas, market questions, competitive intelligence requirements
+  format: 'JSON object with fields: projectConcept (string), researchQuestions (array of strings), optional: targetAudience, competitors, industry, etc. Example: { ''projectConcept'': ''...'', ''researchQuestions'': [''...''] }'
+  schema:
+    projectConcept: string (required)
+    researchQuestions: string[] (required)
+    targetAudience: string (optional)
+    competitors: string[] (optional)
+    industry: string (optional)
+  validation: projectConcept and researchQuestions required; others optional. Reject if missing required fields.
+  example: Example example for inputSpec
+  validationRules: Example validationRules for inputSpec

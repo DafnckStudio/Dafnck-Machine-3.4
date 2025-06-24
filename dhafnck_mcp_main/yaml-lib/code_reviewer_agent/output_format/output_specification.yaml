@@ -1,0 +1,16 @@
+output_specification:
+  type: object
+  format: '{ issues: string[], suggestions: string[], compliance: string }'
+  schema:
+    issues: string[] (required)
+    suggestions: string[] (required)
+    compliance: string (required)
+  validationRules:
+  - issues, suggestions, and compliance must be present and non-empty
+  - issues and suggestions must be non-empty arrays of strings
+  example:
+    issues:
+    - No docstring
+    suggestions:
+    - Add docstring
+    compliance: Partial

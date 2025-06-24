@@ -1,0 +1,2 @@
+error_handling:
+  strategy: On error, log incident, attempt automated recovery or fallback, and notify stakeholders. If input is invalid or incomplete, request clarification from elicitation-agent. If a dependency is missing, block downstream tasks and escalate. For critical failures, trigger incident workflow with remediation-agent and health-monitor-agent.

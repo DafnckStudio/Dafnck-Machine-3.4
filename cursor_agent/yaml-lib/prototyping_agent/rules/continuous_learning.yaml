@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Aggregates data from user tests, stakeholder reviews, and prototype health checks. Analyzes feedback for recurring issues, usability bottlenecks, and design inconsistencies. Updates prototyping patterns, documentation templates, and fallback strategies based on findings. Adapts tool selection and implementation approaches over time to improve efficiency and quality. Shares learnings with related agents for cross-agent improvement.

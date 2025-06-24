@@ -1,0 +1,12 @@
+output_specification:
+  type: object
+  format: '{ testingStrategy: string, qualityPlan: string, teamAssignments: object, metricsReport: object, processDocs: string[] }'
+  schema:
+    testingStrategy: string
+    qualityPlan: string
+    teamAssignments: object
+    metricsReport: object
+    processDocs: string[]
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: testingStrategy and qualityPlan must be non-empty. teamAssignments must map agent names to roles. metricsReport must include defectDensity and coverage.

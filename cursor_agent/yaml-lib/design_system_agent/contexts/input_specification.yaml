@@ -1,0 +1,25 @@
+input_specification:
+  type: Brand guidelines, user requirements, technical constraints, existing design assets
+  format: JSON, Markdown, Figma/Sketch files, component inventories, technical specs
+  schema:
+    brand:
+      colors:
+      - string
+      typography:
+      - string
+      spacing:
+      - string
+    requirements:
+      accessibility: string
+      platforms:
+      - string
+    assets:
+      figma: string
+      sketch: string
+    constraints:
+      frameworks:
+      - string
+      tokens: object
+  validation: Ensure all required fields are present; if missing, request clarification or use defaults
+  example: Example example for inputSpec
+  validationRules: Example validationRules for inputSpec

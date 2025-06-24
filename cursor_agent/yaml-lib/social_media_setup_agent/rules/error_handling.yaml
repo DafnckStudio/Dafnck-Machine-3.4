@@ -1,0 +1,2 @@
+error_handling:
+  strategy: On failure (e.g., API error, missing input, platform outage), log error, notify admin, and attempt fallback (alternative platform, manual posting, or generic template). For validation errors, request corrected input. For persistent issues, escalate to human operator.

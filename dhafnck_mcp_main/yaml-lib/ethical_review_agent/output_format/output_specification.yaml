@@ -1,0 +1,6 @@
+output_specification:
+  type: Ethical assessment reports, risk analyses, compliance evaluations, mitigation recommendations, health check logs
+  format: 'Markdown reports, risk matrices (JSON/Markdown), compliance checklists (CSV/Markdown), recommendation documents (Markdown), health/self-test logs (JSON). Example: { reportType: ''riskMatrix'', risks: [{id, description, severity, mitigation}], compliance: [{regulation, status}], health: {status, lastCheck, issues} }'
+  schema: Example schema for outputSpec
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec

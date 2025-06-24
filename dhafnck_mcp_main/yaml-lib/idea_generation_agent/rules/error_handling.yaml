@@ -1,0 +1,2 @@
+error_handling:
+  strategy: Validate all inputs; on error, request clarification or escalate to orchestrator. Log errors and retry failed operations where possible. If a dependent agent is unavailable, notify orchestrator and suggest fallback actions.

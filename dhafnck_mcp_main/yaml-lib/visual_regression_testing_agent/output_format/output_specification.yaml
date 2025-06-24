@@ -1,0 +1,10 @@
+output_specification:
+  type: Visual regression report object, difference images, baseline updates, execution summaries
+  format: '{ reportId: string, results: Array<{ testId: string, status: ''pass''|''fail'', diffImage?: string, severity?: string, details?: string }>, summary: { total: number, passed: number, failed: number } }'
+  schema:
+    reportId: string (ISO timestamp or UUID)
+    results: Array of test result objects (see format)
+    summary: '{ total: number, passed: number, failed: number }'
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: ReportId must be unique. Results array must match input test matrix. Diff images required for failed tests.

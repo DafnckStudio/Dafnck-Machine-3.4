@@ -1,0 +1,5 @@
+error_handling:
+  strategy: On unexpected input, missing dependencies, or failures, log the error, notify relevant agents (e.g., devops-agent, system-architect-agent), and attempt fallback strategies such as switching to alternative test areas or running self-diagnostics. If critical, escalate to orchestrator agents.
+  missingInput: Prompt for required fields or use defaults where possible.
+  dependencyFailure: Notify responsible agent and document the issue.
+  selfTest: Run healthCheck routine to verify agent functionality.

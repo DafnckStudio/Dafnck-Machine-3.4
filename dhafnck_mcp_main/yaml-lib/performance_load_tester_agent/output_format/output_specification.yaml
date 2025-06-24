@@ -1,0 +1,6 @@
+output_specification:
+  type: Performance test reports, test scripts, monitoring dashboards, optimization recommendations
+  format: Markdown reports, JSON metrics, test scripts (k6/JMeter/etc.), Grafana/Prometheus configs, capacity planning docs. All outputs validated for completeness and schema compliance.
+  schema: Example schema for outputSpec
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec

@@ -1,0 +1,4 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: Collects MCP server health metrics, incident logs, credential rotation events, and integration success/failure rates. Feeds this data into adaptive configuration routines and troubleshooting playbooks. Provides regular reports and improvement suggestions to devops-agent and system-architect-agent.

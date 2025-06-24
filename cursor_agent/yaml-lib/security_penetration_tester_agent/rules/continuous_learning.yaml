@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Collects vulnerability data, remediation outcomes, and security incident reports. Uses this data to retrain testing logic and update attack scenarios. Adapts by updating test templates, adjusting risk thresholds, and incorporating new security tactics. Periodically reviews failed tests to identify systemic issues and improve fallback strategies. Shares learning updates with orchestrator and related agents.

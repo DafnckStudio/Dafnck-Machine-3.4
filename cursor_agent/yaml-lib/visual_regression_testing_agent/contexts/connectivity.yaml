@@ -1,0 +1,4 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: Collects data on detection accuracy, false positives, test flakiness, and baseline update effectiveness. Feedback is gathered from test-orchestrator-agent (test reliability), design-qa-analyst (report quality), and development-orchestrator-agent (actionability of findings). Uses this data to adjust thresholds, update test plans, and refine baseline management.

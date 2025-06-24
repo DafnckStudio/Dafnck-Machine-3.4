@@ -1,0 +1,3 @@
+output_specification:
+  format: '{ qaReport: { summary: string, issues: Issue[], scorecards: { designSystem: number, accessibility: number } } }'
+  validation: qaReport.summary must be present; issues array may be empty; scorecards must be numbers between 0-100

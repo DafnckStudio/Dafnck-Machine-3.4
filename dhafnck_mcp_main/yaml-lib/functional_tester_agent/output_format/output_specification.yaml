@@ -1,0 +1,14 @@
+output_specification:
+  type: object
+  format: '{ result: string, bugs: string[], report: string }'
+  schema:
+    result: string (required)
+    bugs: string[] (required)
+    report: string (required)
+  validationRules:
+  - result, bugs, and report must be present and non-empty
+  - bugs must be a non-empty array of strings
+  example:
+    result: Pass
+    bugs: []
+    report: Test passed successfully

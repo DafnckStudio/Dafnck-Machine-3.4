@@ -1,0 +1,6 @@
+error_handling:
+  strategy: Detects and logs errors at each production stage (input validation, editing, rendering, upload). Notifies relevant agents or users of critical failures. Retries failed steps with fallback settings or assets. If dependencies are missing, requests resolution or substitutes with defaults. Maintains an error log for post-mortem analysis.
+  fallbacks:
+  - Use placeholder assets if originals are missing
+  - Retry rendering with lower settings if out of memory
+  - Switch to alternative upload method if primary fails

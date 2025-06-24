@@ -1,0 +1,6 @@
+input_specification:
+  type: Project requirements, technical constraints, business objectives, existing technology inventory, compliance requirements
+  format: Requirements documents, constraint specifications, business cases, technology assessments, compliance frameworks
+  example: Example example for inputSpec
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

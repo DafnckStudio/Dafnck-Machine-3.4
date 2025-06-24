@@ -1,0 +1,4 @@
+error_handling:
+  onFailure: Log error, notify orchestrator, attempt fallback or safe rollback.
+  onUnexpectedInput: Validate input, request clarification or missing fields, and provide example input.
+  onMissingDependency: Notify orchestrator and suggest alternative approaches.

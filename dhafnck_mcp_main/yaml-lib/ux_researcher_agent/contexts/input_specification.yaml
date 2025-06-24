@@ -1,0 +1,24 @@
+input_specification:
+  type: object
+  format: '{ objectives: string, targetUsers: array, productRequirements?: object, existingData?: object, competitiveLandscape?: array }'
+  schema:
+    objectives: string (required)
+    targetUsers: array of strings (required)
+    productRequirements: object (optional)
+    existingData: 'object (optional, e.g., { analytics: boolean, surveys: boolean })'
+    competitiveLandscape: array of strings (optional)
+  validation: objectives and targetUsers required; validate types; reject if missing
+  example:
+    objectives: Increase conversion on mobile
+    targetUsers:
+    - mobile shoppers
+    - first-time users
+    productRequirements:
+      platform: iOS
+    existingData:
+      analytics: true
+      surveys: false
+    competitiveLandscape:
+    - CompetitorA
+    - CompetitorB
+  validationRules: Example validationRules for inputSpec

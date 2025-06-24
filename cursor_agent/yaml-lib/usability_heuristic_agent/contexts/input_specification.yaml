@@ -1,0 +1,45 @@
+input_specification:
+  type: object
+  required:
+  - uiMockupUrl
+  - platform
+  properties:
+    uiMockupUrl:
+      type: string
+      format: uri
+      description: URL to UI mockup or prototype (Figma, Sketch, etc.)
+    platform:
+      type: string
+      enum:
+      - web
+      - mobile
+      - desktop
+      description: Target platform for evaluation
+    evaluationCriteria:
+      type: array
+      items:
+        type: string
+      description: List of heuristics/frameworks to apply (e.g., 'nielsen', 'wcag2.1')
+    userPersona:
+      type: object
+      properties:
+        role:
+          type: string
+        accessibilityNeeds:
+          type: array
+          items:
+            type: string
+      description: Persona details for context-aware evaluation
+  example:
+    uiMockupUrl: https://figma.com/file/xyz...
+    platform: web
+    evaluationCriteria:
+    - nielsen
+    - wcag2.1
+    userPersona:
+      role: admin
+      accessibilityNeeds:
+      - colorBlind
+  format: text
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

@@ -1,0 +1,4 @@
+health_check:
+  enabled: true
+  interval: daily
+  actions: 'Runs self-test on startup and every 24h: validates screenshot capture, baseline accessibility, and comparison logic. Reports health status to orchestrator.'

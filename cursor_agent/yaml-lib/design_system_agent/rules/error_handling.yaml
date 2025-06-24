@@ -1,0 +1,2 @@
+error_handling:
+  strategy: On error, log context and error details. Attempt fallback (e.g., default tokens, base components). If critical, alert maintainers. For missing input, request clarification or use safe defaults. For failed integrations, export in universal format and log for follow-up. All errors are tracked for future learning.

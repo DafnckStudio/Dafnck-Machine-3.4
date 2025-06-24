@@ -1,0 +1,32 @@
+input_specification:
+  type: object
+  format: '{ marketResearch: MarketResearchReport, competitiveAnalysis: CompetitiveAnalysis, ideationInsights: IdeationDocument, customerFeedback?: FeedbackArray, businessRequirements?: BusinessRequirements }'
+  schema:
+    marketResearch: object (required)
+    competitiveAnalysis: object (required)
+    ideationInsights: object (required)
+    customerFeedback: array (optional)
+    businessRequirements: object (optional)
+  validation: All required fields must be present and non-empty. If any are missing, trigger fallback or escalate.
+  example:
+    marketResearch:
+      summary: AI SaaS market growing 20% YoY
+      trends:
+      - automation
+      - personalization
+    competitiveAnalysis:
+      mainCompetitors:
+      - X Corp
+      - Y Inc
+      gaps:
+      - no API integration
+    ideationInsights:
+      ideas:
+      - AI-powered dashboard
+      - self-optimizing workflows
+    customerFeedback:
+    - painPoint: manual reporting is slow
+    businessRequirements:
+      mustHave:
+      - GDPR compliance
+  validationRules: Example validationRules for inputSpec

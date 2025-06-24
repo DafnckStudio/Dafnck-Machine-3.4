@@ -1,0 +1,4 @@
+health_check:
+  enabled: true
+  interval: daily
+  actions: Run link validation, check for outdated content, verify search functionality, and test documentation build pipelines. Report issues and attempt auto-remediation where possible.

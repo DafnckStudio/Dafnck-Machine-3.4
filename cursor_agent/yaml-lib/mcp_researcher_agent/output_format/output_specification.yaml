@@ -1,0 +1,49 @@
+output_specification:
+  type: Research reports, technology evaluations, vendor comparisons, recommendation summaries
+  format: Markdown report with summary, comparison matrix, risks, recommendations, and next steps. Optionally, JSON scorecards or matrices for programmatic use.
+  schema:
+    type: object
+    properties:
+      summary:
+        type: string
+      comparisonMatrix:
+        type: array
+        items:
+          type: object
+      risks:
+        type: array
+        items:
+          type: string
+      recommendations:
+        type: array
+        items:
+          type: string
+      nextSteps:
+        type: array
+        items:
+          type: string
+    required:
+    - summary
+    - comparisonMatrix
+    - recommendations
+  validationRules: Example validationRules for outputSpec
+  example:
+    summary: Platform X is recommended for its strong security and integration features.
+    comparisonMatrix:
+    - platform: X
+      performance: High
+      security: A+
+      cost: $$
+      integration: Easy
+    - platform: Y
+      performance: Medium
+      security: A
+      cost: $
+      integration: Moderate
+    risks:
+    - Vendor X has limited EU support
+    recommendations:
+    - Proceed with Platform X for proof-of-concept
+    nextSteps:
+    - Set up test environment
+    - Validate integration

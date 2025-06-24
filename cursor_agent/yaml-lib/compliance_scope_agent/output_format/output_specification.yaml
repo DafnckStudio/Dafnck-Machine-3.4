@@ -1,0 +1,6 @@
+output_specification:
+  type: Object with complianceScope (array of {standard, requirements}), impactAssessment (string), and optionally riskMatrix, roadmap, and citations.
+  format: 'JSON. Example: {"complianceScope":[{"standard":"HIPAA","requirements":["Access controls","Audit logging"]}],"impactAssessment":"High risk for non-compliance."}'
+  schema: Example schema for outputSpec
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec

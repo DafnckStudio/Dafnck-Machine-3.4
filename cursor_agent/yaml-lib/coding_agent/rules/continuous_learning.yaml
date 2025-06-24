@@ -1,0 +1,4 @@
+continuous_learning:
+  enabled: true
+  mechanism: Collects data from code reviews, bug reports, test failures, and performance metrics. Uses this data to identify recurring issues, update internal best practices, and suggest refactoring. Periodically reviews feedback log and adapts implementation strategies. Can trigger self-review or request additional review from code-reviewer-agent if repeated issues are detected. Stays updated with framework/library updates via context7 and perplexity-mcp tools.
+  appliedLearning: Improves code quality, test coverage, and documentation over time. Adapts to new technologies and project requirements. Shares lessons learned with peer agents.

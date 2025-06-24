@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Collects deployment metrics (success/failure rates, rollback triggers, performance impact, incident root causes), analyzes trends, and updates strategy selection logic. Incorporates feedback from post-mortems, incident reviews, and stakeholder input. Periodically reviews new deployment technologies and best practices. Adapts fallback and risk models based on real-world outcomes and emerging threats.

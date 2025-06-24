@@ -1,0 +1,6 @@
+input_specification:
+  type: Object containing brand guidelines, target audience profiles, business objectives, and existing social presence.
+  format: 'JSON object. Required fields: brandGuidelines (object), targetAudience (array), businessObjectives (array), existingSocials (array of URLs). Validation: All fields required. Example: see customInstructions.'
+  example: Example example for inputSpec
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

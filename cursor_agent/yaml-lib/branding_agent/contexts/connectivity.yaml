@@ -1,0 +1,4 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: Collects brand performance metrics (engagement, recognition, compliance rates), audience feedback (surveys, sentiment analysis), and asset usage analytics. Feedback is logged, analyzed, and used to trigger brand refresh or adjustment cycles. Learning is applied by updating guidelines, recommending changes, and sharing insights with collaborators.

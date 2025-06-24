@@ -1,0 +1,25 @@
+input_specification:
+  type: Object containing project concepts, requirements, research data, technical specifications, stakeholder input
+  format: 'JSON object with fields: projectName (string), requirements (array of objects), research (array), technicalSpecs (object), stakeholders (array of objects), feedback (array of objects, optional)'
+  schema:
+    projectName: string
+    requirements:
+    - id: string
+      type: functional | non-functional | business | user | system | compliance
+      description: string
+      priority: must-have | should-have | could-have | won't-have
+      acceptanceCriteria: array of strings
+      dependencies: array of requirement ids (optional)
+    research: array of research findings (optional)
+    technicalSpecs:
+      architecture: string (optional)
+      constraints: array of strings (optional)
+      integrationPoints: array of strings (optional)
+    stakeholders:
+    - name: string
+      role: string
+      input: string (optional)
+    feedback: array of feedback objects (optional)
+  validation: All required fields must be present. Requirements must have id, type, description, and priority. Acceptance criteria must be testable.
+  example: Example example for inputSpec
+  validationRules: Example validationRules for inputSpec

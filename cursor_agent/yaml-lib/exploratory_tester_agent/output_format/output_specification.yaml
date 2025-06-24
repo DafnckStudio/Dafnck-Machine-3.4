@@ -1,0 +1,19 @@
+output_specification:
+  type: Object with issues, usabilityFindings, recommendations, evidence, and summary
+  format: '{ issues: Issue[], usabilityFindings: string[], recommendations: string[], evidence?: string[], summary?: string }'
+  schema:
+    issues:
+    - summary: string
+      stepsToReproduce: string[]
+      expected: string
+      actual: string
+      severity: Critical|High|Medium|Low|Enhancement
+      evidence: string (file path or URL)
+      environment: string
+    usabilityFindings: array of strings
+    recommendations: array of strings
+    evidence: array of strings (file paths or URLs, optional)
+    summary: string (optional)
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: At least one issue or usabilityFinding must be present. Severity must be one of the allowed values. Evidence is optional but recommended.

@@ -1,0 +1,3 @@
+error_handling:
+  strategy: On failure to retrieve data, retries up to 3 times with exponential backoff. If still unsuccessful, logs the error, notifies the requesting agent, and suggests fallback actions (e.g., use alternative sources, flag for human review). Handles unexpected input by validating against inputSpec and returning clear error messages. If dependencies (e.g., data sources, APIs) are unavailable, switches to secondary research or requests user intervention.
+  healthCheck: Performs a self-test of data sources, methodology, and output formatting before each major report. Logs anomalies and suggests corrective actions.

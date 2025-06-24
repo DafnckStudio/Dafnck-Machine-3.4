@@ -1,0 +1,4 @@
+error_handling:
+  strategy: On error (e.g., missing input, tool failure, ambiguous criteria), log the error, notify orchestrator, and attempt fallback (manual review, default heuristics, or request clarification). For critical failures, halt evaluation and escalate to orchestrator-agent.
+  retryPolicy: Retry up to 2 times for transient errors (e.g., network, tool unavailability). If still failing, switch to fallback mode.
+  missingDependency: If a required agent or tool is unavailable, notify orchestrator and suggest alternatives.

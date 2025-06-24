@@ -1,0 +1,36 @@
+input_specification:
+  type: object
+  format: 'JSON object with fields: businessObjectives (array of strings), targetAudience (object with personas array), marketResearch (object with competitors array), existingAssets (array of file paths). At least one field required. Example: {"businessObjectives":["Grow market share"],"targetAudience":{"personas":["Millennials"]}}'
+  schema:
+    type: object
+    properties:
+      businessObjectives:
+        type: array
+        items:
+          type: string
+      targetAudience:
+        type: object
+        properties:
+          personas:
+            type: array
+            items:
+              type: string
+        required:
+        - personas
+      marketResearch:
+        type: object
+        properties:
+          competitors:
+            type: array
+            items:
+              type: string
+        required:
+        - competitors
+      existingAssets:
+        type: array
+        items:
+          type: string
+    minProperties: 1
+  validation: At least one of businessObjectives, targetAudience, marketResearch, or existingAssets must be provided. If present, targetAudience must include personas array; marketResearch must include competitors array; existingAssets must be valid file paths.
+  example: Example example for inputSpec
+  validationRules: Example validationRules for inputSpec

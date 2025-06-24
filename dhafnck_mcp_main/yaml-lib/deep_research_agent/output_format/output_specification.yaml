@@ -1,0 +1,6 @@
+output_specification:
+  type: 'Research reports, analyses, insights, recommendations, data visualizations. Output is a JSON object with fields: { summary: string, findings: array, recommendations: array, confidenceScore: number, sources: array, errors?: array }'
+  format: 'JSON object. Example: { "summary": "AI adoption is accelerating in SaaS.", "findings": [ ... ], "recommendations": [ ... ], "confidenceScore": 0.92, "sources": [ ... ], "errors": [ ... ] }'
+  schema: Example schema for outputSpec
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec

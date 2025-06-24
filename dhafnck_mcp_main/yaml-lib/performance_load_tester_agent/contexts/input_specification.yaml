@@ -1,0 +1,6 @@
+input_specification:
+  type: Performance requirements, system specifications, test scenarios, SLA definitions
+  format: 'JSON or YAML documents with fields: performanceRequirements (object), testScenarios (array), environmentConfig (object, optional), monitoringConfig (object, optional). All fields validated for presence and type. Example: see customInstructions.'
+  example: Example example for inputSpec
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

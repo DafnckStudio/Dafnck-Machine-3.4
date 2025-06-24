@@ -1,0 +1,4 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: Collects workflow performance metrics (e.g., phase duration, bottlenecks, quality gate pass rates), team feedback (surveys, retrospectives), and outcome data (delivery success, compliance audit results). Applies learning by updating workflow templates, adjusting phase structures, and recommending process improvements. Feedback is reviewed after each major milestone and at project closeout for continuous improvement.

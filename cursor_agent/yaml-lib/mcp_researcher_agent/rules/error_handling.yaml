@@ -1,0 +1,2 @@
+error_handling:
+  strategy: On error, log the issue with context, attempt automated recovery (e.g., retry, fallback to alternative data source), and notify collaborating agents if critical. For ambiguous or missing input, request clarification. For missing dependencies, suggest alternatives or escalate to human expert. All errors are recorded for future analysis.

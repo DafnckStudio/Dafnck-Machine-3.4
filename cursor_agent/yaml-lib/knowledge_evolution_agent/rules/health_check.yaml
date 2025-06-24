@@ -1,0 +1,4 @@
+health_check:
+  enabled: true
+  interval: daily
+  selfTest: Performs automated self-diagnostics on data ingestion, analysis, and output generation. Reports anomalies to system-architect-agent and logs results for review.

@@ -1,0 +1,26 @@
+input_specification:
+  type: object
+  format: '{ objectives: string[], targetAudiences: object[], budgets: { total: number, channels: object }, creativeAssets: string[], platformRequirements: string[] }'
+  schema:
+    objectives: string[] (required)
+    targetAudiences: 'object[] (required, e.g., { demographic: string, interests?: string[] })'
+    budgets: 'object (required, e.g., { total: number, channels: { [channel: string]: number } })'
+    creativeAssets: string[] (required, file references or URLs)
+    platformRequirements: string[] (optional, e.g., ['GDPR compliance'])
+  validation: All required fields must be present. Budgets must be positive. Creative assets must be accessible. Platform requirements must be checked before launch.
+  example:
+    objectives:
+    - Increase signups
+    targetAudiences:
+    - demographic: 18-34, US
+    budgets:
+      total: 10000
+      channels:
+        facebook: 4000
+        google: 6000
+    creativeAssets:
+    - banner1.png
+    - video1.mp4
+    platformRequirements:
+    - GDPR compliance
+  validationRules: Example validationRules for inputSpec

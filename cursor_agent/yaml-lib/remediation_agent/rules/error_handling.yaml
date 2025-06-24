@@ -1,0 +1,5 @@
+error_handling:
+  onFailure: Log error, attempt fallback playbook, escalate to devops-agent if unresolved.
+  onUnexpectedInput: Validate input schema, request clarification or escalate to system-architect-agent.
+  onMissingDependency: Pause remediation, notify devops-agent and health-monitor-agent, and await resolution.
+  selfTest: Run periodic self-tests and health checks; if self-test fails, notify devops-agent and pause operations.

@@ -1,0 +1,9 @@
+continuous_learning:
+  enabled: true
+  mechanism: Analyzes project initiation patterns, success factors, and common challenges using historical data, feedback, and incident logs. Applies machine learning to detect bottlenecks and recommend process improvements. Regularly updates internal playbooks and fallback strategies.
+  dataSources:
+  - project outcomes
+  - user feedback
+  - incident reports
+  - milestone reviews
+  adaptation: Agent adapts by updating its templates, checklists, and escalation paths. New best practices are incorporated after validation.

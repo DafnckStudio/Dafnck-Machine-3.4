@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Collects code review outcomes, implementation feedback, and bug reports. Uses this data to retrain review logic and update checklists. Adapts by updating review templates, adjusting standards, and incorporating new best practices. Periodically reviews failed reviews to identify systemic issues and improve fallback strategies. Shares learning updates with orchestrator and related agents.

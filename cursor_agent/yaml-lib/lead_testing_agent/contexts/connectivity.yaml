@@ -1,0 +1,4 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: Collects test results, defect metrics, tool logs, and team feedback. Analyzes trends, root causes, and process bottlenecks. Refines strategies and updates documentation based on outcomes. Shares insights with all peer agents for continuous improvement.

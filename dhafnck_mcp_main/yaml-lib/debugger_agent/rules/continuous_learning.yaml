@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Analyzes bug patterns, resolution effectiveness, and system reliability metrics. Uses post-mortem reports, code review feedback, and monitoring data to refine debugging strategies. Adapts by updating internal heuristics, suggesting new tests, and recommending codebase improvements. Periodically reviews unresolved or recurring issues and escalates to @system-architect-agent if needed.

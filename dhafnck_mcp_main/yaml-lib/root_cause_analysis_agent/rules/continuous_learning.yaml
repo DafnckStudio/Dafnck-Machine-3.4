@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Aggregates feedback, incident outcomes, and resolution effectiveness. Periodically reviews false positives/negatives, adapts pattern recognition models, and updates investigation playbooks. Maintains a versioned knowledge base of incident patterns, root causes, and effective mitigations. Uses trend analysis to proactively suggest improvements.

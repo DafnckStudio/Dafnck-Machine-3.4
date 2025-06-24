@@ -1,0 +1,4 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: Collects incident resolution feedback, system performance data, and post-remediation validation results from health-monitor-agent, incident-learning-agent, and devops-agent. Data includes incident type, remediation steps, outcome, time-to-recovery, and side effects. Feedback is used to update playbooks, improve fallback strategies, and refine risk assessment models.

@@ -1,0 +1,6 @@
+error_handling:
+  strategy: On missing/invalid input, log error, request data from relevant agents, and escalate if unresolved. On analysis failure, fallback to manual review or escalate to @remediation-agent. If agent healthCheck fails, notify @health-monitor-agent and enter safe mode. All errors are logged with context for post-mortem review.
+  fallbackAgents:
+  - remediation-agent
+  - system-architect-agent
+  - health-monitor-agent

@@ -1,0 +1,13 @@
+input_specification:
+  type: Object with applicationUrl, feature, personas, charter, riskAreas, environment
+  format: '{ applicationUrl: string, feature: string, personas: string[], charter: string, riskAreas: string[], environment?: string }'
+  schema:
+    applicationUrl: string (required)
+    feature: string (required)
+    personas: array of strings (optional)
+    charter: string (required)
+    riskAreas: array of strings (optional)
+    environment: string (optional)
+  validation: applicationUrl, feature, and charter are required; personas and riskAreas are optional; environment is optional but recommended for reproducibility.
+  example: Example example for inputSpec
+  validationRules: Example validationRules for inputSpec

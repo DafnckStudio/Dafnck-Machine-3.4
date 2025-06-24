@@ -1,0 +1,4 @@
+connectivity:
+  interactsWith:
+  - coding-agent
+  feedbackLoop: Collects raw performance metrics, error logs, and optimization outcomes from each test run. Analyzes trends and bottlenecks, then updates test strategies and recommendations. Shares learnings with test-orchestrator-agent and system-architect-agent for continuous improvement.

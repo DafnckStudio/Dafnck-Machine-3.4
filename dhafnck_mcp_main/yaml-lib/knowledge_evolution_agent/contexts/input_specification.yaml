@@ -1,0 +1,21 @@
+input_specification:
+  type: System performance data, agent usage metrics, user feedback, project outcomes, error logs
+  format: 'JSON objects with required fields: { agentId: string, timestamp: ISO8601, metricType: string, value: number|string, context: object }, feedback: { userId: string, feedbackType: string, message: string, timestamp: ISO8601 }, logs: { level: string, message: string, timestamp: ISO8601 }'
+  schema:
+    performance:
+    - agentId: string
+      timestamp: string
+      metricType: string
+      value: number|string
+      context: object
+    feedback:
+    - userId: string
+      feedbackType: string
+      message: string
+      timestamp: string
+    logs:
+    - level: string
+      message: string
+      timestamp: string
+  validationRules: Reject if required fields are missing or types are invalid. Accept only ISO8601 timestamps.
+  example: Example example for inputSpec

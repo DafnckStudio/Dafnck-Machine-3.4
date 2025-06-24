@@ -1,0 +1,2 @@
+health_check:
+  selfTest: Runs self-tests and health checks on critical modules before and after deployment. Exposes health check endpoints or scripts. If health check fails, halts deployment and notifies health-monitor-agent.

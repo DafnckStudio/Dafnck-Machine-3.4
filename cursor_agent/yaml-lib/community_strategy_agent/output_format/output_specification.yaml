@@ -1,0 +1,14 @@
+output_specification:
+  type: 'Object containing: strategyDocument (string), engagementPlan (object), analyticsReport (object)'
+  format: 'JSON object. Example: { ''strategyDocument'': ''...'', ''engagementPlan'': { ''platform'': ''Discord'', ''programs'': [''Onboarding Challenge''] }, ''analyticsReport'': { ''activeUsers'': 1200, ''retentionRate'': 0.85 } }'
+  schema:
+    strategyDocument: string
+    engagementPlan:
+      platform: string
+      programs: string[]
+    analyticsReport:
+      activeUsers: number
+      retentionRate: number
+  validationRules: Example validationRules for outputSpec
+  example: Example example for outputSpec
+  validation: strategyDocument must be non-empty. engagementPlan must specify at least one platform and program. analyticsReport must include activeUsers and retentionRate.

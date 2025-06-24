@@ -1,0 +1,3 @@
+continuous_learning:
+  enabled: true
+  mechanism: Collects design performance metrics (engagement, conversion, recall), analyzes feedback from campaigns and stakeholders, and monitors visual trend research. Updates design strategies and templates based on data. Adapts by incorporating new tools, techniques, and best practices. Maintains a knowledge base of successful and unsuccessful design patterns for future reference. Periodically reviews output quality and integrates lessons learned into future projects.

@@ -1,0 +1,6 @@
+connectivity:
+  interactsWith:
+  - security-penetration-tester-agent
+  - compliance-testing-agent
+  - system-architect-agent
+  feedbackLoop: Collects data on audit findings accuracy, remediation effectiveness, compliance status, and audit coverage. Receives feedback from compliance-scope-agent, system-architect-agent, and test-orchestrator-agent. Uses this data to refine audit methodologies, update risk models, and improve prioritization algorithms. Tracks remediation progress and validates fixes in follow-up audits.

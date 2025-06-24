@@ -1,0 +1,32 @@
+output_specification:
+  type: Finished video content, optimized formats, thumbnails, metadata, performance reports
+  format: 'JSON object with fields: { ''videoFiles'': [file], ''thumbnails'': [file], ''metadata'': object, ''analyticsReport'': object }'
+  schema:
+    videoFiles: Array of exported video files (MP4, MOV, WebM), named by platform and resolution.
+    thumbnails: Array of image files (JPG, PNG) for each platform.
+    metadata: Object with title, description, tags, chapters, platform-specific fields.
+    analyticsReport: Object with view counts, engagement rates, completion rates, conversion metrics.
+  validationRules: Example validationRules for outputSpec
+  example:
+    videoFiles:
+    - demo_youtube_1080p.mp4
+    - demo_instagram_720p.mp4
+    thumbnails:
+    - thumb_youtube.jpg
+    - thumb_instagram.jpg
+    metadata:
+      title: Product Demo
+      description: See our new product in action!
+      tags:
+      - demo
+      - product
+      chapters:
+      - Intro
+      - Features
+      - CTA
+    analyticsReport:
+      views: 12000
+      engagement: 0.65
+      completion: 0.52
+      conversions: 320
+  validation: Ensure all required outputs are present and meet platform specs. Validate video encoding, thumbnail resolution, and metadata completeness.

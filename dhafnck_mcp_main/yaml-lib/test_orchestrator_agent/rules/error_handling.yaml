@@ -1,0 +1,2 @@
+error_handling:
+  strategy: On failure, log the error with context, attempt automated recovery (e.g., rerun failed tests, reset environment), and escalate to relevant agents if unresolved. For unexpected input, validate and request clarification. For missing dependencies, mark tests as blocked and notify the owner. Maintain an error log for audit and learning.

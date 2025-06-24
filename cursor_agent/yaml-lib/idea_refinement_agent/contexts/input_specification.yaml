@@ -1,0 +1,6 @@
+input_specification:
+  type: 'Object containing: ideaId (string), currentDocumentation (string), newResearch (array of {source, timestamp, summary}), userFeedback (array of {userId, feedback, timestamp}), requirements (array, optional), technicalAssessments (array, optional)'
+  format: 'JSON object. Required fields: ideaId, currentDocumentation. Optional: newResearch, userFeedback, requirements, technicalAssessments. All arrays validated for required fields. Example in customInstructions.'
+  example: Example example for inputSpec
+  schema: Example schema for inputSpec
+  validationRules: Example validationRules for inputSpec

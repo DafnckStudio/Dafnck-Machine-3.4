@@ -1,0 +1,2 @@
+error_handling:
+  strategy: On failure to process input, log error with context, notify system-architect-agent, and fallback to last known good configuration. For missing dependencies, request required data or escalate. For unexpected input, validate and reject with error message. For critical errors, isolate affected components and trigger healthCheck.

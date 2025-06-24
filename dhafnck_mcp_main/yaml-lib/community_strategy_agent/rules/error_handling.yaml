@@ -1,0 +1,5 @@
+error_handling:
+  onPlatformFailure: Retry with exponential backoff, switch to backup platform, alert devops-agent and health-monitor-agent.
+  onInputError: Request clarification, use default templates, or escalate to human review.
+  onModerationEscalation: Trigger manual review, notify security-auditor-agent.
+  onAnalyticsFailure: Use cached data, flag for later reconciliation.

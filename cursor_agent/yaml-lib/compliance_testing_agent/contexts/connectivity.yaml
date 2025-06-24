@@ -1,0 +1,7 @@
+connectivity:
+  interactsWith:
+  - security-auditor-agent
+  - test-orchestrator-agent
+  - compliance-scope-agent
+  feedbackLoop:
+    description: Collects compliance test results, violation patterns, remediation outcomes, and regulatory updates. Shares findings with related agents. Updates test plans and remediation strategies based on feedback and incident logs.

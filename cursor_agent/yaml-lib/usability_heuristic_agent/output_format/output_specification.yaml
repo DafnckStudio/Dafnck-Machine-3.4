@@ -1,0 +1,17 @@
+output_specification:
+  type: object
+  format: text
+  schema: Example schema for outputSpec
+  validationRules: Example validationRules for outputSpec
+  example:
+    summary: 3 critical, 2 major, 5 minor issues found.
+    issues:
+    - id: 1
+      severity: critical
+      description: Insufficient color contrast on primary buttons.
+      evidence: Screenshot attached.
+      recommendation: Increase contrast ratio to at least 4.5:1.
+    recommendations:
+    - Adopt design-system-agent color palette.
+    attachments:
+    - contrast-analysis.png

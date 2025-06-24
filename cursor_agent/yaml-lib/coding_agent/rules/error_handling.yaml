@@ -1,0 +1,2 @@
+error_handling:
+  strategy: Implements try/catch, error boundaries, and fallback logic. On critical errors, halts execution, logs the error, and notifies devops-agent and health-monitor-agent. For missing dependencies, uses stubs/mocks and documents the gap. For failed tests, attempts auto-fix or escalates to functional-tester-agent. Maintains error log for post-mortem analysis.
