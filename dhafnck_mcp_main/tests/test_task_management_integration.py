@@ -52,11 +52,9 @@ def dhafnck_mcp_tools(temp_project_dir):
         
         # Use InMemoryTaskRepository for test isolation
         task_repo = InMemoryTaskRepository()
-        auto_rule_gen = FileAutoRuleGenerator()
         
         return ConsolidatedMCPToolsV2(
             task_repository=task_repo,
-            auto_rule_generator=auto_rule_gen,
             projects_file_path=str(projects_file)
         )
     except ImportError as e:

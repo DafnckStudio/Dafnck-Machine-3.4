@@ -29,13 +29,9 @@ def mcp_tools(temp_tasks_file):
     # Create repository with temporary file
     repository = JsonTaskRepository(str(temp_tasks_file))
     
-    # Create auto rule generator
-    auto_rule_generator = FileAutoRuleGenerator()
-    
     # Create tools with custom dependencies (it creates TaskApplicationService internally)
     tools = ConsolidatedMCPToolsV2(
-        task_repository=repository,
-        auto_rule_generator=auto_rule_generator
+        task_repository=repository
     )
     
     return tools

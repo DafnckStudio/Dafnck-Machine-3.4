@@ -88,7 +88,7 @@ class FileAutoRuleGenerator(AutoRuleGenerator):
         
         # Create a simplified task context that matches what the original system expects
         # Based on the TaskContext class in models.py, it expects these fields:
-        # id, title, description, requirements, current_phase, assigned_roles, primary_role, context_data, created_at, updated_at, progress
+        # id, title, description, requirements, current_phase, assigned_raaoles, primary_role, context_data, created_at, updated_at, progress
         
         # Map task status to phase
         status_to_phase_map = {

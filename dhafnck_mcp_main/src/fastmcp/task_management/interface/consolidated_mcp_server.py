@@ -1,4 +1,7 @@
-"""Consolidated DDD-based MCP Server with Multi-Agent Support"""
+"""Consolidated DDD-based MCP Server with Multi-Agent Support
+
+NOTE: Ensure PYTHONPATH is set to dhafnck_mcp_main/src before running this server, or DDD imports will fail silently.
+"""
 
 import asyncio
 import logging

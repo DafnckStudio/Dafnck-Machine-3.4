@@ -3848,6 +3848,23 @@
       "status": "pending",
       "priority": "medium",
       "created_at": "2025-01-18T12:00:00Z"
+    },
+    {
+      "id": "20250624001",
+      "title": "DDD Test Task",
+      "description": "Testing DDD integration",
+      "project_id": null,
+      "status": "todo",
+      "priority": "medium",
+      "details": "",
+      "estimatedEffort": "",
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-24T07:21:27.963441+00:00",
+      "updated_at": "2025-06-24T07:21:27.963441+00:00"
     }
   ]
 }

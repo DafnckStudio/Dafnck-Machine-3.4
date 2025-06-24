@@ -358,26 +358,22 @@ class TestConsolidatedMCPToolsV2:
     def consolidated_tools(self, temp_projects_file):
         """Create ConsolidatedMCPToolsV2 instance for testing"""
         task_repository = InMemoryTaskRepository()
-        auto_rule_generator = Mock()
         return ConsolidatedMCPToolsV2(
             task_repository=task_repository,
-            auto_rule_generator=auto_rule_generator,
             projects_file_path=temp_projects_file
         )
     
     def test_init_with_custom_dependencies(self, temp_projects_file):
         """Test initialization with custom dependencies"""
         task_repository = InMemoryTaskRepository()
-        auto_rule_generator = Mock()
         
         tools = ConsolidatedMCPToolsV2(
             task_repository=task_repository,
-            auto_rule_generator=auto_rule_generator,
             projects_file_path=temp_projects_file
         )
         
         assert tools._task_repository == task_repository
-        assert tools._auto_rule_generator == auto_rule_generator
+        assert tools._auto_rule_generator is not None  # Should be FileAutoRuleGenerator()
         assert isinstance(tools._multi_agent_tools, SimpleMultiAgentTools)
         assert isinstance(tools._cursor_rules_tools, object)  # CursorRulesTools instance
     
@@ -770,10 +766,8 @@ class TestIntegrationScenarios:
     def consolidated_tools(self, temp_projects_file):
         """Create ConsolidatedMCPToolsV2 instance for testing"""
         task_repository = InMemoryTaskRepository()
-        auto_rule_generator = Mock()
         return ConsolidatedMCPToolsV2(
             task_repository=task_repository,
-            auto_rule_generator=auto_rule_generator,
             projects_file_path=temp_projects_file
         )
     

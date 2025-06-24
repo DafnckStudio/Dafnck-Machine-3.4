@@ -41,7 +41,7 @@ from fastmcp.task_management.infrastructure.services.agent_converter import Agen
 from fastmcp.task_management.domain.entities.project import Project as ProjectEntity
 from fastmcp.task_management.domain.entities.task_tree import TaskTree as TaskTreeEntity
 from fastmcp.task_management.domain.services.orchestrator import Orchestrator
-from ..application.dtos import (
+from fastmcp.task_management.application.dtos import (
     CreateTaskRequest,
     UpdateTaskRequest,
     ListTasksRequest,
@@ -55,7 +55,7 @@ from ..application.dtos import (
     AddDependencyRequest,
     DependencyResponse
 )
-from ..domain.entities.task import Task
+from fastmcp.task_management.domain.entities.task import Task
 
 BRAIN_DIR = os.path.join(os.path.dirname(__file__), '../../../.cursor/rules/brain')
 PROJECTS_FILE = os.path.join(BRAIN_DIR, 'projects.json')
@@ -344,7 +344,6 @@ class ConsolidatedMCPToolsV2:
     def __init__(
         self,
         task_repository: Optional[TaskRepository] = None,
-        auto_rule_generator: Optional[AutoRuleGenerator] = None,
         projects_file_path: Optional[str] = None
     ):
         logger.info("Initializing ConsolidatedMCPToolsV2...")
@@ -361,7 +360,7 @@ class ConsolidatedMCPToolsV2:
         else:
             self._task_repository = task_repository
             
-        self._auto_rule_generator = auto_rule_generator or FileAutoRuleGenerator()
+        self._auto_rule_generator = FileAutoRuleGenerator()
         
         # Initialize application service with dependencies
         self._task_app_service = TaskApplicationService(
@@ -901,15 +900,17 @@ class ConsolidatedMCPToolsV2:
         response = self._task_app_service.create_task(request)
         logging.info(f"Create task response: {response}")
 
+        # Defensive: Always access nested attributes, never direct task_id
         is_success = getattr(response, 'success', False)
         task_data = getattr(response, 'task', None)
         error_message = getattr(response, 'message', 'Unknown error')
 
-        if is_success:
+        if is_success and task_data is not None:
+            # Defensive: If task_data is a dataclass, convert to dict
             return {
                 "success": True,
                 "action": "create",
-                "task": asdict(task_data) if task_data and not isinstance(task_data, dict) else task_data
+                "task": asdict(task_data) if not isinstance(task_data, dict) else task_data
             }
         else:
             return {
@@ -952,12 +953,12 @@ class ConsolidatedMCPToolsV2:
             task_data = getattr(response, 'task', None)
             error_message = getattr(response, 'message', error_message)
 
-        if is_success:
+        if is_success and task_data is not None:
             return {
                 "success": True,
                 "action": "update",
                 "task_id": task_id,
-                "task": asdict(task_data) if task_data and not isinstance(task_data, dict) else task_data
+                "task": asdict(task_data) if not isinstance(task_data, dict) else task_data
             }
         
         return {"success": False, "action": "update", "error": error_message}
