@@ -1,154 +1,94 @@
-# CLAUDE.md
+# Claude Code Project Configuration
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+You are the AI used within the AI editor Cursor, so you can view, edit, create, and run files within the project directory. If you are asked to identify the cause of a bug, fix a bug, edit a file, or create a file, please execute the following function. Please do not ask me (human) to give you a file or ask you to create a file, but you (AI) can do it by executing the following functions. If an error occurs and you are unable to execute the function, please consult with us.
 
-# Agentic Project with MCP Task Management
+edit_file: Edit an existing file, create a new file
+read_file: Read the contents of a file
+grep_search: Search in the codebase based on a specific creator
+list_dir: Get a list of files and folders in a specific directory”
 
-This is an advanced agentic project built around the `dhafnck_mcp` server framework, featuring Model Context Protocol (MCP) integration and sophisticated task management capabilities.
+Please edit the file in small chunks
 
-## Core Architecture
+ALWAYS use sequential-thinking mcp for analyze complex request or tasks, then use task
+ALWAYS read `.cursor/rules/main_objectif.mdc` first to understand project context
+Fix root causes, not symptoms
+Detailed summaries without missing important details
+No root directory file creation without permission
+ALWAYS ask before creating new files
+Respect project structure unless changes requested
+Monitor for requests that would exceed Pro plan token limits
+If a request would require paid usage beyond Pro limits, I must immediately terminate the response and inform you to start a new chat if you want to proceed with paid usage
 
-The project follows Domain-Driven Design (DDD) principles with these key components:
 
-- **Main MCP Server**: `dhafnck_mcp_main/` - Advanced MCP server framework with integrated task management
-- **Task Management System**: Built on DDD architecture with domain, application, infrastructure, and interface layers
-- **Multi-Agent Orchestration**: Tools for managing teams of AI agents with automatic role switching
-- **Cursor Rules System**: Comprehensive AI context management in `.cursor/rules/`
+CONTINUE_AUTOMATIC : ON
+if CONTINUE_AUTOMATIC = OFF, terminate chat if task is completed, else continue same task
 
-## Essential Commands
+USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT = ON
+If USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT is set to ON, you must use the absolute path from the ROOT_PATH when creating or updating files to avoid path issues when working with different projects in the same folder.
 
-### Development Environment Setup
-```bash
-# Navigate to main project
-cd dhafnck_mcp_main
+ROOT_PATH on WSL Ubuntu: /home/<username>/agentic-project
 
-# Install dependencies
-uv sync
+username : daihungpham
 
-# Activate virtual environment
-source .venv/bin/activate
+PLAN_ACTUAL : @migration_plan.md
 
-# Install development dependencies
-uv sync --dev
-```
 
-### Testing
-```bash
-# Run full test suite
-pytest
+## Project Overview
+This is an agentic project with task management capabilities using MCP (Model Context Protocol) servers.
 
-# Run with coverage
-pytest --cov=src/fastmcp
+## Key Directories
+- `dhafnck_mcp_main/` - Main MCP task management implementation
+- `.cursor/rules/` - Cursor-specific rules and configurations
+- `.cursor/rules/tasks/` - Task management data
 
-# Run specific test categories
-pytest -m unit          # Unit tests
-pytest -m interface     # Interface tests
-pytest -m integration   # Integration tests
-```
+## Important Rules
 
-### Code Quality
-```bash
-# Lint code
-ruff check src/
-
-# Format code
-ruff format src/
-
-# Type checking
-pyright
-
-# Run pre-commit hooks
-pre-commit run --all-files
-```
-
-### MCP Server Operations
-```bash
-# Start MCP server
-dhafnck_mcp serve
-
-# Debug MCP server
-python src/debug_mcp_server.py
-
-# Test MCP connection
-timeout 10 python src/debug_mcp_server.py
-```
-
-## Project Configuration
+### MCP Protocol Priority
+- **ALWAYS USE MCP TOOLS WHEN AVAILABLE**
+- Never create CLI scripts or direct API calls when MCP tools exist
+- Use proper MCP tool calls through the protocol interface
+- Follow MCP workflow patterns defined in documentation
 
 ### Path Management
-- **ROOT_PATH**: `/home/daihungpham/agentic-project`
-- **USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT**: ON
+- **USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT = ON**
+- Root path: `/home/daihungpham/agentic-project`
 - Always use absolute paths when creating/updating files
 
-### MCP Integration Priority
-- **ALWAYS USE MCP TOOLS** when available for task operations
-- Primary MCP server: `dhafnck_mcp` (required for all task management)
-- Never bypass MCP by accessing JSON files directly
-- Use `manage_task`, `manage_project`, `manage_agent` tools through MCP protocol
+### Task Management
+- **MANDATORY: Use MCP dhafnck_mcp server for ALL task operations**
+- Use `manage_task` tool with MCP protocol - never direct database access
+- Task data located at: `.cursor/rules/tasks/tasks.json`
+- Follow workflow in: `.cursor/rules/02_AI-DOCS/TaskManagement/dhafnck_mcp_workflow.mdc`
 
-### Task Management Rules
-- **Task Data Location**: `.cursor/rules/tasks/tasks.json`
-- **MANDATORY**: Use MCP `dhafnck_mcp` server for ALL task operations
-- **Workflow**: Follow `.cursor/rules/02_AI-DOCS/TaskManagement/` documentation
-- **Context Sync**: Auto-generated rules in `.cursor/rules/auto_rule.mdc` provide task-specific context
+### Testing
+- Virtual environment: `dhafnck_mcp_main/.venv`
+- All tests located in: `dhafnck_mcp_main/tests/`
+- Run tests with: `cd dhafnck_mcp_main && uv sync && python -m pytest`
 
 ### Agent System
-- **Configurations**: `.cursor/rules/agents/` and `dhafnck_mcp_main/yaml-lib/`
-- **Auto Role Switching**: Triggered by task assignees with "@" prefix (e.g., `@coding_agent`)
-- **Documentation**: `.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/`
-- **Agent Calling**: Use `call_agent` MCP tool to load specialized configurations
+- Agent configurations: `.cursor/rules/agents/`
+- Multi-agent orchestration docs: `.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/`
+- Automatic role switching based on task assignees
 
-## Key Development Practices
+### Commands
+- Force quit commands running longer than 10 seconds
+- Always try exit command after terminal operations
 
-### File Operations
-- Always read `.cursor/rules/main_objectif.mdc` first for project context
-- Use sequential-thinking MCP for complex requests
-- Fix root causes, not symptoms
-- Request permission before creating new files at root level
-- Force quit terminal commands running longer than 10 seconds
+## Referenced Files
+- Main objectives: `.cursor/rules/main_objectif.mdc`
+- Migration plan: `.cursor/rules/migration_plan.md`
+- Auto-generated rules: `.cursor/rules/auto_rule.mdc`
 
-### MCP Server Development
-The `dhafnck_mcp` server is built using FastMCP framework with:
+## MCP Servers
+- `dhafnck_mcp` - Custom task management server (REQUIRED for all task operations)
+- `sequential-thinking` - Enhanced reasoning
+- `github` - GitHub integration
 
-- **Domain Layer**: Business logic and entities (`dhafnck_mcp_main/src/fastmcp/task_management/domain/`)
-- **Application Layer**: Use cases and services (`dhafnck_mcp_main/src/fastmcp/task_management/application/`)
-- **Infrastructure Layer**: Repositories and external services (`dhafnck_mcp_main/src/fastmcp/task_management/infrastructure/`)
-- **Interface Layer**: MCP tools and API endpoints (`dhafnck_mcp_main/src/fastmcp/task_management/interface/`)
-
-### Testing Strategy
-- Comprehensive test suite with 77% coverage
-- Test categories: unit, interface, integration, architecture, business_rules
-- Virtual environment required: `dhafnck_mcp_main/.venv`
-- Timeout settings: 3 seconds default, force quit long-running commands
-
-## MCP Tools Available
-
-Core task management tools accessible via MCP protocol:
-- `mcp__task_management__manage_project` - Project lifecycle management
-- `mcp__task_management__manage_task` - Task CRUD operations
-- `mcp__task_management__manage_subtask` - Hierarchical task management
-- `mcp__task_management__manage_agent` - Agent registration and coordination
-- `mcp__task_management__call_agent` - Agent configuration retrieval
-- `mcp__task_management__validate_tasks_json` - Task data validation
-- `mcp__task_management__regenerate_auto_rule` - Context rule generation
-- `mcp__sequential-thinking__sequentialthinking` - Enhanced reasoning
-
-## Important Files and Directories
-
-### Configuration Files
-- `.cursor/rules/main_objectif.mdc` - Project objectives and context
-- `.cursor/rules/auto_rule.mdc` - Auto-generated AI context rules
-- `.cursor/rules/migration_plan.md` - Current migration plan
-- `.claude/settings.local.json` - Claude Code permissions and settings
-
-### Documentation
-- `dhafnck_mcp_main/README.md` - MCP server framework documentation
-- `.cursor/rules/02_AI-DOCS/` - Comprehensive system documentation
-- `.cursor/rules/agents/` - Agent configuration documentation
-
-### Core Implementation
-- `dhafnck_mcp_main/src/fastmcp/task_management/` - Main task management implementation
-- `dhafnck_mcp_main/tests/` - Test suite
-- `dhafnck_mcp_main/yaml-lib/` - Agent YAML configurations
-
-The project emphasizes clean architecture, comprehensive testing, and seamless integration between AI agents and the MCP protocol for advanced task orchestration.
+## MCP Usage Guidelines
+- **FIRST PRIORITY**: Check if MCP tools are available for the task
+- **USE MCP TOOLS**: Instead of writing custom scripts or direct API calls
+- **TOOL EXAMPLES**:
+  - Task management: Use `manage_task`, `manage_project`, `manage_agent` tools
+  - Never bypass MCP by accessing JSON files directly
+  - Always follow the MCP workflow patterns
+- **DEBUGGING**: If MCP tools fail, fix the MCP server rather than bypassing it
