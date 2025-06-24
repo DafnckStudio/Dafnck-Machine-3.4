@@ -163,6 +163,7 @@ async def test_create_openapi_server(
     assert server.name == "Test App"
 
 
+@pytest.mark.asyncio
 async def test_create_openapi_server_classmethod(
     fastapi_app: FastAPI, api_client: httpx.AsyncClient
 ):
@@ -171,12 +172,14 @@ async def test_create_openapi_server_classmethod(
     assert server.name == "OpenAPI FastMCP"
 
 
+@pytest.mark.asyncio
 async def test_create_fastapi_server_classmethod(fastapi_app: FastAPI):
     server = FastMCP.from_fastapi(fastapi_app)
     assert isinstance(server, FastMCPOpenAPI)
     assert server.name == "FastAPI App"
 
 
+@pytest.mark.asyncio
 async def test_create_openapi_server_with_timeout(
     fastapi_app: FastAPI, api_client: httpx.AsyncClient
 ):
@@ -203,6 +206,7 @@ async def test_create_openapi_server_with_timeout(
 
 
 class TestTools:
+    @pytest.mark.asyncio
     async def test_default_behavior_converts_everything_to_tools(
         self, fastapi_app: FastAPI
     ):
@@ -214,6 +218,7 @@ class TestTools:
         assert len(await server.get_resources()) == 0
         assert len(await server.get_resource_templates()) == 0
 
+    @pytest.mark.asyncio
     async def test_list_tools(self, fastmcp_openapi_server: FastMCPOpenAPI):
         """
         By default, tools exclude GET methods
@@ -251,6 +256,7 @@ class TestTools:
             },
         )
 
+    @pytest.mark.asyncio
     async def test_call_create_user_tool(
         self,
         fastmcp_openapi_server: FastMCPOpenAPI,
@@ -279,6 +285,7 @@ class TestTools:
             user = json.loads(response_text)
         assert user == expected_user
 
+    @pytest.mark.asyncio
     async def test_call_update_user_name_tool(
         self,
         fastmcp_openapi_server: FastMCPOpenAPI,
@@ -308,6 +315,7 @@ class TestTools:
             user = json.loads(response_text)
         assert user == expected_data
 
+    @pytest.mark.asyncio
     async def test_call_tool_return_list(
         self,
         fastapi_app: FastAPI,
@@ -334,6 +342,7 @@ class TestTools:
 
 
 class TestResources:
+    @pytest.mark.asyncio
     async def test_list_resources(self, fastmcp_openapi_server: FastMCPOpenAPI):
         """
         By default, resources exclude GET methods without parameters
@@ -344,6 +353,7 @@ class TestResources:
         assert resources[0].uri == AnyUrl("resource://get_users_users_get")
         assert resources[0].name == "get_users_users_get"
 
+    @pytest.mark.asyncio
     async def test_get_resource(
         self,
         fastmcp_openapi_server: FastMCPOpenAPI,
@@ -367,6 +377,7 @@ class TestResources:
         response = await api_client.get("/users")
         assert response.json() == json_users
 
+    @pytest.mark.asyncio
     async def test_get_bytes_resource(
         self,
         fastmcp_openapi_server: FastMCPOpenAPI,
@@ -380,6 +391,7 @@ class TestResources:
             assert isinstance(resource_response[0], BlobResourceContents)
             assert base64.b64decode(resource_response[0].blob) == b"pong"
 
+    @pytest.mark.asyncio
     async def test_get_str_resource(
         self,
         fastmcp_openapi_server: FastMCPOpenAPI,
@@ -392,6 +404,7 @@ class TestResources:
 
 
 class TestResourceTemplates:
+    @pytest.mark.asyncio
     async def test_list_resource_templates(
         self, fastmcp_openapi_server: FastMCPOpenAPI
     ):
@@ -411,6 +424,7 @@ class TestResourceTemplates:
             == r"resource://get_user_active_state_users/{is_active}/{user_id}"
         )
 
+    @pytest.mark.asyncio
     async def test_get_resource_template(
         self,
         fastmcp_openapi_server: FastMCPOpenAPI,
@@ -432,6 +446,7 @@ class TestResourceTemplates:
         response = await api_client.get(f"/users/{user_id}")
         assert resource == response.json()
 
+    @pytest.mark.asyncio
     async def test_get_resource_template_multi_param(
         self,
         fastmcp_openapi_server: FastMCPOpenAPI,
@@ -456,6 +471,7 @@ class TestResourceTemplates:
 
 
 class TestPrompts:
+    @pytest.mark.asyncio
     async def test_list_prompts(self, fastmcp_openapi_server: FastMCPOpenAPI):
         """
         By default, there are no prompts.
@@ -468,6 +484,7 @@ class TestPrompts:
 class TestTagTransfer:
     """Tests for transferring tags from OpenAPI routes to MCP objects."""
 
+    @pytest.mark.asyncio
     async def test_tags_transferred_to_tools(
         self, fastmcp_openapi_server: FastMCPOpenAPI
     ):
@@ -496,6 +513,7 @@ class TestTagTransfer:
         assert "update" in update_user_tool.tags
         assert len(update_user_tool.tags) == 2
 
+    @pytest.mark.asyncio
     async def test_tags_transferred_to_resources(
         self, fastmcp_openapi_server: FastMCPOpenAPI
     ):
@@ -516,6 +534,7 @@ class TestTagTransfer:
         assert "list" in get_users_resource.tags
         assert len(get_users_resource.tags) == 2
 
+    @pytest.mark.asyncio
     async def test_tags_transferred_to_resource_templates(
         self, fastmcp_openapi_server: FastMCPOpenAPI
     ):
@@ -538,6 +557,7 @@ class TestTagTransfer:
         assert "detail" in get_user_template.tags
         assert len(get_user_template.tags) == 2
 
+    @pytest.mark.asyncio
     async def test_tags_preserved_in_resources_created_from_templates(
         self, fastmcp_openapi_server: FastMCPOpenAPI
     ):
@@ -668,11 +688,13 @@ class TestOpenAPI30Compatibility:
             route_maps=GET_ROUTE_MAPS,
         )
 
+    @pytest.mark.asyncio
     async def test_server_creation(self, openapi_30_server_with_all_types):
         """Test that a server can be created from an OpenAPI 3.0 spec."""
         assert isinstance(openapi_30_server_with_all_types, FastMCP)
         assert openapi_30_server_with_all_types.name == "Product API 3.0"
 
+    @pytest.mark.asyncio
     async def test_resource_discovery(self, openapi_30_server_with_all_types):
         """Test that resources are correctly discovered from an OpenAPI 3.0 spec."""
         async with Client(openapi_30_server_with_all_types) as client:
@@ -680,6 +702,7 @@ class TestOpenAPI30Compatibility:
         assert len(resources) == 1
         assert resources[0].uri == AnyUrl("resource://listProducts")
 
+    @pytest.mark.asyncio
     async def test_resource_template_discovery(self, openapi_30_server_with_all_types):
         """Test that resource templates are correctly discovered from an OpenAPI 3.0 spec."""
         async with Client(openapi_30_server_with_all_types) as client:
@@ -688,6 +711,7 @@ class TestOpenAPI30Compatibility:
         assert templates[0].name == "getProduct"
         assert templates[0].uriTemplate == r"resource://getProduct/{product_id}"
 
+    @pytest.mark.asyncio
     async def test_tool_discovery(self, openapi_30_server_with_all_types):
         """Test that tools are correctly discovered from an OpenAPI 3.0 spec."""
         async with Client(openapi_30_server_with_all_types) as client:
@@ -697,6 +721,7 @@ class TestOpenAPI30Compatibility:
         assert "name" in tools[0].inputSchema["properties"]
         assert "price" in tools[0].inputSchema["properties"]
 
+    @pytest.mark.asyncio
     async def test_resource_access(self, openapi_30_server_with_all_types):
         """Test reading a resource from an OpenAPI 3.0 server."""
         async with Client(openapi_30_server_with_all_types) as client:
@@ -707,6 +732,7 @@ class TestOpenAPI30Compatibility:
         assert content[0]["name"] == "Product 1"
         assert content[1]["name"] == "Product 2"
 
+    @pytest.mark.asyncio
     async def test_resource_template_access(self, openapi_30_server_with_all_types):
         """Test reading a resource from template from an OpenAPI 3.0 server."""
         async with Client(openapi_30_server_with_all_types) as client:
@@ -717,6 +743,7 @@ class TestOpenAPI30Compatibility:
         assert content["name"] == "Product 1"
         assert content["price"] == 19.99
 
+    @pytest.mark.asyncio
     async def test_tool_execution(self, openapi_30_server_with_all_types):
         """Test executing a tool from an OpenAPI 3.0 server."""
         async with Client(openapi_30_server_with_all_types) as client:
@@ -844,11 +871,13 @@ class TestOpenAPI31Compatibility:
             route_maps=GET_ROUTE_MAPS,
         )
 
+    @pytest.mark.asyncio
     async def test_server_creation(self, openapi_31_server_with_all_types):
         """Test that a server can be created from an OpenAPI 3.1 spec."""
         assert isinstance(openapi_31_server_with_all_types, FastMCP)
         assert openapi_31_server_with_all_types.name == "Order API 3.1"
 
+    @pytest.mark.asyncio
     async def test_resource_discovery(self, openapi_31_server_with_all_types):
         """Test that resources are correctly discovered from an OpenAPI 3.1 spec."""
         async with Client(openapi_31_server_with_all_types) as client:
@@ -856,6 +885,7 @@ class TestOpenAPI31Compatibility:
         assert len(resources) == 1
         assert resources[0].uri == AnyUrl("resource://listOrders")
 
+    @pytest.mark.asyncio
     async def test_resource_template_discovery(self, openapi_31_server_with_all_types):
         """Test that resource templates are correctly discovered from an OpenAPI 3.1 spec."""
         async with Client(openapi_31_server_with_all_types) as client:
@@ -864,6 +894,7 @@ class TestOpenAPI31Compatibility:
         assert templates[0].name == "getOrder"
         assert templates[0].uriTemplate == r"resource://getOrder/{order_id}"
 
+    @pytest.mark.asyncio
     async def test_tool_discovery(self, openapi_31_server_with_all_types):
         """Test that tools are correctly discovered from an OpenAPI 3.1 spec."""
         async with Client(openapi_31_server_with_all_types) as client:
@@ -873,6 +904,7 @@ class TestOpenAPI31Compatibility:
         assert "customer" in tools[0].inputSchema["properties"]
         assert "items" in tools[0].inputSchema["properties"]
 
+    @pytest.mark.asyncio
     async def test_resource_access(self, openapi_31_server_with_all_types):
         """Test reading a resource from an OpenAPI 3.1 server."""
         async with Client(openapi_31_server_with_all_types) as client:
@@ -883,6 +915,7 @@ class TestOpenAPI31Compatibility:
         assert content[0]["customer"] == "Alice"
         assert content[1]["customer"] == "Bob"
 
+    @pytest.mark.asyncio
     async def test_resource_template_access(self, openapi_31_server_with_all_types):
         """Test reading a resource from template from an OpenAPI 3.1 server."""
         async with Client(openapi_31_server_with_all_types) as client:
@@ -893,6 +926,190 @@ class TestOpenAPI31Compatibility:
         assert content["customer"] == "Alice"
         assert content["items"] == ["item1", "item2"]
 
+    @pytest.mark.asyncio
+    async def test_tool_execution(self, openapi_31_server_with_all_types):
+        """Test executing a tool from an OpenAPI 3.1 server."""
+        async with Client(openapi_31_server_with_all_types) as client:
+            result = await client.call_tool(
+                "createOrder", {"customer": "Charlie", "items": ["item4", "item5"]}
+            )
+            # Result should be a text content
+            assert len(result) == 1
+            order = json.loads(result[0].text)  # type: ignore[attr-dict]
+            assert order["id"] == "o3"
+            assert order["customer"] == "Charlie"
+            assert order["items"] == ["item4", "item5"]
+
+
+class TestOpenAPI31Compatibility:
+    """Tests for compatibility with OpenAPI 3.1 specifications."""
+
+    @pytest.fixture
+    def openapi_31_spec(self) -> dict:
+        """Fixture that returns a simple OpenAPI 3.1 specification."""
+        return {
+            "openapi": "3.1.0",
+            "info": {"title": "Order API (3.1)", "version": "1.0.0"},
+            "paths": {
+                "/orders": {
+                    "get": {
+                        "operationId": "listOrders",
+                        "summary": "List all orders",
+                        "responses": {"200": {"description": "A list of orders"}},
+                    },
+                    "post": {
+                        "operationId": "createOrder",
+                        "summary": "Place a new order",
+                        "requestBody": {
+                            "required": True,
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "customer": {"type": "string"},
+                                            "items": {
+                                                "type": "array",
+                                                "items": {"type": "string"},
+                                            },
+                                        },
+                                        "required": ["customer", "items"],
+                                    }
+                                }
+                            },
+                        },
+                        "responses": {"201": {"description": "Order created"}},
+                    },
+                },
+                "/orders/{order_id}": {
+                    "get": {
+                        "operationId": "getOrder",
+                        "summary": "Get order by ID",
+                        "parameters": [
+                            {
+                                "name": "order_id",
+                                "in": "path",
+                                "required": True,
+                                "schema": {"type": "string"},
+                            }
+                        ],
+                        "responses": {"200": {"description": "An order"}},
+                    }
+                },
+            },
+        }
+
+    @pytest.fixture
+    async def mock_31_client(self) -> httpx.AsyncClient:
+        """Mock client that returns predefined responses for the 3.1 API."""
+
+        async def _responder(request):
+            if request.url.path == "/orders" and request.method == "GET":
+                return httpx.Response(
+                    200,
+                    json=[
+                        {"id": "o1", "customer": "Alice", "items": ["item1", "item2"]},
+                        {"id": "o2", "customer": "Bob", "items": ["item3"]},
+                    ],
+                )
+            elif request.url.path == "/orders" and request.method == "POST":
+                import json
+
+                data = json.loads(request.content)
+                return httpx.Response(
+                    201,
+                    json={
+                        "id": "o3",
+                        "customer": data["customer"],
+                        "items": data["items"],
+                    },
+                )
+            elif request.url.path.startswith("/orders/") and request.method == "GET":
+                order_id = request.url.path.split("/")[-1]
+                orders = {
+                    "o1": {
+                        "id": "o1",
+                        "customer": "Alice",
+                        "items": ["item1", "item2"],
+                    },
+                    "o2": {"id": "o2", "customer": "Bob", "items": ["item3"]},
+                }
+                if order_id in orders:
+                    return httpx.Response(200, json=orders[order_id])
+                return httpx.Response(404, json={"error": "Order not found"})
+            return httpx.Response(404)
+
+        transport = httpx.MockTransport(_responder)
+        return httpx.AsyncClient(transport=transport, base_url="http://test")
+
+    @pytest.fixture
+    async def openapi_31_server_with_all_types(
+        self, openapi_31_spec, mock_31_client
+    ) -> FastMCPOpenAPI:
+        """Create a FastMCPOpenAPI server from the OpenAPI 3.1 spec."""
+        return FastMCPOpenAPI(
+            openapi_spec=openapi_31_spec,
+            client=mock_31_client,
+            name="Order API 3.1",
+            route_maps=GET_ROUTE_MAPS,
+        )
+
+    @pytest.mark.asyncio
+    async def test_server_creation(self, openapi_31_server_with_all_types):
+        """Test that a server can be created from an OpenAPI 3.1 spec."""
+        assert isinstance(openapi_31_server_with_all_types, FastMCP)
+        assert openapi_31_server_with_all_types.name == "Order API 3.1"
+
+    @pytest.mark.asyncio
+    async def test_resource_discovery(self, openapi_31_server_with_all_types):
+        """Test that resources are correctly discovered from an OpenAPI 3.1 spec."""
+        async with Client(openapi_31_server_with_all_types) as client:
+            resources = await client.list_resources()
+        assert len(resources) == 1
+        assert resources[0].uri == AnyUrl("resource://listOrders")
+
+    @pytest.mark.asyncio
+    async def test_resource_template_discovery(self, openapi_31_server_with_all_types):
+        """Test that resource templates are correctly discovered from an OpenAPI 3.1 spec."""
+        async with Client(openapi_31_server_with_all_types) as client:
+            templates = await client.list_resource_templates()
+        assert len(templates) == 1
+        assert templates[0].name == "getOrder"
+        assert templates[0].uriTemplate == r"resource://getOrder/{order_id}"
+
+    @pytest.mark.asyncio
+    async def test_tool_discovery(self, openapi_31_server_with_all_types):
+        """Test that tools are correctly discovered from an OpenAPI 3.1 spec."""
+        async with Client(openapi_31_server_with_all_types) as client:
+            tools = await client.list_tools()
+        assert len(tools) == 1
+        assert tools[0].name == "createOrder"
+        assert "customer" in tools[0].inputSchema["properties"]
+        assert "items" in tools[0].inputSchema["properties"]
+
+    @pytest.mark.asyncio
+    async def test_resource_access(self, openapi_31_server_with_all_types):
+        """Test reading a resource from an OpenAPI 3.1 server."""
+        async with Client(openapi_31_server_with_all_types) as client:
+            resource_response = await client.read_resource("resource://listOrders")
+            response_text = resource_response[0].text  # type: ignore[attr-defined]
+            content = json.loads(response_text)
+        assert len(content) == 2
+        assert content[0]["customer"] == "Alice"
+        assert content[1]["customer"] == "Bob"
+
+    @pytest.mark.asyncio
+    async def test_resource_template_access(self, openapi_31_server_with_all_types):
+        """Test reading a resource from template from an OpenAPI 3.1 server."""
+        async with Client(openapi_31_server_with_all_types) as client:
+            resource_response = await client.read_resource("resource://getOrder/o1")
+            response_text = resource_response[0].text  # type: ignore[attr-defined]
+            content = json.loads(response_text)
+        assert content["id"] == "o1"
+        assert content["customer"] == "Alice"
+        assert content["items"] == ["item1", "item2"]
+
+    @pytest.mark.asyncio
     async def test_tool_execution(self, openapi_31_server_with_all_types):
         """Test executing a tool from an OpenAPI 3.1 server."""
         async with Client(openapi_31_server_with_all_types) as client:
@@ -1174,6 +1391,7 @@ class TestDescriptionPropagation:
 
     # --- RESOURCE TESTS ---
 
+    @pytest.mark.asyncio
     async def test_resource_includes_route_description(
         self, simple_mcp_server: FastMCP
     ):
@@ -1188,6 +1406,7 @@ class TestDescriptionPropagation:
             "Route description missing from Resource"
         )
 
+    @pytest.mark.asyncio
     async def test_resource_includes_response_description(
         self, simple_mcp_server: FastMCP
     ):
@@ -1202,6 +1421,7 @@ class TestDescriptionPropagation:
             "Response description missing from Resource"
         )
 
+    @pytest.mark.asyncio
     async def test_resource_includes_response_model_fields(
         self, simple_mcp_server: FastMCP
     ):
@@ -1225,6 +1445,7 @@ class TestDescriptionPropagation:
 
     # --- RESOURCE TEMPLATE TESTS ---
 
+    @pytest.mark.asyncio
     async def test_template_includes_route_description(
         self, simple_mcp_server: FastMCP
     ):
@@ -1240,6 +1461,7 @@ class TestDescriptionPropagation:
             "Route description missing from ResourceTemplate"
         )
 
+    @pytest.mark.asyncio
     async def test_template_includes_function_docstring(
         self, simple_mcp_server: FastMCP
     ):
@@ -1255,6 +1477,7 @@ class TestDescriptionPropagation:
             "Function docstring missing from ResourceTemplate"
         )
 
+    @pytest.mark.asyncio
     async def test_template_includes_path_parameter_description(
         self, simple_mcp_server: FastMCP
     ):
@@ -1270,6 +1493,7 @@ class TestDescriptionPropagation:
             "Path parameter description missing from ResourceTemplate description"
         )
 
+    @pytest.mark.asyncio
     async def test_template_includes_query_parameter_description(
         self, simple_mcp_server: FastMCP
     ):
@@ -1285,6 +1509,7 @@ class TestDescriptionPropagation:
             "Query parameter description missing from ResourceTemplate description"
         )
 
+    @pytest.mark.asyncio
     async def test_template_parameter_schema_includes_description(
         self, simple_mcp_server: FastMCP
     ):
@@ -1312,6 +1537,7 @@ class TestDescriptionPropagation:
 
     # --- TOOL TESTS ---
 
+    @pytest.mark.asyncio
     async def test_tool_includes_route_description(self, simple_mcp_server: FastMCP):
         """Test that a Tool includes the route description."""
         tools_dict = await simple_mcp_server._tool_manager.get_tools()
@@ -1323,6 +1549,7 @@ class TestDescriptionPropagation:
             "Route description missing from Tool"
         )
 
+    @pytest.mark.asyncio
     async def test_tool_includes_function_docstring(self, simple_mcp_server: FastMCP):
         """Test that a Tool includes the function docstring."""
         tools_dict = await simple_mcp_server._tool_manager.get_tools()
@@ -1335,6 +1562,7 @@ class TestDescriptionPropagation:
             "Function docstring missing from Tool"
         )
 
+    @pytest.mark.asyncio
     async def test_tool_parameter_schema_includes_property_description(
         self, simple_mcp_server: FastMCP
     ):
@@ -1360,6 +1588,7 @@ class TestDescriptionPropagation:
 
     # --- CLIENT API TESTS ---
 
+    @pytest.mark.asyncio
     async def test_client_api_resource_description(self, simple_mcp_server: FastMCP):
         """Test that Resource descriptions are accessible via the client API."""
         async with Client(simple_mcp_server) as client:
@@ -1374,6 +1603,7 @@ class TestDescriptionPropagation:
                 "Route description missing in Resource from client API"
             )
 
+    @pytest.mark.asyncio
     async def test_client_api_template_description(self, simple_mcp_server: FastMCP):
         """Test that ResourceTemplate descriptions are accessible via the client API."""
         async with Client(simple_mcp_server) as client:
@@ -1388,6 +1618,7 @@ class TestDescriptionPropagation:
                 "Route description missing in ResourceTemplate from client API"
             )
 
+    @pytest.mark.asyncio
     async def test_client_api_tool_description(self, simple_mcp_server: FastMCP):
         """Test that Tool descriptions are accessible via the client API."""
         async with Client(simple_mcp_server) as client:
@@ -1402,6 +1633,7 @@ class TestDescriptionPropagation:
                 "Function docstring missing in Tool from client API"
             )
 
+    @pytest.mark.asyncio
     async def test_client_api_tool_parameter_schema(self, simple_mcp_server: FastMCP):
         """Test that Tool parameter schemas are accessible via the client API."""
         async with Client(simple_mcp_server) as client:
@@ -1553,6 +1785,7 @@ class TestFastAPIDescriptionPropagation:
 
         return server
 
+    @pytest.mark.asyncio
     async def test_resource_includes_function_docstring(self, fastapi_server: FastMCP):
         """Test that a Resource includes the function docstring."""
         resources_dict = await fastapi_server._resource_manager.get_resources()
@@ -1567,6 +1800,7 @@ class TestFastAPIDescriptionPropagation:
             "Function docstring missing from Resource"
         )
 
+    @pytest.mark.asyncio
     async def test_resource_includes_response_model_fields(
         self, fastapi_server: FastMCP
     ):
@@ -1590,6 +1824,7 @@ class TestFastAPIDescriptionPropagation:
         # We've already verified in TestDescriptionPropagation that when descriptions
         # are present in the OpenAPI schema, they are properly included in the component description
 
+    @pytest.mark.asyncio
     async def test_template_includes_function_docstring(self, fastapi_server: FastMCP):
         """Test that a ResourceTemplate includes the function docstring."""
         templates_dict = await fastapi_server._resource_manager.get_resource_templates()
@@ -1602,6 +1837,7 @@ class TestFastAPIDescriptionPropagation:
             "Function docstring missing from ResourceTemplate"
         )
 
+    @pytest.mark.asyncio
     async def test_template_includes_path_parameter_description(
         self, fastapi_server: FastMCP
     ):
@@ -1625,6 +1861,7 @@ class TestFastAPIDescriptionPropagation:
             "item_id parameter missing from ResourceTemplate description"
         )
 
+    @pytest.mark.asyncio
     async def test_template_includes_query_parameter_description(
         self, fastapi_server: FastMCP
     ):
@@ -1648,6 +1885,7 @@ class TestFastAPIDescriptionPropagation:
             "fields parameter missing from ResourceTemplate description"
         )
 
+    @pytest.mark.asyncio
     async def test_template_parameter_schema_includes_description(
         self, fastapi_server: FastMCP
     ):
@@ -1671,6 +1909,7 @@ class TestFastAPIDescriptionPropagation:
             in get_template.parameters["properties"]["item_id"]["description"]
         ), "Path parameter description incorrect in schema"
 
+    @pytest.mark.asyncio
     async def test_tool_includes_function_docstring(self, fastapi_server: FastMCP):
         """Test that a Tool includes the function docstring."""
         tools_dict = await fastapi_server._tool_manager.get_tools()
@@ -1685,6 +1924,7 @@ class TestFastAPIDescriptionPropagation:
             "Function docstring missing from Tool"
         )
 
+    @pytest.mark.asyncio
     async def test_tool_parameter_schema_includes_property_description(
         self, fastapi_server: FastMCP
     ):
@@ -1709,6 +1949,7 @@ class TestFastAPIDescriptionPropagation:
         )
         # We don't test for the description field content as it may not be consistently propagated
 
+    @pytest.mark.asyncio
     async def test_client_api_resource_description(self, fastapi_server: FastMCP):
         """Test that Resource descriptions are accessible via the client API."""
         async with Client(fastapi_server) as client:
@@ -1723,6 +1964,7 @@ class TestFastAPIDescriptionPropagation:
                 "Function docstring missing in Resource from client API"
             )
 
+    @pytest.mark.asyncio
     async def test_client_api_template_description(self, fastapi_server: FastMCP):
         """Test that ResourceTemplate descriptions are accessible via the client API."""
         async with Client(fastapi_server) as client:
@@ -1739,6 +1981,7 @@ class TestFastAPIDescriptionPropagation:
                 "Function docstring missing in ResourceTemplate from client API"
             )
 
+    @pytest.mark.asyncio
     async def test_client_api_tool_description(self, fastapi_server: FastMCP):
         """Test that Tool descriptions are accessible via the client API."""
         async with Client(fastapi_server) as client:
@@ -1755,6 +1998,7 @@ class TestFastAPIDescriptionPropagation:
                 "Function docstring missing in Tool from client API"
             )
 
+    @pytest.mark.asyncio
     async def test_client_api_tool_parameter_schema(self, fastapi_server: FastMCP):
         """Test that Tool parameter schemas are accessible via the client API."""
         async with Client(fastapi_server) as client:
@@ -1778,6 +2022,7 @@ class TestFastAPIDescriptionPropagation:
 class TestReprMethods:
     """Tests for the custom __repr__ methods of OpenAPI objects."""
 
+    @pytest.mark.asyncio
     async def test_openapi_tool_repr(self, fastmcp_openapi_server: FastMCPOpenAPI):
         """Test that OpenAPITool's __repr__ method works without recursion errors."""
         tools = await fastmcp_openapi_server._tool_manager.list_tools()
@@ -1790,6 +2035,7 @@ class TestReprMethods:
         assert "method=" in tool_repr
         assert "path=" in tool_repr
 
+    @pytest.mark.asyncio
     async def test_openapi_resource_repr(self, fastmcp_openapi_server: FastMCPOpenAPI):
         """Test that OpenAPIResource's __repr__ method works without recursion errors."""
         resources_dict = await fastmcp_openapi_server._resource_manager.get_resources()
@@ -1803,6 +2049,7 @@ class TestReprMethods:
         assert "uri=" in resource_repr
         assert "path=" in resource_repr
 
+    @pytest.mark.asyncio
     async def test_openapi_resource_template_repr(
         self, fastmcp_openapi_server: FastMCPOpenAPI
     ):
@@ -1824,6 +2071,7 @@ class TestReprMethods:
 class TestEnumHandling:
     """Tests for handling enum parameters in OpenAPI schemas."""
 
+    @pytest.mark.asyncio
     async def test_enum_parameter_schema(self):
         """Test that enum parameters are properly handled in tool parameter schemas."""
 
@@ -1934,6 +2182,7 @@ class TestRouteMapWildcard:
         transport = httpx.MockTransport(_responder)
         return httpx.AsyncClient(transport=transport, base_url="http://test")
 
+    @pytest.mark.asyncio
     async def test_wildcard_matches_all_methods(
         self, basic_openapi_spec, mock_basic_client
     ):
@@ -2011,6 +2260,7 @@ class TestRouteMapTags:
         transport = httpx.MockTransport(_responder)
         return httpx.AsyncClient(transport=transport, base_url="http://test")
 
+    @pytest.mark.asyncio
     async def test_tags_as_tools(self, tagged_openapi_spec, mock_client):
         """Test that routes with specific tags are converted to tools."""
         # Convert routes with "admin" tag to tools
@@ -2041,6 +2291,7 @@ class TestRouteMapTags:
         assert "getHealth" in resource_names
         assert "getMetrics" in resource_names
 
+    @pytest.mark.asyncio
     async def test_exclude_tags(self, tagged_openapi_spec, mock_client):
         """Test that routes with specific tags are excluded."""
         # Exclude routes with "internal" tag
@@ -2075,6 +2326,7 @@ class TestRouteMapTags:
         assert "getMetrics" in resource_names
         assert "createUser" in tool_names
 
+    @pytest.mark.asyncio
     async def test_multiple_tags_and_condition(self, tagged_openapi_spec, mock_client):
         """Test that routes must have ALL specified tags (AND condition)."""
         # Routes must have BOTH "users" AND "admin" tags
@@ -2109,6 +2361,7 @@ class TestRouteMapTags:
         assert "getHealth" in resource_names
         assert "getMetrics" in resource_names
 
+    @pytest.mark.asyncio
     async def test_pattern_and_tags_combination(self, tagged_openapi_spec, mock_client):
         """Test that both pattern and tags must be satisfied."""
         # Routes matching pattern AND having specific tags
@@ -2146,6 +2399,7 @@ class TestRouteMapTags:
         assert "getHealth" in resource_names
         assert "getMetrics" in resource_names
 
+    @pytest.mark.asyncio
     async def test_empty_tags_ignored(self, tagged_openapi_spec, mock_client):
         """Test that empty tags set is ignored (matches all routes)."""
         # Empty tags should match all routes
@@ -2249,6 +2503,7 @@ class TestMCPNames:
         transport = httpx.MockTransport(_responder)
         return httpx.AsyncClient(transport=transport, base_url="http://test")
 
+    @pytest.mark.asyncio
     async def test_mcp_names_custom_mapping(self, mcp_names_openapi_spec, mock_client):
         """Test that mcp_names dictionary provides custom names for components."""
         mcp_names = {
@@ -2279,6 +2534,7 @@ class TestMCPNames:
         resource_names = {resource.name for resource in resources_dict.values()}
         assert "user_list" in resource_names
 
+    @pytest.mark.asyncio
     async def test_mcp_names_fallback_to_operation_id_short(
         self, mcp_names_openapi_spec, mock_client
     ):
@@ -2311,6 +2567,7 @@ class TestMCPNames:
         assert "create_user_admin" in tool_names
         assert "get_user_by_id" in template_names
 
+    @pytest.mark.asyncio
     async def test_names_are_slugified(self, mcp_names_openapi_spec, mock_client):
         """Test that names are properly slugified (spaces, special chars removed)."""
         server = FastMCPOpenAPI(
@@ -2338,6 +2595,7 @@ class TestMCPNames:
         assert "%" not in slugified_name
         assert " " not in slugified_name
 
+    @pytest.mark.asyncio
     async def test_names_are_truncated_to_56_chars(
         self, mcp_names_openapi_spec, mock_client
     ):
@@ -2370,6 +2628,7 @@ class TestMCPNames:
         long_name = next((name for name in all_names if len(name) > 50), None)
         assert long_name is not None, "Expected to find a truncated name for testing"
 
+    @pytest.mark.asyncio
     async def test_mcp_names_with_from_openapi_classmethod(
         self, mcp_names_openapi_spec, mock_client
     ):
@@ -2388,6 +2647,7 @@ class TestMCPNames:
         tool_names = {tool.name for tool in tools}
         assert "openapi_user_list" in tool_names
 
+    @pytest.mark.asyncio
     async def test_mcp_names_with_from_fastapi_classmethod(self):
         """Test mcp_names works with FastMCP.from_fastapi() classmethod."""
         from fastapi import FastAPI
@@ -2422,6 +2682,7 @@ class TestMCPNames:
         assert "fastapi_create_user" in tool_names
         assert "fastapi_user_list" in tool_names
 
+    @pytest.mark.asyncio
     async def test_mcp_names_custom_names_are_also_truncated(
         self, mcp_names_openapi_spec, mock_client
     ):
@@ -2498,6 +2759,7 @@ class TestRouteMapMCPTags:
         transport = httpx.MockTransport(_responder)
         return httpx.AsyncClient(transport=transport, base_url="http://test")
 
+    @pytest.mark.asyncio
     async def test_mcp_tags_added_to_tools(self, simple_fastapi_app, mock_client):
         """Test that mcp_tags are added to Tools created from routes."""
         # Create route map that adds custom tags to POST endpoints
@@ -2529,6 +2791,7 @@ class TestRouteMapMCPTags:
         assert "custom" in create_user_tool.tags  # Added via mcp_tags
         assert "api-write" in create_user_tool.tags  # Added via mcp_tags
 
+    @pytest.mark.asyncio
     async def test_mcp_tags_added_to_resources(self, simple_fastapi_app, mock_client):
         """Test that mcp_tags are added to Resources created from routes."""
         # Create route map that adds custom tags to GET endpoints without path params
@@ -2564,6 +2827,7 @@ class TestRouteMapMCPTags:
         assert "list-data" in get_users_resource.tags  # Added via mcp_tags
         assert "public-api" in get_users_resource.tags  # Added via mcp_tags
 
+    @pytest.mark.asyncio
     async def test_mcp_tags_added_to_resource_templates(
         self, simple_fastapi_app, mock_client
     ):
@@ -2599,6 +2863,7 @@ class TestRouteMapMCPTags:
         assert "detail-view" in get_user_template.tags  # Added via mcp_tags
         assert "parameterized" in get_user_template.tags  # Added via mcp_tags
 
+    @pytest.mark.asyncio
     async def test_multiple_route_maps_with_different_mcp_tags(
         self, simple_fastapi_app, mock_client
     ):
@@ -2693,6 +2958,7 @@ class TestGlobalTagsParameter:
         transport = httpx.MockTransport(_responder)
         return httpx.AsyncClient(transport=transport, base_url="http://test")
 
+    @pytest.mark.asyncio
     async def test_from_fastapi_adds_global_tags(self, simple_fastapi_app):
         """Test that from_fastapi adds global tags to all components."""
         global_tags = {"global", "api-v1"}
@@ -2734,6 +3000,7 @@ class TestGlobalTagsParameter:
         assert "global" in get_item_template.tags  # Global tag
         assert "api-v1" in get_item_template.tags  # Global tag
 
+    @pytest.mark.asyncio
     async def test_from_openapi_adds_global_tags(self, simple_fastapi_app, mock_client):
         """Test that from_openapi adds global tags to all components."""
         global_tags = {"openapi-global", "service"}
@@ -2776,6 +3043,7 @@ class TestGlobalTagsParameter:
         assert "openapi-global" in get_item_template.tags  # Global tag
         assert "service" in get_item_template.tags  # Global tag
 
+    @pytest.mark.asyncio
     async def test_global_tags_combine_with_route_map_tags(
         self, simple_fastapi_app, mock_client
     ):

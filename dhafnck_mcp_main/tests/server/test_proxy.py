@@ -86,6 +86,7 @@ async def test_create_proxy(fastmcp_server):
     assert server.name == "FastMCP"
 
 
+@pytest.mark.asyncio
 async def test_as_proxy_with_server(fastmcp_server):
     """FastMCP.as_proxy should accept a FastMCP instance."""
     proxy = FastMCP.as_proxy(fastmcp_server)

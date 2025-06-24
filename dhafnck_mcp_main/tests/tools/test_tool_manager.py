@@ -100,6 +100,7 @@ class TestAddTools:
         assert tool.parameters["properties"]["x"]["type"] == "integer"
         assert tool.parameters["properties"]["y"]["type"] == "integer"
 
+    @pytest.mark.asyncio
     async def test_async_callable_object(self):
         class Adder:
             """Adds two numbers."""
@@ -120,6 +121,7 @@ class TestAddTools:
         assert tool.parameters["properties"]["x"]["type"] == "integer"
         assert tool.parameters["properties"]["y"]["type"] == "integer"
 
+    @pytest.mark.asyncio
     async def test_tool_with_image_return(self):
         def image_tool(data: bytes) -> Image:
             return Image(data=data)
@@ -349,6 +351,7 @@ class TestToolTags:
 
 
 class TestCallTools:
+    @pytest.mark.asyncio
     async def test_call_tool(self):
         def add(a: int, b: int) -> int:
             """Add two numbers."""
@@ -361,6 +364,7 @@ class TestCallTools:
 
         assert result[0].text == "3"  # type: ignore[attr-defined]
 
+    @pytest.mark.asyncio
     async def test_call_async_tool(self):
         async def double(n: int) -> int:
             """Double a number."""
@@ -880,6 +884,7 @@ class TestToolErrorHandling:
         assert "Error calling tool 'buggy_tool'" in str(excinfo.value)
         assert "Internal error details" not in str(excinfo.value)
 
+    @pytest.mark.asyncio
     async def test_async_tool_error_passthrough(self):
         """Test that ToolErrors from async tools are passed through directly."""
         manager = ToolManager()
@@ -893,6 +898,7 @@ class TestToolErrorHandling:
         with pytest.raises(ToolError, match="Async tool error"):
             await manager.call_tool("async_error_tool", {"x": 42})
 
+    @pytest.mark.asyncio
     async def test_async_exception_converted_to_tool_error_with_details(self):
         """Test that other exceptions from async tools include details by default."""
         manager = ToolManager()
@@ -910,6 +916,7 @@ class TestToolErrorHandling:
         assert "Error calling tool 'async_buggy_tool'" in str(excinfo.value)
         assert "Internal async error details" in str(excinfo.value)
 
+    @pytest.mark.asyncio
     async def test_async_exception_converted_to_masked_tool_error(self):
         """Test that other exceptions from async tools are masked when enabled."""
         manager = ToolManager(mask_error_details=True)

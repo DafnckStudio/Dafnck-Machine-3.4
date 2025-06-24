@@ -37,6 +37,7 @@ class TestToolFromFunction:
         assert tool.parameters["properties"]["a"]["type"] == "integer"
         assert tool.parameters["properties"]["b"]["type"] == "integer"
 
+    @pytest.mark.asyncio
     async def test_async_function(self):
         """Test registering and running an async function."""
 
@@ -177,6 +178,7 @@ class TestToolFromFunction:
         ):
             Tool.from_function(func)
 
+    @pytest.mark.asyncio
     async def test_instance_method(self):
         class MyClass:
             def add(self, x: int, y: int) -> int:
@@ -190,6 +192,7 @@ class TestToolFromFunction:
         assert tool.description == "Add two numbers."
         assert "self" not in tool.parameters["properties"]
 
+    @pytest.mark.asyncio
     async def test_instance_method_with_varargs_not_allowed(self):
         class MyClass:
             def add(self, x: int, y: int, *args: int) -> int:
@@ -203,6 +206,7 @@ class TestToolFromFunction:
         ):
             Tool.from_function(obj.add)
 
+    @pytest.mark.asyncio
     async def test_instance_method_with_varkwargs_not_allowed(self):
         class MyClass:
             def add(self, x: int, y: int, **kwargs: int) -> int:
