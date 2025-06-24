@@ -15,14 +15,14 @@ from fastmcp.tools.tool_path import find_project_root
 # Configure logging
 logger = logging.getLogger(__name__)
 
-# Application layer imports (use cases and service)
+# Application layer imports
 from fastmcp.task_management.application import (
     TaskApplicationService,
     DoNextUseCase,
     CallAgentUseCase
 )
 
-# DTO imports - use module-level imports to avoid conflicts
+# DTO imports
 from fastmcp.task_management.application.dtos import (
     CreateTaskRequest,
     UpdateTaskRequest,
@@ -56,9 +56,13 @@ from fastmcp.task_management.domain.entities.task_tree import TaskTree as TaskTr
 from fastmcp.task_management.domain.entities.task import Task
 from fastmcp.task_management.domain.services.orchestrator import Orchestrator
 
-# Constants and Configuration
+# Constants
 PROJECT_ROOT = find_project_root()
 
+
+# ═══════════════════════════════════════════════════════════════════
+# 🛠️ CONFIGURATION AND PATH MANAGEMENT
+# ═══════════════════════════════════════════════════════════════════
 
 class PathResolver:
     """Handles path resolution and directory management"""
@@ -74,6 +78,7 @@ class PathResolver:
         
     def ensure_brain_dir(self):
         os.makedirs(self.brain_dir, exist_ok=True)
+
 
 class ProjectManager:
     """Manages project lifecycle and multi-agent coordination"""
@@ -328,12 +333,24 @@ class ProjectManager:
 
 
 class ToolConfig:
-    """Manages tool configuration and enablement"""
+    """Manages MCP tool configuration and enablement settings"""
+    
+    DEFAULT_CONFIG = {
+        "enabled_tools": {
+            "manage_project": True, "manage_task": True, "manage_subtask": True,
+            "manage_agent": True, "call_agent": True, "update_auto_rule": True,
+            "validate_rules": True, "manage_cursor_rules": True,
+            "regenerate_auto_rule": True, "validate_tasks_json": True
+        },
+        "debug_mode": False, 
+        "tool_logging": False
+    }
     
     def __init__(self):
         self.config = self._load_config()
         
     def _load_config(self) -> Dict[str, Any]:
+        """Load configuration from environment or use defaults"""
         config_path = os.environ.get('MCP_TOOL_CONFIG')
         if config_path and os.path.exists(config_path):
             try:
@@ -342,64 +359,357 @@ class ToolConfig:
             except Exception as e:
                 logger.warning(f"Failed to load config from {config_path}: {e}")
         
-        return {
-            "enabled_tools": {
-                "manage_project": True, "manage_task": True, "manage_subtask": True,
-                "manage_agent": True, "call_agent": True, "update_auto_rule": True,
-                "validate_rules": True, "manage_cursor_rules": True,
-                "regenerate_auto_rule": True, "validate_tasks_json": True
-            },
-            "debug_mode": False, "tool_logging": False
-        }
+        return self.DEFAULT_CONFIG.copy()
         
     def is_enabled(self, tool_name: str) -> bool:
+        """Check if a specific tool is enabled"""
         return self.config.get("enabled_tools", {}).get(tool_name, True)
-
-
-class ConsolidatedMCPToolsV2:
-    """Main MCP tools interface with clean architecture"""
     
-    def __init__(self, task_repository: Optional[TaskRepository] = None, projects_file_path: Optional[str] = None):
-        logger.info("Initializing ConsolidatedMCPToolsV2...")
-        
-        # Initialize configuration
-        self._config = ToolConfig()
-        
-        # Initialize repositories
-        self._task_repository = self._init_task_repository(task_repository)
-        self._auto_rule_generator = FileAutoRuleGenerator()
-        
-        # Initialize services
-        self._task_app_service = TaskApplicationService(
-            task_repository=self._task_repository,
-            auto_rule_generator=self._auto_rule_generator
-        )
-        
-        # Initialize components
-        self._path_resolver = PathResolver()
-        self._project_manager = ProjectManager(self._path_resolver, projects_file_path)
-        self._call_agent_use_case = CallAgentUseCase(PROJECT_ROOT / 'yaml-lib')
-        logger.info("ConsolidatedMCPToolsV2 initialized successfully.")
-        
-    def _init_task_repository(self, task_repository: Optional[TaskRepository]) -> TaskRepository:
-        if task_repository:
-            return task_repository
-            
-        tasks_file_path = os.environ.get('TASKS_JSON_PATH')
-        if tasks_file_path:
-            logger.info(f"Found TASKS_JSON_PATH: {tasks_file_path}")
-            return JsonTaskRepository(file_path=tasks_file_path)
+    def get_enabled_tools(self) -> Dict[str, bool]:
+        """Get all enabled tools configuration"""
+        return self.config.get("enabled_tools", {})
+
+
+# ═══════════════════════════════════════════════════════════════════
+# 🔧 OPERATION HANDLERS
+# ═══════════════════════════════════════════════════════════════════
+
+class TaskOperationHandler:
+    """Handles all task-related operations and business logic"""
+    
+    def __init__(self, task_app_service: TaskApplicationService, auto_rule_generator: AutoRuleGenerator):
+        self._task_app_service = task_app_service
+        self._auto_rule_generator = auto_rule_generator
+    
+    def handle_core_operations(self, action, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date, project_id=None, force_full_generation=False):
+        """Handle core CRUD operations for tasks"""
+        logger.debug(f"Handling task action '{action}' with task_id '{task_id}'")
+
+        if labels:
+            try:
+                labels = LabelValidator.validate_labels(labels)
+            except ValueError as e:
+                return {"success": False, "error": f"Invalid label(s) provided: {e}"}
+
+        try:
+            if action == "create":
+                return self._create_task(title, description, project_id, status, priority, details, estimated_effort, assignees, labels, due_date)
+            elif action == "update":
+                return self._update_task(task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date)
+            elif action == "get":
+                task_response = self._task_app_service.get_task(task_id, generate_rules=True, force_full_generation=force_full_generation)
+                if task_response:
+                    return {"success": True, "action": "get", "task": asdict(task_response)}
+                else:
+                    return {"success": False, "action": "get", "error": f"Task with ID {task_id} not found."}
+            elif action == "delete":
+                success = self._task_app_service.delete_task(task_id)
+                if success:
+                    return {"success": True, "action": "delete"}
+                else:
+                    return {"success": False, "action": "delete", "error": f"Task with ID {task_id} not found."}
+            elif action == "complete":
+                return self._complete_task(task_id)
+            else:
+                return {"success": False, "error": f"Invalid core action: {action}"}
+        except TaskNotFoundError as e:
+            return {"success": False, "error": str(e)}
+        except ValueError as e:
+            return {"success": False, "error": str(e)}
+        except AutoRuleGenerationError as e:
+            logger.warning(f"Auto rule generation failed: {e}")
+            return {"success": False, "error": str(e)}
+        except Exception as e:
+            logger.error(f"An unexpected error occurred in core operations: {e}\n{traceback.format_exc()}")
+            return {"success": False, "error": f"An unexpected error occurred: {str(e)}"}
+    
+    def handle_list_search_next(self, action, status, priority, assignees, labels, limit, query):
+        """Handle list, search, and next actions"""
+        if action == "list":
+            return self._list_tasks(status, priority, assignees, labels, limit)
+        elif action == "search":
+            return self._search_tasks(query, limit)
+        elif action == "next":
+            return self._get_next_task()
         else:
-            logger.warning("TASKS_JSON_PATH not set, using default.")
-            return JsonTaskRepository()
+            return {"success": False, "error": "Invalid action for list/search/next"}
     
+    def handle_dependency_operations(self, action, task_id, dependency_data=None):
+        """Handle dependency operations (add, remove, get, clear, get_blocking)"""
+        if not task_id:
+            return {"success": False, "error": "task_id is required for dependency operations"}
+        try:
+            if action == "add_dependency":
+                if not dependency_data or "dependency_id" not in dependency_data:
+                    return {"success": False, "error": "dependency_data with dependency_id is required"}
+                
+                request = AddDependencyRequest(task_id=task_id, dependency_id=dependency_data["dependency_id"])
+                response = self._task_app_service.add_dependency(request)
+                return {"success": response.success, "action": "add_dependency", "task_id": response.task_id, "dependencies": response.dependencies, "message": response.message}
+            elif action == "remove_dependency":
+                if not dependency_data or "dependency_id" not in dependency_data:
+                    return {"success": False, "error": "dependency_data with dependency_id is required"}
+                response = self._task_app_service.remove_dependency(task_id, dependency_data["dependency_id"])
+                return {"success": response.success, "action": "remove_dependency", "task_id": response.task_id, "dependencies": response.dependencies, "message": response.message}
+            elif action == "get_dependencies":
+                response = self._task_app_service.get_dependencies(task_id)
+                return {"success": True, "action": "get_dependencies", **response}
+            elif action == "clear_dependencies":
+                response = self._task_app_service.clear_dependencies(task_id)
+                return {"success": response.success, "action": "clear_dependencies", "task_id": response.task_id, "dependencies": response.dependencies, "message": response.message}
+            elif action == "get_blocking_tasks":
+                response = self._task_app_service.get_blocking_tasks(task_id)
+                return {"success": True, "action": "get_blocking_tasks", **response}
+            else:
+                return {"success": False, "error": f"Unknown dependency action: {action}"}
+        except Exception as e:
+            return {"success": False, "error": f"Dependency operation failed: {str(e)}"}
     
-    def register_tools(self, mcp: FastMCP):
-        """Register all consolidated MCP tools in three logical categories"""
-        logger.info("Registering tools in ConsolidatedMCPToolsV2...")
+    def handle_subtask_operations(self, action, task_id, subtask_data=None):
+        """Handle subtask operations"""
+        logging.info(f"Subtask operation action: {action}, task_id: {task_id}, subtask_data: {subtask_data}")
+        if not task_id:
+            return {"success": False, "error": "task_id is required for subtask operations"}
         
-        # Log enabled tools
-        enabled_tools = self._config.config.get("enabled_tools", {})
+        try:
+            response = self._task_app_service.manage_subtasks(task_id, action, subtask_data or {})
+            logging.info(f"Subtask operation result: {response}")
+            
+            if action in ["add_subtask", "add"]:
+                if isinstance(response, dict) and "subtask" in response:
+                    return {
+                        "success": True, 
+                        "action": action, 
+                        "result": {
+                            "subtask": response["subtask"],
+                            "progress": response.get("progress", {})
+                        }
+                    }
+                else:
+                    return {"success": True, "action": action, "result": response}
+            elif action in ["list_subtasks", "list"]:
+                if isinstance(response, dict) and "subtasks" in response:
+                    return {
+                        "success": True, 
+                        "action": action, 
+                        "result": response["subtasks"],
+                        "progress": response.get("progress", {})
+                    }
+                else:
+                    return {"success": True, "action": action, "result": response}
+            else:
+                return {"success": True, "action": action, "result": response}
+                
+        except Exception as e:
+            logging.error(f"Error handling subtask operation: {e}")
+            return {"success": False, "error": f"Subtask operation failed: {str(e)}"}
+    
+    # Private helper methods
+    def _create_task(self, title, description, project_id, status, priority, details, estimated_effort, assignees, labels, due_date):
+        """Create a new task"""
+        if not title:
+            return {"success": False, "error": "Title is required for creating a task."}
+        
+        request = CreateTaskRequest(
+            title=title,
+            description=description,
+            project_id=project_id,
+            status=status,
+            priority=priority,
+            details=details,
+            estimated_effort=estimated_effort,
+            assignees=assignees,
+            labels=labels,
+            due_date=due_date
+        )
+        response = self._task_app_service.create_task(request)
+        logging.info(f"Create task response: {response}")
+
+        is_success = getattr(response, 'success', False)
+        task_data = getattr(response, 'task', None)
+        error_message = getattr(response, 'message', 'Unknown error')
+
+        if is_success and task_data is not None:
+            return {
+                "success": True,
+                "action": "create",
+                "task": asdict(task_data) if not isinstance(task_data, dict) else task_data
+            }
+        else:
+            return {
+                "success": False,
+                "action": "create",
+                "error": error_message
+            }
+    
+    def _update_task(self, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date):
+        """Update an existing task"""
+        if task_id is None:
+            return {"success": False, "error": "Task ID is required for update action"}
+        
+        try:
+            if labels:
+                labels = LabelValidator.validate_labels(labels)
+        except ValueError as e:
+            return {"success": False, "error": f"Invalid label(s) provided: {e}"}
+
+        request = UpdateTaskRequest(
+            task_id=task_id,
+            title=title,
+            description=description,
+            status=status,
+            priority=priority,
+            details=details,
+            estimated_effort=estimated_effort,
+            assignees=assignees,
+            labels=labels,
+            due_date=due_date
+        )
+        response = self._task_app_service.update_task(request)
+
+        is_success = False
+        task_data = None
+        error_message = f"Task with ID {task_id} not found."
+
+        if response:
+            is_success = getattr(response, 'success', False)
+            task_data = getattr(response, 'task', None)
+            error_message = getattr(response, 'message', error_message)
+
+        if is_success and task_data is not None:
+            return {
+                "success": True,
+                "action": "update",
+                "task_id": task_id,
+                "task": asdict(task_data) if not isinstance(task_data, dict) else task_data
+            }
+        
+        return {"success": False, "action": "update", "error": error_message}
+    
+    def _complete_task(self, task_id):
+        """Complete a task"""
+        if not task_id:
+            return {"success": False, "error": "task_id is required for completing a task"}
+        try:
+            response = self._task_app_service.complete_task(task_id)
+            if response.get("success"):
+                response["action"] = "complete"
+            return response
+        except TaskNotFoundError:
+            return {"success": False, "error": f"Task with ID {task_id} not found."}
+        except Exception as e:
+            logger.error(f"Error completing task {task_id}: {e}")
+            return {"success": False, "error": str(e)}
+    
+    def _list_tasks(self, status, priority, assignees, labels, limit):
+        """List tasks with optional filters"""
+        try:
+            request = ListTasksRequest(
+                status=status,
+                priority=priority,
+                assignees=assignees,
+                labels=labels,
+                limit=limit
+            )
+            
+            response = self._task_app_service.list_tasks(request)
+            return {
+                "success": True,
+                "tasks": [
+                    {
+                        "id": task.id,
+                        "title": task.title,
+                        "description": task.description,
+                        "status": task.status,
+                        "priority": task.priority,
+                        "assignees": task.assignees,
+                        "labels": task.labels
+                    }
+                    for task in response.tasks
+                ],
+                "count": len(response.tasks)
+            }
+        except Exception as e:
+            return {"success": False, "error": f"Failed to list tasks: {str(e)}"}
+    
+    def _search_tasks(self, query, limit):
+        """Search tasks by query"""
+        if not query:
+            return {"success": False, "error": "query is required for searching tasks"}
+        
+        try:
+            request = SearchTasksRequest(query=query, limit=limit or 10)
+            response = self._task_app_service.search_tasks(request)
+            
+            return {
+                "success": True,
+                "tasks": [
+                    {
+                        "id": task.id,
+                        "title": task.title,
+                        "description": task.description,
+                        "status": task.status,
+                        "priority": task.priority,
+                        "assignees": task.assignees,
+                        "labels": task.labels
+                    }
+                    for task in response.tasks
+                ],
+                "count": len(response.tasks),
+                "query": query
+            }
+        except Exception as e:
+            return {"success": False, "error": f"Failed to search tasks: {str(e)}"}
+    
+    def _get_next_task(self):
+        """Get next recommended task"""
+        try:
+            do_next_use_case = DoNextUseCase(self._task_app_service._task_repository, self._auto_rule_generator)
+            response = do_next_use_case.execute()
+            
+            if response.has_next and response.next_item:
+                return {
+                    "success": True,
+                    "action": "next",
+                    "next_item": response.next_item,
+                    "message": response.message
+                }
+            else:
+                return {
+                    "success": True,
+                    "action": "next",
+                    "next_item": None,
+                    "message": response.message,
+                    "context": response.context if response.context else None
+                }
+        except Exception as e:
+            return {"success": False, "error": f"Failed to get next task: {str(e)}"}
+
+
+class ToolRegistrationOrchestrator:
+    """Orchestrates the registration of all MCP tools"""
+    
+    def __init__(self, config: ToolConfig, task_handler: TaskOperationHandler, project_manager: ProjectManager, call_agent_use_case: CallAgentUseCase):
+        self._config = config
+        self._task_handler = task_handler
+        self._project_manager = project_manager
+        self._call_agent_use_case = call_agent_use_case
+    
+    def register_all_tools(self, mcp: FastMCP):
+        """Register all MCP tools in organized categories"""
+        logger.info("Registering tools via ToolRegistrationOrchestrator...")
+        
+        self._log_configuration()
+        self._register_project_tools(mcp)
+        self._register_task_tools(mcp)
+        self._register_agent_tools(mcp)
+        self._register_cursor_tools(mcp)
+        
+        logger.info("Finished registering all tools.")
+    
+    def _log_configuration(self):
+        """Log current tool configuration"""
+        enabled_tools = self._config.get_enabled_tools()
         enabled_count = sum(1 for enabled in enabled_tools.values() if enabled)
         total_count = len(enabled_tools)
         logger.info(f"Tool configuration: {enabled_count}/{total_count} tools enabled")
@@ -407,11 +717,9 @@ class ConsolidatedMCPToolsV2:
         for tool_name, enabled in enabled_tools.items():
             status = "ENABLED" if enabled else "DISABLED"
             logger.info(f"  - {tool_name}: {status}")
-        
-        # ═══════════════════════════════════════════════════════════════════
-        # 🏗️ PROJECT MANAGEMENT - High-level orchestration and coordination
-        # ═══════════════════════════════════════════════════════════════════
-        
+    
+    def _register_project_tools(self, mcp: FastMCP):
+        """Register project management tools"""
         if self._config.is_enabled("manage_project"):
             @mcp.tool()
             def manage_project(
@@ -472,11 +780,9 @@ class ConsolidatedMCPToolsV2:
             logger.info("Registered manage_project tool")
         else:
             logger.info("Skipped manage_project tool (disabled)")
-        
-        # ═══════════════════════════════════════════════════════════════════
-        # 📋 TASK MANAGEMENT - Granular work item lifecycle and workflow  
-        # ═══════════════════════════════════════════════════════════════════
-        
+    
+    def _register_task_tools(self, mcp: FastMCP):
+        """Register task management tools"""
         if self._config.is_enabled("manage_task"):
             @mcp.tool()
             def manage_task(
@@ -508,7 +814,7 @@ class ConsolidatedMCPToolsV2:
                 dependency_actions = ["add_dependency", "remove_dependency"]
 
                 if action in core_actions:
-                    return self._handle_core_task_operations(
+                    return self._task_handler.handle_core_operations(
                         action=action, task_id=task_id, title=title, description=description,
                         status=status, priority=priority, details=details,
                         estimated_effort=estimated_effort, assignees=assignees,
@@ -517,13 +823,13 @@ class ConsolidatedMCPToolsV2:
                     )
                 
                 elif action in list_search_actions:
-                    return self._handle_list_search_next(
+                    return self._task_handler.handle_list_search_next(
                         action=action, status=status, priority=priority, assignees=assignees,
                         labels=labels, limit=limit, query=query
                     )
 
                 elif action in dependency_actions:
-                    return self._handle_dependency_operations(
+                    return self._task_handler.handle_dependency_operations(
                         action=action, task_id=task_id, dependency_data=dependency_data
                     )
                 
@@ -552,23 +858,21 @@ class ConsolidatedMCPToolsV2:
                     return {"success": False, "error": "task_id is required"}
 
                 try:
-                    result = self._handle_subtask_operations(action, task_id, subtask_data)
+                    result = self._task_handler.handle_subtask_operations(action, task_id, subtask_data)
                     return result
                 except (ValueError, TypeError, TaskNotFoundError) as e:
                     logging.error(f"Error managing subtask: {e}")
                     return {"success": False, "error": str(e)}
                 except Exception as e:
-                    logging.error(f"Unexpected error in manage_subtask: {e}\\n{traceback.format_exc()}")
+                    logging.error(f"Unexpected error in manage_subtask: {e}\n{traceback.format_exc()}")
                     return {"success": False, "error": f"An unexpected error occurred: {e}"}
 
             logger.info("Registered manage_subtask tool")
         else:
             logger.info("Skipped manage_subtask tool (disabled)")
-        
-        # ═══════════════════════════════════════════════════════════════════
-        # 🤖 AGENT MANAGEMENT - Multi-agent coordination and assignment
-        # ═══════════════════════════════════════════════════════════════════
-        
+    
+    def _register_agent_tools(self, mcp: FastMCP):
+        """Register agent management tools"""
         if self._config.is_enabled("manage_agent"):
             @mcp.tool()
             def manage_agent(
@@ -607,7 +911,6 @@ class ConsolidatedMCPToolsV2:
                 elif action == "get":
                     if not project_id or not agent_id:
                         return {"success": False, "error": "project_id and agent_id are required"}
-                    # Get agent details from project
                     project_response = self._project_manager.get_project(project_id)
                     if not project_response.get("success"):
                         return project_response
@@ -655,7 +958,6 @@ class ConsolidatedMCPToolsV2:
                     if not project_id or not agent_id:
                         return {"success": False, "error": "project_id and agent_id are required"}
                     
-                    # Get current project
                     project_response = self._project_manager.get_project(project_id)
                     if not project_response.get("success"):
                         return project_response
@@ -664,14 +966,12 @@ class ConsolidatedMCPToolsV2:
                     if agent_id not in agents:
                         return {"success": False, "error": f"Agent {agent_id} not found in project {project_id}"}
                     
-                    # Update agent with new values
                     agent_data = agents[agent_id]
                     if name:
                         agent_data["name"] = name
                     if call_agent:
                         agent_data["call_agent"] = call_agent
                     
-                    # Save and return updated agent
                     self._project_manager._save_projects()
                     return {"success": True, "agent": agent_data}
                     
@@ -679,7 +979,6 @@ class ConsolidatedMCPToolsV2:
                     if not project_id or not agent_id:
                         return {"success": False, "error": "project_id and agent_id are required"}
                     
-                    # Get current project
                     project_response = self._project_manager.get_project(project_id)
                     if not project_response.get("success"):
                         return project_response
@@ -690,15 +989,12 @@ class ConsolidatedMCPToolsV2:
                     if agent_id not in agents:
                         return {"success": False, "error": f"Agent {agent_id} not found in project {project_id}"}
                     
-                    # Remove agent and any assignments
                     removed_agent = agents.pop(agent_id)
                     
-                    # Remove from assignments
                     assignments = project_data.get("agent_assignments", {})
                     assignments = {k: v for k, v in assignments.items() if v != agent_id}
                     project_data["agent_assignments"] = assignments
                     
-                    # Save changes
                     self._project_manager._save_projects()
                     return {"success": True, "message": f"Agent {agent_id} unregistered", "removed_agent": removed_agent}
                     
@@ -714,18 +1010,6 @@ class ConsolidatedMCPToolsV2:
         else:
             logger.info("Skipped manage_agent tool (disabled)")
 
-        # Register Cursor Rules Tools for additional functionality (conditional)
-        cursor_tools = ["update_auto_rule", "validate_rules", "manage_cursor_rules", "regenerate_auto_rule", "validate_tasks_json"]
-        enabled_cursor_tools = [tool for tool in cursor_tools if self._config.is_enabled(tool)]
-        
-        if enabled_cursor_tools:
-            logger.info(f"Registering {len(enabled_cursor_tools)} cursor rules tools")
-            # Create a filtered config for cursor tools and register conditionally
-            self._register_cursor_tools_conditionally(mcp, enabled_cursor_tools)
-        else:
-            logger.info("Skipped all cursor rules tools (all disabled)")
-
-        # Register Agent Information Tool
         if self._config.is_enabled("call_agent"):
             @mcp.tool()
             def call_agent(
@@ -743,7 +1027,6 @@ class ConsolidatedMCPToolsV2:
                 """
                 try:
                     result = self._call_agent_use_case.execute(name_agent)
-                    # If the result contains suggestions, format them for better display
                     if not result.get("success") and "available_agents" in result:
                         result["formatted_message"] = f"{result['error']}\n\n{result['suggestion']}"
                     return result
@@ -754,336 +1037,69 @@ class ConsolidatedMCPToolsV2:
             logger.info("Registered call_agent tool")
         else:
             logger.info("Skipped call_agent tool (disabled)")
-
-        logger.info("Finished registering all tools.")
-
-    def _register_cursor_tools_conditionally(self, mcp, enabled_tools):
-        """Register only enabled cursor rules tools"""
-        from .cursor_rules_tools import CursorRulesTools
-        
-        # Create a temporary cursor tools instance just to access the individual tool methods
-        temp_cursor_tools = CursorRulesTools()
-        
-        # For now, register all cursor tools since they're in one method
-        # TODO: Split CursorRulesTools.register_tools into individual methods
-        if enabled_tools:
-            temp_cursor_tools.register_tools(mcp)
-            for tool in enabled_tools:
-                logger.info(f"  - Registered {tool}")
-
-    # ═══════════════════════════════════════════════════════════════════
-    # 🔧 HELPER METHODS - Internal routing and operation handling
-    # ═══════════════════════════════════════════════════════════════════
     
-    def _handle_core_task_operations(self, action, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date, project_id=None, force_full_generation=False):
-        """Helper to manage core CRUD operations for tasks"""
-        logger.debug(f"Handling task action '{action}' with task_id '{task_id}'")
-
-        if labels:
-            try:
-                labels = LabelValidator.validate_labels(labels)
-            except ValueError as e:
-                return {"success": False, "error": f"Invalid label(s) provided: {e}"}
-
-        try:
-            if action == "create":
-                return self._core_create_task(title, description, project_id, status, priority, details, estimated_effort, assignees, labels, due_date)
-            elif action == "update":
-                return self._core_update_task(task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date)
-            elif action == "get":
-                task_response = self._task_app_service.get_task(task_id, generate_rules=True, force_full_generation=force_full_generation)
-                if task_response:
-                    return {"success": True, "action": "get", "task": asdict(task_response)}
-                else:
-                    return {"success": False, "action": "get", "error": f"Task with ID {task_id} not found."}
-            elif action == "delete":
-                success = self._task_app_service.delete_task(task_id)
-                if success:
-                    return {"success": True, "action": "delete"}
-                else:
-                    return {"success": False, "action": "delete", "error": f"Task with ID {task_id} not found."}
-            elif action == "complete":
-                return self._handle_complete_task(task_id)
-            else:
-                return {"success": False, "error": f"Invalid core action: {action}"}
-        except TaskNotFoundError as e:
-            return {"success": False, "error": str(e)}
-        except ValueError as e:
-            # Catches validation errors for labels, etc.
-            return {"success": False, "error": str(e)}
-        except AutoRuleGenerationError as e:
-            logger.warning(f"Auto rule generation failed: {e}")
-            return {"success": False, "error": str(e)}
-        except Exception as e:
-            logger.error(f"An unexpected error occurred in _handle_core_task_operations: {e}\n{traceback.format_exc()}")
-            return {"success": False, "error": f"An unexpected error occurred: {str(e)}"}
-
-    def _core_create_task(self, title, description, project_id, status, priority, details, estimated_effort, assignees, labels, due_date):
-        if not title:
-            return {"success": False, "error": "Title is required for creating a task."}
+    def _register_cursor_tools(self, mcp: FastMCP):
+        """Register cursor rules tools conditionally"""
+        cursor_tools = ["update_auto_rule", "validate_rules", "manage_cursor_rules", "regenerate_auto_rule", "validate_tasks_json"]
+        enabled_cursor_tools = [tool for tool in cursor_tools if self._config.is_enabled(tool)]
         
-        request = CreateTaskRequest(
-            title=title,
-            description=description,
-            project_id=project_id,
-            status=status,
-            priority=priority,
-            details=details,
-            estimated_effort=estimated_effort,
-            assignees=assignees,
-            labels=labels,
-            due_date=due_date
-        )
-        response = self._task_app_service.create_task(request)
-        logging.info(f"Create task response: {response}")
-
-        # Defensive: Always access nested attributes, never direct task_id
-        is_success = getattr(response, 'success', False)
-        task_data = getattr(response, 'task', None)
-        error_message = getattr(response, 'message', 'Unknown error')
-
-        if is_success and task_data is not None:
-            # Defensive: If task_data is a dataclass, convert to dict
-            return {
-                "success": True,
-                "action": "create",
-                "task": asdict(task_data) if not isinstance(task_data, dict) else task_data
-            }
+        if enabled_cursor_tools:
+            logger.info(f"Registering {len(enabled_cursor_tools)} cursor rules tools")
+            temp_cursor_tools = CursorRulesTools()
+            temp_cursor_tools.register_tools(mcp)
+            for tool in enabled_cursor_tools:
+                logger.info(f"  - Registered {tool}")
         else:
-            return {
-                "success": False,
-                "action": "create",
-                "error": error_message
-            }
+            logger.info("Skipped all cursor rules tools (all disabled)")
 
-    def _core_update_task(self, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date):
-        """Core logic to update a task."""
-        if task_id is None:
-            return {"success": False, "error": "Task ID is required for update action"}
+
+# ═══════════════════════════════════════════════════════════════════
+# 🏗️ MAIN CONSOLIDATED TOOLS CLASS
+# ═══════════════════════════════════════════════════════════════════
+
+class ConsolidatedMCPToolsV2:
+    """Main MCP tools interface with clean architecture and separated concerns"""
+    
+    def __init__(self, task_repository: Optional[TaskRepository] = None, projects_file_path: Optional[str] = None):
+        logger.info("Initializing ConsolidatedMCPToolsV2...")
         
-        try:
-            if labels:
-                labels = LabelValidator.validate_labels(labels)
-        except ValueError as e:
-            return {"success": False, "error": f"Invalid label(s) provided: {e}"}
-
-        request = UpdateTaskRequest(
-            task_id=task_id,
-            title=title,
-            description=description,
-            status=status,
-            priority=priority,
-            details=details,
-            estimated_effort=estimated_effort,
-            assignees=assignees,
-            labels=labels,
-            due_date=due_date
+        # Initialize configuration and paths
+        self._config = ToolConfig()
+        self._path_resolver = PathResolver()
+        
+        # Initialize repositories and services
+        self._task_repository = self._init_task_repository(task_repository)
+        self._auto_rule_generator = FileAutoRuleGenerator()
+        self._task_app_service = TaskApplicationService(
+            task_repository=self._task_repository,
+            auto_rule_generator=self._auto_rule_generator
         )
-        response = self._task_app_service.update_task(request)
-
-        is_success = False
-        task_data = None
-        error_message = f"Task with ID {task_id} not found."
-
-        if response:
-            is_success = getattr(response, 'success', False)
-            task_data = getattr(response, 'task', None)
-            error_message = getattr(response, 'message', error_message)
-
-        if is_success and task_data is not None:
-            return {
-                "success": True,
-                "action": "update",
-                "task_id": task_id,
-                "task": asdict(task_data) if not isinstance(task_data, dict) else task_data
-            }
         
-        return {"success": False, "action": "update", "error": error_message}
-
-    def _handle_complete_task(self, task_id):
-        """Handle completing a task"""
-        if not task_id:
-            return {"success": False, "error": "task_id is required for completing a task"}
-        try:
-            response = self._task_app_service.complete_task(task_id)
-            if response.get("success"):
-                response["action"] = "complete"
-            return response
-        except TaskNotFoundError:
-            return {"success": False, "error": f"Task with ID {task_id} not found."}
-        except Exception as e:
-            logger.error(f"Error completing task {task_id}: {e}")
-            return {"success": False, "error": str(e)}
-
-    def _handle_list_search_next(self, action, status, priority, assignees, labels, limit, query):
-        """Handle list, search, and next actions."""
-        if action == "list":
-            return self._handle_list_tasks(status, priority, assignees, labels, limit)
-        elif action == "search":
-            return self._handle_search_tasks(query, limit)
-        elif action == "next":
-            return self._handle_do_next()
+        # Initialize managers and handlers
+        self._project_manager = ProjectManager(self._path_resolver, projects_file_path)
+        self._call_agent_use_case = CallAgentUseCase(PROJECT_ROOT / 'yaml-lib')
+        self._task_handler = TaskOperationHandler(self._task_app_service, self._auto_rule_generator)
+        
+        # Initialize tool registration orchestrator
+        self._tool_orchestrator = ToolRegistrationOrchestrator(
+            self._config, self._task_handler, self._project_manager, self._call_agent_use_case
+        )
+        
+        logger.info("ConsolidatedMCPToolsV2 initialized successfully.")
+        
+    def _init_task_repository(self, task_repository: Optional[TaskRepository]) -> TaskRepository:
+        """Initialize task repository with environment configuration"""
+        if task_repository:
+            return task_repository
+            
+        tasks_file_path = os.environ.get('TASKS_JSON_PATH')
+        if tasks_file_path:
+            logger.info(f"Found TASKS_JSON_PATH: {tasks_file_path}")
+            return JsonTaskRepository(file_path=tasks_file_path)
         else:
-            # This case should not be reached due to the dispatching in manage_task
-            return {"success": False, "error": "Invalid action for list/search/next"}
-
-    def _handle_list_tasks(self, status, priority, assignees, labels, limit):
-        """Handles listing tasks with optional filters."""
-        try:
-            request = ListTasksRequest(
-                status=status,
-                priority=priority,
-                assignees=assignees,
-                labels=labels,
-                limit=limit
-            )
-            
-            response = self._task_app_service.list_tasks(request)
-            return {
-                "success": True,
-                "tasks": [
-                    {
-                        "id": task.id,
-                        "title": task.title,
-                        "description": task.description,
-                        "status": task.status,
-                        "priority": task.priority,
-                        "assignees": task.assignees,
-                        "labels": task.labels
-                    }
-                    for task in response.tasks
-                ],
-                "count": len(response.tasks)
-            }
-        except Exception as e:
-            return {"success": False, "error": f"Failed to list tasks: {str(e)}"}
-
-    def _handle_search_tasks(self, query, limit):
-        """Handle task search"""
-        if not query:
-            return {"success": False, "error": "query is required for searching tasks"}
-        
-        try:
-            request = SearchTasksRequest(query=query, limit=limit or 10)
-            response = self._task_app_service.search_tasks(request)
-            
-            return {
-                "success": True,
-                "tasks": [
-                    {
-                        "id": task.id,
-                        "title": task.title,
-                        "description": task.description,
-                        "status": task.status,
-                        "priority": task.priority,
-                        "assignees": task.assignees,
-                        "labels": task.labels
-                    }
-                    for task in response.tasks
-                ],
-                "count": len(response.tasks),
-                "query": query
-            }
-        except Exception as e:
-            return {"success": False, "error": f"Failed to search tasks: {str(e)}"}
-
-    def _handle_do_next(self):
-        """Handle next task recommendation"""
-        try:
-            do_next_use_case = DoNextUseCase(self._task_repository, self._auto_rule_generator)
-            response = do_next_use_case.execute()
-            
-            if response.has_next and response.next_item:
-                return {
-                    "success": True,
-                    "action": "next",
-                    "next_item": response.next_item,
-                    "message": response.message
-                }
-            else:
-                return {
-                    "success": True,
-                    "action": "next",
-                    "next_item": None,
-                    "message": response.message,
-                    "context": response.context if response.context else None
-                }
-        except Exception as e:
-            return {"success": False, "error": f"Failed to get next task: {str(e)}"}
-
-    def _handle_dependency_operations(self, action, task_id, dependency_data=None):
-        """Handle dependency operations (add, remove, get, clear, get_blocking)"""
-        if not task_id:
-            return {"success": False, "error": "task_id is required for dependency operations"}
-        try:
-            if action == "add_dependency":
-                if not dependency_data or "dependency_id" not in dependency_data:
-                    return {"success": False, "error": "dependency_data with dependency_id is required"}
-                
-                request = AddDependencyRequest(task_id=task_id, dependency_id=dependency_data["dependency_id"])
-                response = self._task_app_service.add_dependency(request)
-                return {"success": response.success, "action": "add_dependency", "task_id": response.task_id, "dependencies": response.dependencies, "message": response.message}
-            elif action == "remove_dependency":
-                if not dependency_data or "dependency_id" not in dependency_data:
-                    return {"success": False, "error": "dependency_data with dependency_id is required"}
-                response = self._task_app_service.remove_dependency(task_id, dependency_data["dependency_id"])
-                return {"success": response.success, "action": "remove_dependency", "task_id": response.task_id, "dependencies": response.dependencies, "message": response.message}
-            elif action == "get_dependencies":
-                response = self._task_app_service.get_dependencies(task_id)
-                return {"success": True, "action": "get_dependencies", **response}
-            elif action == "clear_dependencies":
-                response = self._task_app_service.clear_dependencies(task_id)
-                return {"success": response.success, "action": "clear_dependencies", "task_id": response.task_id, "dependencies": response.dependencies, "message": response.message}
-            elif action == "get_blocking_tasks":
-                response = self._task_app_service.get_blocking_tasks(task_id)
-                return {"success": True, "action": "get_blocking_tasks", **response}
-            else:
-                return {"success": False, "error": f"Unknown dependency action: {action}"}
-        except Exception as e:
-            return {"success": False, "error": f"Dependency operation failed: {str(e)}"}
-
-    def _handle_subtask_operations(self, action, task_id, subtask_data=None):
-        """Handle subtask operations"""
-        logging.info(f"Subtask operation action: {action}, task_id: {task_id}, subtask_data: {subtask_data}")
-        if not task_id:
-            return {"success": False, "error": "task_id is required for subtask operations"}
-        
-        try:
-            response = self._task_app_service.manage_subtasks(task_id, action, subtask_data or {})
-            logging.info(f"Subtask operation result: {response}")
-            
-            # Always wrap response data in a "result" key for consistency
-            if action in ["add_subtask", "add"]:
-                if isinstance(response, dict) and "subtask" in response:
-                    # The response is a SubtaskResponse dict with structure:
-                    # {"task_id": "...", "subtask": {...}, "progress": {...}}
-                    # Wrap the subtask data in a "result" key for consistency
-                    return {
-                        "success": True, 
-                        "action": action, 
-                        "result": {
-                            "subtask": response["subtask"],
-                            "progress": response.get("progress", {})
-                        }
-                    }
-                else:
-                    return {"success": True, "action": action, "result": response}
-            elif action in ["list_subtasks", "list"]:
-                if isinstance(response, dict) and "subtasks" in response:
-                    # The response is a dict with structure:
-                    # {"task_id": "...", "subtasks": [...], "progress": {...}}
-                    # Wrap the subtasks array in a "result" key for consistency
-                    return {
-                        "success": True, 
-                        "action": action, 
-                        "result": response["subtasks"],  # Return subtasks array as result
-                        "progress": response.get("progress", {})
-                    }
-                else:
-                    return {"success": True, "action": action, "result": response}
-            else:
-                return {"success": True, "action": action, "result": response}
-                
-        except Exception as e:
-            logging.error(f"Error handling subtask operation: {e}")
-            return {"success": False, "error": f"Subtask operation failed: {str(e)}"} 
+            logger.warning("TASKS_JSON_PATH not set, using default.")
+            return JsonTaskRepository()
+    
+    def register_tools(self, mcp: FastMCP):
+        """Register all consolidated MCP tools using the orchestrator"""
+        self._tool_orchestrator.register_all_tools(mcp)
