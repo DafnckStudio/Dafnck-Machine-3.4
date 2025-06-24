@@ -159,4 +159,5 @@ site/
 # Local development
 local/
 debug/
-scratch/
+scratch/# Protect yaml-lib directory
+!dhafnck_mcp_main/yaml-lib/**
