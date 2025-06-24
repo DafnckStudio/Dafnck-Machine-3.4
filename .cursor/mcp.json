@@ -20,6 +20,18 @@
         "CURSOR_AGENT_DIR_PATH": "dhafnck_mcp_main/yaml-lib",
         "AGENT_YAML_LIB_PATH": "dhafnck_mcp_main/yaml-lib"
       }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "env": {}
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
     }
   }
 } 

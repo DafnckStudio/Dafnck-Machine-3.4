@@ -38,7 +38,7 @@ from fastmcp.task_management.domain.entities.task import Task
 from fastmcp.task_management.domain.value_objects.task_id import TaskId
 from fastmcp.task_management.domain.value_objects.task_status import TaskStatus
 from fastmcp.task_management.domain.value_objects.priority import Priority
-from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
+from fastmcp.task_management.interface.consolidated_mcp_server import create_consolidated_mcp_server
 from fastmcp import FastMCP
 
 
@@ -107,7 +107,7 @@ class TestMigrationIntegration:
         
         try:
             # Create MCP server with tools registered
-            mcp_server = create_mcp_server()
+            mcp_server = create_consolidated_mcp_server()
             yield mcp_server
         finally:
             os.chdir(original_cwd)

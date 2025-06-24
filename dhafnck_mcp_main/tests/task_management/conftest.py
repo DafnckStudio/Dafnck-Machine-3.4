@@ -17,8 +17,8 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
-from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
-from fastmcp.task_management.interface.mcp_tools import MCPTaskTools
+from fastmcp.task_management.interface.consolidated_mcp_server import create_consolidated_mcp_server
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 from fastmcp.task_management.domain.entities.task import Task
 from fastmcp.task_management.domain.value_objects.task_id import TaskId
 from fastmcp.task_management.domain.value_objects.task_status import TaskStatus, TaskStatusEnum
@@ -34,7 +34,7 @@ def mock_mcp_server():
 @pytest.fixture
 def mcp_server():
     """Real MCP server for integration tests."""
-    return create_mcp_server()
+    return create_consolidated_mcp_server()
 
 
 @pytest.fixture

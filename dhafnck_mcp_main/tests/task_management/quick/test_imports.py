@@ -16,11 +16,11 @@ import pytest
 def test_can_import_mcp_server():
     """Test that MCP server module can be imported."""
     try:
-        from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server, main
-        from fastmcp.task_management.interface.mcp_tools import MCPTaskTools
-        assert create_mcp_server is not None
+        from fastmcp.task_management.interface.consolidated_mcp_server import create_consolidated_mcp_server, main
+        from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
+        assert create_consolidated_mcp_server is not None
         assert main is not None
-        assert MCPTaskTools is not None
+        assert ConsolidatedMCPTools is not None
     except ImportError as e:
         pytest.fail(f"Cannot import MCP server modules: {e}")
 
@@ -84,9 +84,9 @@ def test_can_import_infrastructure():
 def test_can_import_mcp_tools():
     """Test that MCP tools can be imported."""
     try:
-        from fastmcp.task_management.interface.mcp_tools import MCPTaskTools
+        from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
         
-        assert MCPTaskTools is not None
+        assert ConsolidatedMCPTools is not None
     except ImportError as e:
         pytest.fail(f"Cannot import MCP tools: {e}")
 

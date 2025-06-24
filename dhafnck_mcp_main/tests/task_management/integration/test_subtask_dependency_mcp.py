@@ -13,7 +13,7 @@ import pytest
 import tempfile
 import os
 from pathlib import Path
-from fastmcp.task_management.interface.mcp_tools import MCPTaskTools
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
 from fastmcp.task_management.domain import TaskId
 
@@ -30,7 +30,7 @@ class TestSubtaskDependencyMCPIntegration:
         self.temp_file.close()
         
         # Initialize MCP tools with temporary repository
-        self.mcp_tools = MCPTaskTools()
+        self.mcp_tools = ConsolidatedMCPTools()
         self.mcp_tools._task_repository = JsonTaskRepository(self.temp_file.name)
         
         # Recreate the task service with the new repository

@@ -18,9 +18,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 def test_mcp_server_can_be_created():
     """Test that MCP server can be created."""
     try:
-        from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
+        from fastmcp.task_management.interface.consolidated_mcp_server import create_consolidated_mcp_server
         
-        server = create_mcp_server()
+        server = create_consolidated_mcp_server()
         assert server is not None
         assert hasattr(server, 'run')
         
@@ -33,9 +33,9 @@ def test_mcp_server_can_be_created():
 def test_mcp_server_has_required_methods():
     """Test that MCP server has all required methods."""
     try:
-        from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
+        from fastmcp.task_management.interface.consolidated_mcp_server import create_consolidated_mcp_server
         
-        server = create_mcp_server()
+        server = create_consolidated_mcp_server()
         
         # Check for required methods
         required_methods = ['run']
@@ -52,9 +52,9 @@ def test_mcp_server_has_required_methods():
 def test_mcp_tools_registration():
     """Test that MCP tools can be registered."""
     try:
-        from fastmcp.task_management.interface.mcp_tools import MCPTaskTools
+        from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
         
-        tools = MCPTaskTools()
+        tools = ConsolidatedMCPTools()
         assert tools is not None
         
         # Check if tools has register_tools method
@@ -70,9 +70,9 @@ def test_mcp_tools_registration():
 def test_server_configuration_loading():
     """Test that server can load basic configuration."""
     try:
-        from fastmcp.task_management.interface.ddd_mcp_server import create_mcp_server
+        from fastmcp.task_management.interface.consolidated_mcp_server import create_consolidated_mcp_server
         
-        server = create_mcp_server()
+        server = create_consolidated_mcp_server()
         
         # Test that server can be configured (basic validation)
         assert server is not None
