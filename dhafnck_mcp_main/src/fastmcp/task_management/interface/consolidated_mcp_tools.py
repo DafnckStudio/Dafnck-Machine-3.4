@@ -21,6 +21,7 @@ from fastmcp.task_management.application import (
     DoNextUseCase,
     CallAgentUseCase
 )
+from fastmcp.task_management.application.use_cases.call_agent import CURSOR_AGENT_DIR
 
 # DTO imports
 from fastmcp.task_management.application.dtos import (
@@ -1077,7 +1078,7 @@ class ConsolidatedMCPTools:
         
         # Initialize managers and handlers
         self._project_manager = ProjectManager(self._path_resolver, projects_file_path)
-        self._call_agent_use_case = CallAgentUseCase(PROJECT_ROOT / 'yaml-lib')
+        self._call_agent_use_case = CallAgentUseCase(CURSOR_AGENT_DIR)
         self._task_handler = TaskOperationHandler(self._task_app_service, self._auto_rule_generator)
         
         # Initialize tool registration orchestrator

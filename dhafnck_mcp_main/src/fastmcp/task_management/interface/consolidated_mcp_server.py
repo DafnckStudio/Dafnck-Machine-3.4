@@ -11,7 +11,7 @@ from fastmcp import FastMCP
 
 # Package imports - no need for sys.path manipulation with proper package structure
 
-from dhafnck_mcp_main.src.fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 
 
 def create_consolidated_mcp_server() -> FastMCP:
