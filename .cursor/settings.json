@@ -1,9 +1,0 @@
-{
-  "mcp.enabled": true,
-  "mcp.servers": {
-    "dhafnck_mcp": {
-      "enabled": true,
-      "autoStart": true
-    }
-  }
-}
