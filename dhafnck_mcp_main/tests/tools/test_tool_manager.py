@@ -22,6 +22,7 @@ from fastmcp.utilities.types import Image
 
 
 class TestAddTools:
+    
     async def test_basic_function(self):
         """Test registering and running a basic function."""
 
@@ -40,6 +41,7 @@ class TestAddTools:
         assert tool.parameters["properties"]["a"]["type"] == "integer"
         assert tool.parameters["properties"]["b"]["type"] == "integer"
 
+    
     async def test_async_function(self):
         """Test registering and running an async function."""
 
@@ -57,6 +59,7 @@ class TestAddTools:
         assert tool.description == "Fetch data from URL."
         assert tool.parameters["properties"]["url"]["type"] == "string"
 
+    
     async def test_pydantic_model_function(self):
         """Test registering a function that takes a Pydantic model."""
 
@@ -80,6 +83,7 @@ class TestAddTools:
         assert "age" in tool.parameters["$defs"]["UserInput"]["properties"]
         assert "flag" in tool.parameters["properties"]
 
+    
     async def test_callable_object(self):
         class Adder:
             """Adds two numbers."""
@@ -100,7 +104,7 @@ class TestAddTools:
         assert tool.parameters["properties"]["x"]["type"] == "integer"
         assert tool.parameters["properties"]["y"]["type"] == "integer"
 
-    @pytest.mark.asyncio
+    
     async def test_async_callable_object(self):
         class Adder:
             """Adds two numbers."""
@@ -121,7 +125,7 @@ class TestAddTools:
         assert tool.parameters["properties"]["x"]["type"] == "integer"
         assert tool.parameters["properties"]["y"]["type"] == "integer"
 
-    @pytest.mark.asyncio
+    
     async def test_tool_with_image_return(self):
         def image_tool(data: bytes) -> Image:
             return Image(data=data)
@@ -155,6 +159,7 @@ class TestAddTools:
             tool = Tool.from_function(lambda x: x)
             manager.add_tool(tool)
 
+    
     async def test_remove_tool_successfully(self):
         """Test removing an added tool by key."""
         manager = ToolManager()
@@ -176,6 +181,7 @@ class TestAddTools:
         with pytest.raises(NotFoundError, match="Tool 'missing' not found"):
             manager.remove_tool("missing")
 
+    
     async def test_warn_on_duplicate_tools(self, caplog):
         """Test warning on duplicate tools."""
         manager = ToolManager(duplicate_behavior="warn")
@@ -220,6 +226,7 @@ class TestAddTools:
             tool2 = Tool.from_function(test_fn, name="test_tool")
             manager.add_tool(tool2)
 
+    
     async def test_replace_duplicate_tools(self):
         """Test replacing duplicate tools."""
         manager = ToolManager(duplicate_behavior="replace")
@@ -241,6 +248,7 @@ class TestAddTools:
         assert isinstance(tool, FunctionTool)
         assert tool.fn.__name__ == "replacement_fn"
 
+    
     async def test_ignore_duplicate_tools(self):
         """Test ignoring duplicate tools."""
         manager = ToolManager(duplicate_behavior="ignore")
@@ -269,6 +277,7 @@ class TestAddTools:
 class TestToolTags:
     """Test functionality related to tool tags."""
 
+    
     async def test_add_tool_with_tags(self):
         """Test adding tags to a tool."""
 
@@ -285,6 +294,7 @@ class TestToolTags:
         assert tool is not None
         assert tool.tags == {"math", "utility"}
 
+    
     async def test_add_tool_with_empty_tags(self):
         """Test adding a tool with empty tags set."""
 
@@ -298,6 +308,7 @@ class TestToolTags:
 
         assert tool.tags == set()
 
+    
     async def test_add_tool_with_none_tags(self):
         """Test adding a tool with None tags."""
 
@@ -311,6 +322,7 @@ class TestToolTags:
 
         assert tool.tags == set()
 
+    
     async def test_list_tools_with_tags(self):
         """Test listing tools with specific tags."""
 
@@ -351,7 +363,7 @@ class TestToolTags:
 
 
 class TestCallTools:
-    @pytest.mark.asyncio
+    
     async def test_call_tool(self):
         def add(a: int, b: int) -> int:
             """Add two numbers."""
@@ -364,7 +376,7 @@ class TestCallTools:
 
         assert result[0].text == "3"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_call_async_tool(self):
         async def double(n: int) -> int:
             """Double a number."""
@@ -376,6 +388,7 @@ class TestCallTools:
         result = await manager.call_tool("double", {"n": 5})
         assert result[0].text == "10"  # type: ignore[attr-defined]
 
+    
     async def test_call_tool_callable_object(self):
         class Adder:
             """Adds two numbers."""
@@ -390,6 +403,7 @@ class TestCallTools:
         result = await manager.call_tool("Adder", {"x": 1, "y": 2})
         assert result[0].text == "3"  # type: ignore[attr-defined]
 
+    
     async def test_call_tool_callable_object_async(self):
         class Adder:
             """Adds two numbers."""
@@ -404,6 +418,7 @@ class TestCallTools:
         result = await manager.call_tool("Adder", {"x": 1, "y": 2})
         assert result[0].text == "3"  # type: ignore[attr-defined]
 
+    
     async def test_call_tool_with_default_args(self):
         def add(a: int, b: int = 1) -> int:
             """Add two numbers."""
@@ -416,6 +431,7 @@ class TestCallTools:
 
         assert result[0].text == "2"  # type: ignore[attr-defined]
 
+    
     async def test_call_tool_with_missing_args(self):
         def add(a: int, b: int) -> int:
             """Add two numbers."""
@@ -427,11 +443,13 @@ class TestCallTools:
         with pytest.raises(ToolError):
             await manager.call_tool("add", {"a": 1})
 
+    
     async def test_call_unknown_tool(self):
         manager = ToolManager()
         with pytest.raises(NotFoundError, match="Tool 'unknown' not found"):
             await manager.call_tool("unknown", {"a": 1})
 
+    
     async def test_call_tool_with_list_int_input(self):
         def sum_vals(vals: list[int]) -> int:
             return sum(vals)
@@ -443,6 +461,7 @@ class TestCallTools:
         result = await manager.call_tool("sum_vals", {"vals": [1, 2, 3]})
         assert result[0].text == "6"  # type: ignore[attr-defined]
 
+    
     async def test_call_tool_with_list_int_input_legacy_behavior(self):
         """Legacy behavior -- parse a stringified JSON object"""
 
@@ -458,6 +477,7 @@ class TestCallTools:
             result = await manager.call_tool("sum_vals", {"vals": "[1, 2, 3]"})
             assert result[0].text == "6"  # type: ignore[attr-defined]
 
+    
     async def test_call_tool_with_list_str_or_str_input(self):
         def concat_strs(vals: list[str] | str) -> str:
             return vals if isinstance(vals, str) else "".join(vals)
@@ -473,6 +493,7 @@ class TestCallTools:
         result = await manager.call_tool("concat_strs", {"vals": "a"})
         assert result[0].text == "a"  # type: ignore[attr-defined]
 
+    
     async def test_call_tool_with_list_str_or_str_input_legacy_behavior(self):
         """Legacy behavior -- parse a stringified JSON object"""
 
@@ -490,6 +511,7 @@ class TestCallTools:
             result = await manager.call_tool("concat_strs", {"vals": '"a"'})
             assert result[0].text == "a"  # type: ignore[attr-defined]
 
+    
     async def test_call_tool_with_complex_model(self):
         class MyShrimpTank(BaseModel):
             class Shrimp(BaseModel):
@@ -521,6 +543,7 @@ class TestCallTools:
 
         assert result[0].text == '[\n  "rex",\n  "gertrude"\n]'  # type: ignore[attr-defined]
 
+    
     async def test_call_tool_with_custom_serializer(self):
         """Test that a custom serializer provided to FastMCP is used by tools."""
 
@@ -540,6 +563,7 @@ class TestCallTools:
         result = await manager.call_tool("get_data", {})
         assert result[0].text == 'CUSTOM:{"key": "value", "number": 123}'  # type: ignore[attr-defined]
 
+    
     async def test_call_tool_with_list_result_custom_serializer(self):
         """Test that a custom serializer provided to FastMCP is used by tools that return lists."""
 
@@ -564,6 +588,7 @@ class TestCallTools:
             == 'CUSTOM:[{"key": "value", "number": 123}, {"key": "value2", "number": 456}]'  # type: ignore[attr-defined]
         )
 
+    
     async def test_custom_serializer_fallback_on_error(self):
         """Test that a broken custom serializer gracefully falls back."""
 
@@ -741,6 +766,7 @@ class TestContextHandling:
 class TestCustomToolNames:
     """Test adding tools with custom names that differ from their function names."""
 
+    
     async def test_add_tool_with_custom_name(self):
         """Test adding a tool with a custom name parameter using add_tool_from_fn."""
 
@@ -760,6 +786,7 @@ class TestCustomToolNames:
         with pytest.raises(NotFoundError, match="Tool 'original_fn' not found"):
             await manager.get_tool("original_fn")
 
+    
     async def test_add_tool_object_with_custom_key(self):
         """Test adding a Tool object with a custom key using add_tool()."""
 
@@ -781,6 +808,7 @@ class TestCustomToolNames:
         with pytest.raises(NotFoundError, match="Tool 'my_tool' not found"):
             await manager.get_tool("my_tool")
 
+    
     async def test_call_tool_with_custom_name(self):
         """Test calling a tool added with a custom name."""
 
@@ -800,6 +828,7 @@ class TestCustomToolNames:
         with pytest.raises(NotFoundError, match="Tool 'multiply' not found"):
             await manager.call_tool("multiply", {"a": 5, "b": 3})
 
+    
     async def test_replace_tool_keeps_original_name(self):
         """Test that replacing a tool with "replace" keeps the original name."""
 
@@ -837,6 +866,7 @@ class TestCustomToolNames:
 class TestToolErrorHandling:
     """Test error handling in the ToolManager."""
 
+    
     async def test_tool_error_passthrough(self):
         """Test that ToolErrors are passed through directly."""
         manager = ToolManager()
@@ -850,6 +880,7 @@ class TestToolErrorHandling:
         with pytest.raises(ToolError, match="Specific tool error"):
             await manager.call_tool("error_tool", {"x": 42})
 
+    
     async def test_exception_converted_to_tool_error_with_details(self):
         """Test that other exceptions include details by default."""
         manager = ToolManager()
@@ -867,6 +898,7 @@ class TestToolErrorHandling:
         assert "Error calling tool 'buggy_tool'" in str(excinfo.value)
         assert "Internal error details" in str(excinfo.value)
 
+    
     async def test_exception_converted_to_masked_tool_error(self):
         """Test that other exceptions are masked when enabled."""
         manager = ToolManager(mask_error_details=True)
@@ -884,7 +916,7 @@ class TestToolErrorHandling:
         assert "Error calling tool 'buggy_tool'" in str(excinfo.value)
         assert "Internal error details" not in str(excinfo.value)
 
-    @pytest.mark.asyncio
+    
     async def test_async_tool_error_passthrough(self):
         """Test that ToolErrors from async tools are passed through directly."""
         manager = ToolManager()
@@ -898,7 +930,7 @@ class TestToolErrorHandling:
         with pytest.raises(ToolError, match="Async tool error"):
             await manager.call_tool("async_error_tool", {"x": 42})
 
-    @pytest.mark.asyncio
+    
     async def test_async_exception_converted_to_tool_error_with_details(self):
         """Test that other exceptions from async tools include details by default."""
         manager = ToolManager()
@@ -916,7 +948,7 @@ class TestToolErrorHandling:
         assert "Error calling tool 'async_buggy_tool'" in str(excinfo.value)
         assert "Internal async error details" in str(excinfo.value)
 
-    @pytest.mark.asyncio
+    
     async def test_async_exception_converted_to_masked_tool_error(self):
         """Test that other exceptions from async tools are masked when enabled."""
         manager = ToolManager(mask_error_details=True)

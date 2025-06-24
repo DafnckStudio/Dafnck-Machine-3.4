@@ -109,7 +109,7 @@ async def test_read_resource_file(mcp: FastMCP):
     assert res.content == "print('hello world')"
 
 
-@pytest.mark.asyncio
+
 async def test_delete_file(mcp: FastMCP, test_dir: Path):
     await mcp._mcp_call_tool(
         "delete_file", arguments=dict(path=str(test_dir / "example.py"))
@@ -117,7 +117,7 @@ async def test_delete_file(mcp: FastMCP, test_dir: Path):
     assert not (test_dir / "example.py").exists()
 
 
-@pytest.mark.asyncio
+
 async def test_delete_file_and_check_resources(mcp: FastMCP, test_dir: Path):
     await mcp._mcp_call_tool(
         "delete_file", arguments=dict(path=str(test_dir / "example.py"))

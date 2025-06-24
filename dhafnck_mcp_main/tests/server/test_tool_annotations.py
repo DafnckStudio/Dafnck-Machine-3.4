@@ -4,6 +4,8 @@ from mcp.types import ToolAnnotations
 
 from fastmcp import Client, FastMCP
 from fastmcp.tools.tool import Tool
+import pytest
+
 
 
 async def test_tool_annotations_in_tool_manager():
@@ -31,6 +33,7 @@ async def test_tool_annotations_in_tool_manager():
     assert tools[0].annotations.openWorldHint is False
 
 
+
 async def test_tool_annotations_in_mcp_protocol():
     """Test that tool annotations are correctly propagated to MCP tools list."""
     mcp = FastMCP("Test Server")
@@ -53,6 +56,7 @@ async def test_tool_annotations_in_mcp_protocol():
     assert mcp_tools[0].annotations.title == "Echo Tool"
     assert mcp_tools[0].annotations.readOnlyHint is True
     assert mcp_tools[0].annotations.openWorldHint is False
+
 
 
 async def test_tool_annotations_in_client_api():
@@ -81,6 +85,7 @@ async def test_tool_annotations_in_client_api():
         assert tools_result[0].annotations.openWorldHint is False
 
 
+
 async def test_provide_tool_annotations_as_dict_to_decorator():
     """Test that tool annotations are correctly accessible via client API."""
     mcp = FastMCP("Test Server")
@@ -105,6 +110,7 @@ async def test_provide_tool_annotations_as_dict_to_decorator():
         assert tools_result[0].annotations.title == "Echo Tool"
         assert tools_result[0].annotations.readOnlyHint is True
         assert tools_result[0].annotations.openWorldHint is False
+
 
 
 async def test_direct_tool_annotations_in_tool_manager():
@@ -136,6 +142,7 @@ async def test_direct_tool_annotations_in_tool_manager():
     assert tools[0].annotations.openWorldHint is True
 
 
+
 async def test_direct_tool_annotations_in_client_api():
     """Test direct ToolAnnotations object is correctly accessible via client API."""
     mcp = FastMCP("Test Server")
@@ -162,6 +169,7 @@ async def test_direct_tool_annotations_in_client_api():
         assert tools_result[0].annotations.title == "Direct Tool"
         assert tools_result[0].annotations.readOnlyHint is False
         assert tools_result[0].annotations.destructiveHint is True
+
 
 
 async def test_add_tool_method_annotations():
@@ -192,6 +200,7 @@ async def test_add_tool_method_annotations():
     assert tools[0].annotations.title == "Create Item"
     assert tools[0].annotations.readOnlyHint is False
     assert tools[0].annotations.destructiveHint is False
+
 
 
 async def test_tool_functionality_with_annotations():

@@ -76,6 +76,7 @@ def mock_client():
     return client
 
 
+
 async def test_fastmcp_from_openapi(array_path_spec, mock_client):
     """Test creating FastMCP from OpenAPI spec with array path parameter."""
     # Create FastMCP from the spec
@@ -85,6 +86,7 @@ async def test_fastmcp_from_openapi(array_path_spec, mock_client):
     tools_result = await mcp.get_tools()
     tool_names = [tool.name for tool in tools_result.values()]
     assert "test_operation" in tool_names
+
 
 
 async def test_array_path_parameter_handling(mock_client):
@@ -157,6 +159,7 @@ async def test_array_path_parameter_handling(mock_client):
     )
 
 
+
 async def test_integration_array_path_parameter(array_path_spec, mock_client):
     """Integration test for array path parameters."""
     # Create FastMCP from the spec
@@ -188,6 +191,7 @@ async def test_integration_array_path_parameter(array_path_spec, mock_client):
         json=None,
         timeout=None,
     )
+
 
 
 async def test_complex_nested_array_path_parameter(mock_client):
@@ -259,6 +263,7 @@ async def test_complex_nested_array_path_parameter(mock_client):
     assert "{" not in called_url, "The URL should not contain Python object syntax"
 
 
+
 async def test_array_query_param_with_fastapi():
     """Test array query parameters using FastAPI and FastMCP.from_fastapi integration."""
     # Create a FastAPI app with a route that has an array query parameter
@@ -315,6 +320,7 @@ async def test_array_query_param_with_fastapi():
         assert result[0].type == "text"
         result_data = json.loads(result[0].text)
         assert result_data == {"selected": ["monday", "tuesday"]}
+
 
 
 async def test_array_query_parameter_format(mock_client):
@@ -385,6 +391,7 @@ async def test_array_query_parameter_format(mock_client):
         json=None,
         timeout=None,
     )
+
 
 
 async def test_array_query_parameter_exploded_format(mock_client):

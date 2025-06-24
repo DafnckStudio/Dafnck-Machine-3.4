@@ -1,6 +1,8 @@
 """Tests for different resource prefix formats in server mounting and importing."""
 
 from fastmcp import FastMCP
+import pytest
+
 
 
 async def test_resource_prefix_format_in_constructor():
@@ -37,6 +39,7 @@ async def test_resource_prefix_format_in_constructor():
     assert "resource://sub/test" in path_resources
     # Protocol format should be sub+resource://test
     assert "sub+resource://test" in protocol_resources
+
 
 
 async def test_resource_prefix_format_in_import_server():

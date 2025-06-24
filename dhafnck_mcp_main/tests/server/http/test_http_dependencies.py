@@ -54,7 +54,7 @@ def sse_server() -> Generator[str, None, None]:
         yield f"{url}/sse/"
 
 
-@pytest.mark.asyncio
+
 async def test_http_headers_resource_shttp(shttp_server: str):
     """Test getting HTTP headers from the server."""
     async with Client(
@@ -68,7 +68,7 @@ async def test_http_headers_resource_shttp(shttp_server: str):
         assert json_result["x-demo-header"] == "ABC"
 
 
-@pytest.mark.asyncio
+
 async def test_http_headers_resource_sse(sse_server: str):
     """Test getting HTTP headers from the server."""
     async with Client(
@@ -80,7 +80,7 @@ async def test_http_headers_resource_sse(sse_server: str):
         assert json_result["x-demo-header"] == "ABC"
 
 
-@pytest.mark.asyncio
+
 async def test_http_headers_tool_shttp(shttp_server: str):
     """Test getting HTTP headers from the server."""
     async with Client(
@@ -94,7 +94,7 @@ async def test_http_headers_tool_shttp(shttp_server: str):
         assert json_result["x-demo-header"] == "ABC"
 
 
-@pytest.mark.asyncio
+
 async def test_http_headers_tool_sse(sse_server: str):
     async with Client(
         transport=SSETransport(sse_server, headers={"X-DEMO-HEADER": "ABC"})
@@ -105,7 +105,7 @@ async def test_http_headers_tool_sse(sse_server: str):
         assert json_result["x-demo-header"] == "ABC"
 
 
-@pytest.mark.asyncio
+
 async def test_http_headers_prompt_shttp(shttp_server: str):
     """Test getting HTTP headers from the server."""
     async with Client(
@@ -119,7 +119,7 @@ async def test_http_headers_prompt_shttp(shttp_server: str):
         assert json_result["x-demo-header"] == "ABC"
 
 
-@pytest.mark.asyncio
+
 async def test_http_headers_prompt_sse(sse_server: str):
     """Test getting HTTP headers from the server."""
     async with Client(

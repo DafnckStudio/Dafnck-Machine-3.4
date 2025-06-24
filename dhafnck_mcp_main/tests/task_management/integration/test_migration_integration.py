@@ -129,7 +129,7 @@ class TestMigrationIntegration:
     
     @pytest.mark.integration
     @pytest.mark.migration
-    @pytest.mark.asyncio
+    
     async def test_all_mcp_tools_available_after_migration(self, mcp_server_instance):
         """Verify all MCP tools are available and properly registered after migration."""
         mcp_server = mcp_server_instance
@@ -708,7 +708,7 @@ class TestMigrationIntegration:
     
     @pytest.mark.integration
     @pytest.mark.migration
-    @pytest.mark.asyncio
+    
     async def test_fastmcp_server_integration(self, mcp_server_instance):
         """Test integration with FastMCP server framework."""
         mcp_server = mcp_server_instance
@@ -728,7 +728,7 @@ class TestMigrationIntegration:
     
     @pytest.mark.integration
     @pytest.mark.migration
-    @pytest.mark.asyncio
+    
     async def test_mcp_server_tool_registration(self, mcp_server_instance):
         """Test that all MCP tools are properly registered with the server."""
         mcp_server = mcp_server_instance

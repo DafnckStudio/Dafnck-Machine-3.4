@@ -34,7 +34,7 @@ def fastmcp_server():
 
 
 class TestClientLogs:
-    @pytest.mark.asyncio
+    
     async def test_log(self, fastmcp_server: FastMCP):
         log_handler = LogHandler()
         async with Client(fastmcp_server, log_handler=log_handler.handle_log) as client:
@@ -44,7 +44,7 @@ class TestClientLogs:
         assert log_handler.logs[0].data == "hello?"
         assert log_handler.logs[0].level == "info"
 
-    @pytest.mark.asyncio
+    
     async def test_echo_log(self, fastmcp_server: FastMCP):
         log_handler = LogHandler()
         async with Client(fastmcp_server, log_handler=log_handler.handle_log) as client:

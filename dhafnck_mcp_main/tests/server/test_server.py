@@ -171,7 +171,7 @@ class TestToolDecorator:
         tool = tools[0]
         assert tool.description == "Add two numbers"
 
-    @pytest.mark.asyncio
+    
     async def test_tool_decorator_instance_method(self):
         mcp = FastMCP()
 
@@ -187,7 +187,7 @@ class TestToolDecorator:
         result = await mcp._mcp_call_tool("add", {"y": 2})
         assert result[0].text == "12"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_tool_decorator_classmethod(self):
         mcp = FastMCP()
 
@@ -202,7 +202,7 @@ class TestToolDecorator:
         result = await mcp._mcp_call_tool("add", {"y": 2})
         assert result[0].text == "12"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_tool_decorator_staticmethod(self):
         mcp = FastMCP()
 
@@ -215,7 +215,7 @@ class TestToolDecorator:
         result = await mcp._mcp_call_tool("add", {"x": 1, "y": 2})
         assert result[0].text == "3"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_tool_decorator_async_function(self):
         mcp = FastMCP()
 
@@ -226,7 +226,7 @@ class TestToolDecorator:
         result = await mcp._mcp_call_tool("add", {"x": 1, "y": 2})
         assert result[0].text == "3"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_tool_decorator_classmethod_error(self):
         mcp = FastMCP()
 
@@ -238,7 +238,7 @@ class TestToolDecorator:
                 def add(cls, y: int) -> None:
                     pass
 
-    @pytest.mark.asyncio
+    
     async def test_tool_decorator_classmethod_async_function(self):
         mcp = FastMCP()
 
@@ -253,7 +253,7 @@ class TestToolDecorator:
         result = await mcp._mcp_call_tool("add", {"y": 2})
         assert result[0].text == "12"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_tool_decorator_staticmethod_async_function(self):
         mcp = FastMCP()
 
@@ -266,7 +266,7 @@ class TestToolDecorator:
         result = await mcp._mcp_call_tool("add", {"x": 1, "y": 2})
         assert result[0].text == "3"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_tool_decorator_staticmethod_order(self):
         """Test that the recommended decorator order works for static methods"""
         mcp = FastMCP()
@@ -281,7 +281,7 @@ class TestToolDecorator:
         result = await mcp._mcp_call_tool("add_v1", {"x": 1, "y": 2})
         assert result[0].text == "3"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_tool_decorator_with_tags(self):
         """Test that the tool decorator properly sets tags."""
         mcp = FastMCP()
@@ -713,7 +713,7 @@ class TestTemplateDecorator:
 
 
 class TestPromptDecorator:
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator(self):
         mcp = FastMCP()
 
@@ -729,7 +729,7 @@ class TestPromptDecorator:
         content = await prompt.render()
         assert content[0].content.text == "Hello, world!"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_without_parentheses(self):
         mcp = FastMCP()
 
@@ -748,7 +748,7 @@ class TestPromptDecorator:
             assert len(result.messages) == 1
             assert result.messages[0].content.text == "Hello, world!"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_with_name(self):
         mcp = FastMCP()
 
@@ -763,7 +763,7 @@ class TestPromptDecorator:
         content = await prompt.render()
         assert content[0].content.text == "Hello, world!"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_with_description(self):
         mcp = FastMCP()
 
@@ -778,7 +778,7 @@ class TestPromptDecorator:
         content = await prompt.render()
         assert content[0].content.text == "Hello, world!"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_with_parameters(self):
         mcp = FastMCP()
 
@@ -809,7 +809,7 @@ class TestPromptDecorator:
             message = result.messages[0]
             assert message.content.text == "Hi, World!"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_instance_method(self):
         mcp = FastMCP()
 
@@ -829,7 +829,7 @@ class TestPromptDecorator:
             message = result.messages[0]
             assert message.content.text == "My prefix: Hello, world!"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_classmethod(self):
         mcp = FastMCP()
 
@@ -848,7 +848,7 @@ class TestPromptDecorator:
             message = result.messages[0]
             assert message.content.text == "Class prefix: Hello, world!"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_classmethod_error(self):
         mcp = FastMCP()
 
@@ -860,7 +860,7 @@ class TestPromptDecorator:
                 def test_prompt(cls) -> None:
                     pass
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_staticmethod(self):
         mcp = FastMCP()
 
@@ -876,7 +876,7 @@ class TestPromptDecorator:
             message = result.messages[0]
             assert message.content.text == "Static Hello, world!"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_async_function(self):
         mcp = FastMCP()
 
@@ -890,7 +890,7 @@ class TestPromptDecorator:
             message = result.messages[0]
             assert message.content.text == "Async Hello, world!"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_with_tags(self):
         """Test that the prompt decorator properly sets tags."""
         mcp = FastMCP()
@@ -904,7 +904,7 @@ class TestPromptDecorator:
         prompt = prompts_dict["sample_prompt"]
         assert prompt.tags == {"example", "test-tag"}
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_with_string_name(self):
         """Test that @prompt(\"custom_name\") syntax works correctly."""
         mcp = FastMCP()
@@ -925,7 +925,7 @@ class TestPromptDecorator:
             assert len(result.messages) == 1
             assert result.messages[0].content.text == "Hello from string named prompt!"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_direct_function_call(self):
         """Test that prompts can be registered via direct function call."""
         mcp = FastMCP()
@@ -950,7 +950,7 @@ class TestPromptDecorator:
             assert len(result.messages) == 1
             assert result.messages[0].content.text == "Hello from direct call!"  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_conflicting_names_error(self):
         """Test that providing both positional and keyword names raises an error."""
         mcp = FastMCP()
@@ -964,7 +964,7 @@ class TestPromptDecorator:
             def my_function() -> str:
                 return "Hello, world!"
 
-    @pytest.mark.asyncio
+    
     async def test_prompt_decorator_staticmethod_order(self):
         """Test that both decorator orders work for static methods"""
         mcp = FastMCP()

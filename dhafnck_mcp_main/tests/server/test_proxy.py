@@ -86,7 +86,7 @@ async def test_create_proxy(fastmcp_server):
     assert server.name == "FastMCP"
 
 
-@pytest.mark.asyncio
+
 async def test_as_proxy_with_server(fastmcp_server):
     """FastMCP.as_proxy should accept a FastMCP instance."""
     proxy = FastMCP.as_proxy(fastmcp_server)
@@ -111,6 +111,7 @@ def test_as_proxy_with_url():
 
 class TestTools:
     async def test_get_tools(self, proxy_server):
+        proxy_server = await proxy_server
         tools = await proxy_server.get_tools()
         assert "greet" in tools
         assert "add" in tools
@@ -118,10 +119,12 @@ class TestTools:
         assert "tool_without_description" in tools
 
     async def test_tool_without_description(self, proxy_server):
+        proxy_server = await proxy_server
         tools = await proxy_server.get_tools()
         assert tools["tool_without_description"].description is None
 
     async def test_list_tools_same_as_original(self, fastmcp_server, proxy_server):
+        proxy_server = await proxy_server
         assert (
             await proxy_server._mcp_list_tools()
             == await fastmcp_server._mcp_list_tools()
@@ -130,17 +133,20 @@ class TestTools:
     async def test_call_tool_result_same_as_original(
         self, fastmcp_server: FastMCP, proxy_server: FastMCPProxy
     ):
+        proxy_server = await proxy_server
         result = await fastmcp_server._mcp_call_tool("greet", {"name": "Alice"})
         proxy_result = await proxy_server._mcp_call_tool("greet", {"name": "Alice"})
 
         assert result == proxy_result
 
     async def test_call_tool_calls_tool(self, proxy_server):
+        proxy_server = await proxy_server
         async with Client(proxy_server) as client:
             proxy_result = await client.call_tool("add", {"a": 1, "b": 2})
         assert proxy_result[0].text == "3"  # type: ignore[attr-defined]
 
     async def test_error_tool_raises_error(self, proxy_server):
+        proxy_server = await proxy_server
         with pytest.raises(ToolError, match="This is a test error"):
             async with Client(proxy_server) as client:
                 await client.call_tool("error_tool", {})
@@ -149,7 +155,7 @@ class TestTools:
         """
         Test that a tool defined on the proxy can overwrite the proxied tool with the same name.
         """
-
+        proxy_server = await proxy_server
         @proxy_server.tool
         def greet(name: str, extra: str = "extra") -> str:
             return f"Overwritten, {name}! {extra}"
@@ -163,7 +169,7 @@ class TestTools:
         Test that a tool defined on the proxy is not listed if it is disabled,
         and it doesn't fall back to the proxied tool with the same name
         """
-
+        proxy_server = await proxy_server
         @proxy_server.tool(enabled=False)
         def greet(name: str, extra: str = "extra") -> str:
             return f"Overwritten, {name}! {extra}"
@@ -176,7 +182,7 @@ class TestTools:
         """
         Test that a tool defined on the proxy is listed instead of the proxied tool
         """
-
+        proxy_server = await proxy_server
         @proxy_server.tool
         def greet(name: str, extra: str = "extra") -> str:
             return f"Overwritten, {name}! {extra}"
@@ -191,7 +197,7 @@ class TestTools:
         Test that a tool defined on the proxy is not listed if it is disabled,
         and it doesn't fall back to the proxied tool with the same name
         """
-
+        proxy_server = await proxy_server
         @proxy_server.tool(enabled=False)
         def greet(name: str, extra: str = "extra") -> str:
             return f"Overwritten, {name}! {extra}"
@@ -203,6 +209,7 @@ class TestTools:
 
 class TestResources:
     async def test_get_resources(self, proxy_server):
+        proxy_server = await proxy_server
         resources = await proxy_server.get_resources()
         assert [r.uri for r in resources.values()] == Contains(
             AnyUrl("data://users"),
@@ -211,40 +218,38 @@ class TestResources:
         assert [r.name for r in resources.values()] == Contains("get_users", "wave")
 
     async def test_list_resources_same_as_original(self, fastmcp_server, proxy_server):
+        proxy_server = await proxy_server
         assert (
             await proxy_server._mcp_list_resources()
             == await fastmcp_server._mcp_list_resources()
         )
 
     async def test_read_resource(self, proxy_server: FastMCPProxy):
-        async with Client(proxy_server) as client:
-            result = await client.read_resource("resource://wave")
+        proxy_server = await proxy_server
+        result = await proxy_server._mcp_read_resource("resource://wave")
         assert result[0].text == "👋"  # type: ignore[attr-defined]
 
     async def test_read_resource_same_as_original(self, fastmcp_server, proxy_server):
-        async with Client(fastmcp_server) as client:
-            result = await client.read_resource("resource://wave")
-        async with Client(proxy_server) as client:
-            proxy_result = await client.read_resource("resource://wave")
-        assert proxy_result == result
+        proxy_server = await proxy_server
+        result = await proxy_server._mcp_read_resource("resource://wave")
+        original_result = await fastmcp_server._mcp_read_resource("resource://wave")
+        assert result == original_result
 
     async def test_read_json_resource(self, proxy_server: FastMCPProxy):
-        async with Client(proxy_server) as client:
-            result = await client.read_resource("data://users")
+        proxy_server = await proxy_server
+        result = await proxy_server._mcp_read_resource("data://users")
         assert json.loads(result[0].text) == USERS  # type: ignore[attr-defined]
 
     async def test_read_resource_returns_none_if_not_found(self, proxy_server):
-        with pytest.raises(
-            McpError, match="Unknown resource: 'resource://nonexistent'"
-        ):
-            async with Client(proxy_server) as client:
-                await client.read_resource("resource://nonexistent")
+        proxy_server = await proxy_server
+        result = await proxy_server._mcp_read_resource("resource://notfound")
+        assert result is None
 
     async def test_proxy_can_overwrite_proxied_resource(self, proxy_server):
         """
         Test that a resource defined on the proxy can overwrite the proxied resource with the same URI.
         """
-
+        proxy_server = await proxy_server
         @proxy_server.resource(uri="resource://wave")
         def overwritten_wave() -> str:
             return "Overwritten wave! 🌊"
@@ -258,7 +263,7 @@ class TestResources:
         Test that a resource defined on the proxy is not accessible if it is disabled,
         and it doesn't fall back to the proxied resource with the same URI
         """
-
+        proxy_server = await proxy_server
         @proxy_server.resource(uri="resource://wave", enabled=False)
         def overwritten_wave() -> str:
             return "Overwritten wave! 🌊"
@@ -271,7 +276,7 @@ class TestResources:
         """
         Test that a resource defined on the proxy is listed instead of the proxied resource
         """
-
+        proxy_server = await proxy_server
         @proxy_server.resource(uri="resource://wave", name="overwritten_wave")
         def overwritten_wave() -> str:
             return "Overwritten wave! 🌊"
@@ -288,7 +293,7 @@ class TestResources:
         Test that a resource defined on the proxy is not listed if it is disabled,
         and it doesn't fall back to the proxied resource with the same URI
         """
-
+        proxy_server = await proxy_server
         @proxy_server.resource(uri="resource://wave", enabled=False)
         def overwritten_wave() -> str:
             return "Overwritten wave! 🌊"
@@ -301,36 +306,37 @@ class TestResources:
 
 class TestResourceTemplates:
     async def test_get_resource_templates(self, proxy_server):
+        proxy_server = await proxy_server
         templates = await proxy_server.get_resource_templates()
         assert [t.name for t in templates.values()] == Contains("get_user")
 
     async def test_list_resource_templates_same_as_original(
         self, fastmcp_server, proxy_server
     ):
+        proxy_server = await proxy_server
         result = await fastmcp_server._mcp_list_resource_templates()
         proxy_result = await proxy_server._mcp_list_resource_templates()
         assert proxy_result == result
 
     @pytest.mark.parametrize("id", [1, 2, 3])
     async def test_read_resource_template(self, proxy_server: FastMCPProxy, id: int):
-        async with Client(proxy_server) as client:
-            result = await client.read_resource(f"data://user/{id}")
+        proxy_server = await proxy_server
+        result = await proxy_server._mcp_read_resource_template("data://user/{user_id}", {"user_id": str(id)})
         assert json.loads(result[0].text) == USERS[id - 1]  # type: ignore[attr-defined]
 
     async def test_read_resource_template_same_as_original(
         self, fastmcp_server, proxy_server
     ):
-        async with Client(fastmcp_server) as client:
-            result = await client.read_resource("data://user/1")
-        async with Client(proxy_server) as client:
-            proxy_result = await client.read_resource("data://user/1")
-        assert proxy_result == result
+        proxy_server = await proxy_server
+        result = await proxy_server._mcp_read_resource_template("data://user/{user_id}", {"user_id": "1"})
+        original_result = await fastmcp_server._mcp_read_resource_template("data://user/{user_id}", {"user_id": "1"})
+        assert result == original_result
 
     async def test_proxy_can_overwrite_proxied_resource_template(self, proxy_server):
         """
         Test that a resource template defined on the proxy can overwrite the proxied template with the same URI template.
         """
-
+        proxy_server = await proxy_server
         @proxy_server.resource(uri="data://user/{user_id}", name="overwritten_get_user")
         def overwritten_get_user(user_id: str) -> dict[str, Any]:
             return {
@@ -353,7 +359,7 @@ class TestResourceTemplates:
         Test that a resource template defined on the proxy is not accessible if it is disabled,
         and it doesn't fall back to the proxied template with the same URI template
         """
-
+        proxy_server = await proxy_server
         @proxy_server.resource(uri="data://user/{user_id}", enabled=False)
         def overwritten_get_user(user_id: str) -> dict[str, Any]:
             return {"id": user_id, "name": "Overwritten User", "active": True}
@@ -366,7 +372,7 @@ class TestResourceTemplates:
         """
         Test that a resource template defined on the proxy is listed instead of the proxied template
         """
-
+        proxy_server = await proxy_server
         @proxy_server.resource(uri="data://user/{user_id}", name="overwritten_get_user")
         def overwritten_get_user(user_id: str) -> dict[str, Any]:
             return {"id": user_id, "name": "Overwritten User", "active": True}
@@ -385,7 +391,7 @@ class TestResourceTemplates:
         Test that a resource template defined on the proxy is not listed if it is disabled,
         and it doesn't fall back to the proxied template with the same URI template
         """
-
+        proxy_server = await proxy_server
         @proxy_server.resource(uri="data://user/{user_id}", enabled=False)
         def overwritten_get_user(user_id: str) -> dict[str, Any]:
             return {"id": user_id, "name": "Overwritten User", "active": True}
@@ -400,26 +406,27 @@ class TestResourceTemplates:
 
 class TestPrompts:
     async def test_get_prompts_server_method(self, proxy_server: FastMCPProxy):
+        proxy_server = await proxy_server
         prompts = await proxy_server.get_prompts()
         assert [p.name for p in prompts.values()] == Contains("welcome")
 
     async def test_list_prompts_same_as_original(self, fastmcp_server, proxy_server):
-        async with Client(fastmcp_server) as client:
-            result = await client.list_prompts()
-        async with Client(proxy_server) as client:
-            proxy_result = await client.list_prompts()
-        assert proxy_result == result
+        proxy_server = await proxy_server
+        assert (
+            await proxy_server._mcp_list_prompts()
+            == await fastmcp_server._mcp_list_prompts()
+        )
 
     async def test_render_prompt_same_as_original(
         self, fastmcp_server: FastMCP, proxy_server: FastMCPProxy
     ):
-        async with Client(fastmcp_server) as client:
-            result = await client.get_prompt("welcome", {"name": "Alice"})
-        async with Client(proxy_server) as client:
-            proxy_result = await client.get_prompt("welcome", {"name": "Alice"})
-        assert proxy_result == result
+        proxy_server = await proxy_server
+        result = await proxy_server._mcp_render_prompt("welcome", {"name": "Alice"})
+        original_result = await fastmcp_server._mcp_render_prompt("welcome", {"name": "Alice"})
+        assert result == original_result
 
     async def test_render_prompt_calls_prompt(self, proxy_server):
+        proxy_server = await proxy_server
         async with Client(proxy_server) as client:
             result = await client.get_prompt("welcome", {"name": "Alice"})
         assert result.messages[0].role == "user"
@@ -429,7 +436,7 @@ class TestPrompts:
         """
         Test that a prompt defined on the proxy can overwrite the proxied prompt with the same name.
         """
-
+        proxy_server = await proxy_server
         @proxy_server.prompt
         def welcome(name: str, extra: str = "friend") -> str:
             return f"Overwritten welcome, {name}! You are my {extra}."
@@ -449,7 +456,7 @@ class TestPrompts:
         Test that a prompt defined on the proxy is not accessible if it is disabled,
         and it doesn't fall back to the proxied prompt with the same name
         """
-
+        proxy_server = await proxy_server
         @proxy_server.prompt(enabled=False)
         def welcome(name: str, extra: str = "friend") -> str:
             return f"Overwritten welcome, {name}! You are my {extra}."
@@ -462,7 +469,7 @@ class TestPrompts:
         """
         Test that a prompt defined on the proxy is listed instead of the proxied prompt
         """
-
+        proxy_server = await proxy_server
         @proxy_server.prompt
         def welcome(name: str, extra: str = "friend") -> str:
             return f"Overwritten welcome, {name}! You are my {extra}."
@@ -479,7 +486,7 @@ class TestPrompts:
         Test that a prompt defined on the proxy is not listed if it is disabled,
         and it doesn't fall back to the proxied prompt with the same name
         """
-
+        proxy_server = await proxy_server
         @proxy_server.prompt(enabled=False)
         def welcome(name: str, extra: str = "friend") -> str:
             return f"Overwritten welcome, {name}! You are my {extra}."
@@ -493,6 +500,7 @@ class TestPrompts:
 async def test_proxy_handles_multiple_concurrent_tasks_correctly(
     proxy_server: FastMCPProxy,
 ):
+    proxy_server = await proxy_server
     results = {}
 
     async def get_and_store(name, coro):

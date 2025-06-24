@@ -148,7 +148,7 @@ def mcp_server(recording_middleware):
 
 
 class TestMiddlewareHooks:
-    @pytest.mark.asyncio
+    
     async def test_call_tool(
         self, mcp_server: FastMCP, recording_middleware: RecordingMiddleware
     ):
@@ -161,7 +161,7 @@ class TestMiddlewareHooks:
         assert recording_middleware.assert_called(hook="on_request", times=1)
         assert recording_middleware.assert_called(hook="on_call_tool", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_read_resource(
         self, mcp_server: FastMCP, recording_middleware: RecordingMiddleware
     ):
@@ -174,7 +174,7 @@ class TestMiddlewareHooks:
         assert recording_middleware.assert_called(hook="on_request", times=1)
         assert recording_middleware.assert_called(hook="on_read_resource", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_read_resource_template(
         self, mcp_server: FastMCP, recording_middleware: RecordingMiddleware
     ):
@@ -187,7 +187,7 @@ class TestMiddlewareHooks:
         assert recording_middleware.assert_called(hook="on_request", times=1)
         assert recording_middleware.assert_called(hook="on_read_resource", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_get_prompt(
         self, mcp_server: FastMCP, recording_middleware: RecordingMiddleware
     ):
@@ -200,7 +200,7 @@ class TestMiddlewareHooks:
         assert recording_middleware.assert_called(hook="on_request", times=1)
         assert recording_middleware.assert_called(hook="on_get_prompt", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_list_tools(
         self, mcp_server: FastMCP, recording_middleware: RecordingMiddleware
     ):
@@ -213,7 +213,7 @@ class TestMiddlewareHooks:
         assert recording_middleware.assert_called(hook="on_request", times=1)
         assert recording_middleware.assert_called(hook="on_list_tools", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_list_resources(
         self, mcp_server: FastMCP, recording_middleware: RecordingMiddleware
     ):
@@ -226,7 +226,7 @@ class TestMiddlewareHooks:
         assert recording_middleware.assert_called(hook="on_request", times=1)
         assert recording_middleware.assert_called(hook="on_list_resources", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_list_resource_templates(
         self, mcp_server: FastMCP, recording_middleware: RecordingMiddleware
     ):
@@ -243,7 +243,7 @@ class TestMiddlewareHooks:
             hook="on_list_resource_templates", times=1
         )
 
-    @pytest.mark.asyncio
+    
     async def test_list_prompts(
         self, mcp_server: FastMCP, recording_middleware: RecordingMiddleware
     ):
@@ -299,7 +299,7 @@ class TestNestedMiddlewareHooks:
 
         return mcp
 
-    @pytest.mark.asyncio
+    
     async def test_call_tool_on_parent_server(
         self,
         mcp_server: FastMCP,
@@ -320,7 +320,7 @@ class TestNestedMiddlewareHooks:
 
         assert nested_middleware.assert_called(times=0)
 
-    @pytest.mark.asyncio
+    
     async def test_call_tool_on_nested_server(
         self,
         mcp_server: FastMCP,
@@ -345,7 +345,7 @@ class TestNestedMiddlewareHooks:
         assert nested_middleware.assert_called(hook="on_request", times=1)
         assert nested_middleware.assert_called(hook="on_call_tool", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_read_resource_on_parent_server(
         self,
         mcp_server: FastMCP,
@@ -366,7 +366,7 @@ class TestNestedMiddlewareHooks:
 
         assert nested_middleware.assert_called(times=0)
 
-    @pytest.mark.asyncio
+    
     async def test_read_resource_on_nested_server(
         self,
         mcp_server: FastMCP,
@@ -391,7 +391,7 @@ class TestNestedMiddlewareHooks:
         assert nested_middleware.assert_called(hook="on_request", times=1)
         assert nested_middleware.assert_called(hook="on_read_resource", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_read_resource_template_on_parent_server(
         self,
         mcp_server: FastMCP,
@@ -412,7 +412,7 @@ class TestNestedMiddlewareHooks:
 
         assert nested_middleware.assert_called(times=0)
 
-    @pytest.mark.asyncio
+    
     async def test_read_resource_template_on_nested_server(
         self,
         mcp_server: FastMCP,
@@ -437,7 +437,7 @@ class TestNestedMiddlewareHooks:
         assert nested_middleware.assert_called(hook="on_request", times=1)
         assert nested_middleware.assert_called(hook="on_read_resource", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_get_prompt_on_parent_server(
         self,
         mcp_server: FastMCP,
@@ -458,7 +458,7 @@ class TestNestedMiddlewareHooks:
 
         assert nested_middleware.assert_called(times=0)
 
-    @pytest.mark.asyncio
+    
     async def test_get_prompt_on_nested_server(
         self,
         mcp_server: FastMCP,
@@ -483,7 +483,7 @@ class TestNestedMiddlewareHooks:
         assert nested_middleware.assert_called(hook="on_request", times=1)
         assert nested_middleware.assert_called(hook="on_get_prompt", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_list_tools_on_nested_server(
         self,
         mcp_server: FastMCP,
@@ -508,7 +508,7 @@ class TestNestedMiddlewareHooks:
         assert nested_middleware.assert_called(hook="on_request", times=1)
         assert nested_middleware.assert_called(hook="on_list_tools", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_list_resources_on_nested_server(
         self,
         mcp_server: FastMCP,
@@ -533,7 +533,7 @@ class TestNestedMiddlewareHooks:
         assert nested_middleware.assert_called(hook="on_request", times=1)
         assert nested_middleware.assert_called(hook="on_list_resources", times=1)
 
-    @pytest.mark.asyncio
+    
     async def test_list_resource_templates_on_nested_server(
         self,
         mcp_server: FastMCP,
@@ -568,7 +568,7 @@ class TestNestedMiddlewareHooks:
 
 
 class TestProxyServer:
-    @pytest.mark.asyncio
+    
     async def test_call_tool(
         self, mcp_server: FastMCP, recording_middleware: RecordingMiddleware
     ):

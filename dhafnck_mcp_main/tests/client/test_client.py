@@ -89,7 +89,7 @@ def tagged_resources_server():
     return server
 
 
-@pytest.mark.asyncio
+
 async def test_list_tools(fastmcp_server):
     """Test listing tools with InMemoryClient."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -102,7 +102,7 @@ async def test_list_tools(fastmcp_server):
         assert set(tool.name for tool in result) == {"greet", "add", "sleep"}
 
 
-@pytest.mark.asyncio
+
 async def test_list_tools_mcp(fastmcp_server):
     """Test the list_tools_mcp method that returns raw MCP protocol objects."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -116,7 +116,7 @@ async def test_list_tools_mcp(fastmcp_server):
         assert set(tool.name for tool in result.tools) == {"greet", "add", "sleep"}
 
 
-@pytest.mark.asyncio
+
 async def test_call_tool(fastmcp_server):
     """Test calling a tool with InMemoryClient."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -129,7 +129,7 @@ async def test_call_tool(fastmcp_server):
         assert "Hello, World!" in content_str
 
 
-@pytest.mark.asyncio
+
 async def test_call_tool_mcp(fastmcp_server):
     """Test the call_tool_mcp method that returns raw MCP protocol objects."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -150,7 +150,7 @@ async def test_call_tool_mcp(fastmcp_server):
         assert "Hello, World!" in content_str
 
 
-@pytest.mark.asyncio
+
 async def test_list_resources(fastmcp_server):
     """Test listing resources with InMemoryClient."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -163,7 +163,7 @@ async def test_list_resources(fastmcp_server):
         assert str(result[0].uri) == "data://users"
 
 
-@pytest.mark.asyncio
+
 async def test_list_resources_mcp(fastmcp_server):
     """Test the list_resources_mcp method that returns raw MCP protocol objects."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -177,7 +177,7 @@ async def test_list_resources_mcp(fastmcp_server):
         assert str(result.resources[0].uri) == "data://users"
 
 
-@pytest.mark.asyncio
+
 async def test_list_prompts(fastmcp_server):
     """Test listing prompts with InMemoryClient."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -190,7 +190,7 @@ async def test_list_prompts(fastmcp_server):
         assert result[0].name == "welcome"
 
 
-@pytest.mark.asyncio
+
 async def test_list_prompts_mcp(fastmcp_server):
     """Test the list_prompts_mcp method that returns raw MCP protocol objects."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -204,7 +204,7 @@ async def test_list_prompts_mcp(fastmcp_server):
         assert result.prompts[0].name == "welcome"
 
 
-@pytest.mark.asyncio
+
 async def test_get_prompt(fastmcp_server):
     """Test getting a prompt with InMemoryClient."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -217,7 +217,7 @@ async def test_get_prompt(fastmcp_server):
         assert result.description == "Example greeting prompt."
 
 
-@pytest.mark.asyncio
+
 async def test_get_prompt_mcp(fastmcp_server):
     """Test the get_prompt_mcp method that returns raw MCP protocol objects."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -230,7 +230,7 @@ async def test_get_prompt_mcp(fastmcp_server):
         assert result.description == "Example greeting prompt."
 
 
-@pytest.mark.asyncio
+
 async def test_read_resource_invalid_uri(fastmcp_server):
     """Test reading a resource with an invalid URI."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -238,7 +238,7 @@ async def test_read_resource_invalid_uri(fastmcp_server):
         await client.read_resource("invalid_uri")
 
 
-@pytest.mark.asyncio
+
 async def test_read_resource(fastmcp_server):
     """Test reading a resource with InMemoryClient."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -257,7 +257,7 @@ async def test_read_resource(fastmcp_server):
         assert "Charlie" in contents_str
 
 
-@pytest.mark.asyncio
+
 async def test_read_resource_mcp(fastmcp_server):
     """Test the read_resource_mcp method that returns raw MCP protocol objects."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -278,7 +278,7 @@ async def test_read_resource_mcp(fastmcp_server):
         assert "Charlie" in contents_str
 
 
-@pytest.mark.asyncio
+
 async def test_client_connection(fastmcp_server):
     """Test that connect is idempotent."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -291,7 +291,7 @@ async def test_client_connection(fastmcp_server):
     assert not client.is_connected()
 
 
-@pytest.mark.asyncio
+
 async def test_initialize_called_once(fastmcp_server, monkeypatch):
     mock_initialize = AsyncMock()
     monkeypatch.setattr(mcp.ClientSession, "initialize", mock_initialize)
@@ -300,7 +300,7 @@ async def test_initialize_called_once(fastmcp_server, monkeypatch):
         assert mock_initialize.call_count == 1
 
 
-@pytest.mark.asyncio
+
 async def test_initialize_result_connected(fastmcp_server):
     """Test that initialize_result returns the correct result when connected."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -319,7 +319,7 @@ async def test_initialize_result_connected(fastmcp_server):
         assert result.serverInfo.version is not None
 
 
-@pytest.mark.asyncio
+
 async def test_initialize_result_disconnected(fastmcp_server):
     """Test that initialize_result raises an error when not connected."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -338,7 +338,7 @@ async def test_initialize_result_disconnected(fastmcp_server):
         _ = client.initialize_result
 
 
-@pytest.mark.asyncio
+
 async def test_server_info_custom_version():
     """Test that custom version is properly set in serverInfo."""
     # Test with custom version
@@ -364,7 +364,7 @@ async def test_server_info_custom_version():
         )  # Should be different from custom version
 
 
-@pytest.mark.asyncio
+
 async def test_client_nested_context_manager(fastmcp_server):
     """Test that the client connects and disconnects once in nested context manager."""
 
@@ -395,7 +395,7 @@ async def test_client_nested_context_manager(fastmcp_server):
     assert client._session is None
 
 
-@pytest.mark.asyncio
+
 async def test_concurrent_client_context_managers():
     """
     Test that concurrent client usage doesn't cause cross-task cancel scope issues.
@@ -442,7 +442,7 @@ async def test_concurrent_client_context_managers():
     assert all(count == 1 for count in results.values())  # All should see 1 tool
 
 
-@pytest.mark.asyncio
+
 async def test_resource_template(fastmcp_server):
     """Test using a resource template with InMemoryClient."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -466,7 +466,7 @@ async def test_resource_template(fastmcp_server):
         assert '"active": true' in content_str
 
 
-@pytest.mark.asyncio
+
 async def test_list_resource_templates_mcp(fastmcp_server):
     """Test the list_resource_templates_mcp method that returns raw MCP protocol objects."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -480,7 +480,7 @@ async def test_list_resource_templates_mcp(fastmcp_server):
         assert "data://user/{user_id}" in result.resourceTemplates[0].uriTemplate
 
 
-@pytest.mark.asyncio
+
 async def test_mcp_resource_generation(fastmcp_server):
     """Test that resources are properly generated in MCP format."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -497,7 +497,7 @@ async def test_mcp_resource_generation(fastmcp_server):
         assert str(resource.uri) == "data://users"
 
 
-@pytest.mark.asyncio
+
 async def test_mcp_template_generation(fastmcp_server):
     """Test that templates are properly generated in MCP format."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -514,7 +514,7 @@ async def test_mcp_template_generation(fastmcp_server):
         assert "data://user/{user_id}" in template.uriTemplate
 
 
-@pytest.mark.asyncio
+
 async def test_template_access_via_client(fastmcp_server):
     """Test that templates can be accessed through a client."""
     client = Client(transport=FastMCPTransport(fastmcp_server))
@@ -527,7 +527,7 @@ async def test_template_access_via_client(fastmcp_server):
         assert '"id": "456"' in content_str
 
 
-@pytest.mark.asyncio
+
 async def test_tagged_resource_metadata(tagged_resources_server):
     """Test that resource metadata is preserved in MCP format."""
     client = Client(transport=FastMCPTransport(tagged_resources_server))
@@ -542,7 +542,7 @@ async def test_tagged_resource_metadata(tagged_resources_server):
         assert resource.description == "A tagged resource"
 
 
-@pytest.mark.asyncio
+
 async def test_tagged_template_metadata(tagged_resources_server):
     """Test that template metadata is preserved in MCP format."""
     client = Client(transport=FastMCPTransport(tagged_resources_server))
@@ -557,7 +557,7 @@ async def test_tagged_template_metadata(tagged_resources_server):
         assert template.description == "A tagged template"
 
 
-@pytest.mark.asyncio
+
 async def test_tagged_template_functionality(tagged_resources_server):
     """Test that tagged templates function correctly when accessed."""
     client = Client(transport=FastMCPTransport(tagged_resources_server))
@@ -572,7 +572,7 @@ async def test_tagged_template_functionality(tagged_resources_server):
 
 
 class TestErrorHandling:
-    @pytest.mark.asyncio
+    
     async def test_general_tool_exceptions_are_not_masked_by_default(self):
         mcp = FastMCP("TestServer")
 
@@ -588,7 +588,7 @@ class TestErrorHandling:
             assert "test error" in result.content[0].text  # type: ignore[attr-defined]
             assert "abc" in result.content[0].text  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_general_tool_exceptions_are_masked_when_enabled(self):
         mcp = FastMCP("TestServer", mask_error_details=True)
 
@@ -604,7 +604,7 @@ class TestErrorHandling:
             assert "test error" not in result.content[0].text  # type: ignore[attr-defined]
             assert "abc" not in result.content[0].text  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_specific_tool_errors_are_sent_to_client(self):
         mcp = FastMCP("TestServer")
 
@@ -620,7 +620,7 @@ class TestErrorHandling:
             assert "test error" in result.content[0].text  # type: ignore[attr-defined]
             assert "abc" in result.content[0].text  # type: ignore[attr-defined]
 
-    @pytest.mark.asyncio
+    
     async def test_general_resource_exceptions_are_not_masked_by_default(self):
         mcp = FastMCP("TestServer")
 
@@ -637,7 +637,7 @@ class TestErrorHandling:
             assert "sensitive" in str(excinfo.value)
             assert "internal error" in str(excinfo.value)
 
-    @pytest.mark.asyncio
+    
     async def test_general_resource_exceptions_are_masked_when_enabled(self):
         mcp = FastMCP("TestServer", mask_error_details=True)
 
@@ -654,7 +654,7 @@ class TestErrorHandling:
             assert "sensitive" not in str(excinfo.value)
             assert "internal error" not in str(excinfo.value)
 
-    @pytest.mark.asyncio
+    
     async def test_resource_errors_are_sent_to_client(self):
         mcp = FastMCP("TestServer")
 
@@ -669,7 +669,7 @@ class TestErrorHandling:
                 await client.read_resource(AnyUrl("error://resource"))
             assert "This is a resource error (xyz)" in str(excinfo.value)
 
-    @pytest.mark.asyncio
+    
     async def test_general_template_exceptions_are_not_masked_by_default(self):
         mcp = FastMCP("TestServer")
 
@@ -686,7 +686,7 @@ class TestErrorHandling:
             assert "sensitive" in str(excinfo.value)
             assert "internal error" in str(excinfo.value)
 
-    @pytest.mark.asyncio
+    
     async def test_general_template_exceptions_are_masked_when_enabled(self):
         mcp = FastMCP("TestServer", mask_error_details=True)
 
@@ -703,7 +703,7 @@ class TestErrorHandling:
             assert "sensitive" not in str(excinfo.value)
             assert "internal error" not in str(excinfo.value)
 
-    @pytest.mark.asyncio
+    
     async def test_template_errors_are_sent_to_client(self):
         mcp = FastMCP("TestServer")
 
@@ -724,7 +724,7 @@ class TestErrorHandling:
     reason="Timeout tests are flaky on Windows. Timeouts *are* supported but the tests are unreliable.",
 )
 class TestTimeout:
-    @pytest.mark.asyncio
+    
     async def test_timeout(self, fastmcp_server: FastMCP):
         async with Client(
             transport=FastMCPTransport(fastmcp_server), timeout=0.05
@@ -735,13 +735,13 @@ class TestTimeout:
             ):
                 await client.call_tool("sleep", {"seconds": 0.1})
 
-    @pytest.mark.asyncio
+    
     async def test_timeout_tool_call(self, fastmcp_server: FastMCP):
         async with Client(transport=FastMCPTransport(fastmcp_server)) as client:
             with pytest.raises(McpError):
                 await client.call_tool("sleep", {"seconds": 0.1}, timeout=0.01)
 
-    @pytest.mark.asyncio
+    
     async def test_timeout_tool_call_overrides_client_timeout(
         self, fastmcp_server: FastMCP
     ):
@@ -756,7 +756,7 @@ class TestTimeout:
         sys.platform == "win32",
         reason="This test is flaky on Windows. Sometimes the client timeout is respected and sometimes it is not.",
     )
-    @pytest.mark.asyncio
+    
     async def test_timeout_tool_call_overrides_client_timeout_even_if_lower(
         self, fastmcp_server: FastMCP
     ):
@@ -770,7 +770,7 @@ class TestTimeout:
 class TestInferTransport:
     """Tests for the infer_transport function."""
 
-    @pytest.mark.asyncio
+    
     @pytest.mark.parametrize(
         "url",
         [
@@ -798,7 +798,7 @@ class TestInferTransport:
         """Test that URLs with /sse/ pattern return SSETransport."""
         assert isinstance(infer_transport(url), SSETransport)
 
-    @pytest.mark.asyncio
+    
     @pytest.mark.parametrize(
         "url",
         [
@@ -820,7 +820,7 @@ class TestInferTransport:
         """Test that URLs without /sse/ pattern return StreamableHttpTransport."""
         assert isinstance(infer_transport(url), StreamableHttpTransport)
 
-    @pytest.mark.asyncio
+    
     def test_infer_remote_transport_from_config(self):
         config = {
             "mcpServers": {
@@ -836,7 +836,7 @@ class TestInferTransport:
         assert transport.transport.url == "http://localhost:8000/sse/"
         assert transport.transport.headers == {"Authorization": "Bearer 123"}
 
-    @pytest.mark.asyncio
+    
     def test_infer_local_transport_from_config(self):
         config = {
             "mcpServers": {
@@ -852,21 +852,21 @@ class TestInferTransport:
         assert transport.transport.command == "echo"
         assert transport.transport.args == ["hello"]
 
-    @pytest.mark.asyncio
+    
     def test_config_with_no_servers(self):
         """Test that an empty MCPConfig raises a ValueError."""
         config = {"mcpServers": {}}
         with pytest.raises(ValueError, match="No MCP servers defined in the config"):
             infer_transport(config)
 
-    @pytest.mark.asyncio
+    
     def test_mcpconfigtransport_with_no_servers(self):
         """Test that MCPConfigTransport raises a ValueError when initialized with an empty config."""
         config = {"mcpServers": {}}
         with pytest.raises(ValueError, match="No MCP servers defined in the config"):
             MCPConfigTransport(config=config)
 
-    @pytest.mark.asyncio
+    
     def test_infer_composite_client(self):
         config = {
             "mcpServers": {
@@ -890,13 +890,13 @@ class TestInferTransport:
             == 2
         )
 
-    @pytest.mark.asyncio
+    
     def test_infer_fastmcp_server(self, fastmcp_server):
         """FastMCP server instances should infer to FastMCPTransport."""
         transport = infer_transport(fastmcp_server)
         assert isinstance(transport, FastMCPTransport)
 
-    @pytest.mark.asyncio
+    
     def test_infer_fastmcp_v1_server(self):
         """FastMCP 1.0 server instances should infer to FastMCPTransport."""
         from mcp.server.fastmcp import FastMCP as FastMCP1
@@ -907,17 +907,17 @@ class TestInferTransport:
 
 
 class TestAuth:
-    @pytest.mark.asyncio
+    
     def test_default_auth_is_none(self):
         client = Client(transport=StreamableHttpTransport("http://localhost:8000"))
         assert client.transport.auth is None
 
-    @pytest.mark.asyncio
+    
     def test_stdio_doesnt_support_auth(self):
         with pytest.raises(ValueError, match="This transport does not support auth"):
             Client(transport=StdioTransport("echo", ["hello"]), auth="oauth")
 
-    @pytest.mark.asyncio
+    
     def test_oauth_literal_sets_up_oauth_shttp(self):
         client = Client(
             transport=StreamableHttpTransport("http://localhost:8000"), auth="oauth"
@@ -925,7 +925,7 @@ class TestAuth:
         assert isinstance(client.transport, StreamableHttpTransport)
         assert isinstance(client.transport.auth, OAuthClientProvider)
 
-    @pytest.mark.asyncio
+    
     def test_oauth_literal_pass_direct_to_transport(self):
         client = Client(
             transport=StreamableHttpTransport("http://localhost:8000", auth="oauth"),
@@ -933,19 +933,19 @@ class TestAuth:
         assert isinstance(client.transport, StreamableHttpTransport)
         assert isinstance(client.transport.auth, OAuthClientProvider)
 
-    @pytest.mark.asyncio
+    
     def test_oauth_literal_sets_up_oauth_sse(self):
         client = Client(transport=SSETransport("http://localhost:8000"), auth="oauth")
         assert isinstance(client.transport, SSETransport)
         assert isinstance(client.transport.auth, OAuthClientProvider)
 
-    @pytest.mark.asyncio
+    
     def test_oauth_literal_pass_direct_to_transport_sse(self):
         client = Client(transport=SSETransport("http://localhost:8000", auth="oauth"))
         assert isinstance(client.transport, SSETransport)
         assert isinstance(client.transport.auth, OAuthClientProvider)
 
-    @pytest.mark.asyncio
+    
     def test_auth_string_sets_up_bearer_auth_shttp(self):
         client = Client(
             transport=StreamableHttpTransport("http://localhost:8000"),
@@ -955,7 +955,7 @@ class TestAuth:
         assert isinstance(client.transport.auth, BearerAuth)
         assert client.transport.auth.token.get_secret_value() == "test_token"
 
-    @pytest.mark.asyncio
+    
     def test_auth_string_pass_direct_to_transport_shttp(self):
         client = Client(
             transport=StreamableHttpTransport(
@@ -966,7 +966,7 @@ class TestAuth:
         assert isinstance(client.transport.auth, BearerAuth)
         assert client.transport.auth.token.get_secret_value() == "test_token"
 
-    @pytest.mark.asyncio
+    
     def test_auth_string_sets_up_bearer_auth_sse(self):
         client = Client(
             transport=SSETransport("http://localhost:8000"),
@@ -976,7 +976,7 @@ class TestAuth:
         assert isinstance(client.transport.auth, BearerAuth)
         assert client.transport.auth.token.get_secret_value() == "test_token"
 
-    @pytest.mark.asyncio
+    
     def test_auth_string_pass_direct_to_transport_sse(self):
         client = Client(
             transport=SSETransport("http://localhost:8000", auth="test_token"),

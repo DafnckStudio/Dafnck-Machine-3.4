@@ -29,7 +29,7 @@ async def test_complex_inputs():
         assert result[0].text == '[\n  "bob",\n  "alice",\n  "charlie"\n]'  # type: ignore[attr-defined]
 
 
-@pytest.mark.asyncio
+
 async def test_desktop(monkeypatch):
     """Test the desktop server"""
     from examples.desktop import mcp

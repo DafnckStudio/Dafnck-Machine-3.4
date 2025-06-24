@@ -111,6 +111,7 @@ def get_simple_func_adapter():
     return get_cached_typeadapter(simple_func)
 
 
+
 async def test_complex_function_runtime_arg_validation_non_json():
     """Test that basic non-JSON arguments are validated correctly using a simpler function"""
     type_adapter = get_simple_func_adapter()
@@ -187,6 +188,7 @@ def test_skip_names():
     if "required" in pruned_schema:
         assert "skip_this" not in pruned_schema["required"]
         assert "also_skip" not in pruned_schema["required"]
+
 
 
 async def test_lambda_function():

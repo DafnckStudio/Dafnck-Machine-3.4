@@ -86,7 +86,7 @@ class TestRouteTypeIgnoreDeprecation:
 
         return httpx.AsyncClient(transport=httpx.MockTransport(_responder))
 
-    @pytest.mark.asyncio
+    
     async def test_route_type_ignore_conversion(self, basic_openapi_spec, mock_client):
         """Test that routes with RouteType.IGNORE are properly excluded."""
         # Capture the deprecation warning without checking the exact message

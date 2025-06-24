@@ -26,5 +26,9 @@ def find_project_root(start_path: Path = None) -> Path:
     for parent in [current] + list(current.parents):
         if (parent / "pyproject.toml").exists() or (parent / ".git").exists():
             return parent
-    # Fallback: use parent of the directory containing the file
-    return current.parent.parent 
+    # Fallback: if no project root found, return the current working directory
+    # or the directory containing the file, whichever makes more sense
+    if current.is_file():
+        return current.parent
+    else:
+        return current 

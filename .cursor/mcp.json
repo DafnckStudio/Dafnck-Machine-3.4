@@ -13,8 +13,8 @@
         "MCP_TOOL_CONFIG": ".cursor/tool_config.json",
         "AGENTS_OUTPUT_DIR": ".cursor/rules/agents",
         "AUTO_RULE_PATH": ".cursor/rules/auto_rule.mdc",
-        "BRAIN_DIR_PATH": "dhafnck_mcp_main/.cursor/rules/brain",
-        "PROJECTS_FILE_PATH": "dhafnck_mcp_main/.cursor/rules/brain/projects.json",
+        "BRAIN_DIR_PATH": ".cursor/rules/brain",
+        "PROJECTS_FILE_PATH": ".cursor/rules/brain/projects.json",
         "PROJECT_ROOT_PATH": ".",
         "CURSOR_AGENT_DIR_PATH": "dhafnck_mcp_main/yaml-lib",
         "AGENT_YAML_LIB_PATH": "dhafnck_mcp_main/yaml-lib"

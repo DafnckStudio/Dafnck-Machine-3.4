@@ -859,7 +859,7 @@ class TestProxyServer:
 class TestAsProxyKwarg:
     """Test the as_proxy kwarg."""
 
-    @pytest.mark.asyncio
+    
     async def test_as_proxy_defaults_false(self):
         mcp = FastMCP("Main")
         sub = FastMCP("Sub")
@@ -867,7 +867,7 @@ class TestAsProxyKwarg:
         mcp.mount(sub, "sub")
         assert mcp._tool_manager._mounted_servers[0].server is sub
 
-    @pytest.mark.asyncio
+    
     async def test_as_proxy_false(self):
         mcp = FastMCP("Main")
         sub = FastMCP("Sub")
@@ -876,7 +876,7 @@ class TestAsProxyKwarg:
 
         assert mcp._tool_manager._mounted_servers[0].server is sub
 
-    @pytest.mark.asyncio
+    
     async def test_as_proxy_true(self):
         mcp = FastMCP("Main")
         sub = FastMCP("Sub")
@@ -886,7 +886,7 @@ class TestAsProxyKwarg:
         assert mcp._tool_manager._mounted_servers[0].server is not sub
         assert isinstance(mcp._tool_manager._mounted_servers[0].server, FastMCPProxy)
 
-    @pytest.mark.asyncio
+    
     async def test_as_proxy_defaults_true_if_lifespan(self):
         @asynccontextmanager
         async def lifespan(mcp: FastMCP):
@@ -900,7 +900,7 @@ class TestAsProxyKwarg:
         assert mcp._tool_manager._mounted_servers[0].server is not sub
         assert isinstance(mcp._tool_manager._mounted_servers[0].server, FastMCPProxy)
 
-    @pytest.mark.asyncio
+    
     async def test_as_proxy_ignored_for_proxy_mounts_default(self):
         mcp = FastMCP("Main")
         sub = FastMCP("Sub")
@@ -910,7 +910,7 @@ class TestAsProxyKwarg:
 
         assert mcp._tool_manager._mounted_servers[0].server is sub_proxy
 
-    @pytest.mark.asyncio
+    
     async def test_as_proxy_ignored_for_proxy_mounts_false(self):
         mcp = FastMCP("Main")
         sub = FastMCP("Sub")
@@ -920,7 +920,7 @@ class TestAsProxyKwarg:
 
         assert mcp._tool_manager._mounted_servers[0].server is sub_proxy
 
-    @pytest.mark.asyncio
+    
     async def test_as_proxy_ignored_for_proxy_mounts_true(self):
         mcp = FastMCP("Main")
         sub = FastMCP("Sub")
@@ -930,7 +930,7 @@ class TestAsProxyKwarg:
 
         assert mcp._tool_manager._mounted_servers[0].server is sub_proxy
 
-    @pytest.mark.asyncio
+    
     async def test_as_proxy_mounts_still_have_live_link(self):
         mcp = FastMCP("Main")
         sub = FastMCP("Sub")
@@ -945,7 +945,7 @@ class TestAsProxyKwarg:
 
         assert len(await mcp.get_tools()) == 1
 
-    @pytest.mark.asyncio
+    
     async def test_sub_lifespan_is_executed(self):
         lifespan_check = []
 

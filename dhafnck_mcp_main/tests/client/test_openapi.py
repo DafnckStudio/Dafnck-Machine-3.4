@@ -73,7 +73,7 @@ class TestClientHeaders:
         ) as url:
             yield f"{url}/mcp/"
 
-    @pytest.mark.asyncio
+    
     async def test_client_headers_sse_resource(self, sse_server: str):
         async with Client(
             transport=SSETransport(sse_server, headers={"X-TEST": "test-123"})
@@ -82,7 +82,7 @@ class TestClientHeaders:
             headers = json.loads(result[0].text)  # type: ignore[attr-defined]
             assert headers["x-test"] == "test-123"
 
-    @pytest.mark.asyncio
+    
     async def test_client_headers_shttp_resource(self, shttp_server: str):
         async with Client(
             transport=StreamableHttpTransport(
@@ -93,7 +93,7 @@ class TestClientHeaders:
             headers = json.loads(result[0].text)  # type: ignore[attr-defined]
             assert headers["x-test"] == "test-123"
 
-    @pytest.mark.asyncio
+    
     async def test_client_headers_sse_resource_template(self, sse_server: str):
         async with Client(
             transport=SSETransport(sse_server, headers={"X-TEST": "test-123"})
@@ -104,7 +104,7 @@ class TestClientHeaders:
             header = json.loads(result[0].text)  # type: ignore[attr-defined]
             assert header == "test-123"
 
-    @pytest.mark.asyncio
+    
     async def test_client_headers_shttp_resource_template(self, shttp_server: str):
         async with Client(
             transport=StreamableHttpTransport(
@@ -117,7 +117,7 @@ class TestClientHeaders:
             header = json.loads(result[0].text)  # type: ignore[attr-defined]
             assert header == "test-123"
 
-    @pytest.mark.asyncio
+    
     async def test_client_headers_sse_tool(self, sse_server: str):
         async with Client(
             transport=SSETransport(sse_server, headers={"X-TEST": "test-123"})
@@ -126,7 +126,7 @@ class TestClientHeaders:
             headers = json.loads(result[0].text)  # type: ignore[attr-defined]
             assert headers["x-test"] == "test-123"
 
-    @pytest.mark.asyncio
+    
     async def test_client_headers_shttp_tool(self, shttp_server: str):
         async with Client(
             transport=StreamableHttpTransport(
@@ -137,7 +137,7 @@ class TestClientHeaders:
             headers = json.loads(result[0].text)  # type: ignore[attr-defined]
             assert headers["x-test"] == "test-123"
 
-    @pytest.mark.asyncio
+    
     async def test_client_overrides_server_headers(self, shttp_server: str):
         async with Client(
             transport=StreamableHttpTransport(
@@ -148,7 +148,7 @@ class TestClientHeaders:
             headers = json.loads(result[0].text)  # type: ignore[attr-defined]
             assert headers["x-server-header"] == "test-client"
 
-    @pytest.mark.asyncio
+    
     async def test_client_with_excluded_header_is_ignored(self, sse_server: str):
         async with Client(
             transport=SSETransport(
@@ -165,7 +165,7 @@ class TestClientHeaders:
             assert headers["not-host"] == "1.2.3.4"
             assert headers["host"] == "fastapi"
 
-    @pytest.mark.asyncio
+    
     async def test_client_headers_proxy(self, proxy_server: str):
         """
         Test that client headers are passed through the proxy to the remove server.

@@ -70,12 +70,12 @@ def resolve_path(path):
     return p if p.is_absolute() else (project_root / p)
 
 # Allow override via environment variables, else use default nested paths
-BRAIN_DIR = resolve_path(os.environ.get("BRAIN_DIR_PATH", "dhafnck_mcp_main/.cursor/rules/brain"))
+BRAIN_DIR = resolve_path(os.environ.get("BRAIN_DIR_PATH", ".cursor/rules/brain"))
 PROJECTS_FILE = resolve_path(os.environ.get("PROJECTS_FILE_PATH", BRAIN_DIR / "projects.json"))
 
 # Get project root directory
 PROJECT_ROOT = project_root
-CURSOR_AGENT_DIR = PROJECT_ROOT / 'dhafnck_mcp_main'  # Agents are in PROJECT_ROOT/dhafnck_mcp_main/yaml-lib
+CURSOR_AGENT_DIR = PROJECT_ROOT / 'yaml-lib'  # Agents are in PROJECT_ROOT/yaml-lib
 
 def ensure_brain_dir():
     os.makedirs(BRAIN_DIR, exist_ok=True)

@@ -1,9 +1,11 @@
 import json
 from urllib.parse import quote
+import pytest
 
 from fastmcp.client.client import Client
 from fastmcp.server.server import FastMCP
 from fastmcp.tools.tool import FunctionTool, Tool
+
 
 
 async def test_import_basic_functionality():
@@ -32,6 +34,7 @@ async def test_import_basic_functionality():
     assert callable(tool.fn)
 
 
+
 async def test_import_multiple_apps():
     """Test importing multiple apps to a main app."""
     # Create main app and multiple sub-apps
@@ -55,6 +58,7 @@ async def test_import_multiple_apps():
     # Verify tools were imported with the correct prefixes
     assert "weather_get_forecast" in main_app._tool_manager._tools
     assert "news_get_headlines" in main_app._tool_manager._tools
+
 
 
 async def test_import_combines_tools():
@@ -87,6 +91,7 @@ async def test_import_combines_tools():
     assert "api_first_tool" in main_app._tool_manager._tools
 
 
+
 async def test_import_with_resources():
     """Test importing with resources."""
     # Create apps
@@ -103,6 +108,7 @@ async def test_import_with_resources():
 
     # Verify the resource was imported with the prefix
     assert "data://data/users" in main_app._resource_manager._resources
+
 
 
 async def test_import_with_resource_templates():
@@ -123,6 +129,7 @@ async def test_import_with_resource_templates():
     assert "users://api/{user_id}/profile" in main_app._resource_manager._templates
 
 
+
 async def test_import_with_prompts():
     """Test importing with prompts."""
     # Create apps
@@ -139,6 +146,7 @@ async def test_import_with_prompts():
 
     # Verify the prompt was imported with the prefix
     assert "assistant_greeting" in main_app._prompt_manager._prompts
+
 
 
 async def test_import_multiple_resource_templates():
@@ -166,6 +174,7 @@ async def test_import_multiple_resource_templates():
     assert "news://content/{category}" in main_app._resource_manager._templates
 
 
+
 async def test_import_multiple_prompts():
     """Test importing multiple apps with prompts."""
     # Create apps
@@ -191,6 +200,7 @@ async def test_import_multiple_prompts():
     assert "sql_explain_sql" in main_app._prompt_manager._prompts
 
 
+
 async def test_tool_custom_name_preserved_when_imported():
     """Test that a tool's custom name is preserved when imported."""
     main_app = FastMCP("MainApp")
@@ -211,6 +221,7 @@ async def test_tool_custom_name_preserved_when_imported():
     assert tool.fn.__name__ == "fetch_data"
 
 
+
 async def test_call_imported_custom_named_tool():
     """Test calling an imported tool with a custom name."""
     main_app = FastMCP("MainApp")
@@ -225,6 +236,7 @@ async def test_call_imported_custom_named_tool():
     async with Client(main_app) as client:
         result = await client.call_tool("api_get_data", {"query": "test"})
         assert result[0].text == "Data for query: test"  # type: ignore[attr-defined]
+
 
 
 async def test_first_level_importing_with_custom_name():
@@ -245,6 +257,7 @@ async def test_first_level_importing_with_custom_name():
     assert tool.fn.__name__ == "calculate_value"
 
 
+
 async def test_nested_importing_preserves_prefixes():
     """Test that importing a previously imported app preserves prefixes."""
     main_app = FastMCP("MainApp")
@@ -263,6 +276,7 @@ async def test_nested_importing_preserves_prefixes():
     assert tool is not None
 
 
+
 async def test_call_nested_imported_tool():
     """Test calling a tool through multiple levels of importing."""
     main_app = FastMCP("MainApp")
@@ -279,6 +293,7 @@ async def test_call_nested_imported_tool():
     async with Client(main_app) as client:
         result = await client.call_tool("service_provider_compute", {"input": 21})
         assert result[0].text == "42"  # type: ignore[attr-defined]
+
 
 
 async def test_import_with_proxy_tools():
@@ -305,6 +320,7 @@ async def test_import_with_proxy_tools():
         assert result[0].text == "Data for query: test"  # type: ignore[attr-defined]
 
 
+
 async def test_import_with_proxy_prompts():
     """
     Test importing with prompts that have custom keys.
@@ -328,6 +344,7 @@ async def test_import_with_proxy_prompts():
         result = await client.get_prompt("api_greeting", {"name": "World"})
         assert result.messages[0].content.text == "Hello, World from API!"  # type: ignore[attr-defined]
         assert result.description == "Example greeting prompt."
+
 
 
 async def test_import_with_proxy_resources():
@@ -360,6 +377,7 @@ async def test_import_with_proxy_resources():
         assert content["base_url"] == "https://api.example.com"
 
 
+
 async def test_import_with_proxy_resource_templates():
     """
     Test importing with resource templates that have custom keys.
@@ -390,6 +408,7 @@ async def test_import_with_proxy_resource_templates():
         assert content["email"] == "john@example.com"
 
 
+
 async def test_import_invalid_resource_prefix():
     main_app = FastMCP("MainApp")
     api_app = FastMCP("APIApp")
@@ -400,6 +419,7 @@ async def test_import_invalid_resource_prefix():
     await main_app.import_server(api_app, "api")
 
 
+
 async def test_import_invalid_resource_separator():
     main_app = FastMCP("MainApp")
     api_app = FastMCP("APIApp")
@@ -407,6 +427,7 @@ async def test_import_invalid_resource_separator():
     # This test is for maintaining coverage for importing with prefixes
     # We no longer pass the deprecated resource_separator parameter
     await main_app.import_server(api_app, "api")
+
 
 
 async def test_import_with_no_prefix():
@@ -459,6 +480,7 @@ async def test_import_with_no_prefix():
         assert prompt_result.messages[0].content.text == "Sub prompt content"  # type: ignore[attr-defined]
 
 
+
 async def test_import_conflict_resolution_tools():
     """Test that later imported tools overwrite earlier ones when names conflict."""
     main_app = FastMCP("MainApp")
@@ -488,6 +510,7 @@ async def test_import_conflict_resolution_tools():
         assert result[0].text == "Second app tool"  # type: ignore[attr-defined]
 
 
+
 async def test_import_conflict_resolution_resources():
     """Test that later imported resources overwrite earlier ones when URIs conflict."""
     main_app = FastMCP("MainApp")
@@ -515,6 +538,7 @@ async def test_import_conflict_resolution_resources():
 
         result = await client.read_resource("shared://data")
         assert result[0].text == "Second app data"  # type: ignore[attr-defined]
+
 
 
 async def test_import_conflict_resolution_templates():
@@ -548,6 +572,7 @@ async def test_import_conflict_resolution_templates():
         assert result[0].text == "Second app user 123"  # type: ignore[attr-defined]
 
 
+
 async def test_import_conflict_resolution_prompts():
     """Test that later imported prompts overwrite earlier ones when names conflict."""
     main_app = FastMCP("MainApp")
@@ -576,6 +601,7 @@ async def test_import_conflict_resolution_prompts():
         result = await client.get_prompt("shared_prompt", {})
         assert result.messages is not None
         assert result.messages[0].content.text == "Second app prompt"  # type: ignore[attr-defined]
+
 
 
 async def test_import_conflict_resolution_with_prefix():

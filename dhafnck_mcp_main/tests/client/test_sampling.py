@@ -39,7 +39,7 @@ def fastmcp_server():
     return mcp
 
 
-@pytest.mark.asyncio
+
 async def test_simple_sampling(fastmcp_server: FastMCP):
     def sampling_handler(
         messages: list[SamplingMessage], params: SamplingParams, ctx: RequestContext
@@ -52,7 +52,7 @@ async def test_simple_sampling(fastmcp_server: FastMCP):
         assert reply.text == "This is the sample message!"
 
 
-@pytest.mark.asyncio
+
 async def test_sampling_with_system_prompt(fastmcp_server: FastMCP):
     def sampling_handler(
         messages: list[SamplingMessage], params: SamplingParams, ctx: RequestContext
@@ -68,7 +68,7 @@ async def test_sampling_with_system_prompt(fastmcp_server: FastMCP):
         assert reply.text == "You love FastMCP"
 
 
-@pytest.mark.asyncio
+
 async def test_sampling_with_messages(fastmcp_server: FastMCP):
     def sampling_handler(
         messages: list[SamplingMessage], params: SamplingParams, ctx: RequestContext

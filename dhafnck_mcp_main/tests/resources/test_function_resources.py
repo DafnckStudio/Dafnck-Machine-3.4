@@ -30,7 +30,7 @@ class TestFunctionResource:
         assert resource.mime_type == "text/plain"  # default
         assert resource.fn == my_func
 
-    @pytest.mark.asyncio
+    
     async def test_read_text(self):
         """Test reading text from a FunctionResource."""
 
@@ -46,7 +46,7 @@ class TestFunctionResource:
         assert content == "Hello, world!"
         assert resource.mime_type == "text/plain"
 
-    @pytest.mark.asyncio
+    
     async def test_read_binary(self):
         """Test reading binary data from a FunctionResource."""
 
@@ -61,7 +61,7 @@ class TestFunctionResource:
         content = await resource.read()
         assert content == b"Hello, world!"
 
-    @pytest.mark.asyncio
+    
     async def test_json_conversion(self):
         """Test automatic JSON conversion of non-string results."""
 
@@ -77,7 +77,7 @@ class TestFunctionResource:
         assert isinstance(content, str)
         assert '"key": "value"' in content
 
-    @pytest.mark.asyncio
+    
     async def test_error_handling(self):
         """Test error handling in FunctionResource."""
 
@@ -92,7 +92,7 @@ class TestFunctionResource:
         with pytest.raises(ValueError, match="Test error"):
             await resource.read()
 
-    @pytest.mark.asyncio
+    
     async def test_basemodel_conversion(self):
         """Test handling of BaseModel types."""
 
@@ -107,7 +107,7 @@ class TestFunctionResource:
         content = await resource.read()
         assert content == '{\n  "name": "test"\n}'
 
-    @pytest.mark.asyncio
+    
     async def test_custom_type_conversion(self):
         """Test handling of custom types."""
 
@@ -126,7 +126,7 @@ class TestFunctionResource:
         content = await resource.read()
         assert isinstance(content, str)
 
-    @pytest.mark.asyncio
+    
     async def test_async_read_text(self):
         """Test reading text from async FunctionResource."""
 

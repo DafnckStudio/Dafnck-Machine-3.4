@@ -6,8 +6,8 @@ alwaysApply: true
 # Main objectif : correct mcp dhafnck_mcp tools not detect
 **Tip: Read the logic in cursor_agent to fix issues in dhafnck_mcp_main.
 
-CONTINUE_AUTOMATIC_NEW_TASK : OFF
-if CONTINUE_AUTOMATIC_NEW_TASK = OFF, terminate chat if task is completed
+CONTINUE_AUTOMATIC : ON
+if CONTINUE_AUTOMATIC = OFF, terminate chat if task is completed, else continue same task
 
 USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT = ON
 If USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT is set to ON, you must use the absolute path from the ROOT_PATH when creating or updating files to avoid path issues when working with different projects in the same folder.

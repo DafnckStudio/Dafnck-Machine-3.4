@@ -169,7 +169,7 @@ class TestResourceTemplate:
                 name="test",
             )
 
-    @pytest.mark.asyncio
+    
     async def test_create_resource(self):
         """Test creating a resource from a template."""
 
@@ -193,7 +193,7 @@ class TestResourceTemplate:
         data = json.loads(content)
         assert data == {"key": "foo", "value": 123}
 
-    @pytest.mark.asyncio
+    
     async def test_async_text_resource(self):
         """Test creating a text resource from async function."""
 
@@ -215,7 +215,7 @@ class TestResourceTemplate:
         content = await resource.read()
         assert content == "Hello, world!"
 
-    @pytest.mark.asyncio
+    
     async def test_async_binary_resource(self):
         """Test creating a binary resource from async function."""
 
@@ -237,7 +237,7 @@ class TestResourceTemplate:
         content = await resource.read()
         assert content == b"test"
 
-    @pytest.mark.asyncio
+    
     async def test_basemodel_conversion(self):
         """Test handling of BaseModel types."""
 
@@ -265,7 +265,7 @@ class TestResourceTemplate:
         data = json.loads(content)
         assert data == {"key": "foo", "value": 123}
 
-    @pytest.mark.asyncio
+    
     async def test_custom_type_conversion(self):
         """Test handling of custom types."""
 
@@ -294,7 +294,7 @@ class TestResourceTemplate:
         content = await resource.read()
         assert content == '"hello"'
 
-    @pytest.mark.asyncio
+    
     async def test_wildcard_param_can_create_resource(self):
         """Test that wildcard parameters are valid."""
 
@@ -312,7 +312,7 @@ class TestResourceTemplate:
             {"path": "path/to/test.py"},
         )
 
-    @pytest.mark.asyncio
+    
     async def test_wildcard_param_matches(self):
         def identify(path: str) -> str:
             return path
@@ -326,7 +326,7 @@ class TestResourceTemplate:
         params = template.matches("test://src/path/to/test.py")
         assert params == {"path": "path/to/test"}
 
-    @pytest.mark.asyncio
+    
     async def test_multiple_wildcard_params(self):
         """Test that multiple wildcard parameters are valid."""
 
@@ -342,7 +342,7 @@ class TestResourceTemplate:
         params = template.matches("test://path/to/xyz/abc")
         assert params == {"path": "path/to", "path2": "abc"}
 
-    @pytest.mark.asyncio
+    
     async def test_wildcard_param_with_regular_param(self):
         """Test that a wildcard parameter can be used with a regular parameter."""
 
@@ -358,7 +358,7 @@ class TestResourceTemplate:
         params = template.matches("test://src/path/to/test.py")
         assert params == {"prefix": "src", "path": "path/to/test.py"}
 
-    @pytest.mark.asyncio
+    
     async def test_function_with_varargs_not_allowed(self):
         def func(x: int, *args: int) -> int:
             return x + sum(args)
@@ -373,7 +373,7 @@ class TestResourceTemplate:
                 name="test",
             )
 
-    @pytest.mark.asyncio
+    
     async def test_function_with_varkwargs_ok(self):
         def func(x: int, **kwargs: int) -> int:
             return x + sum(kwargs.values())
@@ -385,7 +385,7 @@ class TestResourceTemplate:
         )
         assert template.uri_template == "test://{x}/{y}/{z}"
 
-    @pytest.mark.asyncio
+    
     async def test_callable_object_as_template(self):
         """Test that a callable object can be used as a template."""
 
@@ -669,7 +669,7 @@ class TestContextHandling:
             name="test",
         )
 
-    @pytest.mark.asyncio
+    
     async def test_context_injection(self):
         """Test that context is properly injected during resource creation."""
 
@@ -698,7 +698,7 @@ class TestContextHandling:
             content = await resource.read()
             assert content == "42"
 
-    @pytest.mark.asyncio
+    
     async def test_context_optional(self):
         """Test that context is optional when creating resources."""
 
