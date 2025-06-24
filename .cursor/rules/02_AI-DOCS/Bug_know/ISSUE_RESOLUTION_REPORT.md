@@ -84,7 +84,7 @@ from fastmcp.task_management.application.dtos import CreateTaskRequest, UpdateTa
 
 ### **3. Fixed DDD Import Structure**
 
-**File**: `consolidated_mcp_tools_v2.py`
+**File**: `consolidated_mcp_tools.py`
 
 **Changes:**
 - ❌ Removed duplicate DTO imports
@@ -102,7 +102,7 @@ from fastmcp.task_management.application.dtos import CreateTaskRequest, UpdateTa
 ✅ Native MCP server with DDD integration imported successfully
 ✅ MCP Server instance: <mcp.server.lowlevel.server.Server>
 ✅ Server name: dhafnck_mcp_native
-✅ DDD tools instance: ConsolidatedMCPToolsV2
+✅ DDD tools instance: ConsolidatedMCPTools
 ✅ All components initialized successfully
 
 # Startup test
@@ -118,8 +118,8 @@ from fastmcp.task_management.application.dtos import CreateTaskRequest, UpdateTa
 ### **✅ DDD Components Tests**
 ```bash
 # Import fix verification
-✅ ConsolidatedMCPToolsV2 imports and initializes correctly
-✅ Tools instance created: ConsolidatedMCPToolsV2
+✅ ConsolidatedMCPTools imports and initializes correctly
+✅ Tools instance created: ConsolidatedMCPTools
 ✅ No import conflicts or duplicate imports
 ```
 

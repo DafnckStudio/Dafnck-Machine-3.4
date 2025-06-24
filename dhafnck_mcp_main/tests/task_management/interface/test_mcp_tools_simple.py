@@ -13,25 +13,25 @@ from unittest.mock import Mock, patch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
 # Use the new consolidated tools
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 
 class TestMCPToolsSimple:
     """Simplified test cases for MCP Tools functionality."""
     
     @pytest.fixture
     def tools(self):
-        """Fixture to create a mocked instance of ConsolidatedMCPToolsV2"""
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.JsonTaskRepository'), \
-             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator'), \
-             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.TaskApplicationService'), \
-             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.CursorRulesTools'):
+        """Fixture to create a mocked instance of ConsolidatedMCPTools"""
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools.JsonTaskRepository'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools.FileAutoRuleGenerator'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools.TaskApplicationService'), \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools.CursorRulesTools'):
             
-            yield ConsolidatedMCPToolsV2()
+            yield ConsolidatedMCPTools()
 
     @pytest.mark.unit
     @pytest.mark.mcp
     def test_mcp_tools_can_be_instantiated(self, tools):
-        """Test that ConsolidatedMCPToolsV2 can be instantiated."""
+        """Test that ConsolidatedMCPTools can be instantiated."""
         assert tools is not None
         assert hasattr(tools, 'register_tools')
         assert hasattr(tools, '_task_app_service')
@@ -41,7 +41,7 @@ class TestMCPToolsSimple:
     @pytest.mark.unit
     @pytest.mark.mcp
     def test_mcp_tools_has_required_dependencies(self, tools):
-        """Test that ConsolidatedMCPToolsV2 has all required dependencies."""
+        """Test that ConsolidatedMCPTools has all required dependencies."""
         # Check that internal services are properly initialized
         assert tools._task_repository is not None
         assert tools._auto_rule_generator is not None

@@ -11,7 +11,7 @@ from fastmcp import FastMCP
 
 # Package imports - no need for sys.path manipulation with proper package structure
 
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from dhafnck_mcp_main.src.fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 
 
 def create_consolidated_mcp_server() -> FastMCP:
@@ -21,10 +21,10 @@ def create_consolidated_mcp_server() -> FastMCP:
     mcp = FastMCP("Task Management Consolidated with Multi-Agent Support")
     
     # Initialize and register consolidated tools v2 with reorganized structure
-    consolidated_tools = ConsolidatedMCPToolsV2()
+    consolidated_tools = ConsolidatedMCPTools()
     consolidated_tools.register_tools(mcp)
     
-    # Note: Multi-agent tools are now integrated into ConsolidatedMCPToolsV2
+    # Note: Multi-agent tools are now integrated into ConsolidatedMCPTools
     
     return mcp
 

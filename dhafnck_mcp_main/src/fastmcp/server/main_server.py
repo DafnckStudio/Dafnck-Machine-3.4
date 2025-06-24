@@ -25,14 +25,14 @@ def create_main_server(name: Optional[str] = None):
     
     # Use delayed imports to avoid circular import issues
     from fastmcp import FastMCP
-    from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+    from dhafnck_mcp_main.src.fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
     
     # Initialize FastMCP server
     server_name = name or "FastMCP Server with Task Management"
     mcp = FastMCP(server_name)
     
     # Initialize and register task management tools
-    dhafnck_mcp_tools = ConsolidatedMCPToolsV2()
+    dhafnck_mcp_tools = ConsolidatedMCPTools()
     dhafnck_mcp_tools.register_tools(mcp)
     
     logging.info(f"Main server '{server_name}' initialized with task management tools")

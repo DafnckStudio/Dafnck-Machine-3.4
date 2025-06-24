@@ -9,13 +9,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 
 
 import pytest
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import (
-    ConsolidatedMCPToolsV2,
+from fastmcp.task_management.interface.consolidated_mcp_tools import (
+    ConsolidatedMCPTools,
 )
 
 @pytest.fixture(scope="module")
 def mcp_tools():
-    return ConsolidatedMCPToolsV2()
+    return ConsolidatedMCPTools()
 
 def test_project_task_workflow(mcp_tools):
     # 1. Create a project

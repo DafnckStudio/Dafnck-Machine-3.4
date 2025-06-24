@@ -12,10 +12,10 @@ import shutil
 from unittest.mock import Mock, patch
 
 # Updated import to use consolidated v2 tools
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 
 
-class TestConsolidatedMCPToolsV2:
+class TestConsolidatedMCPTools:
     """Test consolidated MCP tools v2 functionality (migrated from old MCPTaskTools tests)"""
     
     @pytest.fixture
@@ -34,11 +34,11 @@ class TestConsolidatedMCPToolsV2:
     
     @pytest.fixture
     def mcp_tools(self, temp_projects_file):
-        """Create ConsolidatedMCPToolsV2 instance with mocked dependencies and isolated files"""
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo_class, \
-             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_generator_class, \
-             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.TaskApplicationService') as mock_service_class, \
-             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.CursorRulesTools') as mock_cursor_class:
+        """Create ConsolidatedMCPTools instance with mocked dependencies and isolated files"""
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools.JsonTaskRepository') as mock_repo_class, \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools.FileAutoRuleGenerator') as mock_generator_class, \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools.TaskApplicationService') as mock_service_class, \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools.CursorRulesTools') as mock_cursor_class:
             
             # Configure mock instances
             mock_repo = Mock()
@@ -52,7 +52,7 @@ class TestConsolidatedMCPToolsV2:
             mock_cursor_class.return_value = mock_cursor
             
             # Create tools with isolated projects file
-            return ConsolidatedMCPToolsV2(projects_file_path=temp_projects_file)
+            return ConsolidatedMCPTools(projects_file_path=temp_projects_file)
     
     def test_mcp_tools_initialization(self, mcp_tools):
         """Test MCP tools initialization"""

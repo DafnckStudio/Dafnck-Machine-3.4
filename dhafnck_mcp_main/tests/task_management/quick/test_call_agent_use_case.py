@@ -85,10 +85,10 @@ def test_call_agent_use_case_calls_generate_docs():
 
 
 def test_call_agent_use_case_integration_with_consolidated_tools():
-    """Test that CallAgentUseCase integrates correctly with ConsolidatedMCPToolsV2"""
-    from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+    """Test that CallAgentUseCase integrates correctly with ConsolidatedMCPTools"""
+    from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
     
-    tools = ConsolidatedMCPToolsV2()
+    tools = ConsolidatedMCPTools()
     
     # Should have the call_agent_use_case attribute
     assert hasattr(tools, '_call_agent_use_case')

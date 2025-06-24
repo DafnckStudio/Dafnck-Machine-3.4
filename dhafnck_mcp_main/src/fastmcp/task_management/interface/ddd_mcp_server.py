@@ -4,7 +4,7 @@ import asyncio
 import logging
 from fastmcp import FastMCP
 
-from .consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from .consolidated_mcp_tools import ConsolidatedMCPTools
 
 
 def create_mcp_server() -> FastMCP:
@@ -14,7 +14,7 @@ def create_mcp_server() -> FastMCP:
     mcp = FastMCP("Task Management DDD")
     
     # Initialize and register consolidated tools v2 (includes all functionality)
-    consolidated_tools = ConsolidatedMCPToolsV2()
+    consolidated_tools = ConsolidatedMCPTools()
     consolidated_tools.register_tools(mcp)
     
     return mcp

@@ -37,13 +37,13 @@ def mock_fastmcp_server():
 
 @pytest.fixture
 def dhafnck_mcp_tools(temp_project_dir):
-    """Initialize ConsolidatedMCPToolsV2 with test configuration"""
+    """Initialize ConsolidatedMCPTools with test configuration"""
     # Import the module first, before any mocking
     import sys
     sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
     
     try:
-        from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+        from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
         from fastmcp.task_management.infrastructure import InMemoryTaskRepository, FileAutoRuleGenerator
         
         # Create test projects file
@@ -53,12 +53,12 @@ def dhafnck_mcp_tools(temp_project_dir):
         # Use InMemoryTaskRepository for test isolation
         task_repo = InMemoryTaskRepository()
         
-        return ConsolidatedMCPToolsV2(
+        return ConsolidatedMCPTools(
             task_repository=task_repo,
             projects_file_path=str(projects_file)
         )
     except ImportError as e:
-        pytest.skip(f"Could not import ConsolidatedMCPToolsV2: {e}")
+        pytest.skip(f"Could not import ConsolidatedMCPTools: {e}")
 
 
 class TestTaskManagementIntegration:

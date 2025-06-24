@@ -11,11 +11,11 @@ import sys
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 
 @pytest.fixture
 def mcp_tools(temp_tasks_file):
-    """Fixture to provide an instance of ConsolidatedMCPToolsV2 with temporary task file."""
+    """Fixture to provide an instance of ConsolidatedMCPTools with temporary task file."""
     from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
     from fastmcp.task_management.application.services.task_application_service import TaskApplicationService
     from fastmcp.task_management.application.use_cases.create_task import CreateTaskUseCase
@@ -30,7 +30,7 @@ def mcp_tools(temp_tasks_file):
     repository = JsonTaskRepository(str(temp_tasks_file))
     
     # Create tools with custom dependencies (it creates TaskApplicationService internally)
-    tools = ConsolidatedMCPToolsV2(
+    tools = ConsolidatedMCPTools(
         task_repository=repository
     )
     

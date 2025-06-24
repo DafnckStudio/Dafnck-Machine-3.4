@@ -31,7 +31,7 @@ from unittest.mock import Mock, patch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
 # Import migrated components
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository, InMemoryTaskRepository
 from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
 from fastmcp.task_management.domain.entities.task import Task
@@ -94,7 +94,7 @@ class TestMigrationIntegration:
         try:
             # Initialize with real file-based repository for migration testing
             repository = JsonTaskRepository()
-            mcp_tools = ConsolidatedMCPToolsV2(task_repository=repository)
+            mcp_tools = ConsolidatedMCPTools(task_repository=repository)
             yield mcp_tools
         finally:
             os.chdir(original_cwd)

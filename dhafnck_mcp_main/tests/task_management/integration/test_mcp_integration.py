@@ -16,7 +16,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 
 # Use the new consolidated tools
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 
 
 class TestMCPIntegration:
@@ -62,7 +62,7 @@ class TestMCPIntegration:
             # Initialize real components
             repository = JsonTaskRepository()
             auto_rule_generator = FileAutoRuleGenerator()
-            mcp_tools = ConsolidatedMCPToolsV2(task_repository=repository)
+            mcp_tools = ConsolidatedMCPTools(task_repository=repository)
             
             # Test that components are properly initialized
             assert repository is not None

@@ -1057,11 +1057,11 @@ class ToolRegistrationOrchestrator:
 # 🏗️ MAIN CONSOLIDATED TOOLS CLASS
 # ═══════════════════════════════════════════════════════════════════
 
-class ConsolidatedMCPToolsV2:
+class ConsolidatedMCPTools:
     """Main MCP tools interface with clean architecture and separated concerns"""
     
     def __init__(self, task_repository: Optional[TaskRepository] = None, projects_file_path: Optional[str] = None):
-        logger.info("Initializing ConsolidatedMCPToolsV2...")
+        logger.info("Initializing ConsolidatedMCPTools...")
         
         # Initialize configuration and paths
         self._config = ToolConfig()
@@ -1085,7 +1085,7 @@ class ConsolidatedMCPToolsV2:
             self._config, self._task_handler, self._project_manager, self._call_agent_use_case
         )
         
-        logger.info("ConsolidatedMCPToolsV2 initialized successfully.")
+        logger.info("ConsolidatedMCPTools initialized successfully.")
         
     def _init_task_repository(self, task_repository: Optional[TaskRepository]) -> TaskRepository:
         """Initialize task repository with environment configuration"""

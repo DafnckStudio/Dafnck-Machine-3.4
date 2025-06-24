@@ -7,7 +7,7 @@ contains only simplified agent registrations with id, name, and call_agent field
 import json
 import os
 import pytest
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import PROJECTS_FILE
+from fastmcp.task_management.interface.consolidated_mcp_tools import PROJECTS_FILE
 from fastmcp.tools.tool_path import find_project_root
 from pathlib import Path
 

@@ -4,9 +4,9 @@ This module provides backward compatibility for tests and legacy code
 that imports MCPTaskTools from task_mcp.interface.mcp_tools
 """
 
-from .consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from .consolidated_mcp_tools import ConsolidatedMCPTools
 
 # Backward compatibility alias
-MCPTaskTools = ConsolidatedMCPToolsV2
+MCPTaskTools = ConsolidatedMCPTools
 
 __all__ = ["MCPTaskTools"] 

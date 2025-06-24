@@ -24,9 +24,9 @@ sys.path.insert(0, '/home/daihungpham/agentic-project/dhafnck_mcp_main/src')
 
 # Import our fixed call_agent implementation
 try:
-    from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+    from dhafnck_mcp_main.src.fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
     logger.info("✅ DDD components imported successfully")
-    ddd_tools = ConsolidatedMCPToolsV2()
+    ddd_tools = ConsolidatedMCPTools()
     logger.info("✅ DDD tools initialized successfully")
 except Exception as e:
     logger.error(f"❌ Failed to import DDD components: {e}")

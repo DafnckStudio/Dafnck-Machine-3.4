@@ -19,7 +19,7 @@ try:
     print(f"✅ Has .git: {(project_root / '.git').exists()}")
     
     # Test path resolution
-    from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import PROJECT_ROOT, BRAIN_DIR
+    from fastmcp.task_management.interface.consolidated_mcp_tools import PROJECT_ROOT, BRAIN_DIR
     print(f"✅ PROJECT_ROOT: {PROJECT_ROOT}")
     print(f"✅ BRAIN_DIR: {BRAIN_DIR}")
     print(f"✅ BRAIN_DIR exists: {BRAIN_DIR.exists()}")

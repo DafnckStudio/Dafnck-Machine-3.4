@@ -74,7 +74,7 @@ class TestDDDLayerBoundaries:
     @pytest.mark.architecture
     def test_interface_layer_dependencies(self):
         """Test that interface layer can depend on all other layers."""
-        import fastmcp.task_management.interface.consolidated_mcp_tools_v2 as mcp_tools_module
+        import fastmcp.task_management.interface.consolidated_mcp_tools as mcp_tools_module
         
         source = inspect.getsource(mcp_tools_module)
         

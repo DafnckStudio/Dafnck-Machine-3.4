@@ -17,8 +17,8 @@ from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 from datetime import datetime, timezone
 
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import (
-    ConsolidatedMCPToolsV2,
+from fastmcp.task_management.interface.consolidated_mcp_tools import (
+    ConsolidatedMCPTools,
     SimpleMultiAgentTools,
     find_project_root,
     ensure_brain_dir
@@ -67,7 +67,7 @@ class TestFindProjectRoot:
         with tempfile.TemporaryDirectory() as temp_dir:
             brain_dir = os.path.join(temp_dir, "brain")
             
-            with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.BRAIN_DIR', brain_dir):
+            with patch('fastmcp.task_management.interface.consolidated_mcp_tools.BRAIN_DIR', brain_dir):
                 ensure_brain_dir()
                 assert os.path.exists(brain_dir)
 
@@ -98,8 +98,8 @@ class TestSimpleMultiAgentTools:
     
     def test_init_with_default_paths(self):
         """Test initialization with default paths"""
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.BRAIN_DIR', '/tmp/brain'):
-            with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.PROJECTS_FILE', '/tmp/projects.json'):
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools.BRAIN_DIR', '/tmp/brain'):
+            with patch('fastmcp.task_management.interface.consolidated_mcp_tools.PROJECTS_FILE', '/tmp/projects.json'):
                 tools = SimpleMultiAgentTools()
                 assert tools._brain_dir == '/tmp/brain'
                 assert tools._projects_file == '/tmp/projects.json'
@@ -299,8 +299,8 @@ class TestSimpleMultiAgentTools:
         assert result["project"]["name"] == "Test Project"
 
 
-class TestConsolidatedMCPToolsV2:
-    """Test ConsolidatedMCPToolsV2 functionality"""
+class TestConsolidatedMCPTools:
+    """Test ConsolidatedMCPTools functionality"""
     
     @pytest.fixture
     def temp_projects_file(self):
@@ -319,9 +319,9 @@ class TestConsolidatedMCPToolsV2:
     
     @pytest.fixture
     def consolidated_tools(self, temp_projects_file):
-        """Create ConsolidatedMCPToolsV2 instance for testing"""
+        """Create ConsolidatedMCPTools instance for testing"""
         task_repository = InMemoryTaskRepository()
-        return ConsolidatedMCPToolsV2(
+        return ConsolidatedMCPTools(
             task_repository=task_repository,
             projects_file_path=temp_projects_file
         )
@@ -330,7 +330,7 @@ class TestConsolidatedMCPToolsV2:
         """Test initialization with custom dependencies"""
         task_repository = InMemoryTaskRepository()
         
-        tools = ConsolidatedMCPToolsV2(
+        tools = ConsolidatedMCPTools(
             task_repository=task_repository,
             projects_file_path=temp_projects_file
         )
@@ -342,12 +342,12 @@ class TestConsolidatedMCPToolsV2:
     
     def test_init_with_default_dependencies(self):
         """Test initialization with default dependencies"""
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo:
-            with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_generator:
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools.JsonTaskRepository') as mock_repo:
+            with patch('fastmcp.task_management.interface.consolidated_mcp_tools.FileAutoRuleGenerator') as mock_generator:
                 mock_repo.return_value = Mock()
                 mock_generator.return_value = Mock()
                 
-                tools = ConsolidatedMCPToolsV2()
+                tools = ConsolidatedMCPTools()
                 
                 assert tools._task_repository is not None
                 assert tools._auto_rule_generator is not None
@@ -727,9 +727,9 @@ class TestIntegrationScenarios:
     
     @pytest.fixture
     def consolidated_tools(self, temp_projects_file):
-        """Create ConsolidatedMCPToolsV2 instance for testing"""
+        """Create ConsolidatedMCPTools instance for testing"""
         task_repository = InMemoryTaskRepository()
-        return ConsolidatedMCPToolsV2(
+        return ConsolidatedMCPTools(
             task_repository=task_repository,
             projects_file_path=temp_projects_file
         )

@@ -5,8 +5,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sr
 
 import pytest
 from unittest.mock import MagicMock
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import (
-    ConsolidatedMCPToolsV2,
+from fastmcp.task_management.interface.consolidated_mcp_tools import (
+    ConsolidatedMCPTools,
 )
 
 mock_task_app_service = MagicMock()
@@ -14,7 +14,7 @@ mock_task_app_service = MagicMock()
 
 @pytest.fixture
 def mcp_tools():
-    tools = ConsolidatedMCPToolsV2()
+    tools = ConsolidatedMCPTools()
     tools._task_app_service = mock_task_app_service
     return tools
 

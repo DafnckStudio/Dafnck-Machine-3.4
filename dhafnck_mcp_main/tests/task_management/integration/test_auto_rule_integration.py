@@ -17,7 +17,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 # Import MCP and application classes
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 from fastmcp.task_management.application.services.task_application_service import TaskApplicationService
 from fastmcp.task_management.infrastructure.repositories.json_task_repository import JsonTaskRepository
 from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
@@ -101,7 +101,7 @@ class TestAutoRuleIntegration:
         mcp_tools.register_tools(mock_mcp)
         return registered_tools.get(tool_name)
 
-    @patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_tools.FileAutoRuleGenerator')
     def test_mcp_get_task_triggers_auto_rule_generation(self, mock_auto_rule_generator_class):
         """Test that MCP get_task tool triggers auto rule generation"""
         # Set up mock auto rule generator
@@ -109,7 +109,7 @@ class TestAutoRuleIntegration:
         mock_auto_rule_generator_class.return_value = mock_generator
         
         task_repository = JsonTaskRepository(self.test_tasks_file)
-        mcp_tools = ConsolidatedMCPToolsV2(
+        mcp_tools = ConsolidatedMCPTools(
             task_repository=task_repository
         )
         manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')
@@ -120,7 +120,7 @@ class TestAutoRuleIntegration:
         # Verify that auto rule generation was called
         mock_generator.generate_rules_for_task.assert_called()
 
-    @patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_tools.FileAutoRuleGenerator')
     def test_mcp_get_task_with_different_roles(self, mock_auto_rule_generator_class):
         """Test auto rule generation with different roles through MCP"""
         # Set up mock auto rule generator
@@ -128,7 +128,7 @@ class TestAutoRuleIntegration:
         mock_auto_rule_generator_class.return_value = mock_generator
         
         task_repository = JsonTaskRepository(self.test_tasks_file)
-        mcp_tools = ConsolidatedMCPToolsV2(
+        mcp_tools = ConsolidatedMCPTools(
             task_repository=task_repository
         )
         manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')
@@ -138,7 +138,7 @@ class TestAutoRuleIntegration:
         result2 = manage_task_func(action="get", task_id=self.task_id_2)
         assert result2["success"] is True
 
-    @patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_tools.FileAutoRuleGenerator')
     def test_mcp_get_task_nonexistent_task(self, mock_auto_rule_generator_class):
         """Test MCP get_task with nonexistent task"""
         # Set up mock auto rule generator
@@ -146,7 +146,7 @@ class TestAutoRuleIntegration:
         mock_auto_rule_generator_class.return_value = mock_generator
         
         task_repository = JsonTaskRepository(self.test_tasks_file)
-        mcp_tools = ConsolidatedMCPToolsV2(
+        mcp_tools = ConsolidatedMCPTools(
             task_repository=task_repository
         )
         manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')
@@ -159,11 +159,11 @@ class TestAutoRuleIntegration:
         """Test the structure and quality of generated auto rule content"""
         task_repository = JsonTaskRepository(self.test_tasks_file)
         # Use a real FileAutoRuleGenerator with custom file path for this test
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_class:
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools.FileAutoRuleGenerator') as mock_class:
             real_generator = FileAutoRuleGenerator(self.test_auto_rule_file)
             mock_class.return_value = real_generator
             
-            mcp_tools = ConsolidatedMCPToolsV2(
+            mcp_tools = ConsolidatedMCPTools(
                 task_repository=task_repository
             )
             manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')
@@ -183,11 +183,11 @@ class TestAutoRuleIntegration:
         """Test that auto rule file is overwritten on subsequent calls"""
         task_repository = JsonTaskRepository(self.test_tasks_file)
         # Use a real FileAutoRuleGenerator with custom file path for this test
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_class:
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools.FileAutoRuleGenerator') as mock_class:
             real_generator = FileAutoRuleGenerator(self.test_auto_rule_file)
             mock_class.return_value = real_generator
             
-            mcp_tools = ConsolidatedMCPToolsV2(
+            mcp_tools = ConsolidatedMCPTools(
                 task_repository=task_repository
             )
             manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')
@@ -213,7 +213,7 @@ class TestAutoRuleIntegration:
             assert content_before != content_after, "File content should be different after update"
             assert "Updated Test Task Title" in content_after, "Updated title not found in content"
 
-    @patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator')
+    @patch('fastmcp.task_management.interface.consolidated_mcp_tools.FileAutoRuleGenerator')
     def test_auto_rule_generation_error_recovery(self, mock_auto_rule_generator_class):
         """Test that the system gracefully handles errors during auto rule generation"""
         task_repository = JsonTaskRepository(self.test_tasks_file)
@@ -221,7 +221,7 @@ class TestAutoRuleIntegration:
         mock_generator.generate_rules_for_task.side_effect = Exception("Simulated generation error")
         mock_auto_rule_generator_class.return_value = mock_generator
         
-        mcp_tools = ConsolidatedMCPToolsV2(
+        mcp_tools = ConsolidatedMCPTools(
             task_repository=task_repository
         )
         manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')

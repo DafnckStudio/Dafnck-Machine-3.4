@@ -12,7 +12,7 @@ import pytest
 import os
 import json
 from fastmcp import FastMCP
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 from fastmcp.task_management.infrastructure.repositories.json_task_repository import InMemoryTaskRepository
 
 @pytest.fixture(scope="function")
@@ -27,7 +27,7 @@ def mcp_server_instance():
     in_memory_repo = InMemoryTaskRepository()
     
     # Instantiate the tools and register them with the MCP instance
-    mcp_tools_instance = ConsolidatedMCPToolsV2(task_repository=in_memory_repo)
+    mcp_tools_instance = ConsolidatedMCPTools(task_repository=in_memory_repo)
     mcp_tools_instance.register_tools(mcp)
     
     return mcp

@@ -11,7 +11,7 @@ import os
 from unittest.mock import Mock, patch
 
 # Updated import to use v2
-from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import ConsolidatedMCPToolsV2
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 
 
 class TestConsolidatedMCPTools:
@@ -28,11 +28,11 @@ class TestConsolidatedMCPTools:
     
     @pytest.fixture
     def consolidated_tools(self, temp_tasks_file):
-        """Create ConsolidatedMCPToolsV2 instance with mocked dependencies"""
-        with patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.JsonTaskRepository') as mock_repo_class, \
-             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.FileAutoRuleGenerator') as mock_generator_class, \
-             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.TaskApplicationService') as mock_service_class, \
-             patch('fastmcp.task_management.interface.consolidated_mcp_tools_v2.CursorRulesTools') as mock_cursor_class:
+        """Create ConsolidatedMCPTools instance with mocked dependencies"""
+        with patch('fastmcp.task_management.interface.consolidated_mcp_tools.JsonTaskRepository') as mock_repo_class, \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools.FileAutoRuleGenerator') as mock_generator_class, \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools.TaskApplicationService') as mock_service_class, \
+             patch('fastmcp.task_management.interface.consolidated_mcp_tools.CursorRulesTools') as mock_cursor_class:
             
             # Configure mock instances
             mock_repo = Mock()
@@ -45,7 +45,7 @@ class TestConsolidatedMCPTools:
             mock_service_class.return_value = mock_service
             mock_cursor_class.return_value = mock_cursor
             
-            tools = ConsolidatedMCPToolsV2()
+            tools = ConsolidatedMCPTools()
             return tools
     
     def test_consolidated_tools_initialization(self, consolidated_tools):
@@ -104,7 +104,7 @@ class TestConsolidatedToolsWithRealFiles:
         
         try:
             # Test instantiation works with real files
-            tools = ConsolidatedMCPToolsV2()
+            tools = ConsolidatedMCPTools()
             assert tools is not None
             
             # Verify components are initialized
