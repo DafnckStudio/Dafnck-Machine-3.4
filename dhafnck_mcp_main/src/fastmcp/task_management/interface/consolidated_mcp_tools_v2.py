@@ -366,8 +366,7 @@ class ConsolidatedMCPToolsV2:
             auto_rule_generator=self._auto_rule_generator
         )
         
-        # Initialize cursor rules tools
-        self._cursor_rules_tools = CursorRulesTools()
+        # Cursor rules tools are initialized conditionally in _register_cursor_tools_conditionally()
         
         # Initialize multi-agent tools with optional custom projects file path
         self._multi_agent_tools = SimpleMultiAgentTools(projects_file_path=projects_file_path)
