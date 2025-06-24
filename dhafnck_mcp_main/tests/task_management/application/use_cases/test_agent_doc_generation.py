@@ -19,8 +19,8 @@ from fastmcp.task_management.domain.value_objects import TaskId
 @pytest.fixture
 def temp_agent_setup():
     """Setup temporary directories for agent YAMLs and output docs."""
-    temp_root = Path("./temp_test_agent_root")
-    agent_yaml_lib_path = temp_root / "cursor_agent/yaml-lib"
+    temp_root = Path("./temp_test_agent_root").resolve()
+    agent_yaml_lib_path = temp_root / "dhafnck_mcp_main/yaml-lib"
     agents_output_dir_path = temp_root / ".cursor/rules/agents"
 
     # Create dummy agent files for coding_agent

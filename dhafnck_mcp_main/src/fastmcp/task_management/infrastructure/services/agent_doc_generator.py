@@ -32,7 +32,12 @@ class AgentDocGenerator:
         elif env_yaml_lib:
             self.agent_yaml_lib = resolve_path(env_yaml_lib)
         else:
-            self.agent_yaml_lib = project_root / "yaml-lib"
+            # Handle project structure correctly - if project_root is dhafnck_mcp_main itself,
+            # yaml-lib is direct child, otherwise it's in dhafnck_mcp_main subdirectory
+            if project_root.name == "dhafnck_mcp_main":
+                self.agent_yaml_lib = project_root / "yaml-lib"
+            else:
+                self.agent_yaml_lib = project_root / "dhafnck_mcp_main/yaml-lib"
 
         if agents_output_dir:
             self.agents_output_dir = resolve_path(agents_output_dir)
@@ -42,7 +47,7 @@ class AgentDocGenerator:
             self.agents_output_dir = project_root / ".cursor/rules/agents"
 
         self.project_root = project_root
-        self.convert_script = project_root / "yaml-lib/convert_yaml_to_mdc_format.py"
+        self.convert_script = self.agent_yaml_lib / "convert_yaml_to_mdc_format.py"
     
     def clear_agents_output_dir(self):
         """Clear all files in the agents output directory"""
@@ -154,9 +159,14 @@ def _get_project_root() -> Path:
 
 # Always resolve relative to the project root
 PROJECT_ROOT = _get_project_root()
-AGENT_YAML_LIB = PROJECT_ROOT / "cursor_agent/yaml-lib"
+# Handle project structure correctly - if project_root is dhafnck_mcp_main itself,
+# yaml-lib is direct child, otherwise it's in dhafnck_mcp_main subdirectory
+if PROJECT_ROOT.name == "dhafnck_mcp_main":
+    AGENT_YAML_LIB = PROJECT_ROOT / "yaml-lib"
+else:
+    AGENT_YAML_LIB = PROJECT_ROOT / "dhafnck_mcp_main/yaml-lib"
 AGENTS_OUTPUT_DIR = PROJECT_ROOT / ".cursor/rules/agents"
-CONVERT_SCRIPT = PROJECT_ROOT / "cursor_agent/yaml-lib/convert_yaml_to_mdc_format.py"
+CONVERT_SCRIPT = AGENT_YAML_LIB / "convert_yaml_to_mdc_format.py"
 
 
 def clear_agents_output_dir():

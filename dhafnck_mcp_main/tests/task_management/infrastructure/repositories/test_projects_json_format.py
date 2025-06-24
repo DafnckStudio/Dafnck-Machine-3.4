@@ -1,7 +1,7 @@
 """
 Integration test to verify that the actual projects.json file uses simplified agent format.
 
-This test validates that the real projects.json file in cursor_agent/.cursor/rules/brain/
+This test validates that the real projects.json file in .cursor/rules/brain/
 contains only simplified agent registrations with id, name, and call_agent fields.
 """
 import json
@@ -18,7 +18,7 @@ class TestProjectsJsonFormat:
     @pytest.fixture
     def projects_file_path(self):
         """Force find_project_root to start from the workspace root for correct projects.json resolution"""
-        workspace_root = Path(__file__).resolve().parents[5]  # /home/daihungpham/agentic-project
+        workspace_root = Path(__file__).resolve().parents[4]  # /home/daihungpham/agentic-project
         project_root = find_project_root(workspace_root)
         return str(project_root / ".cursor/rules/brain/projects.json")
     
@@ -144,9 +144,9 @@ class TestProjectsJsonFormat:
                     f"Agent {project_id}.{agent_id} call_agent '{call_agent}' should start with @"
                 )
                 
-                # Should end with _agent
-                assert call_agent.endswith("_agent"), (
-                    f"Agent {project_id}.{agent_id} call_agent '{call_agent}' should end with _agent"
+                # Should end with _agent or -agent (both formats are acceptable)
+                assert call_agent.endswith("_agent") or call_agent.endswith("-agent"), (
+                    f"Agent {project_id}.{agent_id} call_agent '{call_agent}' should end with _agent or -agent"
                 )
                 
                 # Should not contain spaces

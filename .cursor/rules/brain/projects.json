@@ -1,8 +1,53 @@
 {
-  "test_project": {
-    "id": "test_project",
-    "name": "Test Project",
-    "description": "A test project for unit tests",
+  "proj1": {
+    "id": "proj1",
+    "name": "Project 1",
+    "description": "",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "proj2": {
+    "id": "proj2",
+    "name": "Project 2",
+    "description": "",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "workflow_proj": {
+    "id": "workflow_proj",
+    "name": "Workflow Test Project",
+    "description": "",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "e2e_project_1": {
+    "id": "e2e_project_1",
+    "name": "E2E Test Project",
+    "description": "A project for E2E testing.",
     "task_trees": {
       "main": {
         "id": "main",
@@ -11,18 +56,70 @@
       }
     },
     "registered_agents": {
-      "coding_agent": {
-        "id": "coding_agent",
-        "name": "Coding Agent",
-        "call_agent": "@coding_agent"
+      "agent_001": {
+        "id": "agent_001",
+        "name": "Test Agent 1",
+        "call_agent": "@agent-001-agent"
       },
-      "test_agent": {
-        "id": "test_agent", 
-        "name": "Test Agent",
-        "call_agent": "@test_orchestrator_agent"
+      "agent_002": {
+        "id": "agent_002",
+        "name": "Test Agent 2",
+        "call_agent": "@agent-002-agent"
       }
     },
     "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z"
+  },
+  "migration_test_project": {
+    "id": "migration_test_project",
+    "name": "Migration Test Project",
+    "description": "Test project for migration validation",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {
+      "test_agent": {
+        "id": "test_agent",
+        "name": "Test Agent",
+        "call_agent": "@test_agent"
+      }
+    },
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "migration_workflow_test": {
+    "id": "migration_workflow_test",
+    "name": "Migration Workflow Test Project",
+    "description": "Complete workflow test for migration validation",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      },
+      "workflow_tree": {
+        "id": "workflow_tree",
+        "name": "Workflow Test Tree",
+        "description": "Task tree for workflow testing"
+      }
+    },
+    "registered_agents": {
+      "workflow_test_agent": {
+        "id": "workflow_test_agent",
+        "name": "Workflow Test Agent",
+        "call_agent": "@coding_agent"
+      }
+    },
+    "agent_assignments": {
+      "workflow_test_agent": [
+        "main",
+        "workflow_tree"
+      ]
+    },
+    "created_at": "2025-01-01T00:00:00Z"
   }
-} 
+}

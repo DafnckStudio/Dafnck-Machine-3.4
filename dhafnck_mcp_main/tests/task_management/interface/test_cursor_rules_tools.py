@@ -33,9 +33,10 @@ class TestGetProjectRoot:
         assert isinstance(project_root, Path)
         
         # Check for the presence of a known marker at the project root
-        assert (project_root / "dhafnck_mcp_main").is_dir() or \
-               (project_root / ".git").is_dir() or \
-               (project_root / "pyproject.toml").exists()
+        # Should find the true project root (not dhafnck_mcp_main subdirectory)
+        assert (project_root / ".git").is_dir() and \
+               (project_root / "dhafnck_mcp_main").is_dir(), \
+               f"Expected project root with .git and dhafnck_mcp_main, got: {project_root}"
 
 
 class TestCursorRulesTools:
