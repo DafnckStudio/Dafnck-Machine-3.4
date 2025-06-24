@@ -201,6 +201,7 @@ def client_with_headless_oauth(
         yield client
 
 
+@pytest.mark.asyncio
 async def test_unauthorized(client_unauthorized: Client):
     """Test that unauthenticated requests are rejected."""
     with pytest.raises(httpx.HTTPStatusError, match="401 Unauthorized"):
@@ -208,12 +209,14 @@ async def test_unauthorized(client_unauthorized: Client):
             pass
 
 
+@pytest.mark.asyncio
 async def test_ping(client_with_headless_oauth: Client):
     """Test that we can ping the server."""
     async with client_with_headless_oauth:
         assert await client_with_headless_oauth.ping()
 
 
+@pytest.mark.asyncio
 async def test_list_tools(client_with_headless_oauth: Client):
     """Test that we can list tools."""
     async with client_with_headless_oauth:
@@ -222,6 +225,7 @@ async def test_list_tools(client_with_headless_oauth: Client):
         assert "add" in tool_names
 
 
+@pytest.mark.asyncio
 async def test_call_tool(client_with_headless_oauth: Client):
     """Test that we can call a tool."""
     async with client_with_headless_oauth:
@@ -229,6 +233,7 @@ async def test_call_tool(client_with_headless_oauth: Client):
         assert result[0].text == "8"  # type: ignore[attr-defined]
 
 
+@pytest.mark.asyncio
 async def test_list_resources(client_with_headless_oauth: Client):
     """Test that we can list resources."""
     async with client_with_headless_oauth:
@@ -237,6 +242,7 @@ async def test_list_resources(client_with_headless_oauth: Client):
         assert "resource://test" in resource_uris
 
 
+@pytest.mark.asyncio
 async def test_read_resource(client_with_headless_oauth: Client):
     """Test that we can read a resource."""
     async with client_with_headless_oauth:
@@ -244,6 +250,7 @@ async def test_read_resource(client_with_headless_oauth: Client):
         assert resource[0].text == "Hello from authenticated resource!"  # type: ignore[attr-defined]
 
 
+@pytest.mark.asyncio
 async def test_oauth_server_metadata_discovery(streamable_http_server: str):
     """Test that we can discover OAuth metadata from the running server."""
     parsed_url = urlparse(streamable_http_server)

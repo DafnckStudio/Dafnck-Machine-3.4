@@ -57,6 +57,7 @@ class TestLegacyResourcePrefixes:
             assert result is False
 
 
+@pytest.mark.asyncio
 async def test_mount_with_legacy_prefixes():
     """Test mounting a server with legacy resource prefixes."""
     with temporary_settings(resource_prefix_format="protocol"):
@@ -84,6 +85,7 @@ async def test_mount_with_legacy_prefixes():
             assert len(result) > 0
 
 
+@pytest.mark.asyncio
 async def test_import_server_with_legacy_prefixes():
     """Test importing a server with legacy resource prefixes."""
     with temporary_settings(resource_prefix_format="protocol"):

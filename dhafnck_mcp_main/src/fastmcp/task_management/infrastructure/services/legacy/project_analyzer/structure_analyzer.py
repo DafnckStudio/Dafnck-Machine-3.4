@@ -5,13 +5,14 @@ Handles directory tree analysis and structure detection.
 
 from pathlib import Path
 from typing import Dict
+from fastmcp.tools.tool_path import find_project_root
 
 
 class StructureAnalyzer:
     """Handles project structure analysis"""
     
-    def __init__(self, project_root: Path):
-        self.project_root = project_root
+    def __init__(self, project_root: Path = None):
+        self.project_root = project_root or find_project_root()
     
     def analyze_project_structure(self) -> Dict:
         """Analyze current project structure"""

@@ -53,6 +53,7 @@ class TestMCPMixin:
         ],
         ids=["No prefix", "Default separator", "Custom separator"],
     )
+    @pytest.mark.asyncio
     async def test_tool_registration(
         self, prefix, separator, expected_key, unexpected_key
     ):
@@ -98,6 +99,7 @@ class TestMCPMixin:
         ],
         ids=["No prefix", "Default separator", "Custom separator"],
     )
+    @pytest.mark.asyncio
     async def test_resource_registration(
         self, prefix, separator, expected_uri_key, expected_name, unexpected_uri_key
     ):
@@ -141,6 +143,7 @@ class TestMCPMixin:
         ],
         ids=["No prefix", "Default separator", "Custom separator"],
     )
+    @pytest.mark.asyncio
     async def test_prompt_registration(
         self, prefix, separator, expected_name, unexpected_name
     ):
@@ -159,6 +162,7 @@ class TestMCPMixin:
         assert expected_name in prompts
         assert unexpected_name not in prompts
 
+    @pytest.mark.asyncio
     async def test_register_all_no_prefix(self):
         """Test register_all method registers all types without a prefix."""
         mcp = FastMCP()
@@ -187,6 +191,7 @@ class TestMCPMixin:
         assert "res://all" in resources
         assert "prompt_all" in prompts
 
+    @pytest.mark.asyncio
     async def test_register_all_with_prefix_default_separators(self):
         """Test register_all method registers all types with a prefix and default separators."""
         mcp = FastMCP()
@@ -215,6 +220,7 @@ class TestMCPMixin:
         assert f"all{_DEFAULT_SEPARATOR_RESOURCE}res://all_p" in resources
         assert f"all{_DEFAULT_SEPARATOR_PROMPT}prompt_all_p" in prompts
 
+    @pytest.mark.asyncio
     async def test_register_all_with_prefix_custom_separators(self):
         """Test register_all method registers all types with a prefix and custom separators."""
         mcp = FastMCP()

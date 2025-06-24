@@ -42,6 +42,7 @@ async def progress_handler(
     PROGRESS_MESSAGES.append(dict(progress=progress, total=total, message=message))
 
 
+@pytest.mark.asyncio
 async def test_progress_handler(fastmcp_server: FastMCP):
     async with Client(fastmcp_server, progress_handler=progress_handler) as client:
         await client.call_tool("progress_tool", {})
@@ -49,6 +50,7 @@ async def test_progress_handler(fastmcp_server: FastMCP):
     assert PROGRESS_MESSAGES == EXPECTED_PROGRESS_MESSAGES
 
 
+@pytest.mark.asyncio
 async def test_progress_handler_can_be_supplied_on_tool_call(fastmcp_server: FastMCP):
     async with Client(fastmcp_server) as client:
         await client.call_tool("progress_tool", {}, progress_handler=progress_handler)
@@ -56,6 +58,7 @@ async def test_progress_handler_can_be_supplied_on_tool_call(fastmcp_server: Fas
     assert PROGRESS_MESSAGES == EXPECTED_PROGRESS_MESSAGES
 
 
+@pytest.mark.asyncio
 async def test_progress_handler_supplied_on_tool_call_overrides_default(
     fastmcp_server: FastMCP,
 ):

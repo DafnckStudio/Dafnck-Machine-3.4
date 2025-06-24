@@ -99,17 +99,14 @@ def run_nested_server(host: str, port: int) -> None:
 
 
 @pytest.fixture()
-async def streamable_http_server(
-    stateless_http: bool = False,
-) -> AsyncGenerator[str, None]:
+def streamable_http_server(stateless_http: bool = False):
     with run_server_in_process(
         run_server, stateless_http=stateless_http, transport="streamable-http"
     ) as url:
-        async with Client(transport=StreamableHttpTransport(f"{url}/mcp/")) as client:
-            assert await client.ping()
         yield f"{url}/mcp/"
 
 
+@pytest.mark.asyncio
 async def test_ping(streamable_http_server: str):
     """Test pinging the server."""
     async with Client(
@@ -119,6 +116,7 @@ async def test_ping(streamable_http_server: str):
         assert result is True
 
 
+@pytest.mark.asyncio
 async def test_http_headers(streamable_http_server: str):
     """Test getting HTTP headers from the server."""
     async with Client(
@@ -132,6 +130,7 @@ async def test_http_headers(streamable_http_server: str):
         assert json_result["x-demo-header"] == "ABC"
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize("streamable_http_server", [True, False], indirect=True)
 async def test_greet_with_progress_tool(streamable_http_server: str):
     """Test calling the greet tool."""
@@ -150,6 +149,7 @@ async def test_greet_with_progress_tool(streamable_http_server: str):
         progress_handler.assert_called_once_with(0.5, 1.0, "Greeting in progress")
 
 
+@pytest.mark.asyncio
 async def test_nested_streamable_http_server_resolves_correctly():
     # tests patch for
     # https://github.com/modelcontextprotocol/python-sdk/pull/659
@@ -167,6 +167,7 @@ async def test_nested_streamable_http_server_resolves_correctly():
     reason="Timeout tests are flaky on Windows. Timeouts *are* supported but the tests are unreliable.",
 )
 class TestTimeout:
+    @pytest.mark.asyncio
     async def test_timeout(self, streamable_http_server: str):
         # note this transport behaves differently than others and raises
         # McpError from the *client* context
@@ -177,6 +178,7 @@ class TestTimeout:
             ) as client:
                 await client.call_tool("sleep", {"seconds": 0.2})
 
+    @pytest.mark.asyncio
     async def test_timeout_tool_call(self, streamable_http_server: str):
         async with Client(
             transport=StreamableHttpTransport(streamable_http_server),
@@ -184,6 +186,7 @@ class TestTimeout:
             with pytest.raises(McpError):
                 await client.call_tool("sleep", {"seconds": 0.2}, timeout=0.1)
 
+    @pytest.mark.asyncio
     async def test_timeout_tool_call_overrides_client_timeout(
         self, streamable_http_server: str
     ):

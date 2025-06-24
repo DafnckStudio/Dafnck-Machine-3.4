@@ -134,6 +134,7 @@ class TestBearerTokenJWKS:
 
         return {"keys": [jwk_data]}
 
+    @pytest.mark.asyncio
     async def test_jwks_token_validation(
         self,
         rsa_key_pair: RSAKeyPair,
@@ -156,6 +157,7 @@ class TestBearerTokenJWKS:
         assert access_token is not None
         assert access_token.client_id == "test-user"
 
+    @pytest.mark.asyncio
     async def test_jwks_token_validation_with_invalid_key(
         self,
         rsa_key_pair: RSAKeyPair,
@@ -176,6 +178,7 @@ class TestBearerTokenJWKS:
         access_token = await jwks_provider.load_access_token(token)
         assert access_token is None
 
+    @pytest.mark.asyncio
     async def test_jwks_token_validation_with_kid(
         self,
         rsa_key_pair: RSAKeyPair,
@@ -199,6 +202,7 @@ class TestBearerTokenJWKS:
         assert access_token is not None
         assert access_token.client_id == "test-user"
 
+    @pytest.mark.asyncio
     async def test_jwks_token_validation_with_kid_and_no_kid_in_token(
         self,
         rsa_key_pair: RSAKeyPair,
@@ -221,6 +225,7 @@ class TestBearerTokenJWKS:
         assert access_token is not None
         assert access_token.client_id == "test-user"
 
+    @pytest.mark.asyncio
     async def test_jwks_token_validation_with_no_kid_and_kid_in_jwks(
         self,
         rsa_key_pair: RSAKeyPair,
@@ -243,6 +248,7 @@ class TestBearerTokenJWKS:
         assert access_token is not None
         assert access_token.client_id == "test-user"
 
+    @pytest.mark.asyncio
     async def test_jwks_token_validation_with_kid_mismatch(
         self,
         rsa_key_pair: RSAKeyPair,
@@ -265,6 +271,7 @@ class TestBearerTokenJWKS:
         access_token = await jwks_provider.load_access_token(token)
         assert access_token is None
 
+    @pytest.mark.asyncio
     async def test_jwks_token_validation_with_multiple_keys_and_no_kid_in_token(
         self,
         rsa_key_pair: RSAKeyPair,
@@ -337,6 +344,7 @@ class TestBearerToken:
                 issuer="https://test.example.com",
             )
 
+    @pytest.mark.asyncio
     async def test_valid_token_validation(
         self, rsa_key_pair: RSAKeyPair, bearer_provider: BearerAuthProvider
     ):
@@ -356,6 +364,7 @@ class TestBearerToken:
         assert "write" in access_token.scopes
         assert access_token.expires_at is not None
 
+    @pytest.mark.asyncio
     async def test_expired_token_rejection(
         self, rsa_key_pair: RSAKeyPair, bearer_provider: BearerAuthProvider
     ):
@@ -370,6 +379,7 @@ class TestBearerToken:
         access_token = await bearer_provider.load_access_token(token)
         assert access_token is None
 
+    @pytest.mark.asyncio
     async def test_invalid_issuer_rejection(
         self, rsa_key_pair: RSAKeyPair, bearer_provider: BearerAuthProvider
     ):
@@ -383,6 +393,7 @@ class TestBearerToken:
         access_token = await bearer_provider.load_access_token(token)
         assert access_token is None
 
+    @pytest.mark.asyncio
     async def test_invalid_audience_rejection(
         self, rsa_key_pair: RSAKeyPair, bearer_provider: BearerAuthProvider
     ):
@@ -396,6 +407,7 @@ class TestBearerToken:
         access_token = await bearer_provider.load_access_token(token)
         assert access_token is None
 
+    @pytest.mark.asyncio
     async def test_no_issuer_validation_when_none(self, rsa_key_pair: RSAKeyPair):
         """Test that issuer validation is skipped when provider has no issuer configured."""
         provider = BearerAuthProvider(
@@ -410,6 +422,7 @@ class TestBearerToken:
         access_token = await provider.load_access_token(token)
         assert access_token is not None
 
+    @pytest.mark.asyncio
     async def test_no_audience_validation_when_none(self, rsa_key_pair: RSAKeyPair):
         """Test that audience validation is skipped when provider has no audience configured."""
         provider = BearerAuthProvider(
@@ -427,6 +440,7 @@ class TestBearerToken:
         access_token = await provider.load_access_token(token)
         assert access_token is not None
 
+    @pytest.mark.asyncio
     async def test_multiple_audiences_validation(self, rsa_key_pair: RSAKeyPair):
         """Test validation with multiple audiences in token."""
         provider = BearerAuthProvider(
@@ -446,6 +460,7 @@ class TestBearerToken:
         access_token = await provider.load_access_token(token)
         assert access_token is not None
 
+    @pytest.mark.asyncio
     async def test_provider_with_multiple_expected_audiences(
         self, rsa_key_pair: RSAKeyPair
     ):
@@ -485,6 +500,7 @@ class TestBearerToken:
         access_token3 = await provider.load_access_token(token3)
         assert access_token3 is None
 
+    @pytest.mark.asyncio
     async def test_scope_extraction_string(
         self, rsa_key_pair: RSAKeyPair, bearer_provider: BearerAuthProvider
     ):
@@ -501,6 +517,7 @@ class TestBearerToken:
         assert access_token is not None
         assert set(access_token.scopes) == {"read", "write", "admin"}
 
+    @pytest.mark.asyncio
     async def test_scope_extraction_list(
         self, rsa_key_pair: RSAKeyPair, bearer_provider: BearerAuthProvider
     ):
@@ -517,6 +534,7 @@ class TestBearerToken:
         assert access_token is not None
         assert set(access_token.scopes) == {"read", "write"}
 
+    @pytest.mark.asyncio
     async def test_no_scopes(
         self, rsa_key_pair: RSAKeyPair, bearer_provider: BearerAuthProvider
     ):
@@ -533,6 +551,7 @@ class TestBearerToken:
         assert access_token is not None
         assert access_token.scopes == []
 
+    @pytest.mark.asyncio
     async def test_malformed_token_rejection(self, bearer_provider: BearerAuthProvider):
         """Test rejection of malformed tokens."""
         malformed_tokens = [
@@ -547,6 +566,7 @@ class TestBearerToken:
             access_token = await bearer_provider.load_access_token(token)
             assert access_token is None
 
+    @pytest.mark.asyncio
     async def test_invalid_signature_rejection(
         self, rsa_key_pair: RSAKeyPair, bearer_provider: BearerAuthProvider
     ):
@@ -562,6 +582,7 @@ class TestBearerToken:
         access_token = await bearer_provider.load_access_token(token)
         assert access_token is None
 
+    @pytest.mark.asyncio
     async def test_client_id_fallback(
         self, rsa_key_pair: RSAKeyPair, bearer_provider: BearerAuthProvider
     ):
@@ -578,6 +599,7 @@ class TestBearerToken:
         assert access_token is not None
         assert access_token.client_id == "app456"  # Should prefer client_id over sub
 
+    @pytest.mark.asyncio
     async def test_string_issuer_validation(self, rsa_key_pair: RSAKeyPair):
         """Test that string (non-URL) issuers are supported per RFC 7519."""
         # Create provider with string issuer
@@ -596,6 +618,7 @@ class TestBearerToken:
         assert access_token is not None
         assert access_token.client_id == "test-user"
 
+    @pytest.mark.asyncio
     async def test_string_issuer_mismatch_rejection(self, rsa_key_pair: RSAKeyPair):
         """Test that mismatched string issuers are rejected."""
         # Create provider with one string issuer
@@ -613,6 +636,7 @@ class TestBearerToken:
         access_token = await provider.load_access_token(token)
         assert access_token is None
 
+    @pytest.mark.asyncio
     async def test_url_issuer_still_works(self, rsa_key_pair: RSAKeyPair):
         """Test that URL issuers still work after the fix."""
         # Create provider with URL issuer
@@ -639,6 +663,7 @@ class TestFastMCPBearerAuth:
         )
         assert isinstance(mcp.auth, BearerAuthProvider)
 
+    @pytest.mark.asyncio
     async def test_unauthorized_access(self, mcp_server_url: str):
         with pytest.raises(httpx.HTTPStatusError) as exc_info:
             async with Client(mcp_server_url) as client:
@@ -646,11 +671,13 @@ class TestFastMCPBearerAuth:
         assert exc_info.value.response.status_code == 401
         assert "tools" not in locals()
 
+    @pytest.mark.asyncio
     async def test_authorized_access(self, mcp_server_url: str, bearer_token):
         async with Client(mcp_server_url, auth=BearerAuth(bearer_token)) as client:
             tools = await client.list_tools()  # noqa: F841
         assert tools
 
+    @pytest.mark.asyncio
     async def test_invalid_token_raises_401(self, mcp_server_url: str):
         with pytest.raises(httpx.HTTPStatusError) as exc_info:
             async with Client(mcp_server_url, auth=BearerAuth("invalid")) as client:
@@ -658,6 +685,7 @@ class TestFastMCPBearerAuth:
         assert exc_info.value.response.status_code == 401
         assert "tools" not in locals()
 
+    @pytest.mark.asyncio
     async def test_expired_token(self, mcp_server_url: str, rsa_key_pair: RSAKeyPair):
         token = rsa_key_pair.create_token(
             subject="test-user",
@@ -672,6 +700,7 @@ class TestFastMCPBearerAuth:
         assert exc_info.value.response.status_code == 401
         assert "tools" not in locals()
 
+    @pytest.mark.asyncio
     async def test_token_with_bad_signature(self, mcp_server_url: str):
         rsa_key_pair = RSAKeyPair.generate()
         token = rsa_key_pair.create_token()
@@ -682,6 +711,7 @@ class TestFastMCPBearerAuth:
         assert exc_info.value.response.status_code == 401
         assert "tools" not in locals()
 
+    @pytest.mark.asyncio
     async def test_token_with_insufficient_scopes(
         self, mcp_server_url: str, rsa_key_pair: RSAKeyPair
     ):
@@ -705,6 +735,7 @@ class TestFastMCPBearerAuth:
             assert exc_info.value.response.status_code == 403
             assert "tools" not in locals()
 
+    @pytest.mark.asyncio
     async def test_token_with_sufficient_scopes(
         self, mcp_server_url: str, rsa_key_pair: RSAKeyPair
     ):

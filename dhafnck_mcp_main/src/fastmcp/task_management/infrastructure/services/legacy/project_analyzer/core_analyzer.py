@@ -11,20 +11,21 @@ from .pattern_detector import PatternDetector
 from .dependency_analyzer import DependencyAnalyzer
 from .context_generator import ContextGenerator
 from .file_operations import FileOperations
+from fastmcp.tools.tool_path import find_project_root
 
 
 class ProjectAnalyzer:
     """Main project analyzer that coordinates all analysis modules"""
     
-    def __init__(self, project_root: Path, cache_dir: Optional[Path] = None):
-        self.project_root = project_root
-        
+    def __init__(self, project_root: Path = None, cache_dir: Optional[Path] = None):
+        self.project_root = project_root or find_project_root()
+        context_dir = self.project_root / ".cursor/rules/contexts"
         # Initialize analysis modules (no cache)
-        self.structure_analyzer = StructureAnalyzer(project_root)
-        self.pattern_detector = PatternDetector(project_root)
-        self.dependency_analyzer = DependencyAnalyzer(project_root)
-        self.context_generator = ContextGenerator()
-        self.file_operations = FileOperations(project_root)
+        self.structure_analyzer = StructureAnalyzer(self.project_root)
+        self.pattern_detector = PatternDetector(self.project_root)
+        self.dependency_analyzer = DependencyAnalyzer(self.project_root)
+        self.context_generator = ContextGenerator(context_dir=context_dir)
+        self.file_operations = FileOperations(self.project_root)
     
     def analyze_project_structure(self, use_cache: bool = True) -> Dict:
         """Analyze current project structure (cache parameter ignored)"""

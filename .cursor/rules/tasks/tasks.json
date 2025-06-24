@@ -3865,6 +3865,23 @@
       "dueDate": null,
       "created_at": "2025-06-24T07:21:27.963441+00:00",
       "updated_at": "2025-06-24T07:21:27.963441+00:00"
+    },
+    {
+      "id": "20250624002",
+      "title": "Test Task Creation",
+      "description": "Testing task creation through MCP tools",
+      "project_id": "mcp_test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-24T08:30:18.829280+00:00",
+      "updated_at": "2025-06-24T08:30:18.829280+00:00"
     }
   ]
 }

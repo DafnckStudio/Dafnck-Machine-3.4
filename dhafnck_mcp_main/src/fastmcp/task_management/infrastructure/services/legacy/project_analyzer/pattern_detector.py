@@ -5,13 +5,15 @@ Handles detection of existing code patterns and frameworks.
 
 from pathlib import Path
 from typing import List
+from fastmcp.tools.tool_path import find_project_root
 
 
 class PatternDetector:
     """Handles detection of existing code patterns and frameworks"""
     
-    def __init__(self, project_root: Path):
-        self.project_root = project_root
+    def __init__(self, project_root: Path = None, context_dir: Path = None):
+        self.project_root = project_root or find_project_root()
+        self.context_dir = context_dir or (self.project_root / ".cursor/rules/contexts")
     
     def detect_existing_patterns(self) -> List[str]:
         """Detect existing code patterns and frameworks"""

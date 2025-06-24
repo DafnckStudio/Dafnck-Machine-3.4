@@ -121,5 +121,25 @@
       ]
     },
     "created_at": "2025-01-01T00:00:00Z"
+  },
+  "mcp_test_project": {
+    "id": "mcp_test_project",
+    "name": "MCP Integration Test Project",
+    "description": "Test project to validate MCP tools integration with Cursor",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      },
+      "testing_tree": {
+        "id": "testing_tree",
+        "name": "Testing Workstream",
+        "description": "Dedicated tree for testing MCP functionality"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
   }
 }

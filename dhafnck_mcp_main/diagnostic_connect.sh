@@ -629,7 +629,7 @@ async def generate_summary():
         print("🎯 FINAL TOOL SUMMARY:")
         print("=" * 50)
         print(f"📊 Server Status: {'OPERATIONAL' if tools else 'FAILED'}")
-        print(f"�� Total Tools: {len(tools)}")
+        print(f" Total Tools: {len(tools)}")
         print(f"📊 MCP Tools: {len(mcp_tools)}")
         print(f"📊 Server Name: {mcp_instance.name}")
         
@@ -998,6 +998,24 @@ main() {
     echo -e "  🕒 Current Time: $(date)"
     echo -e "  👤 Current User: $(whoami)"
     
+    print_section "PYTHON/ENVIRONMENT SESSION DIAGNOSTICS"
+    echo -e "${YELLOW}Running Python environment diagnostics...${NC}"
+
+    $PYTHON_PATH << 'EOF'
+import sys
+import os
+print("\n===== PYTHON SESSION DIAGNOSTICS =====")
+print(f"sys.executable: {sys.executable}")
+print(f"os.getcwd(): {os.getcwd()}")
+print("sys.path:")
+for p in sys.path:
+    print(f"  - {p}")
+print("\nEnvironment variables:")
+for var in ["PYTHONPATH", "VIRTUAL_ENV", "PATH", "HOME", "USER", "SHELL"]:
+    print(f"{var}: {os.environ.get(var, '<not set>')}")
+print("===== END PYTHON SESSION DIAGNOSTICS =====\n")
+EOF
+
     print_section "PROJECT STRUCTURE VALIDATION"
     check_path "$PROJECT_ROOT" "Project Root" "required"
     check_path "$DHAFNCK_MCP_DIR" "dhafnck_mcp_main Directory" "required"

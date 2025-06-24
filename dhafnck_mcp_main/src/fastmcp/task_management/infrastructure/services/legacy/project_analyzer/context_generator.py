@@ -4,13 +4,17 @@ Handles generation of contextual guidance and summaries.
 """
 
 from typing import Dict, List
+from fastmcp.tools.tool_path import find_project_root
+from pathlib import Path
 
 
 class ContextGenerator:
-    """Handles context generation for agent roles"""
+    """Handles context generation for agent roles.
+    Optionally stores context files in a configurable directory (default: <project_root>/.cursor/rules/contexts).
+    """
     
-    def __init__(self):
-        pass
+    def __init__(self, context_dir: Path = None):
+        self.context_dir = context_dir or (find_project_root() / ".cursor/rules/contexts")
     
     def generate_context_summary(self, structure: Dict, patterns: List[str], dependencies: List[str], task_phase: str = "coding") -> str:
         """Generate contextual guidance for agent roles based on project analysis"""

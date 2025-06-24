@@ -15,6 +15,7 @@ from typing import Optional, List, Dict, Any, Tuple, Union
 from fastmcp import FastMCP
 import yaml
 from dataclasses import asdict
+from fastmcp.tools.tool_path import find_project_root
 
 # Package imports - no need for sys.path manipulation with proper package structure
 logging.basicConfig(level=logging.INFO)
@@ -61,33 +62,19 @@ from fastmcp.task_management.domain.entities.task_tree import TaskTree as TaskTr
 from fastmcp.task_management.domain.entities.task import Task
 from fastmcp.task_management.domain.services.orchestrator import Orchestrator
 
-BRAIN_DIR = os.path.join(os.path.dirname(__file__), '../../../.cursor/rules/brain')
-PROJECTS_FILE = os.path.join(BRAIN_DIR, 'projects.json')
+# Set up project root and path resolution
+project_root = find_project_root()
 
-# Helper function to find the project root directory
-def find_project_root():
-    """Find the project root directory (containing dhafnck_mcp_main and yaml-lib)"""
-    # Start from the current file's directory
-    current_dir = Path(os.path.abspath(__file__))
-    
-    # Go up until we find the directory containing dhafnck_mcp_main
-    while current_dir.parent != current_dir:  # Stop at filesystem root
-        current_dir = current_dir.parent
-        # If we're in dhafnck_mcp_main directory, go up one more level
-        if current_dir.name == 'dhafnck_mcp_main':
-            return current_dir.parent
-        # If we see dhafnck_mcp_main as a subdirectory, we're at project root
-        if (current_dir / 'dhafnck_mcp_main').exists():
-            return current_dir
-        # Also check for CLAUDE.md as a project marker
-        if (current_dir / 'CLAUDE.md').exists():
-            return current_dir
-    
-    # Fallback to current directory if project root not found
-    return Path(os.path.abspath('.'))
+def resolve_path(path):
+    p = Path(path)
+    return p if p.is_absolute() else (project_root / p)
+
+# Allow override via environment variables, else use default nested paths
+BRAIN_DIR = resolve_path(os.environ.get("BRAIN_DIR_PATH", "dhafnck_mcp_main/.cursor/rules/brain"))
+PROJECTS_FILE = resolve_path(os.environ.get("PROJECTS_FILE_PATH", BRAIN_DIR / "projects.json"))
 
 # Get project root directory
-PROJECT_ROOT = find_project_root()
+PROJECT_ROOT = project_root
 CURSOR_AGENT_DIR = PROJECT_ROOT / 'dhafnck_mcp_main'  # Agents are in PROJECT_ROOT/dhafnck_mcp_main/yaml-lib
 
 def ensure_brain_dir():

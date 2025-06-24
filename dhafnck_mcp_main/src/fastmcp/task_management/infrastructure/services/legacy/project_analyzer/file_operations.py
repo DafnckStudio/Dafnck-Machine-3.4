@@ -7,13 +7,15 @@ import json
 import time
 from pathlib import Path
 from typing import Dict, Optional
+from fastmcp.tools.tool_path import find_project_root
 
 
 class FileOperations:
     """Handles file operations for project analysis context"""
     
-    def __init__(self, project_root: Path):
-        self.project_root = project_root
+    def __init__(self, project_root: Path = None, context_dir: Path = None):
+        self.project_root = project_root or find_project_root()
+        self.context_dir = context_dir or (self.project_root / ".cursor/rules/contexts")
     
     def save_context_to_file(self, context_file: Path, context_data: Dict, task_phase: str = "coding") -> bool:
         """Save analyzed context to project_context.json file"""

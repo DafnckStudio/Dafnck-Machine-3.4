@@ -1,15 +1,15 @@
 {
   "enabled_tools": {
-    "manage_project": false,
-    "manage_task": false,
-    "manage_subtask": false,
-    "manage_agent": false,
+    "manage_project": true,
+    "manage_task": true,
+    "manage_subtask": true,
+    "manage_agent": true,
     "call_agent": true,
-    "update_auto_rule": false,
-    "validate_rules": false,
-    "manage_cursor_rules": false,
-    "regenerate_auto_rule": false,
-    "validate_tasks_json": false
+    "update_auto_rule": true,
+    "validate_rules": true,
+    "manage_cursor_rules": true,
+    "regenerate_auto_rule": true,
+    "validate_tasks_json": true
   },
   "debug_mode": true,
   "tool_logging": true

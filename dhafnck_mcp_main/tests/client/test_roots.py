@@ -19,6 +19,7 @@ def fastmcp_server():
 
 class TestClientRoots:
     @pytest.mark.parametrize("roots", [["x"], ["x", "y"]])
+    @pytest.mark.asyncio
     async def test_invalid_roots(self, fastmcp_server: FastMCP, roots: list[str]):
         """
         Roots must be URIs
@@ -28,6 +29,7 @@ class TestClientRoots:
                 pass
 
     @pytest.mark.parametrize("roots", [["https://x.com"]])
+    @pytest.mark.asyncio
     async def test_invalid_urls(self, fastmcp_server: FastMCP, roots: list[str]):
         """
         At this time, root URIs must start with file://
@@ -37,6 +39,7 @@ class TestClientRoots:
                 pass
 
     @pytest.mark.parametrize("roots", [["file://x/y/z", "file://x/y/z"]])
+    @pytest.mark.asyncio
     async def test_valid_roots(self, fastmcp_server: FastMCP, roots: list[str]):
         async with Client(fastmcp_server, roots=roots) as client:
             result = await client.call_tool("list_roots", {})

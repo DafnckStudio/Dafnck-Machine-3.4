@@ -73,6 +73,7 @@ def sse_server() -> Generator[str, None, None]:
         yield f"{url}/sse/"
 
 
+@pytest.mark.asyncio
 async def test_ping(sse_server: str):
     """Test pinging the server."""
     async with Client(transport=SSETransport(sse_server)) as client:
@@ -80,6 +81,7 @@ async def test_ping(sse_server: str):
         assert result is True
 
 
+@pytest.mark.asyncio
 async def test_http_headers(sse_server: str):
     """Test getting HTTP headers from the server."""
     async with Client(
@@ -101,6 +103,7 @@ def run_nested_server(host: str, port: int) -> None:
     server.run()
 
 
+@pytest.mark.asyncio
 async def test_run_server_on_path():
     with run_server_in_process(run_server, transport="sse", path="/help") as url:
         async with Client(transport=SSETransport(f"{url}/help")) as client:
@@ -108,6 +111,7 @@ async def test_run_server_on_path():
             assert result is True
 
 
+@pytest.mark.asyncio
 async def test_nested_sse_server_resolves_correctly():
     # tests patch for
     # https://github.com/modelcontextprotocol/python-sdk/pull/659
@@ -125,6 +129,7 @@ async def test_nested_sse_server_resolves_correctly():
     reason="Timeout tests are flaky on Windows. Timeouts *are* supported but the tests are unreliable.",
 )
 class TestTimeout:
+    @pytest.mark.asyncio
     async def test_timeout(self, sse_server: str):
         with pytest.raises(
             McpError,
@@ -136,11 +141,13 @@ class TestTimeout:
             ) as client:
                 await client.call_tool("sleep", {"seconds": 0.1})
 
+    @pytest.mark.asyncio
     async def test_timeout_tool_call(self, sse_server: str):
         async with Client(transport=SSETransport(sse_server)) as client:
             with pytest.raises(McpError, match="Timed out"):
                 await client.call_tool("sleep", {"seconds": 0.1}, timeout=0.01)
 
+    @pytest.mark.asyncio
     async def test_timeout_tool_call_overrides_client_timeout_if_lower(
         self, sse_server: str
     ):
@@ -151,6 +158,7 @@ class TestTimeout:
             with pytest.raises(McpError, match="Timed out"):
                 await client.call_tool("sleep", {"seconds": 0.1}, timeout=0.01)
 
+    @pytest.mark.asyncio
     async def test_timeout_client_timeout_does_not_override_tool_call_timeout_if_lower(
         self, sse_server: str
     ):

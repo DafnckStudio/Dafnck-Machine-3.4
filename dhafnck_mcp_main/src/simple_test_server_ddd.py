@@ -31,9 +31,21 @@ logger = logging.getLogger(__name__)
 logger.info("Creating DDD MCP server...")
 app = Server("dhafnck_mcp_ddd")
 
+# Find the project root dynamically (looks for pyproject.toml or .git)
+def find_project_root():
+    current = Path(__file__).resolve()
+    for parent in [current] + list(current.parents):
+        if (parent / "pyproject.toml").exists() or (parent / ".git").exists():
+            return parent
+    # Fallback: use parent of src/
+    return current.parent.parent
+
+PROJECT_ROOT = find_project_root()
+TASKS_JSON_PATH = PROJECT_ROOT / ".cursor" / "rules" / "tasks" / "tasks.json"
+
 # Initialize DDD components
 try:
-    task_repository = JsonTaskRepository(file_path=".cursor/rules/tasks/tasks.json")
+    task_repository = JsonTaskRepository(file_path=str(TASKS_JSON_PATH))
     auto_rule_generator = FileAutoRuleGenerator()
     task_service = TaskApplicationService(task_repository, auto_rule_generator)
     logger.info("DDD components initialized successfully")

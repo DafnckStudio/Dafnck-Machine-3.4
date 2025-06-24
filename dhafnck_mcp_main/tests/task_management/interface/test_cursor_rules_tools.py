@@ -15,20 +15,21 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from fastmcp.task_management.interface.cursor_rules_tools import CursorRulesTools, _get_project_root
+from fastmcp.task_management.interface.cursor_rules_tools import CursorRulesTools
+from fastmcp.tools.tool_path import find_project_root
 
 
 class TestGetProjectRoot:
-    """Test cases for _get_project_root function"""
+    """Test cases for find_project_root function"""
 
     def test_get_project_root_finds_correct_root(self):
         """
-        Tests that _get_project_root correctly finds the project root directory
+        Tests that find_project_root correctly finds the project root directory
         by running it in a real environment.
         """
         # This is now more of an integration test, but it's more robust
         # than trying to mock the complex Path traversal.
-        project_root = _get_project_root()
+        project_root = find_project_root()
         assert isinstance(project_root, Path)
         
         # Check for the presence of a known marker at the project root
@@ -69,7 +70,7 @@ class TestCursorRulesTools:
     @pytest.fixture
     def cursor_rules_tools(self, temp_project_root):
         """Create CursorRulesTools instance with mocked project root"""
-        with patch('fastmcp.task_management.interface.cursor_rules_tools._get_project_root', return_value=temp_project_root):
+        with patch('fastmcp.tools.tool_path.find_project_root', return_value=temp_project_root):
             with patch('fastmcp.task_management.infrastructure.services.FileAutoRuleGenerator'):
                 return CursorRulesTools()
 
@@ -95,7 +96,7 @@ class TestCursorRulesTools:
 
     def test_init(self, temp_project_root):
         """Test CursorRulesTools initialization"""
-        with patch('fastmcp.task_management.interface.cursor_rules_tools._get_project_root', return_value=temp_project_root):
+        with patch('fastmcp.tools.tool_path.find_project_root', return_value=temp_project_root):
             with patch('fastmcp.task_management.infrastructure.services.FileAutoRuleGenerator') as mock_generator:
                 tools = CursorRulesTools()
                 

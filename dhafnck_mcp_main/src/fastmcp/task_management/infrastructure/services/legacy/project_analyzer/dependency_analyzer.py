@@ -6,13 +6,15 @@ Handles analysis of project dependencies and imports.
 import json
 from pathlib import Path
 from typing import List
+from fastmcp.tools.tool_path import find_project_root
 
 
 class DependencyAnalyzer:
     """Handles project dependency analysis"""
     
-    def __init__(self, project_root: Path):
-        self.project_root = project_root
+    def __init__(self, project_root: Path = None, context_dir: Path = None):
+        self.project_root = project_root or find_project_root()
+        self.context_dir = context_dir or (self.project_root / ".cursor/rules/contexts")
     
     def analyze_dependencies(self) -> List[str]:
         """Analyze project dependencies by scanning actual imports in Python files"""

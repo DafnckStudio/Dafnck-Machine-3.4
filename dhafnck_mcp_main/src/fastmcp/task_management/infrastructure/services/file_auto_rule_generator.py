@@ -10,6 +10,7 @@ from datetime import datetime
 from ...domain import Task, AutoRuleGenerator
 from .legacy.rules_generator import RulesGenerator
 from ...domain.enums.agent_roles import get_supported_roles as get_all_supported_roles
+from fastmcp.tools.tool_path import find_project_root
 
 
 def _get_project_root() -> Path:
@@ -24,23 +25,30 @@ def _get_project_root() -> Path:
 
 
 class FileAutoRuleGenerator(AutoRuleGenerator):
-    """File-based implementation of AutoRuleGenerator"""
+    """File-based implementation of AutoRuleGenerator
+    
+    The output path can be set by:
+    1. Passing output_path to the constructor
+    2. Setting the AUTO_RULE_PATH environment variable
+    3. Defaults to .cursor/rules/auto_rule.mdc under the project root
+    """
     
     def __init__(self, output_path: Optional[str] = None):
-        if output_path is None:
-            # Use absolute path to project root
-            project_root = _get_project_root()
-            self._output_path = str(project_root / ".cursor" / "rules" / "auto_rule.mdc")
+        project_root = find_project_root()
+
+        def resolve_path(path):
+            p = Path(path)
+            return str(p if p.is_absolute() else (project_root / p))
+
+        env_path = os.environ.get("AUTO_RULE_PATH")
+        if output_path:
+            self._output_path = resolve_path(output_path)
+        elif env_path:
+            self._output_path = resolve_path(env_path)
         else:
-            # If relative path provided, make it relative to project root
-            if not os.path.isabs(output_path):
-                project_root = _get_project_root()
-                self._output_path = str(project_root / output_path)
-            else:
-                self._output_path = output_path
+            self._output_path = str(project_root / ".cursor" / "rules" / "auto_rule.mdc")
         
         # Initialize RulesGenerator with the yaml-lib directory
-        project_root = _get_project_root()
         yaml_lib_dir = project_root / "cursor_agent" / "yaml-lib"
         self._rules_generator = RulesGenerator(yaml_lib_dir)
         self._ensure_output_dir()

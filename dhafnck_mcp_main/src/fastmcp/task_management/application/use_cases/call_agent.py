@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 
 from ...infrastructure.services.agent_doc_generator import generate_docs_for_assignees
+from fastmcp.tools.tool_path import find_project_root
 
 
 class CallAgentUseCase:
@@ -96,4 +97,18 @@ class CallAgentUseCase:
             return {
                 "success": False,
                 "error": f"Failed to retrieve agent information: {str(e)}"
-            } 
+            }
+
+# Set up project root and path resolution
+def resolve_path(path, base=None):
+    p = Path(path)
+    if p.is_absolute():
+        return p
+    base = base or find_project_root()
+    return (base / p).resolve()
+
+# Allow override via environment variable, else use default
+if "CURSOR_AGENT_DIR_PATH" in os.environ:
+    CURSOR_AGENT_DIR = resolve_path(os.environ["CURSOR_AGENT_DIR_PATH"])
+else:
+    CURSOR_AGENT_DIR = find_project_root() / "dhafnck_mcp_main/yaml-lib" 

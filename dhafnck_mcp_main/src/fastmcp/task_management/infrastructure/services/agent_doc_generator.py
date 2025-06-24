@@ -5,38 +5,44 @@ import shutil
 import argparse
 import subprocess
 from typing import Optional, List
+from fastmcp.tools.tool_path import find_project_root
 
 
 class AgentDocGenerator:
-    """Agent Documentation Generator for converting YAML agent definitions to MDC format"""
+    """Agent Documentation Generator for converting YAML agent definitions to MDC format
+    
+    The agent_yaml_lib and agents_output_dir can be set by:
+    1. Passing them to the constructor
+    2. Setting the AGENT_YAML_LIB_PATH and AGENTS_OUTPUT_DIR environment variables
+    3. Defaults to yaml-lib and .cursor/rules/agents under the project root
+    """
     
     def __init__(self, agent_yaml_lib: Optional[Path] = None, agents_output_dir: Optional[Path] = None):
-        self.project_root = self._get_project_root()
-        self.agent_yaml_lib = agent_yaml_lib or self.project_root / "yaml-lib"
-        self.agents_output_dir = agents_output_dir or self.project_root / ".cursor/rules/agents"
-        self.convert_script = self.project_root / "yaml-lib/convert_yaml_to_mdc_format.py"
-    
-    def _get_project_root(self) -> Path:
-        """Find the project root directory by locating common project markers."""
-        current_dir = Path(__file__).resolve()
-        
-        # Look for project markers (CLAUDE.md, .cursor directory, yaml-lib directory)
-        while current_dir != current_dir.parent:
-            if ((current_dir / "CLAUDE.md").exists() or 
-                (current_dir / ".cursor").is_dir() or 
-                (current_dir / "yaml-lib").is_dir() or
-                (current_dir / "dhafnck_mcp_main").is_dir()):
-                return current_dir
-            current_dir = current_dir.parent
+        project_root = find_project_root()
 
-        # If no project markers found, assume the parent of dhafnck_mcp_main is the project root
-        current_dir = Path(__file__).resolve()
-        while current_dir != current_dir.parent:
-            if current_dir.name == "dhafnck_mcp_main":
-                return current_dir.parent
-            current_dir = current_dir.parent
+        def resolve_path(path):
+            p = Path(path)
+            return p if p.is_absolute() else (project_root / p)
 
-        raise FileNotFoundError("Could not find the project root. Expected to find CLAUDE.md, .cursor, yaml-lib, or dhafnck_mcp_main directory.")
+        env_yaml_lib = os.environ.get("AGENT_YAML_LIB_PATH")
+        env_agents_output = os.environ.get("AGENTS_OUTPUT_DIR")
+
+        if agent_yaml_lib:
+            self.agent_yaml_lib = resolve_path(agent_yaml_lib)
+        elif env_yaml_lib:
+            self.agent_yaml_lib = resolve_path(env_yaml_lib)
+        else:
+            self.agent_yaml_lib = project_root / "yaml-lib"
+
+        if agents_output_dir:
+            self.agents_output_dir = resolve_path(agents_output_dir)
+        elif env_agents_output:
+            self.agents_output_dir = resolve_path(env_agents_output)
+        else:
+            self.agents_output_dir = project_root / ".cursor/rules/agents"
+
+        self.project_root = project_root
+        self.convert_script = project_root / "yaml-lib/convert_yaml_to_mdc_format.py"
     
     def clear_agents_output_dir(self):
         """Clear all files in the agents output directory"""

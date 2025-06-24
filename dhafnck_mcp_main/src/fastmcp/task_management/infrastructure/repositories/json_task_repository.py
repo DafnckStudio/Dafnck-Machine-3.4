@@ -9,24 +9,7 @@ import logging
 
 from ...domain import Task, TaskRepository, TaskId, TaskStatus, Priority
 from ...domain.exceptions import TaskNotFoundError
-
-
-def _get_project_root() -> Path:
-    """Find the project root directory by locating the 'dhafnck_mcp_main' directory."""
-    current_dir = Path(__file__).resolve()
-    while current_dir != current_dir.parent:
-        if (current_dir / "dhafnck_mcp_main").is_dir():
-            return current_dir
-        current_dir = current_dir.parent
-    
-    # Fallback for when script is inside dhafnck_mcp_main
-    current_dir = Path(__file__).resolve()
-    if 'dhafnck_mcp_main' in current_dir.parts:
-        while current_dir.name != "dhafnck_mcp_main":
-            current_dir = current_dir.parent
-        return current_dir.parent
-
-    raise FileNotFoundError("Could not find the project root containing 'dhafnck_mcp_main' directory.")
+from fastmcp.tools.tool_path import find_project_root
 
 
 class InMemoryTaskRepository(TaskRepository):
@@ -186,16 +169,19 @@ class JsonTaskRepository(TaskRepository):
     """JSON file-based implementation of TaskRepository"""
     
     def __init__(self, file_path: Optional[str] = None):
+        project_root = find_project_root()
+
+        def resolve_path(path):
+            p = Path(path)
+            return str(p if p.is_absolute() else (project_root / p))
+
         if file_path:
-            self._file_path = str(Path(file_path).resolve())
+            self._file_path = resolve_path(file_path)
         else:
-            # Check environment variable first
             env_path = os.environ.get("TASKS_JSON_PATH")
             if env_path:
-                self._file_path = os.path.abspath(env_path)
+                self._file_path = resolve_path(env_path)
             else:
-                # Default path relative to the project root
-                project_root = _get_project_root()
                 self._file_path = str(project_root / ".cursor" / "rules" / "tasks" / "tasks.json")
 
         logging.info(f"JsonTaskRepository using file_path: {self._file_path}")

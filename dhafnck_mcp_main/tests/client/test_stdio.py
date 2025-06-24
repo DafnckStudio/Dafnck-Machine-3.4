@@ -29,17 +29,20 @@ class TestKeepAlive:
         script_file.write_text(script)
         return script_file
 
+    @pytest.mark.asyncio
     async def test_keep_alive_default_true(self):
         client = Client(transport=StdioTransport(command="python", args=[""]))
 
         assert client.transport.keep_alive is True
 
+    @pytest.mark.asyncio
     async def test_keep_alive_set_false(self):
         client = Client(
             transport=StdioTransport(command="python", args=[""], keep_alive=False)
         )
         assert client.transport.keep_alive is False
 
+    @pytest.mark.asyncio
     async def test_keep_alive_maintains_session_across_multiple_calls(
         self, stdio_script
     ):
@@ -56,6 +59,7 @@ class TestKeepAlive:
 
         assert pid1 == pid2
 
+    @pytest.mark.asyncio
     async def test_keep_alive_false_starts_new_session_across_multiple_calls(
         self, stdio_script
     ):
@@ -74,6 +78,7 @@ class TestKeepAlive:
 
         assert pid1 != pid2
 
+    @pytest.mark.asyncio
     async def test_keep_alive_starts_new_session_if_manually_closed(self, stdio_script):
         client = Client(transport=PythonStdioTransport(script_path=stdio_script))
         assert client.transport.keep_alive is True
@@ -90,6 +95,7 @@ class TestKeepAlive:
 
         assert pid1 != pid2
 
+    @pytest.mark.asyncio
     async def test_keep_alive_maintains_session_if_reentered(self, stdio_script):
         client = Client(transport=PythonStdioTransport(script_path=stdio_script))
         assert client.transport.keep_alive is True
@@ -107,6 +113,7 @@ class TestKeepAlive:
 
         assert pid1 == pid2 == pid3
 
+    @pytest.mark.asyncio
     async def test_close_session_and_try_to_use_client_raises_error(self, stdio_script):
         client = Client(transport=PythonStdioTransport(script_path=stdio_script))
         assert client.transport.keep_alive is True

@@ -26,6 +26,7 @@ def test_mount_resource_separator_deprecation_warning():
     assert any("Mount prefixes are now optional" in msg for msg in warning_messages)
 
 
+@pytest.mark.asyncio
 async def test_mount_tool_separator_deprecation_warning():
     """Test that using tool_separator in mount() raises a deprecation warning."""
     main_app = FastMCP("MainApp")
@@ -51,6 +52,7 @@ async def test_mount_tool_separator_deprecation_warning():
         assert "sub-test_tool" not in {t.name for t in await client.list_tools()}
 
 
+@pytest.mark.asyncio
 async def test_mount_prompt_separator_deprecation_warning():
     """Test that using prompt_separator in mount() raises a deprecation warning."""
     main_app = FastMCP("MainApp")
@@ -77,6 +79,7 @@ async def test_mount_prompt_separator_deprecation_warning():
             await client.get_prompt("sub-test_prompt")
 
 
+@pytest.mark.asyncio
 async def test_import_server_separator_deprecation_warnings():
     """Test that using separators in import_server() raises deprecation warnings."""
     main_app = FastMCP("MainApp")

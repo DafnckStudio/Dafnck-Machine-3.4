@@ -1,4 +1,5 @@
 import warnings
+import pytest
 
 from fastmcp import FastMCP
 from fastmcp.client import Client
@@ -7,6 +8,7 @@ from fastmcp.client import Client
 class TestDeprecatedMountArgOrder:
     """Test deprecated positional argument order for mount() method."""
 
+    @pytest.mark.asyncio
     async def test_mount_deprecated_arg_order_with_warning(self):
         """Test that mount(prefix, server) still works but raises deprecation warning."""
         main_app = FastMCP("MainApp")
@@ -38,6 +40,7 @@ class TestDeprecatedMountArgOrder:
             result = await client.call_tool("sub_sub_tool", {})
             assert result[0].text == "Sub tool result"  # type: ignore[attr-defined]
 
+    @pytest.mark.asyncio
     async def test_mount_new_arg_order_no_warning(self):
         """Test that mount(server, prefix) works without deprecation warning."""
         main_app = FastMCP("MainApp")
@@ -64,6 +67,7 @@ class TestDeprecatedMountArgOrder:
         tools = await main_app.get_tools()
         assert "sub_sub_tool" in tools
 
+    @pytest.mark.asyncio
     async def test_mount_deprecated_order_no_prefix(self):
         """Test deprecated order detection when first arg is empty string."""
         main_app = FastMCP("MainApp")
@@ -94,6 +98,7 @@ class TestDeprecatedMountArgOrder:
 class TestDeprecatedImportArgOrder:
     """Test deprecated positional argument order for import_server() method."""
 
+    @pytest.mark.asyncio
     async def test_import_deprecated_arg_order_with_warning(self):
         """Test that import_server(prefix, server) still works but raises deprecation warning."""
         main_app = FastMCP("MainApp")
@@ -124,6 +129,7 @@ class TestDeprecatedImportArgOrder:
             result = await client.call_tool("sub_sub_tool", {})
             assert result[0].text == "Sub tool result"  # type: ignore[attr-defined]
 
+    @pytest.mark.asyncio
     async def test_import_new_arg_order_no_warning(self):
         """Test that import_server(server, prefix) works without deprecation warning."""
         main_app = FastMCP("MainApp")
@@ -151,6 +157,7 @@ class TestDeprecatedImportArgOrder:
         # Verify the import worked correctly
         assert "sub_sub_tool" in main_app._tool_manager._tools
 
+    @pytest.mark.asyncio
     async def test_import_deprecated_order_no_prefix(self):
         """Test deprecated order detection when first arg is empty string."""
         main_app = FastMCP("MainApp")
@@ -176,6 +183,7 @@ class TestDeprecatedImportArgOrder:
         # Verify the import worked correctly (no prefix)
         assert "sub_tool" in main_app._tool_manager._tools  # No prefix applied
 
+    @pytest.mark.asyncio
     async def test_import_deprecated_order_with_resources_and_prompts(self):
         """Test deprecated order works with all component types."""
         main_app = FastMCP("MainApp")
@@ -216,6 +224,7 @@ class TestDeprecatedImportArgOrder:
 class TestArgOrderDetection:
     """Test that argument order detection works correctly."""
 
+    @pytest.mark.asyncio
     async def test_mount_correctly_identifies_server_vs_string(self):
         """Test that mount correctly identifies FastMCP instances vs strings."""
         main_app = FastMCP("MainApp")
@@ -245,6 +254,7 @@ class TestArgOrderDetection:
             ]
             assert len(mount_warnings) == 1
 
+    @pytest.mark.asyncio
     async def test_import_correctly_identifies_server_vs_string(self):
         """Test that import_server correctly identifies FastMCP instances vs strings."""
         main_app = FastMCP("MainApp")
