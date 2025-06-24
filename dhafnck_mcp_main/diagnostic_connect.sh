@@ -779,41 +779,72 @@ validate_mcp_config() {
         echo -e "  🔍 dhafnck_mcp configuration:"
         python3 -c "
 import json
-with open('$config_file', 'r') as f:
-    config = json.load(f)
+import os
+import sys
+
+try:
+    with open('$config_file', 'r') as f:
+        config = json.load(f)
     
-if 'mcpServers' in config and 'dhafnck_mcp' in config['mcpServers']:
-    tm_config = config['mcpServers']['dhafnck_mcp']
-    print(f'     Command: {tm_config.get("command", "NOT SET")}')
-    print(f'     Args: {tm_config.get("args", "NOT SET")}')
-    print(f'     CWD: {tm_config.get("cwd", "NOT SET")}')
-    print(f'     Env vars: {len(tm_config.get("env", {}))} variables')
-    
-    # Validate paths
-    import os
-    command = tm_config.get('command', '')
-    if os.path.exists(command):
-        print(f'     ✅ Command path exists: {command}')
-    else:
-        print(f'     ❌ Command path missing: {command}')
+    if 'mcpServers' in config and 'dhafnck_mcp' in config['mcpServers']:
+        tm_config = config['mcpServers']['dhafnck_mcp']
+        print(f'     Command: {tm_config.get(\"command\", \"NOT SET\")}')
+        print(f'     Args: {tm_config.get(\"args\", \"NOT SET\")}')
+        print(f'     CWD: {tm_config.get(\"cwd\", \"NOT SET\")}')
+        print(f'     Env vars: {len(tm_config.get(\"env\", {}))} variables')
         
-    cwd = tm_config.get('cwd', '')
-    if os.path.exists(cwd):
-        print(f'     ✅ Working directory exists: {cwd}')
-    else:
-        print(f'     ❌ Working directory missing: {cwd}')
-        
-    # Check environment variables
-    env = tm_config.get('env', {})
-    for key, value in env.items():
-        print(f'     🌍 {key}={value}')
-        if key.endswith('_PATH') and value:
-            if os.path.exists(value):
-                print(f'        ✅ Path exists: {value}')
+        # Validate paths
+        command = tm_config.get('command', '')
+        if command and os.path.exists(command):
+            print(f'     ✅ Command path exists: {command}')
+        elif command:
+            print(f'     ❌ Command path missing: {command}')
+        else:
+            print(f'     ❌ Command not set')
+            
+        cwd = tm_config.get('cwd', '')
+        if cwd and os.path.exists(cwd):
+            print(f'     ✅ Working directory exists: {cwd}')
+        elif cwd:
+            print(f'     ❌ Working directory missing: {cwd}')
+        else:
+            print(f'     ❌ Working directory not set')
+            
+        # Check environment variables
+        env = tm_config.get('env', {})
+        for key, value in env.items():
+            print(f'     🌍 {key}={value}')
+            if key.endswith('_PATH') and value:
+                # Handle relative paths by joining with cwd
+                if not os.path.isabs(value) and cwd:
+                    full_path = os.path.join(cwd, value)
+                else:
+                    full_path = value
+                    
+                if os.path.exists(full_path):
+                    print(f'        ✅ Path exists: {full_path}')
+                else:
+                    print(f'        ❌ Path missing: {full_path}')
+                    
+        # Check if using correct server script
+        args = tm_config.get('args', [])
+        if args and isinstance(args, list):
+            server_script = args[0] if args else ''
+            if 'consolidated_mcp_server' in server_script:
+                print(f'     ✅ Using consolidated MCP server')
+            elif 'simple_test_server' in server_script:
+                print(f'     ⚠️  Using test server instead of consolidated server')
             else:
-                print(f'        ❌ Path missing: {value}')
-else:
-    print('     ❌ dhafnck_mcp not found in mcpServers')
+                print(f'     ❌ Unknown server script: {server_script}')
+    else:
+        print('     ❌ dhafnck_mcp not found in mcpServers')
+        
+except json.JSONDecodeError as e:
+    print(f'     ❌ JSON parsing error: {e}')
+except FileNotFoundError:
+    print(f'     ❌ Configuration file not found: $config_file')
+except Exception as e:
+    print(f'     ❌ Error reading configuration: {e}')
 " 2>/dev/null || echo -e "     ❌ ${RED}Error parsing configuration${NC}"
     else
         echo -e "  ❌ ${RED}dhafnck_mcp server not found in config${NC}"
@@ -1088,18 +1119,18 @@ async def quick_test():
         print("🔧 Testing tools...")
         tools = await mcp_instance._mcp_list_tools()
         
-        print("✅ SUCCESS: {len(tools)} tools available")
-        print("📋 Tools: {', '.join([t.name for t in tools[:5]]) + ('...' if len(tools) > 5 else '')}")
+        print(f"✅ SUCCESS: {len(tools)} tools available")
+        print(f"📋 Tools: {', '.join([t.name for t in tools[:5]]) + ('...' if len(tools) > 5 else '')}")
         
         return len(tools) > 0
         
     except Exception as e:
-        print("❌ FAILED: {e}")
+        print(f"❌ FAILED: {e}")
         return False
 
 if __name__ == "__main__":
     success = asyncio.run(quick_test())
-    print("\n{'🎉 TOOLS WORKING!' if success else '❌ TOOLS NOT WORKING'}")
+    print(f"\n{'🎉 TOOLS WORKING!' if success else '❌ TOOLS NOT WORKING'}")
     sys.exit(0 if success else 1)
 EOF
 
