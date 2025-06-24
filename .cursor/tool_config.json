@@ -1,0 +1,16 @@
+{
+  "enabled_tools": {
+    "manage_project": false,
+    "manage_task": false,
+    "manage_subtask": false,
+    "manage_agent": false,
+    "call_agent": true,
+    "update_auto_rule": false,
+    "validate_rules": false,
+    "manage_cursor_rules": false,
+    "regenerate_auto_rule": false,
+    "validate_tasks_json": false
+  },
+  "debug_mode": true,
+  "tool_logging": true
+}
