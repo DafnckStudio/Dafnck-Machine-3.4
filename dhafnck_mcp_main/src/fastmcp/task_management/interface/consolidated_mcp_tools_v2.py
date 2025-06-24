@@ -1,24 +1,18 @@
-"""Consolidated MCP Tools v2 - Reorganized with Enhanced Descriptions"""
+"""Consolidated MCP Tools v2 - Clean and Maintainable Architecture"""
 
-import sys
 import os
 import json
-import asyncio
 import logging
-import shutil
-import time
 import traceback
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import datetime
 from pathlib import Path
-from typing import Optional, List, Dict, Any, Tuple, Union
-from fastmcp import FastMCP
-import yaml
+from typing import Optional, List, Dict, Any
 from dataclasses import asdict
+
+from fastmcp import FastMCP
 from fastmcp.tools.tool_path import find_project_root
 
-# Package imports - no need for sys.path manipulation with proper package structure
-logging.basicConfig(level=logging.INFO)
+# Configure logging
 logger = logging.getLogger(__name__)
 
 # Application layer imports (use cases and service)
@@ -62,47 +56,48 @@ from fastmcp.task_management.domain.entities.task_tree import TaskTree as TaskTr
 from fastmcp.task_management.domain.entities.task import Task
 from fastmcp.task_management.domain.services.orchestrator import Orchestrator
 
-# Set up project root and path resolution
-project_root = find_project_root()
+# Constants and Configuration
+PROJECT_ROOT = find_project_root()
 
-def resolve_path(path):
-    p = Path(path)
-    return p if p.is_absolute() else (project_root / p)
 
-# Allow override via environment variables, else use default nested paths
-BRAIN_DIR = resolve_path(os.environ.get("BRAIN_DIR_PATH", ".cursor/rules/brain"))
-PROJECTS_FILE = resolve_path(os.environ.get("PROJECTS_FILE_PATH", BRAIN_DIR / "projects.json"))
-
-# Get project root directory
-PROJECT_ROOT = project_root
-CURSOR_AGENT_DIR = PROJECT_ROOT / 'yaml-lib'  # Agents are in PROJECT_ROOT/yaml-lib
-
-def ensure_brain_dir():
-    os.makedirs(BRAIN_DIR, exist_ok=True)
-
-class SimpleMultiAgentTools:
-    """Simple multi-agent tools implementation for consolidated v2"""
+class PathResolver:
+    """Handles path resolution and directory management"""
     
-    def __init__(self, projects_file_path: Optional[str] = None):
-        # Allow custom projects file path for testing
+    def __init__(self):
+        self.project_root = PROJECT_ROOT
+        self.brain_dir = self._resolve_path(os.environ.get("BRAIN_DIR_PATH", ".cursor/rules/brain"))
+        self.projects_file = self._resolve_path(os.environ.get("PROJECTS_FILE_PATH", self.brain_dir / "projects.json"))
+        
+    def _resolve_path(self, path):
+        p = Path(path)
+        return p if p.is_absolute() else (self.project_root / p)
+        
+    def ensure_brain_dir(self):
+        os.makedirs(self.brain_dir, exist_ok=True)
+
+class ProjectManager:
+    """Manages project lifecycle and multi-agent coordination"""
+    
+    def __init__(self, path_resolver: PathResolver, projects_file_path: Optional[str] = None):
+        self.path_resolver = path_resolver
+        
         if projects_file_path:
             self._projects_file = projects_file_path
             self._brain_dir = os.path.dirname(projects_file_path)
         else:
-            # Use default production paths
-            self._brain_dir = BRAIN_DIR
-            self._projects_file = PROJECTS_FILE
+            self._brain_dir = path_resolver.brain_dir
+            self._projects_file = path_resolver.projects_file
         
         self._projects = {}
         self._load_projects()
         
-        # Initialize agent converter and orchestrator for advanced features
+        # Initialize advanced features
         self._agent_converter = AgentConverter()
         self._orchestrator = Orchestrator()
     
     def _ensure_brain_dir(self):
         """Ensure the brain directory exists"""
-        os.makedirs(self._brain_dir, exist_ok=True)
+        self.path_resolver.ensure_brain_dir()
     
     def _save_projects(self):
         self._ensure_brain_dir()
@@ -332,93 +327,79 @@ class SimpleMultiAgentTools:
         self._save_projects()
 
 
-class ConsolidatedMCPToolsV2:
-    """Consolidated MCP Tools v2 - Three-category organization with enhanced descriptions"""
+class ToolConfig:
+    """Manages tool configuration and enablement"""
     
-    def __init__(
-        self,
-        task_repository: Optional[TaskRepository] = None,
-        projects_file_path: Optional[str] = None
-    ):
+    def __init__(self):
+        self.config = self._load_config()
+        
+    def _load_config(self) -> Dict[str, Any]:
+        config_path = os.environ.get('MCP_TOOL_CONFIG')
+        if config_path and os.path.exists(config_path):
+            try:
+                with open(config_path, 'r') as f:
+                    return json.load(f)
+            except Exception as e:
+                logger.warning(f"Failed to load config from {config_path}: {e}")
+        
+        return {
+            "enabled_tools": {
+                "manage_project": True, "manage_task": True, "manage_subtask": True,
+                "manage_agent": True, "call_agent": True, "update_auto_rule": True,
+                "validate_rules": True, "manage_cursor_rules": True,
+                "regenerate_auto_rule": True, "validate_tasks_json": True
+            },
+            "debug_mode": False, "tool_logging": False
+        }
+        
+    def is_enabled(self, tool_name: str) -> bool:
+        return self.config.get("enabled_tools", {}).get(tool_name, True)
+
+
+class ConsolidatedMCPToolsV2:
+    """Main MCP tools interface with clean architecture"""
+    
+    def __init__(self, task_repository: Optional[TaskRepository] = None, projects_file_path: Optional[str] = None):
         logger.info("Initializing ConsolidatedMCPToolsV2...")
         
-        # Load tool configuration
-        self._tool_config = self._load_tool_config()
+        # Initialize configuration
+        self._config = ToolConfig()
         
-        # Initialize repositories and services
-        # Use environment variable for tasks file path if available
-        if task_repository is None:
-            tasks_file_path = os.environ.get('TASKS_JSON_PATH')
-            if tasks_file_path:
-                logger.info(f"Found TASKS_JSON_PATH: {tasks_file_path}")
-                self._task_repository = JsonTaskRepository(file_path=tasks_file_path)
-            else:
-                logger.warning("TASKS_JSON_PATH not set, using default.")
-                self._task_repository = JsonTaskRepository()
-        else:
-            self._task_repository = task_repository
-            
+        # Initialize repositories
+        self._task_repository = self._init_task_repository(task_repository)
         self._auto_rule_generator = FileAutoRuleGenerator()
         
-        # Initialize application service with dependencies
+        # Initialize services
         self._task_app_service = TaskApplicationService(
             task_repository=self._task_repository,
             auto_rule_generator=self._auto_rule_generator
         )
         
-        # Cursor rules tools are initialized conditionally in _register_cursor_tools_conditionally()
-        
-        # Initialize multi-agent tools with optional custom projects file path
-        self._multi_agent_tools = SimpleMultiAgentTools(projects_file_path=projects_file_path)
-        
-        # Initialize call agent use case with properly resolved path
-        # PROJECT_ROOT is already pointing to dhafnck_mcp_main directory
+        # Initialize components
+        self._path_resolver = PathResolver()
+        self._project_manager = ProjectManager(self._path_resolver, projects_file_path)
         self._call_agent_use_case = CallAgentUseCase(PROJECT_ROOT / 'yaml-lib')
         logger.info("ConsolidatedMCPToolsV2 initialized successfully.")
-    
-    def _load_tool_config(self) -> Dict[str, Any]:
-        """Load tool configuration from environment or default"""
-        config_path = os.environ.get('MCP_TOOL_CONFIG')
-        if config_path and os.path.exists(config_path):
-            try:
-                with open(config_path, 'r') as f:
-                    config = json.load(f)
-                logger.info(f"Loaded tool config from {config_path}")
-                return config
-            except Exception as e:
-                logger.warning(f"Failed to load tool config from {config_path}: {e}")
         
-        # Default configuration - all tools enabled
-        default_config = {
-            "enabled_tools": {
-                "manage_project": True,
-                "manage_task": True,
-                "manage_subtask": True,
-                "manage_agent": True,
-                "call_agent": True,
-                "update_auto_rule": True,
-                "validate_rules": True,
-                "manage_cursor_rules": True,
-                "regenerate_auto_rule": True,
-                "validate_tasks_json": True
-            },
-            "debug_mode": False,
-            "tool_logging": False
-        }
-        logger.info("Using default tool configuration (all tools enabled)")
-        return default_config
+    def _init_task_repository(self, task_repository: Optional[TaskRepository]) -> TaskRepository:
+        if task_repository:
+            return task_repository
+            
+        tasks_file_path = os.environ.get('TASKS_JSON_PATH')
+        if tasks_file_path:
+            logger.info(f"Found TASKS_JSON_PATH: {tasks_file_path}")
+            return JsonTaskRepository(file_path=tasks_file_path)
+        else:
+            logger.warning("TASKS_JSON_PATH not set, using default.")
+            return JsonTaskRepository()
     
-    def _is_tool_enabled(self, tool_name: str) -> bool:
-        """Check if a specific tool is enabled in configuration"""
-        enabled_tools = self._tool_config.get("enabled_tools", {})
-        return enabled_tools.get(tool_name, True)  # Default to enabled if not specified
     
     def register_tools(self, mcp: FastMCP):
         """Register all consolidated MCP tools in three logical categories"""
         logger.info("Registering tools in ConsolidatedMCPToolsV2...")
         
         # Log enabled tools
-        enabled_tools = self._tool_config.get("enabled_tools", {})
+        enabled_tools = self._config.config.get("enabled_tools", {})
         enabled_count = sum(1 for enabled in enabled_tools.values() if enabled)
         total_count = len(enabled_tools)
         logger.info(f"Tool configuration: {enabled_count}/{total_count} tools enabled")
@@ -431,7 +412,7 @@ class ConsolidatedMCPToolsV2:
         # 🏗️ PROJECT MANAGEMENT - High-level orchestration and coordination
         # ═══════════════════════════════════════════════════════════════════
         
-        if self._is_tool_enabled("manage_project"):
+        if self._config.is_enabled("manage_project"):
             @mcp.tool()
             def manage_project(
                 action: str,
@@ -442,110 +423,48 @@ class ConsolidatedMCPToolsV2:
                 tree_name: str = None,
                 tree_description: str = None
             ) -> Dict[str, Any]:
-                """🏗️ PROJECT ORCHESTRATION HUB - Complete multi-agent project lifecycle management
-
-                ✨ INSTANT CONTEXT: Manages entire project ecosystem including task trees, cross-dependencies, and team coordination
-                🎯 HUMAN USAGE: Project managers setting up workflows, coordinating teams, monitoring progress
-                🤖 AI USAGE: Project initialization, workstream creation, orchestration status checks, progress monitoring
-
-                📋 CORE ACTIONS:
-                🆕 CREATE: Initialize new multi-agent project workspace
-                • Input: action="create", project_id="my_project", name="Project Name"
-                • Output: Complete project structure with default main task tree
-                • AI Context: "I'm setting up a new project workspace for team coordination"
-                📊 GET: Retrieve comprehensive project status and structure
-                • Input: action="get", project_id="my_project"
-                • Output: Full project details, task trees, agent assignments, cross-dependencies
-                • AI Context: "I need complete project overview for decision making"
-                📋 LIST: Show all available projects in workspace
-                • Input: action="list"
-                • Output: All projects with summary stats and health indicators
-                • AI Context: "I need workspace overview to understand available projects"
-                🌳 CREATE_TREE: Add new workstream/feature branch to project
-                • Input: action="create_tree", project_id="my_project", tree_id="frontend", tree_name="Frontend Development"
-                • Output: New task tree ready for task assignment and agent coordination
-                • AI Context: "I'm creating a new development workstream for parallel work"
-                📈 GET_TREE_STATUS: Detailed progress analysis of specific workstream
-                • Input: action="get_tree_status", project_id="my_project", tree_id="frontend"
-                • Output: Tree progress, assigned agents, task completion metrics, bottlenecks
-                • AI Context: "I need detailed status of this workstream for progress reporting"
-                🚀 ORCHESTRATE: Run intelligent work assignment and load balancing
-                • Input: action="orchestrate", project_id="my_project"
-                • Output: Optimized task assignments, workload distribution, dependency resolution
-                • AI Context: "I'm optimizing work distribution across available agents"
-                📊 DASHBOARD: Comprehensive project health and orchestration overview
-                • Input: action="dashboard", project_id="my_project"
-                • Output: Complete metrics, agent utilization, bottlenecks, cross-tree dependencies
-                • AI Context: "I need full project dashboard for stakeholder reporting"
-                💡 WHY USE THIS:
-                • Eliminates manual project setup and coordination overhead
-                • Provides real-time visibility into multi-agent workflows
-                • Automatically optimizes work distribution and identifies bottlenecks
-                • Enables seamless scaling from single to multi-agent projects
-
-                ---
-                PARAMETER REQUIREMENTS BY ACTION:
-                - action (str, required): The operation to perform. One of: create, get, list, create_tree, get_tree_status, orchestrate, dashboard
-                - project_id (str, required/optional):
-                    • (required) for: create, get, create_tree, get_tree_status, orchestrate, dashboard
-                    • (optional) for: list
-                - name (str, required/optional):
-                    • (required) for: create
-                    • (optional) for: others
-                - description (Optional[str], optional):
-                    • (optional) for: create
-                - tree_id (str, required/optional):
-                    • (required) for: create_tree, get_tree_status
-                    • (optional) for: others
-                - tree_name (str, required/optional):
-                    • (required) for: create_tree
-                    • (optional) for: others
-                - tree_description (Optional[str], optional):
-                    • (optional) for: create_tree
-                ---
-                For each action, required parameters:
-                • create: action, project_id, name
-                • get: action, project_id
-                • list: action
-                • create_tree: action, project_id, tree_id, tree_name
-                • get_tree_status: action, project_id, tree_id
-                • orchestrate: action, project_id
-                • dashboard: action, project_id
-                ---
+                """Multi-agent project lifecycle management.
+                
+                Actions: create, get, list, create_tree, get_tree_status, orchestrate, dashboard
+                
+                Examples:
+                - action="create", project_id="my_project", name="Project Name"
+                - action="get", project_id="my_project"
+                - action="orchestrate", project_id="my_project"
                 """
                 
                 if action == "create":
                     if not project_id or not name:
                         return {"success": False, "error": "project_id and name are required for creating a project"}
-                    return self._multi_agent_tools.create_project(project_id, name, description or "")
+                    return self._project_manager.create_project(project_id, name, description or "")
                     
                 elif action == "get":
                     if not project_id:
                         return {"success": False, "error": "project_id is required"}
-                    return self._multi_agent_tools.get_project(project_id)
+                    return self._project_manager.get_project(project_id)
                     
                 elif action == "list":
-                    return self._multi_agent_tools.list_projects()
+                    return self._project_manager.list_projects()
                     
                 elif action == "create_tree":
                     if not all([project_id, tree_id, tree_name]):
                         return {"success": False, "error": "project_id, tree_id, and tree_name are required"}
-                    return self._multi_agent_tools.create_task_tree(project_id, tree_id, tree_name, tree_description or "")
+                    return self._project_manager.create_task_tree(project_id, tree_id, tree_name, tree_description or "")
                     
                 elif action == "get_tree_status":
                     if not project_id or not tree_id:
                         return {"success": False, "error": "project_id and tree_id are required"}
-                    return self._multi_agent_tools.get_task_tree_status(project_id, tree_id)
+                    return self._project_manager.get_task_tree_status(project_id, tree_id)
                     
                 elif action == "orchestrate":
                     if not project_id:
                         return {"success": False, "error": "project_id is required"}
-                    return self._multi_agent_tools.orchestrate_project(project_id)
+                    return self._project_manager.orchestrate_project(project_id)
                     
                 elif action == "dashboard":
                     if not project_id:
                         return {"success": False, "error": "project_id is required"}
-                    return self._multi_agent_tools.get_orchestration_dashboard(project_id)
+                    return self._project_manager.get_orchestration_dashboard(project_id)
                     
                 else:
                     return {"success": False, "error": f"Unknown action: {action}. Available: create, get, list, create_tree, get_tree_status, orchestrate, dashboard"}
@@ -558,7 +477,7 @@ class ConsolidatedMCPToolsV2:
         # 📋 TASK MANAGEMENT - Granular work item lifecycle and workflow  
         # ═══════════════════════════════════════════════════════════════════
         
-        if self._is_tool_enabled("manage_task"):
+        if self._config.is_enabled("manage_task"):
             @mcp.tool()
             def manage_task(
                 action: str,
@@ -578,9 +497,9 @@ class ConsolidatedMCPToolsV2:
                 limit: int = None,
                 force_full_generation: bool = False
             ) -> Dict[str, Any]:
-                """
-                Unified tool to manage tasks, subtasks, and dependencies.
-                Dispatches to appropriate handler based on action.
+                """Unified task management: create, update, delete, list, search tasks and dependencies.
+                
+                Actions: create, get, update, delete, complete, list, search, next, add_dependency, remove_dependency
                 """
                 logger.debug(f"Received task management action: {action}")
 
@@ -615,22 +534,19 @@ class ConsolidatedMCPToolsV2:
         else:
             logger.info("Skipped manage_task tool (disabled)")
 
-        if self._is_tool_enabled("manage_subtask"):
+        if self._config.is_enabled("manage_subtask"):
             @mcp.tool()
             def manage_subtask(
                 action: str,
                 task_id: str = None,
                 subtask_data: Dict[str, Any] = None
             ) -> Dict[str, Any]:
-                """Manages subtasks for a given task, including creation, completion, updates, removal, and listing.
-
-                Args:
-                    action (str): The subtask action to perform (e.g., 'add', 'complete', 'list').
-                    task_id (Optional[str]): The ID of the parent task.
-                    subtask_data (Optional[Dict[str, Any]]): Data for the subtask operation.
+                """Manages subtasks: creation, completion, updates, removal, and listing.
                 
-                Returns:
-                    Dict[str, Any]: A dictionary containing the result of the operation.
+                Args:
+                    action: Subtask action ('add', 'complete', 'list', etc.)
+                    task_id: Parent task ID
+                    subtask_data: Subtask operation data
                 """
                 if task_id is None:
                     return {"success": False, "error": "task_id is required"}
@@ -653,7 +569,7 @@ class ConsolidatedMCPToolsV2:
         # 🤖 AGENT MANAGEMENT - Multi-agent coordination and assignment
         # ═══════════════════════════════════════════════════════════════════
         
-        if self._is_tool_enabled("manage_agent"):
+        if self._config.is_enabled("manage_agent"):
             @mcp.tool()
             def manage_agent(
                 action: str,
@@ -663,94 +579,20 @@ class ConsolidatedMCPToolsV2:
                 call_agent: str = None,
                 tree_id: str = None
             ) -> Dict[str, Any]:
-                """🤖 AGENT COORDINATION HUB - Multi-agent team management and intelligent assignment
-
-                ✨ INSTANT CONTEXT: Manages AI agent teams including capability tracking, workload balancing, and intelligent task assignment
-                🎯 HUMAN USAGE: DevOps teams setting up agent pools, project managers coordinating AI workforce, capacity planning
-                🤖 AI USAGE: Agent registration, capability management, assignment optimization, workload monitoring
-
-                📋 AGENT LIFECYCLE ACTIONS:
-                🆕 REGISTER: Add new AI agent to project team
-                • Input: action="register", project_id="my_project", agent_id="frontend_expert", name="Frontend Specialist", call_agent="@coding-agent"
-                • Output: Agent profile with call_agent reference for automatic detail generation
-                • AI Context: "I'm adding a new specialized agent to the project team"
-                📊 GET: Retrieve complete agent profile and workload status
-                • Input: action="get", project_id="my_project", agent_id="frontend_expert"
-                • Output: Agent details with call_agent reference, current assignments, and status
-                • AI Context: "I need detailed information about this agent and its call reference"
-                📋 LIST: Show all agents in project with call_agent references
-                • Input: action="list", project_id="my_project"
-                • Output: Complete agent roster with call_agent references and assignments
-                • AI Context: "I need overview of all available agents and their call references"
-                ✏️ UPDATE: Modify agent call reference or name
-                • Input: action="update", project_id="my_project", agent_id="frontend_expert", call_agent="@ui-designer-agent"
-                • Output: Updated agent profile with new call_agent reference
-                • AI Context: "I'm updating agent call reference for different specialization"
-                🗑️ UNREGISTER: Remove agent from project (impacts active assignments)
-                • Input: action="unregister", project_id="my_project", agent_id="temp_agent"
-                • Output: Agent removed with impact analysis on current assignments
-                • AI Context: "I'm removing agent from project and need to handle reassignments"
-                📌 ASSIGN: Assign agent to specific task tree/workstream
-                • Input: action="assign", project_id="my_project", agent_id="frontend_expert", tree_id="ui_components"
-                • Output: Assignment created with capability validation and workload impact
-                • AI Context: "I'm assigning specialized agent to appropriate workstream"
-                ❌ UNASSIGN: Remove agent from task tree assignment
-                • Input: action="unassign", project_id="my_project", agent_id="frontend_expert", tree_id="ui_components"
-                • Output: Assignment removed with impact analysis and reassignment needs
-                • AI Context: "I'm removing agent assignment and need to handle work transition"
-                📊 GET_ASSIGNMENTS: Show complete assignment matrix
-                • Input: action="get_assignments", project_id="my_project"
-                • Output: Full mapping of agents to task trees with workload distribution
-                • AI Context: "I need complete overview of who is working on what"
-                📈 GET_WORKLOAD: Analyze agent performance and capacity utilization
-                • Input: action="get_workload", project_id="my_project", agent_id="frontend_expert"
-                • Output: Performance metrics, completion rates, capacity analysis, optimization suggestions
-                • AI Context: "I need detailed performance analysis for this agent"
-                🔄 REBALANCE: Intelligent workload redistribution across team
-                • Input: action="rebalance", project_id="my_project"
-                • Output: Optimized assignment recommendations or automatic rebalancing
-                • AI Context: "I'm optimizing work distribution across all available agents"
-                💡 WHY USE THIS:
-                • Eliminates manual agent coordination and assignment overhead
-                • Provides intelligent workload balancing and capacity optimization
-                • Enables dynamic team scaling and capability management
-                • Maintains complete visibility into agent performance and utilization
-                • Automatically prevents overloading and optimizes work distribution
-
-                ---
-                PARAMETER REQUIREMENTS BY ACTION:
-                - action (required): The operation to perform. One of: register, assign, get, list, get_assignments, unassign, update, unregister, rebalance
-                - project_id:
-                    • (required) for: register, assign, get, list, get_assignments, unassign, update, unregister, rebalance
-                - agent_id:
-                    • (required) for: register, assign, get, unassign, update, unregister
-                    • (optional) for: list, get_assignments, rebalance
-                - name:
-                    • (required) for: register
-                    • (optional) for: update
-                - call_agent:
-                    • (optional) for: register, update
-                - tree_id:
-                    • (required) for: assign, unassign
-                    • (optional) for: others
-                ---
-                For each action, required parameters:
-                • register: action, project_id, agent_id, name
-                • assign: action, project_id, agent_id, tree_id
-                • get: action, project_id, agent_id
-                • list: action, project_id
-                • get_assignments: action, project_id
-                • unassign: action, project_id, agent_id, tree_id
-                • update: action, project_id, agent_id
-                • unregister: action, project_id, agent_id
-                • rebalance: action, project_id
-                ---
+                """Multi-agent team management and intelligent assignment.
+                
+                Actions: register, assign, get, list, get_assignments, unassign, update, unregister, rebalance
+                
+                Examples:
+                - action="register", project_id="my_project", agent_id="frontend_expert", name="Frontend Specialist"
+                - action="assign", project_id="my_project", agent_id="frontend_expert", tree_id="ui_components"
+                - action="list", project_id="my_project"
                 """
                 
                 if action == "register":
                     if not all([project_id, agent_id, name]):
                         return {"success": False, "error": "project_id, agent_id, and name are required for registering an agent"}
-                    return self._multi_agent_tools.register_agent(
+                    return self._project_manager.register_agent(
                         project_id=project_id,
                         agent_id=agent_id, 
                         name=name,
@@ -760,13 +602,13 @@ class ConsolidatedMCPToolsV2:
                 elif action == "assign":
                     if not all([project_id, agent_id, tree_id]):
                         return {"success": False, "error": "project_id, agent_id, and tree_id are required for assignment"}
-                    return self._multi_agent_tools.assign_agent_to_tree(project_id, agent_id, tree_id)
+                    return self._project_manager.assign_agent_to_tree(project_id, agent_id, tree_id)
                     
                 elif action == "get":
                     if not project_id or not agent_id:
                         return {"success": False, "error": "project_id and agent_id are required"}
                     # Get agent details from project
-                    project_response = self._multi_agent_tools.get_project(project_id)
+                    project_response = self._project_manager.get_project(project_id)
                     if not project_response.get("success"):
                         return project_response
                     
@@ -784,7 +626,7 @@ class ConsolidatedMCPToolsV2:
                 elif action == "list":
                     if not project_id:
                         return {"success": False, "error": "project_id is required"}
-                    project_response = self._multi_agent_tools.get_project(project_id)
+                    project_response = self._project_manager.get_project(project_id)
                     if not project_response.get("success"):
                         return project_response
                     
@@ -798,7 +640,7 @@ class ConsolidatedMCPToolsV2:
                 elif action == "get_assignments":
                     if not project_id:
                         return {"success": False, "error": "project_id is required"}
-                    project_response = self._multi_agent_tools.get_project(project_id)
+                    project_response = self._project_manager.get_project(project_id)
                     if not project_response.get("success"):
                         return project_response
                     
@@ -814,7 +656,7 @@ class ConsolidatedMCPToolsV2:
                         return {"success": False, "error": "project_id and agent_id are required"}
                     
                     # Get current project
-                    project_response = self._multi_agent_tools.get_project(project_id)
+                    project_response = self._project_manager.get_project(project_id)
                     if not project_response.get("success"):
                         return project_response
                     
@@ -830,7 +672,7 @@ class ConsolidatedMCPToolsV2:
                         agent_data["call_agent"] = call_agent
                     
                     # Save and return updated agent
-                    self._multi_agent_tools._save_projects()
+                    self._project_manager._save_projects()
                     return {"success": True, "agent": agent_data}
                     
                 elif action == "unregister":
@@ -838,7 +680,7 @@ class ConsolidatedMCPToolsV2:
                         return {"success": False, "error": "project_id and agent_id are required"}
                     
                     # Get current project
-                    project_response = self._multi_agent_tools.get_project(project_id)
+                    project_response = self._project_manager.get_project(project_id)
                     if not project_response.get("success"):
                         return project_response
                     
@@ -857,7 +699,7 @@ class ConsolidatedMCPToolsV2:
                     project_data["agent_assignments"] = assignments
                     
                     # Save changes
-                    self._multi_agent_tools._save_projects()
+                    self._project_manager._save_projects()
                     return {"success": True, "message": f"Agent {agent_id} unregistered", "removed_agent": removed_agent}
                     
                 elif action == "rebalance":
@@ -874,7 +716,7 @@ class ConsolidatedMCPToolsV2:
 
         # Register Cursor Rules Tools for additional functionality (conditional)
         cursor_tools = ["update_auto_rule", "validate_rules", "manage_cursor_rules", "regenerate_auto_rule", "validate_tasks_json"]
-        enabled_cursor_tools = [tool for tool in cursor_tools if self._is_tool_enabled(tool)]
+        enabled_cursor_tools = [tool for tool in cursor_tools if self._config.is_enabled(tool)]
         
         if enabled_cursor_tools:
             logger.info(f"Registering {len(enabled_cursor_tools)} cursor rules tools")
@@ -884,50 +726,20 @@ class ConsolidatedMCPToolsV2:
             logger.info("Skipped all cursor rules tools (all disabled)")
 
         # Register Agent Information Tool
-        if self._is_tool_enabled("call_agent"):
+        if self._config.is_enabled("call_agent"):
             @mcp.tool()
             def call_agent(
                 name_agent: str
             ) -> Dict[str, Any]:
-                """🤖 AGENT CALLER - Retrieves agent configuration and documentation
-                
-                ✨ WHAT IT DOES: Loads agent configurations from YAML files and generates agent documentation
-                🎯 WHEN TO USE: When you need to access agent capabilities, call an agent, or get agent information
-                🤖 AI USAGE: Agent discovery, capability checking, multi-agent coordination
-                
-                📋 HOW TO USE:
-                • Input: name_agent="devops_agent" (full agent directory name with _agent suffix)
-                • Output: Agent configuration data and success status
-                • AI Context: "I need to call the DevOps agent for infrastructure tasks"
-                
-                🔍 AGENT DISCOVERY:
-                • Agent YAML configs are in PROJECT_ROOT/dhafnck_mcp_main/yaml-lib/{agent_name}_agent/
-                • Agent MDC files are in .cursor/rules/agents/ directory  
-                • Use full agent directory name including "_agent" suffix
-                • Examples: "devops_agent", "coding_agent", "system_architect_agent", "test_orchestrator_agent"
-                
-                📁 PATH STRUCTURE:
-                • Agents located in: PROJECT_ROOT/dhafnck_mcp_main/yaml-lib/{agent_name}_agent/
-                • Loads all .yaml files from agent directory and subdirectories
-                • Combines configuration into single response
-                • Generates corresponding .mdc files in .cursor/rules/agents/
-                
-                ⚠️ COMMON USAGE ERRORS:
-                • DON'T use: name_agent="@devops-agent" (incorrect format)  
-                • DO use: name_agent="devops_agent" (correct format with _agent suffix)
-                • DON'T use: name_agent="devops" (incomplete name, missing _agent suffix)
-                • DO use: name_agent="coding_agent" (full directory name format)
-                
-                💡 INTEGRATION NOTES:
-                • Automatically generates .mdc documentation files
-                • Works with multi-agent project coordination
-                • Supports dynamic agent discovery and capability mapping
+                """Retrieves agent configuration and documentation from YAML files.
                 
                 Args:
-                    name_agent (str): The name of the agent to call (full directory name with _agent suffix, no @ or - prefixes)
+                    name_agent (str): Agent directory name with _agent suffix (e.g., "devops_agent")
                 
                 Returns:
-                    Dict with agent information and combined content from all YAML files
+                    Dict with agent information and combined YAML content
+                
+                Examples: "devops_agent", "coding_agent", "system_architect_agent"
                 """
                 try:
                     result = self._call_agent_use_case.execute(name_agent)

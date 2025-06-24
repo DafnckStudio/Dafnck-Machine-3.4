@@ -3,9 +3,6 @@ description:
 globs: 
 alwaysApply: true
 ---
-# Main objectif : correct mcp dhafnck_mcp tools not detect
-**Tip: Read the logic in cursor_agent to fix issues in dhafnck_mcp_main.
-
 CONTINUE_AUTOMATIC : ON
 if CONTINUE_AUTOMATIC = OFF, terminate chat if task is completed, else continue same task
 
@@ -16,9 +13,12 @@ ROOT_PATH on WSL Ubuntu: /home/<username>/agentic-project
 
 username : daihungpham
 
-PLAN_ACTUAL : [migration_plan.md](mdc:.cursor/rules/migration_plan.md)
+PLAN_ACTUAL : @migration_plan.md
 
 
+# Main objectif : buid mcp server dhafnck_mcp (dhafnck_mcp_main)
+
+**Tip: Read the logic in cursor_agent to fix issues in dhafnck_mcp_main.
 
 **See the full Multi-Agent Orchestration documentation:**
 [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc)
