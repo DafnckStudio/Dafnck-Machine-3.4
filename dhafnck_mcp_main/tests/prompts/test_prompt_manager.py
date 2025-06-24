@@ -10,6 +10,7 @@ from fastmcp.prompts.prompt_manager import PromptManager
 
 
 class TestPromptManager:
+    @pytest.mark.asyncio
     async def test_add_prompt(self):
         """Test adding a prompt to the manager."""
 
@@ -22,6 +23,7 @@ class TestPromptManager:
         assert added == prompt
         assert await manager.get_prompt("fn") == prompt
 
+    @pytest.mark.asyncio
     async def test_add_duplicate_prompt(self, caplog):
         """Test adding the same prompt twice."""
 
@@ -35,6 +37,7 @@ class TestPromptManager:
         assert first == second
         assert "Prompt already exists" in caplog.text
 
+    @pytest.mark.asyncio
     async def test_disable_warn_on_duplicate_prompts(self, caplog):
         """Test disabling warning on duplicate prompts."""
 
@@ -48,6 +51,7 @@ class TestPromptManager:
         assert first == second
         assert "Prompt already exists" not in caplog.text
 
+    @pytest.mark.asyncio
     async def test_warn_on_duplicate_prompts(self, caplog):
         """Test warning on duplicate prompts."""
         manager = PromptManager(duplicate_behavior="warn")
@@ -64,6 +68,7 @@ class TestPromptManager:
         # Should have the prompt
         assert await manager.get_prompt("test_prompt") is not None
 
+    @pytest.mark.asyncio
     async def test_error_on_duplicate_prompts(self):
         """Test error on duplicate prompts."""
         manager = PromptManager(duplicate_behavior="error")
@@ -78,6 +83,7 @@ class TestPromptManager:
         with pytest.raises(ValueError, match="Prompt already exists: test_prompt"):
             manager.add_prompt(prompt)
 
+    @pytest.mark.asyncio
     async def test_replace_duplicate_prompts(self):
         """Test replacing duplicate prompts."""
         manager = PromptManager(duplicate_behavior="replace")
@@ -100,6 +106,7 @@ class TestPromptManager:
         assert isinstance(prompt, FunctionPrompt)
         assert prompt.fn.__name__ == "replacement_fn"
 
+    @pytest.mark.asyncio
     async def test_ignore_duplicate_prompts(self):
         """Test ignoring duplicate prompts."""
         manager = PromptManager(duplicate_behavior="ignore")
@@ -125,6 +132,7 @@ class TestPromptManager:
         assert isinstance(result, FunctionPrompt)
         assert result.fn.__name__ == "original_fn"
 
+    @pytest.mark.asyncio
     async def test_get_prompts(self):
         """Test retrieving all prompts."""
 
@@ -146,6 +154,7 @@ class TestPromptManager:
 
 
 class TestRenderPrompt:
+    @pytest.mark.asyncio
     async def test_render_prompt(self):
         """Test rendering a prompt."""
 
@@ -164,6 +173,7 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_render_prompt_with_args(self):
         """Test rendering a prompt with arguments."""
 
@@ -182,6 +192,7 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_render_prompt_callable_object(self):
         """Test rendering a prompt with a callable object."""
 
@@ -203,6 +214,7 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_render_prompt_callable_object_async(self):
         """Test rendering a prompt with a callable object."""
 
@@ -224,12 +236,14 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_render_unknown_prompt(self):
         """Test rendering a non-existent prompt."""
         manager = PromptManager()
         with pytest.raises(NotFoundError, match="Unknown prompt: unknown"):
             await manager.render_prompt("unknown")
 
+    @pytest.mark.asyncio
     async def test_render_prompt_with_missing_args(self):
         """Test rendering a prompt with missing required arguments."""
 
@@ -242,6 +256,7 @@ class TestRenderPrompt:
         with pytest.raises(PromptError, match="Missing required arguments"):
             await manager.render_prompt("fn")
 
+    @pytest.mark.asyncio
     async def test_prompt_with_varargs_not_allowed(self):
         """Test that a prompt with *args is not allowed."""
 
@@ -254,6 +269,7 @@ class TestRenderPrompt:
         ):
             manager.add_prompt(Prompt.from_function(fn))
 
+    @pytest.mark.asyncio
     async def test_prompt_with_varkwargs_not_allowed(self):
         """Test that a prompt with **kwargs is not allowed."""
 
@@ -270,6 +286,7 @@ class TestRenderPrompt:
 class TestPromptTags:
     """Test functionality related to prompt tags."""
 
+    @pytest.mark.asyncio
     async def test_add_prompt_with_tags(self):
         """Test adding a prompt with tags."""
 
@@ -284,6 +301,7 @@ class TestPromptTags:
         assert prompt is not None
         assert prompt.tags == {"greeting", "simple"}
 
+    @pytest.mark.asyncio
     async def test_add_prompt_with_empty_tags(self):
         """Test adding a prompt with empty tags."""
 
@@ -298,6 +316,7 @@ class TestPromptTags:
         assert prompt is not None
         assert prompt.tags == set()
 
+    @pytest.mark.asyncio
     async def test_add_prompt_with_none_tags(self):
         """Test adding a prompt with None tags."""
 
@@ -312,6 +331,7 @@ class TestPromptTags:
         assert prompt is not None
         assert prompt.tags == set()
 
+    @pytest.mark.asyncio
     async def test_list_prompts_with_tags(self):
         """Test listing prompts with specific tags."""
 
@@ -377,6 +397,7 @@ class TestContextHandling:
 
         Prompt.from_function(prompt_with_context)
 
+    @pytest.mark.asyncio
     async def test_context_injection(self):
         """Test that context is properly injected during prompt rendering."""
 
@@ -397,6 +418,7 @@ class TestContextHandling:
         assert len(messages) == 1
         assert messages[0].content.text == "42"  # type: ignore[attr-defined]
 
+    @pytest.mark.asyncio
     async def test_context_optional(self):
         """Test that context is optional when rendering prompts."""
 
@@ -419,6 +441,7 @@ class TestContextHandling:
         assert len(messages) == 1
         assert messages[0].content.text == "42"  # type: ignore[attr-defined]
 
+    @pytest.mark.asyncio
     async def test_annotated_context_parameter_detection(self):
         """Test that annotated context parameters are properly detected in
         Prompt.from_function()."""

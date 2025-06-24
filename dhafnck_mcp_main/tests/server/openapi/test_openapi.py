@@ -149,6 +149,7 @@ async def fastmcp_openapi_server(
     )
 
 
+@pytest.mark.asyncio
 async def test_create_openapi_server(
     fastapi_app: FastAPI, api_client: httpx.AsyncClient
 ):

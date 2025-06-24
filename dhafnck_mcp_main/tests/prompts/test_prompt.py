@@ -11,6 +11,7 @@ from fastmcp.prompts.prompt import (
 
 
 class TestRenderPrompt:
+    @pytest.mark.asyncio
     async def test_basic_fn(self):
         def fn() -> str:
             return "Hello, world!"
@@ -22,6 +23,7 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_async_fn(self):
         async def fn() -> str:
             return "Hello, world!"
@@ -33,6 +35,7 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_fn_with_args(self):
         async def fn(name: str, age: int = 30) -> str:
             return f"Hello, {name}! You're {age} years old."
@@ -47,6 +50,7 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_callable_object(self):
         class MyPrompt:
             def __call__(self, name: str) -> str:
@@ -59,6 +63,7 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_async_callable_object(self):
         class MyPrompt:
             async def __call__(self, name: str) -> str:
@@ -71,6 +76,7 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_fn_with_invalid_kwargs(self):
         async def fn(name: str, age: int = 30) -> str:
             return f"Hello, {name}! You're {age} years old."
@@ -79,6 +85,7 @@ class TestRenderPrompt:
         with pytest.raises(ValueError):
             await prompt.render(arguments=dict(age=40))
 
+    @pytest.mark.asyncio
     async def test_fn_returns_message(self):
         async def fn() -> PromptMessage:
             return PromptMessage(
@@ -92,6 +99,7 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_fn_returns_assistant_message(self):
         async def fn() -> PromptMessage:
             return PromptMessage(
@@ -105,6 +113,7 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_fn_returns_multiple_messages(self):
         expected = [
             Message(role="user", content="Hello, world!"),
@@ -121,6 +130,7 @@ class TestRenderPrompt:
         prompt = Prompt.from_function(fn)
         assert await prompt.render() == expected
 
+    @pytest.mark.asyncio
     async def test_fn_returns_list_of_strings(self):
         expected = [
             "Hello, world!",
@@ -136,6 +146,7 @@ class TestRenderPrompt:
             for t in expected
         ]
 
+    @pytest.mark.asyncio
     async def test_fn_returns_resource_content(self):
         """Test returning a message with resource content."""
 
@@ -167,6 +178,7 @@ class TestRenderPrompt:
             )
         ]
 
+    @pytest.mark.asyncio
     async def test_fn_returns_mixed_content(self):
         """Test returning messages with mixed content types."""
 
@@ -210,6 +222,7 @@ class TestRenderPrompt:
             ),
         ]
 
+    @pytest.mark.asyncio
     async def test_fn_returns_message_with_resource(self):
         """Test returning a dict with resource content."""
 

@@ -38,6 +38,7 @@ def temp_file():
 class TestResourceManager:
     """Test ResourceManager functionality."""
 
+    @pytest.mark.asyncio
     async def test_add_resource(self, temp_file: Path):
         """Test adding a resource."""
         manager = ResourceManager()
@@ -54,6 +55,7 @@ class TestResourceManager:
         assert len(resources) == 1
         assert resource in resources.values()
 
+    @pytest.mark.asyncio
     async def test_add_duplicate_resource(self, temp_file: Path):
         """Test adding the same resource twice."""
         manager = ResourceManager()
@@ -71,6 +73,7 @@ class TestResourceManager:
         assert len(resources) == 1
         assert resource in resources.values()
 
+    @pytest.mark.asyncio
     async def test_warn_on_duplicate_resources(self, temp_file: Path, caplog):
         """Test warning on duplicate resources."""
         manager = ResourceManager(duplicate_behavior="warn")
@@ -91,6 +94,7 @@ class TestResourceManager:
         assert len(resources) == 1
         assert resource in resources.values()
 
+    @pytest.mark.asyncio
     async def test_disable_warn_on_duplicate_resources(self, temp_file: Path, caplog):
         """Test disabling warning on duplicate resources."""
         manager = ResourceManager(duplicate_behavior="ignore")
@@ -103,6 +107,7 @@ class TestResourceManager:
         manager.add_resource(resource)
         assert "Resource already exists" not in caplog.text
 
+    @pytest.mark.asyncio
     async def test_error_on_duplicate_resources(self, temp_file: Path):
         """Test error on duplicate resources."""
         manager = ResourceManager(duplicate_behavior="error")
@@ -118,6 +123,7 @@ class TestResourceManager:
         with pytest.raises(ValueError, match="Resource already exists"):
             manager.add_resource(resource)
 
+    @pytest.mark.asyncio
     async def test_replace_duplicate_resources(self, temp_file: Path):
         """Test replacing duplicate resources."""
         manager = ResourceManager(duplicate_behavior="replace")
@@ -144,6 +150,7 @@ class TestResourceManager:
         assert len(resource_list) == 1
         assert resource_list[0].name == "replacement"
 
+    @pytest.mark.asyncio
     async def test_ignore_duplicate_resources(self, temp_file: Path):
         """Test ignoring duplicate resources."""
         manager = ResourceManager(duplicate_behavior="ignore")
@@ -172,6 +179,7 @@ class TestResourceManager:
         # Result should be the original resource
         assert result.name == "original"
 
+    @pytest.mark.asyncio
     async def test_warn_on_duplicate_templates(self, caplog):
         """Test warning on duplicate templates."""
         manager = ResourceManager(duplicate_behavior="warn")
@@ -193,6 +201,7 @@ class TestResourceManager:
         templates = await manager.get_resource_templates()
         assert templates == {"test://{id}": template}
 
+    @pytest.mark.asyncio
     async def test_error_on_duplicate_templates(self):
         """Test error on duplicate templates."""
         manager = ResourceManager(duplicate_behavior="error")
@@ -211,6 +220,7 @@ class TestResourceManager:
         with pytest.raises(ValueError, match="Template already exists"):
             manager.add_template(template)
 
+    @pytest.mark.asyncio
     async def test_replace_duplicate_templates(self):
         """Test replacing duplicate templates."""
         manager = ResourceManager(duplicate_behavior="replace")
@@ -242,6 +252,7 @@ class TestResourceManager:
         assert len(templates) == 1
         assert templates[0].name == "replacement"
 
+    @pytest.mark.asyncio
     async def test_ignore_duplicate_templates(self):
         """Test ignoring duplicate templates."""
         manager = ResourceManager(duplicate_behavior="ignore")
@@ -275,6 +286,7 @@ class TestResourceManager:
         # Result should be the original template
         assert result.name == "original"
 
+    @pytest.mark.asyncio
     async def test_get_resource(self, temp_file: Path):
         """Test getting a resource by URI."""
         manager = ResourceManager()
@@ -287,6 +299,7 @@ class TestResourceManager:
         retrieved = await manager.get_resource(resource.uri)
         assert retrieved == resource
 
+    @pytest.mark.asyncio
     async def test_get_resource_from_template(self):
         """Test getting a resource through a template."""
         manager = ResourceManager()
@@ -306,12 +319,14 @@ class TestResourceManager:
         content = await resource.read()
         assert content == "Hello, world!"
 
+    @pytest.mark.asyncio
     async def test_get_unknown_resource(self):
         """Test getting a non-existent resource."""
         manager = ResourceManager()
         with pytest.raises(NotFoundError, match="Unknown resource"):
             await manager.get_resource(AnyUrl("unknown://test"))
 
+    @pytest.mark.asyncio
     async def test_get_resources(self, temp_file: Path):
         """Test retrieving all resources."""
         manager = ResourceManager()
@@ -339,6 +354,7 @@ class TestResourceManager:
 class TestResourceTags:
     """Test functionality related to resource tags."""
 
+    @pytest.mark.asyncio
     async def test_add_resource_with_tags(self, temp_file: Path):
         """Test adding a resource with tags."""
         manager = ResourceManager()
@@ -356,6 +372,7 @@ class TestResourceTags:
         assert len(resources) == 1
         assert resources[0].tags == {"weather", "data"}
 
+    @pytest.mark.asyncio
     async def test_add_function_resource_with_tags(self):
         """Test adding a function resource with tags."""
         manager = ResourceManager()
@@ -378,6 +395,7 @@ class TestResourceTags:
         assert len(resources) == 1
         assert resources[0].tags == {"sample", "test", "data"}
 
+    @pytest.mark.asyncio
     async def test_add_template_with_tags(self):
         """Test adding a resource template with tags."""
         manager = ResourceManager()
@@ -399,6 +417,7 @@ class TestResourceTags:
         assert len(templates) == 1
         assert templates[0].tags == {"users", "template", "data"}
 
+    @pytest.mark.asyncio
     async def test_filter_resources_by_tags(self, temp_file: Path):
         """Test filtering resources by tags."""
         manager = ResourceManager()
@@ -453,6 +472,7 @@ class TestResourceTags:
 class TestCustomResourceKeys:
     """Test adding resources and templates with custom keys."""
 
+    @pytest.mark.asyncio
     def test_add_resource_with_custom_key(self, temp_file: Path):
         """Test adding a resource with a custom key different from its URI."""
         manager = ResourceManager()
@@ -480,6 +500,7 @@ class TestCustomResourceKeys:
         # The resource's internal URI remains unchanged
         assert str(manager._resources[custom_key].uri) == original_uri
 
+    @pytest.mark.asyncio
     def test_add_template_with_custom_key(self):
         """Test adding a template with a custom key different from its URI template."""
         manager = ResourceManager()
@@ -507,6 +528,7 @@ class TestCustomResourceKeys:
         # The template's internal URI template remains unchanged
         assert str(manager._templates[custom_key].uri_template) == original_uri_template
 
+    @pytest.mark.asyncio
     async def test_get_resource_with_custom_key(self, temp_file: Path):
         """Test that get_resource works with resources added with custom keys."""
         manager = ResourceManager()
@@ -536,6 +558,7 @@ class TestCustomResourceKeys:
         with pytest.raises(NotFoundError, match="Unknown resource"):
             await manager.get_resource(original_uri)
 
+    @pytest.mark.asyncio
     async def test_get_resource_from_template_with_custom_key(self):
         """Test that templates with custom keys can create resources."""
         manager = ResourceManager()
@@ -570,6 +593,7 @@ class TestCustomResourceKeys:
 class TestResourceErrorHandling:
     """Test error handling in the ResourceManager."""
 
+    @pytest.mark.asyncio
     async def test_resource_error_passthrough(self):
         """Test that ResourceErrors are passed through directly."""
         manager = ResourceManager()
@@ -588,6 +612,7 @@ class TestResourceErrorHandling:
         with pytest.raises(ResourceError, match="Specific resource error"):
             await manager.read_resource("error://resource")
 
+    @pytest.mark.asyncio
     async def test_template_resource_error_passthrough(self):
         """Test that ResourceErrors from template-generated resources are passed through."""
         manager = ResourceManager()
@@ -609,6 +634,7 @@ class TestResourceErrorHandling:
         # The original error message should be included in the ValueError
         assert "Template error with param test" in str(excinfo.value)
 
+    @pytest.mark.asyncio
     async def test_exception_converted_to_resource_error_with_details(self):
         """Test that other exceptions are converted to ResourceError with details by default."""
         manager = ResourceManager()
@@ -631,6 +657,7 @@ class TestResourceErrorHandling:
         assert "Error reading resource 'buggy://resource'" in str(excinfo.value)
         assert "Internal error details" in str(excinfo.value)
 
+    @pytest.mark.asyncio
     async def test_exception_converted_to_masked_resource_error(self):
         """Test that other exceptions are masked when enabled."""
         manager = ResourceManager(mask_error_details=True)
