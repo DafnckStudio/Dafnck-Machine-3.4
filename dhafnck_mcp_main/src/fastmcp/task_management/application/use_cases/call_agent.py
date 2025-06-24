@@ -17,19 +17,36 @@ class CallAgentUseCase:
     def __init__(self, cursor_agent_dir: Path):
         self._cursor_agent_dir = cursor_agent_dir
     
+    def _get_available_agents(self) -> list[str]:
+        """Get list of available agent names from the agent directory"""
+        available_agents = []
+        try:
+            if self._cursor_agent_dir.exists() and self._cursor_agent_dir.is_dir():
+                for item in self._cursor_agent_dir.iterdir():
+                    if item.is_dir() and item.name.endswith('_agent'):
+                        available_agents.append(item.name)
+        except Exception as e:
+            logging.warning(f"Error scanning agent directory: {str(e)}")
+        return sorted(available_agents)
+    
     def execute(self, name_agent: str) -> Dict[str, Any]:
         """Execute the call agent use case"""
         try:
             # Use absolute path for agent YAML files
-            base_dir = self._cursor_agent_dir / "yaml-lib" / name_agent
+            base_dir = self._cursor_agent_dir / name_agent
             
             # Log the path for debugging
-            logging.debug(f"Looking for agent in: {base_dir}")
+            logging.error(f"CallAgentUseCase debug - cursor_agent_dir: {self._cursor_agent_dir}")
+            logging.error(f"CallAgentUseCase debug - name_agent: {name_agent}")
+            logging.error(f"CallAgentUseCase debug - base_dir: {base_dir}")
             
             if not base_dir.exists() or not base_dir.is_dir():
+                available_agents = self._get_available_agents()
                 return {
                     "success": False,
-                    "error": f"Agent directory not found: {base_dir}"
+                    "error": f"Agent directory not found: {base_dir}",
+                    "available_agents": available_agents,
+                    "suggestion": f"Available agents: {', '.join(available_agents)}" if available_agents else "No agents found in directory"
                 }
             
             # Dictionary to store all agent content
@@ -69,11 +86,14 @@ class CallAgentUseCase:
                                 # Merge all keys from this file
                                 combined_content.update(yaml_content)
             
-            # If no files were found, return an error
+            # If no files were found, return an error with suggestions
             if not combined_content:
+                available_agents = self._get_available_agents()
                 return {
                     "success": False,
-                    "error": f"No YAML files found for agent: {name_agent}"
+                    "error": f"No YAML files found for agent: {name_agent}",
+                    "available_agents": available_agents,
+                    "suggestion": f"Available agents: {', '.join(available_agents)}" if available_agents else "No agents found in directory"
                 }
             
             # Generate agent documentation (MDC file) for this agent
@@ -111,4 +131,9 @@ def resolve_path(path, base=None):
 if "CURSOR_AGENT_DIR_PATH" in os.environ:
     CURSOR_AGENT_DIR = resolve_path(os.environ["CURSOR_AGENT_DIR_PATH"])
 else:
-    CURSOR_AGENT_DIR = find_project_root() / "dhafnck_mcp_main/yaml-lib" 
+    # find_project_root() returns the dhafnck_mcp_main directory, so we just need yaml-lib
+    project_root = find_project_root()
+    if project_root.name == "dhafnck_mcp_main":
+        CURSOR_AGENT_DIR = project_root / "yaml-lib"
+    else:
+        CURSOR_AGENT_DIR = project_root / "dhafnck_mcp_main/yaml-lib" 

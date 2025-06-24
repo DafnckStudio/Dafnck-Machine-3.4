@@ -372,8 +372,9 @@ class ConsolidatedMCPToolsV2:
         # Initialize multi-agent tools with optional custom projects file path
         self._multi_agent_tools = SimpleMultiAgentTools(projects_file_path=projects_file_path)
         
-        # Initialize call agent use case
-        self._call_agent_use_case = CallAgentUseCase(CURSOR_AGENT_DIR)
+        # Initialize call agent use case with properly resolved path
+        # PROJECT_ROOT is already pointing to dhafnck_mcp_main directory
+        self._call_agent_use_case = CallAgentUseCase(PROJECT_ROOT / 'yaml-lib')
         logger.info("ConsolidatedMCPToolsV2 initialized successfully.")
     
     def _load_tool_config(self) -> Dict[str, Any]:
@@ -889,17 +890,52 @@ class ConsolidatedMCPToolsV2:
             def call_agent(
                 name_agent: str
             ) -> Dict[str, Any]:
-                """
-                Retrieves all YAML configuration files for a specific agent.
+                """🤖 AGENT CALLER - Retrieves agent configuration and documentation
+                
+                ✨ WHAT IT DOES: Loads agent configurations from YAML files and generates agent documentation
+                🎯 WHEN TO USE: When you need to access agent capabilities, call an agent, or get agent information
+                🤖 AI USAGE: Agent discovery, capability checking, multi-agent coordination
+                
+                📋 HOW TO USE:
+                • Input: name_agent="devops_agent" (full agent directory name with _agent suffix)
+                • Output: Agent configuration data and success status
+                • AI Context: "I need to call the DevOps agent for infrastructure tasks"
+                
+                🔍 AGENT DISCOVERY:
+                • Agent YAML configs are in PROJECT_ROOT/dhafnck_mcp_main/yaml-lib/{agent_name}_agent/
+                • Agent MDC files are in .cursor/rules/agents/ directory  
+                • Use full agent directory name including "_agent" suffix
+                • Examples: "devops_agent", "coding_agent", "system_architect_agent", "test_orchestrator_agent"
+                
+                📁 PATH STRUCTURE:
+                • Agents located in: PROJECT_ROOT/dhafnck_mcp_main/yaml-lib/{agent_name}_agent/
+                • Loads all .yaml files from agent directory and subdirectories
+                • Combines configuration into single response
+                • Generates corresponding .mdc files in .cursor/rules/agents/
+                
+                ⚠️ COMMON USAGE ERRORS:
+                • DON'T use: name_agent="@devops-agent" (incorrect format)  
+                • DO use: name_agent="devops_agent" (correct format with _agent suffix)
+                • DON'T use: name_agent="devops" (incomplete name, missing _agent suffix)
+                • DO use: name_agent="coding_agent" (full directory name format)
+                
+                💡 INTEGRATION NOTES:
+                • Automatically generates .mdc documentation files
+                • Works with multi-agent project coordination
+                • Supports dynamic agent discovery and capability mapping
                 
                 Args:
-                    name_agent (str): The name of the agent to call
+                    name_agent (str): The name of the agent to call (full directory name with _agent suffix, no @ or - prefixes)
                 
                 Returns:
                     Dict with agent information and combined content from all YAML files
                 """
                 try:
-                    return self._call_agent_use_case.execute(name_agent)
+                    result = self._call_agent_use_case.execute(name_agent)
+                    # If the result contains suggestions, format them for better display
+                    if not result.get("success") and "available_agents" in result:
+                        result["formatted_message"] = f"{result['error']}\n\n{result['suggestion']}"
+                    return result
                 except Exception as e:
                     logging.error(f"Error getting agent metadata from YAML for {name_agent}: {e}")
                     return {"success": False, "error": f"Failed to get agent metadata: {e}"}
