@@ -34,6 +34,7 @@ class FileAutoRuleGenerator(AutoRuleGenerator):
     """
     
     def __init__(self, output_path: Optional[str] = None):
+        # Only call find_project_root here, not at module/global scope
         project_root = find_project_root()
 
         def resolve_path(path):

@@ -14,12 +14,12 @@
       "coding_agent": {
         "id": "coding_agent",
         "name": "Coding Agent",
-        "call_agent": "@coding-agent"
+        "call_agent": "@coding_agent"
       },
       "test_agent": {
         "id": "test_agent", 
         "name": "Test Agent",
-        "call_agent": "@test-orchestrator-agent"
+        "call_agent": "@test_orchestrator_agent"
       }
     },
     "agent_assignments": {},

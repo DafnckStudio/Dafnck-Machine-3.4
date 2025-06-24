@@ -27,10 +27,10 @@ MUST follow [task-management.mdc](mdc:cursor_agent/.cursor/rules/task-management
 
 ## Command executes: 
 - MUST do when use terminal commande: try exit commande 
-- when commande is longer than 10 sec force quit for see result
+- when commande is longer than 20 sec force quit for see result
 
 run terminal commande →
-    ├── force quit if run more than 10s
+    ├── force quit if run more than 20s
     └── see result
 
 ## Tools calls on chat need counter on background

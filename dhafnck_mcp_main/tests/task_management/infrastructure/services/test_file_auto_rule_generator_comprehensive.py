@@ -50,16 +50,30 @@ class TestFileAutoRuleGenerator:
     
     def test_init_with_default_path(self):
         """Test initialization with default path"""
-        with patch('fastmcp.task_management.infrastructure.services.file_auto_rule_generator._get_project_root') as mock_root:
+        import importlib
+        import sys
+        with patch('fastmcp.tools.tool_path.find_project_root') as mock_root, \
+             patch.dict(os.environ, {}, clear=True):
             mock_root.return_value = Path(self.temp_dir)
+            # Reload the module after patching
+            if 'fastmcp.task_management.infrastructure.services.file_auto_rule_generator' in sys.modules:
+                importlib.reload(sys.modules['fastmcp.task_management.infrastructure.services.file_auto_rule_generator'])
+            from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
             generator = FileAutoRuleGenerator()
             expected_path = os.path.join(self.temp_dir, ".cursor", "rules", "auto_rule.mdc")
             assert generator._output_path == expected_path
     
     def test_init_with_relative_path(self):
         """Test initialization with relative path"""
-        with patch('fastmcp.task_management.infrastructure.services.file_auto_rule_generator._get_project_root') as mock_root:
+        import importlib
+        import sys
+        with patch('fastmcp.tools.tool_path.find_project_root') as mock_root, \
+             patch.dict(os.environ, {}, clear=True):
             mock_root.return_value = Path(self.temp_dir)
+            # Reload the module after patching
+            if 'fastmcp.task_management.infrastructure.services.file_auto_rule_generator' in sys.modules:
+                importlib.reload(sys.modules['fastmcp.task_management.infrastructure.services.file_auto_rule_generator'])
+            from fastmcp.task_management.infrastructure.services.file_auto_rule_generator import FileAutoRuleGenerator
             generator = FileAutoRuleGenerator("relative/path/auto_rule.mdc")
             expected_path = os.path.join(self.temp_dir, "relative", "path", "auto_rule.mdc")
             assert generator._output_path == expected_path

@@ -1229,7 +1229,7 @@ class TestDescriptionPropagation:
     async def test_resource_includes_route_description(
         self, simple_mcp_server: FastMCP
     ):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         resources = list(
             (await server._resource_manager.get_resources()).values()
         )
@@ -1244,7 +1244,7 @@ class TestDescriptionPropagation:
     async def test_resource_includes_response_description(
         self, simple_mcp_server: FastMCP
     ):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         resources = list(
             (await server._resource_manager.get_resources()).values()
         )
@@ -1259,7 +1259,7 @@ class TestDescriptionPropagation:
     async def test_resource_includes_response_model_fields(
         self, simple_mcp_server: FastMCP
     ):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         resources = list(
             (await server._resource_manager.get_resources()).values()
         )
@@ -1283,7 +1283,7 @@ class TestDescriptionPropagation:
     async def test_template_includes_route_description(
         self, simple_mcp_server: FastMCP
     ):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         templates_dict = (
             await server._resource_manager.get_resource_templates()
         )
@@ -1299,7 +1299,7 @@ class TestDescriptionPropagation:
     async def test_template_includes_function_docstring(
         self, simple_mcp_server: FastMCP
     ):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         templates_dict = (
             await server._resource_manager.get_resource_templates()
         )
@@ -1315,7 +1315,7 @@ class TestDescriptionPropagation:
     async def test_template_includes_path_parameter_description(
         self, simple_mcp_server: FastMCP
     ):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         templates_dict = (
             await server._resource_manager.get_resource_templates()
         )
@@ -1331,7 +1331,7 @@ class TestDescriptionPropagation:
     async def test_template_includes_query_parameter_description(
         self, simple_mcp_server: FastMCP
     ):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         templates_dict = (
             await server._resource_manager.get_resource_templates()
         )
@@ -1347,7 +1347,7 @@ class TestDescriptionPropagation:
     async def test_template_parameter_schema_includes_description(
         self, simple_mcp_server: FastMCP
     ):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         templates_dict = (
             await server._resource_manager.get_resource_templates()
         )
@@ -1373,7 +1373,7 @@ class TestDescriptionPropagation:
 
     
     async def test_tool_includes_route_description(self, simple_mcp_server: FastMCP):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         tools_dict = await server._tool_manager.get_tools()
         tools = list(tools_dict.values())
         create_tool = next((t for t in tools if t.name == "createItem"), None)
@@ -1385,7 +1385,7 @@ class TestDescriptionPropagation:
 
     
     async def test_tool_includes_function_docstring(self, simple_mcp_server: FastMCP):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         tools_dict = await server._tool_manager.get_tools()
         tools = list(tools_dict.values())
         create_tool = next((t for t in tools if t.name == "createItem"), None)
@@ -1400,7 +1400,7 @@ class TestDescriptionPropagation:
     async def test_tool_parameter_schema_includes_property_description(
         self, simple_mcp_server: FastMCP
     ):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         tools_dict = await server._tool_manager.get_tools()
         tools = list(tools_dict.values())
         create_tool = next((t for t in tools if t.name == "createItem"), None)
@@ -1424,7 +1424,7 @@ class TestDescriptionPropagation:
 
     
     async def test_client_api_resource_description(self, simple_mcp_server: FastMCP):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         async with Client(server) as client:
             resources = await client.list_resources()
             list_resource = next((r for r in resources if r.name == "listItems"), None)
@@ -1439,7 +1439,7 @@ class TestDescriptionPropagation:
 
     
     async def test_client_api_template_description(self, simple_mcp_server: FastMCP):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         async with Client(server) as client:
             templates = await client.list_resource_templates()
             get_template = next((t for t in templates if t.name == "getItem"), None)
@@ -1454,7 +1454,7 @@ class TestDescriptionPropagation:
 
     
     async def test_client_api_tool_description(self, simple_mcp_server: FastMCP):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         async with Client(server) as client:
             tools = await client.list_tools()
             create_tool = next((t for t in tools if t.name == "createItem"), None)
@@ -1469,7 +1469,7 @@ class TestDescriptionPropagation:
 
     
     async def test_client_api_tool_parameter_schema(self, simple_mcp_server: FastMCP):
-        server = await simple_mcp_server
+        server = simple_mcp_server
         async with Client(server) as client:
             tools = await client.list_tools()
             create_tool = next((t for t in tools if t.name == "createItem"), None)
@@ -1621,7 +1621,7 @@ class TestFastAPIDescriptionPropagation:
 
     
     async def test_resource_includes_function_docstring(self, fastapi_server: FastMCP):
-        fastapi_server = await fastapi_server
+        # fastapi_server is already a FastMCPOpenAPI object, no need to await
         resources_dict = await fastapi_server._resource_manager.get_resources()
         resources = list(resources_dict.values())
 
@@ -1638,7 +1638,7 @@ class TestFastAPIDescriptionPropagation:
     async def test_resource_includes_response_model_fields(
         self, fastapi_server: FastMCP
     ):
-        fastapi_server = await fastapi_server
+        # fastapi_server is already a FastMCPOpenAPI object, no need to await
         resources_dict = await fastapi_server._resource_manager.get_resources()
         resources = list(resources_dict.values())
         list_resource = next((r for r in resources if "items_get" in r.name), None)
@@ -1656,7 +1656,7 @@ class TestFastAPIDescriptionPropagation:
 
     
     async def test_template_includes_function_docstring(self, fastapi_server: FastMCP):
-        fastapi_server = await fastapi_server
+        # fastapi_server is already a FastMCPOpenAPI object, no need to await
         templates_dict = await fastapi_server._resource_manager.get_resource_templates()
         templates = list(templates_dict.values())
         get_template = next((t for t in templates if "get_item_items" in t.name), None)
@@ -1671,7 +1671,7 @@ class TestFastAPIDescriptionPropagation:
     async def test_template_includes_path_parameter_description(
         self, fastapi_server: FastMCP
     ):
-        fastapi_server = await fastapi_server
+        # fastapi_server is already a FastMCPOpenAPI object, no need to await
         templates_dict = await fastapi_server._resource_manager.get_resource_templates()
         templates = list(templates_dict.values())
         get_template = next((t for t in templates if "get_item_items" in t.name), None)
@@ -1691,7 +1691,7 @@ class TestFastAPIDescriptionPropagation:
     async def test_template_includes_query_parameter_description(
         self, fastapi_server: FastMCP
     ):
-        fastapi_server = await fastapi_server
+        # fastapi_server is already a FastMCPOpenAPI object, no need to await
         templates_dict = await fastapi_server._resource_manager.get_resource_templates()
         templates = list(templates_dict.values())
         get_template = next((t for t in templates if "get_item_items" in t.name), None)
@@ -1711,7 +1711,7 @@ class TestFastAPIDescriptionPropagation:
     async def test_template_parameter_schema_includes_description(
         self, fastapi_server: FastMCP
     ):
-        fastapi_server = await fastapi_server
+        # fastapi_server is already a FastMCPOpenAPI object, no need to await
         templates_dict = await fastapi_server._resource_manager.get_resource_templates()
         templates = list(templates_dict.values())
         get_template = next((t for t in templates if "get_item_items" in t.name), None)
@@ -1733,7 +1733,7 @@ class TestFastAPIDescriptionPropagation:
 
     
     async def test_tool_includes_function_docstring(self, fastapi_server: FastMCP):
-        fastapi_server = await fastapi_server
+        # fastapi_server is already a FastMCPOpenAPI object, no need to await
         tools_dict = await fastapi_server._tool_manager.get_tools()
         tools = list(tools_dict.values())
         create_tool = next(
@@ -1750,7 +1750,7 @@ class TestFastAPIDescriptionPropagation:
     async def test_tool_parameter_schema_includes_property_description(
         self, fastapi_server: FastMCP
     ):
-        fastapi_server = await fastapi_server
+        
         tools_dict = await fastapi_server._tool_manager.get_tools()
         tools = list(tools_dict.values())
         create_tool = next(
@@ -1768,7 +1768,7 @@ class TestFastAPIDescriptionPropagation:
 
     
     async def test_client_api_resource_description(self, fastapi_server: FastMCP):
-        fastapi_server = await fastapi_server
+        
         async with Client(fastapi_server) as client:
             resources = await client.list_resources()
             list_resource = next((r for r in resources if "items_get" in r.name), None)
@@ -1783,7 +1783,7 @@ class TestFastAPIDescriptionPropagation:
 
     
     async def test_client_api_template_description(self, fastapi_server: FastMCP):
-        fastapi_server = await fastapi_server
+        
         async with Client(fastapi_server) as client:
             templates = await client.list_resource_templates()
             get_template = next(
@@ -1800,7 +1800,7 @@ class TestFastAPIDescriptionPropagation:
 
     
     async def test_client_api_tool_description(self, fastapi_server: FastMCP):
-        fastapi_server = await fastapi_server
+        
         async with Client(fastapi_server) as client:
             tools = await client.list_tools()
             create_tool = next(
@@ -1817,7 +1817,7 @@ class TestFastAPIDescriptionPropagation:
 
     
     async def test_client_api_tool_parameter_schema(self, fastapi_server: FastMCP):
-        fastapi_server = await fastapi_server
+        
         async with Client(fastapi_server) as client:
             tools = await client.list_tools()
             create_tool = next(

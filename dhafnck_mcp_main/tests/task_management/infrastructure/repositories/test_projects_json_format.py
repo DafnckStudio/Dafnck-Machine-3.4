@@ -7,6 +7,9 @@ contains only simplified agent registrations with id, name, and call_agent field
 import json
 import os
 import pytest
+from fastmcp.task_management.interface.consolidated_mcp_tools_v2 import PROJECTS_FILE
+from fastmcp.tools.tool_path import find_project_root
+from pathlib import Path
 
 
 class TestProjectsJsonFormat:
@@ -14,8 +17,10 @@ class TestProjectsJsonFormat:
     
     @pytest.fixture
     def projects_file_path(self):
-        """Get the path to the actual projects.json file"""
-        return ".cursor/rules/brain/projects.json"
+        """Force find_project_root to start from the workspace root for correct projects.json resolution"""
+        workspace_root = Path(__file__).resolve().parents[5]  # /home/daihungpham/agentic-project
+        project_root = find_project_root(workspace_root)
+        return str(project_root / ".cursor/rules/brain/projects.json")
     
     def test_projects_file_exists(self, projects_file_path):
         """Test that the projects.json file exists"""
