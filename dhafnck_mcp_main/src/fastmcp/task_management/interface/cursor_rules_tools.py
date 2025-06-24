@@ -7,6 +7,7 @@ import os
 import re
 
 from ..domain.services import AutoRuleGenerator
+
 from fastmcp.tools.tool_path import find_project_root
 
 
@@ -18,19 +19,19 @@ def resolve_path(path, base=None):
     return (base / p).resolve()
 
 
-# Allow override via environment variable, else use canonical function
-if "PROJECT_ROOT_PATH" in os.environ:
-    PROJECT_ROOT = resolve_path(os.environ["PROJECT_ROOT_PATH"])
-else:
-    PROJECT_ROOT = find_project_root()
-
-
 class CursorRulesTools:
     """Tools for managing Cursor rules and auto_rule.mdc file"""
     
     def __init__(self):
         from ..infrastructure.services import FileAutoRuleGenerator
         self._auto_rule_generator = FileAutoRuleGenerator()
+    
+    @property
+    def project_root(self):
+        # Allow override via environment variable, else use canonical function
+        if "PROJECT_ROOT_PATH" in os.environ:
+            return resolve_path(os.environ["PROJECT_ROOT_PATH"])
+        return find_project_root()
     
     def register_tools(self, mcp):
         """Register all cursor rules tools with the MCP server"""
@@ -76,7 +77,7 @@ class CursorRulesTools:
             • Integration Setup: Preparing context for external integrations
             """
             try:
-                auto_rule_path = PROJECT_ROOT / ".cursor" / "rules" / "auto_rule.mdc"
+                auto_rule_path = self.project_root / ".cursor" / "rules" / "auto_rule.mdc"
                 
                 # Create backup if requested
                 if backup and auto_rule_path.exists():
@@ -155,11 +156,11 @@ class CursorRulesTools:
             """
             try:
                 if file_path is None:
-                    target_path = PROJECT_ROOT / ".cursor" / "rules" / "auto_rule.mdc"
+                    target_path = self.project_root / ".cursor" / "rules" / "auto_rule.mdc"
                 else:
                     # If relative path provided, make it relative to project root
                     if not os.path.isabs(file_path):
-                        target_path = PROJECT_ROOT / file_path
+                        target_path = self.project_root / file_path
                     else:
                         target_path = Path(file_path)
                 
@@ -264,7 +265,7 @@ class CursorRulesTools:
             • Space Management: Clean up unnecessary backup files
             """
             try:
-                rules_dir = PROJECT_ROOT / ".cursor" / "rules"
+                rules_dir = self.project_root / ".cursor" / "rules"
                 
                 if action == "list":
                     if not rules_dir.exists():
@@ -277,7 +278,7 @@ class CursorRulesTools:
                     rule_files = []
                     for file_path in rules_dir.rglob("*.mdc"):
                         rule_files.append({
-                            "path": str(file_path.relative_to(PROJECT_ROOT)),
+                            "path": str(file_path.relative_to(self.project_root)),
                             "size": file_path.stat().st_size,
                             "modified": file_path.stat().st_mtime
                         })
@@ -305,7 +306,7 @@ class CursorRulesTools:
                     return {
                         "success": True,
                         "message": "Backup created successfully",
-                        "backup_path": str(backup_path.relative_to(PROJECT_ROOT))
+                        "backup_path": str(backup_path.relative_to(self.project_root))
                     }
                 
                 elif action == "restore":
@@ -343,7 +344,7 @@ class CursorRulesTools:
                             "success": True,
                             "info": {
                                 "directory_exists": False,
-                                "path": str(rules_dir.relative_to(PROJECT_ROOT))
+                                "path": str(rules_dir.relative_to(self.project_root))
                             }
                         }
                     
@@ -353,7 +354,7 @@ class CursorRulesTools:
                     
                     info = {
                         "directory_exists": True,
-                        "path": str(rules_dir.relative_to(PROJECT_ROOT)),
+                        "path": str(rules_dir.relative_to(self.project_root)),
                         "total_files": len([f for f in all_files if f.is_file()]),
                         "mdc_files": len(mdc_files),
                         "backup_files": len(backup_files),
@@ -478,7 +479,7 @@ class CursorRulesTools:
                         "success": True,
                         "message": "Auto rules regenerated successfully",
                         "role": role or task_context['assignee'],
-                        "output_path": str((PROJECT_ROOT / ".cursor" / "rules" / "auto_rule.mdc").relative_to(PROJECT_ROOT))
+                        "output_path": str((self.project_root / ".cursor" / "rules" / "auto_rule.mdc").relative_to(self.project_root))
                     }
                 else:
                     return {
@@ -560,7 +561,7 @@ class CursorRulesTools:
                 import importlib.util
                 
                 # Load the tasks validator from the tools directory
-                validator_path = PROJECT_ROOT / ".cursor" / "rules" / "tools" / "tasks_validator.py"
+                validator_path = self.project_root / ".cursor" / "rules" / "tools" / "tasks_validator.py"
                 
                 if not validator_path.exists():
                     return {
