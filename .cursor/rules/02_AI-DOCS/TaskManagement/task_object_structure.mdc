@@ -5,26 +5,30 @@ alwaysApply: false
 ---
 # Task Object Structure & JSON Schema
 
-## Source of Truth
-- All tasks are managed in `.cursor/rules/tasks/tasks.json` (never edit directly; always use MCP tools).
+## Source of Truth - Hierarchical Storage
+- Tasks are managed in hierarchical structure: `.cursor/rules/tasks/{user_id}/{project_id}/{task_tree_id}/tasks.json`
+- Default structure: `.cursor/rules/tasks/default_id/{project_id}/{task_tree_id}/tasks.json`
+- Legacy format: `.cursor/rules/tasks/tasks.json` (deprecated but supported)
+- **Never edit JSON files directly; always use MCP tools**
 
 ## Task Object Fields
-| Field           | Type              | Enum Values (if any) |
-|-----------------|-------------------|----------------------|
-| id              | str               |                      |
-| title           | str               |                      |
-| description     | str               |                      |
-| status          | str               | todo, in_progress, blocked, review, testing, done, cancelled |
-| priority        | str               | low, medium, high, urgent, critical |
-| details         | str               |                      |
-| estimated_effort| str               | quick, short, small, medium, large, xlarge, epic, massive |
-| assignees       | list[str]         | (see AgentRole enum) |
-| labels          | list[str]         | (see CommonLabel enum) |
-| dependencies    | list[str]         |                      |
-| subtasks        | list[object]      |                      |
-| due_date        | str/null          |                      |
-| created_at      | str               |                      |
-| updated_at      | str               |                      |
+| Field           | Type              | Required | Enum Values (if any) |
+|-----------------|-------------------|----------|----------------------|
+| id              | str               | ✅       | Auto-generated (YYYYMMDDNNN) |
+| title           | str               | ✅       |                      |
+| description     | str               | ✅       |                      |
+| project_id      | str               | ✅       | Must match storage location |
+| status          | str               | ✅       | todo, in_progress, blocked, review, testing, done, cancelled |
+| priority        | str               | ✅       | low, medium, high, urgent, critical |
+| details         | str               | ❌       |                      |
+| estimated_effort| str               | ❌       | quick, short, small, medium, large, xlarge, epic, massive |
+| assignees       | list[str]         | ❌       | (see AgentRole enum) |
+| labels          | list[str]         | ❌       | (see CommonLabel enum) |
+| dependencies    | list[str]         | ❌       | References to other task IDs |
+| subtasks        | list[object]      | ❌       | Nested task objects |
+| due_date        | str/null          | ❌       | ISO format or null |
+| created_at      | str               | ✅       | ISO timestamp (auto-generated) |
+| updated_at      | str               | ✅       | ISO timestamp (auto-updated) |
 
 ## Enum Values
 - **status**: todo, in_progress, blocked, review, testing, done, cancelled
@@ -33,32 +37,130 @@ alwaysApply: false
 - **assignees**: see AgentRole enum in MCP tool docstring
 - **labels**: see CommonLabel enum in MCP tool docstring
 
-## Example
+## Hierarchical Tasks.json Structure
+
+### New Format (Recommended)
 ```json
 {
-  "id": "20250619001",
-  "title": "Build Login Page",
-  "description": "React login page with validation",
-  "status": "todo",
-  "priority": "high",
-  "details": "",
-  "estimated_effort": "short",
-  "assignees": ["frontend_expert"],
-  "labels": ["frontend"],
-  "dependencies": [],
-  "subtasks": [],
-  "due_date": null,
-  "created_at": "2025-06-19T20:35:22.450470",
-  "updated_at": "2025-06-19T20:35:22.450494"
+  "tasks": [
+    {
+      "id": "20250625001",
+      "title": "Build Login Page",
+      "description": "React login page with validation",
+      "project_id": "my_web_app",
+      "status": "in_progress",
+      "priority": "high",
+      "details": "Implement OAuth2 integration",
+      "estimated_effort": "medium",
+      "assignees": ["@coding_agent"],
+      "labels": ["frontend", "authentication"],
+      "dependencies": ["20250625000"],
+      "subtasks": [],
+      "due_date": "2025-07-01T00:00:00Z",
+      "created_at": "2025-06-25T20:35:22.450470+00:00",
+      "updated_at": "2025-06-25T21:15:30.123456+00:00"
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "project_id": "my_web_app",
+    "task_tree_id": "main",
+    "user_id": "default_id",
+    "created_at": "2025-06-25T20:00:00.000000+00:00",
+    "last_updated": "2025-06-25T21:15:30.123456+00:00"
+  }
 }
 ```
 
-## Integration & Relationships
-- Tasks are assigned to projects and task trees (see `/ .cursor/rules/02_AI-DOCS/TaskManagement/project_object_structure.mdc`).
-- Dependencies can reference tasks in other trees if a cross-tree dependency exists at the project level.
-- All task operations must use MCP tools for integrity and automation.
+### Legacy Format (Deprecated)
+```json
+[
+  {
+    "id": "20250619001",
+    "title": "Build Login Page",
+    "description": "React login page with validation",
+    "status": "todo",
+    "priority": "high",
+    "assignees": ["frontend_expert"],
+    "labels": ["frontend"],
+    "dependencies": [],
+    "subtasks": [],
+    "due_date": null,
+    "created_at": "2025-06-19T20:35:22.450470",
+    "updated_at": "2025-06-19T20:35:22.450494"
+  }
+]
+```
+
+## Storage Hierarchy & Organization
+
+### Directory Structure
+```
+.cursor/rules/tasks/
+├── {user_id}/                    # User-specific tasks
+│   ├── {project_id}/             # Project-specific tasks
+│   │   ├── main/                 # Default task tree
+│   │   │   └── tasks.json
+│   │   ├── {branch_name}/        # Branch-specific task trees
+│   │   │   └── tasks.json
+│   │   └── {feature_name}/       # Feature-specific task trees
+│   │       └── tasks.json
+│   └── global/                   # Cross-project tasks
+│       └── main/
+│           └── tasks.json
+└── tasks.json                    # Legacy format (deprecated)
+```
+
+### Integration & Relationships
+- **Project Integration**: Tasks belong to specific projects via `project_id` field
+- **Task Trees**: Organized by branches, features, or workflows (task_tree_id)
+- **Cross-Tree Dependencies**: Tasks can reference other tasks across trees within the same project
+- **Cross-Project Dependencies**: Limited support for dependencies across different projects
+- **Agent Assignment**: Tasks assigned to specific agents using `@agent_name` syntax
+- **Validation**: Use `validate_tasks_json(project_id, task_tree_id)` for integrity checks
+
+### Project & Task Tree Relationship
+- Projects are defined in `.cursor/rules/brain/projects.json`
+- Each project can have multiple task trees (main, branches, features)
+- Task trees are referenced by `task_tree_id` in file paths
+- All task operations must use MCP tools for integrity and automation
+
+## Required vs Optional Fields
+
+### Required Fields (Must be present)
+- `id` - Auto-generated unique identifier
+- `title` - Task title/summary
+- `description` - Detailed task description
+- `project_id` - Project identifier (must match storage location)
+- `status` - Current task status
+- `priority` - Task priority level
+- `created_at` - Creation timestamp
+- `updated_at` - Last modification timestamp
+
+### Optional Fields
+- `details` - Additional implementation details
+- `estimated_effort` - Effort estimation
+- `assignees` - Assigned agents (defaults to empty array)
+- `labels` - Task categorization tags
+- `dependencies` - References to prerequisite tasks
+- `subtasks` - Nested sub-tasks
+- `due_date` - Target completion date
+
+### Metadata Fields (Hierarchical Format Only)
+- `version` - Schema version (currently "1.0")
+- `project_id` - Must match task storage location
+- `task_tree_id` - Task tree identifier (e.g., "main", "feature-branch")
+- `user_id` - User identifier (defaults to "default_id")
+- `created_at` - File creation timestamp
+- `last_updated` - File last modification timestamp
 
 ## Deprecated/Legacy Fields
-- Do not use: agentAssignment, projectContext, orchestrationMetrics, workSession, contextFile, or any camelCase fields.
+- **Do not use**: agentAssignment, projectContext, orchestrationMetrics, workSession, contextFile, or any camelCase fields
+- **Migration Path**: Legacy list format should be upgraded to hierarchical format with metadata
 
-For more, see [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/dhafnck_mcp_workflow.mdc).
+## Validation
+- Use `validate_tasks_json(project_id="project_name", task_tree_id="tree_name")` for validation
+- Supports both hierarchical and legacy formats
+- Checks required fields, valid enum values, and reference integrity
+
+For more, see [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc).

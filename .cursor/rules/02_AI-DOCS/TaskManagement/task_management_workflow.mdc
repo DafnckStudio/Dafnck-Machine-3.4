@@ -3,72 +3,397 @@ description:
 globs: 
 alwaysApply: false
 ---
-# Task Management Workflow (MCP)
+# Task Management Workflow (MCP) - Multi-Project & Branch Support
 
 ## Overview
-This workflow describes how to manage tasks, projects, and agents using the MCP tools and the real data structure in `/cursor_agent/.cursor/rules/brain/projects.json` and `.cursor/rules/tasks/tasks.json`.
+This workflow describes how to manage tasks, projects, and agents using the MCP tools with hierarchical storage support. The system manages multiple projects with branch-specific task trees using:
+- **Projects Registry**: `.cursor/rules/brain/projects.json`
+- **Hierarchical Tasks**: `.cursor/rules/tasks/{user_id}/{project_id}/{task_tree_id}/tasks.json`
+- **Legacy Support**: `.cursor/rules/tasks/tasks.json` (deprecated)
 
 ## 1. Project & Task Tree Management
+
+### Project Operations
 - **Create a project:**
-  - Use `manage_project` with `action="create"`, `project_id`, `name`, and optional `description`.
-- **Create a task tree:**
-  - Use `manage_project` with `action="create_tree"`, `project_id`, `tree_id`, `tree_name`, and optional `tree_description`.
+  ```python
+  manage_project(action="create", project_id="my_web_app", name="My Web Application", description="E-commerce platform")
+  ```
+
+- **List all projects:**
+  ```python
+  manage_project(action="list")
+  ```
+
+- **Get project details:**
+  ```python
+  manage_project(action="get", project_id="my_web_app")
+  ```
+
+### Task Tree Management
+- **Create a task tree (branch/feature):**
+  ```python
+  manage_project(action="create_tree", project_id="my_web_app", tree_id="feature-auth", tree_name="Authentication Feature", tree_description="User login and registration")
+  ```
+
+- **List task trees for a project:**
+  ```python
+  manage_project(action="list_trees", project_id="my_web_app")
+  ```
+
+### Storage Structure Created
+```
+.cursor/rules/tasks/default_id/my_web_app/
+├── main/tasks.json              # Default task tree
+└── feature-auth/tasks.json      # Feature-specific tasks
+```
 
 ## 2. Agent Management
-- **Register an agent:**
-  - Use `manage_agent` with `action="register"`, `project_id`, `agent_id`, `name`, and `call_agent` (e.g., `@coding_agent`).
-- **Assign agent to a tree:**
-  - Use `manage_agent` with `action="assign"`, `project_id`, `agent_id`, `tree_id`.
 
-## 3. Task Lifecycle
-- **Create a task:**
-  - Use `manage_task` with `action="create"`, `title`, `description`, `priority`, `assignees`, `labels`, and (optionally) `project_id`.
-- **Get a task:**
-  - Use `manage_task` with `action="get"`, `task_id`.
-- **Update a task:**
-  - Use `manage_task` with `action="update"`, `task_id`, and fields to update.
-- **Complete a task:**
-  - Use `manage_task` with `action="complete"`, `task_id`.
-- **Add a subtask:**
-  - Use `manage_subtask` with `action="add_subtask"`, `task_id`, and `subtask_data`.
+### Agent Registration
+- **Register an agent to a project:**
+  ```python
+  manage_agent(action="register", project_id="my_web_app", agent_id="frontend_dev", name="Frontend Developer", call_agent="@coding_agent")
+  ```
+
+- **Assign agent to specific task tree:**
+  ```python
+  manage_agent(action="assign", project_id="my_web_app", agent_id="frontend_dev", tree_id="feature-auth")
+  ```
+
+- **List agents for a project:**
+  ```python
+  manage_agent(action="list", project_id="my_web_app")
+  ```
+
+### Agent Assignment in Tasks
+- Use `@agent_name` syntax in task assignees: `["@coding_agent", "@test_orchestrator_agent"]`
+- Agents automatically switch roles when tasks are retrieved
+- Multi-agent collaboration supported within task trees
+
+## 3. Task Lifecycle with Project & Tree Context
+
+### Create Tasks
+- **Create task in specific project/tree:**
+  ```python
+  manage_task(
+      action="create",
+      title="Implement OAuth2 Login",
+      description="Add Google OAuth2 authentication",
+      project_id="my_web_app",
+      task_tree_id="feature-auth",
+      user_id="default_id",
+      priority="high",
+      assignees=["@coding_agent"],
+      labels=["frontend", "authentication"]
+  )
+  ```
+
+- **Create task in default tree (main):**
+  ```python
+  manage_task(
+      action="create",
+      title="Setup CI/CD Pipeline",
+      description="Configure GitHub Actions",
+      project_id="my_web_app",
+      priority="medium",
+      assignees=["@devops_agent"],
+      labels=["devops", "automation"]
+  )
+  ```
+
+### Task Operations
+- **Get task (auto-context generation):**
+  ```python
+  manage_task(action="get", task_id="20250625001", project_id="my_web_app", task_tree_id="feature-auth")
+  ```
+
+- **List tasks by project/tree:**
+  ```python
+  manage_task(action="list", project_id="my_web_app", task_tree_id="feature-auth")
+  ```
+
+- **Update task status:**
+  ```python
+  manage_task(action="update", task_id="20250625001", status="in_progress", project_id="my_web_app", task_tree_id="feature-auth")
+  ```
+
+- **Complete task:**
+  ```python
+  manage_task(action="complete", task_id="20250625001", project_id="my_web_app", task_tree_id="feature-auth")
+  ```
+
+### Subtask Management
+- **Add subtask:**
+  ```python
+  manage_subtask(
+      action="add_subtask",
+      task_id="20250625001",
+      project_id="my_web_app",
+      task_tree_id="feature-auth",
+      subtask_data={
+          "title": "Create login form component",
+          "description": "React component with validation",
+          "assignees": ["@coding_agent"]
+      }
+  )
+  ```
 
 ## 4. Automatic Context & Role Switching
-- When you `get` or `complete` a task, the system auto-generates `.cursor/rules/auto_rule.mdc` and switches to the primary agent role (see [Agent Auto-Switch Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/agent_auto_switch_workflow.mdc)).
 
-## 5. Example Workflow
-```typescript
-// Create a project
-manage_project({ action: "create", project_id: "my_proj", name: "My Project" })
+### Context File Generation
+- **Auto-generated on task retrieval**: `.cursor/rules/auto_rule.mdc`
+- **Project-specific contexts**: `.cursor/rules/contexts/{user_id}/{project_id}/context_{task_id}.md`
+- **Task tree awareness**: Context includes project and tree information
 
-// Register and assign an agent
-manage_agent({ action: "register", project_id: "my_proj", agent_id: "dev1", name: "Dev One", call_agent: "@coding_agent" })
-manage_agent({ action: "assign", project_id: "my_proj", agent_id: "dev1", tree_id: "main" })
+### Role Switching Workflow
+1. **Task Retrieved**: `manage_task(action="get", task_id="...", project_id="...", task_tree_id="...")`
+2. **Context Generated**: Auto-rule file created with project/tree context
+3. **Agent Activation**: Primary assignee agent role activated
+4. **Branch Awareness**: Context includes current task tree (branch/feature)
 
-// Create a task
-manage_task({ action: "create", title: "Build Login", description: "Create login page", priority: "high", assignees: ["@coding_agent"], labels: ["frontend"] })
-
-// Get and work on the task
-manage_task({ action: "get", task_id: "20250619001" })
-// (auto_rule.mdc is generated, agent role switches)
-
-// Complete the task
-manage_task({ action: "complete", task_id: "20250619001" })
+### Context Structure
+```yaml
+# Auto-generated context includes:
+project_context:
+  project_id: "my_web_app"
+  task_tree_id: "feature-auth"
+  current_task: "20250625001"
+  
+role_context:
+  primary_agent: "@coding_agent"
+  collaborating_agents: ["@test_orchestrator_agent"]
+  
+task_context:
+  title: "Implement OAuth2 Login"
+  priority: "high"
+  status: "in_progress"
 ```
 
-## 6. Visual Workflow
+See [Agent Auto-Switch Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/agent_auto_switch_workflow.mdc) for details.
+
+## 5. Complete Multi-Project Workflow Example
+
+### Setup: E-commerce Platform with Feature Branches
+```python
+# 1. Create main project
+manage_project(
+    action="create", 
+    project_id="ecommerce_platform", 
+    name="E-commerce Platform", 
+    description="Full-stack e-commerce solution"
+)
+
+# 2. Create feature-specific task trees
+manage_project(
+    action="create_tree", 
+    project_id="ecommerce_platform", 
+    tree_id="feature-auth", 
+    tree_name="Authentication System", 
+    tree_description="User login, registration, and OAuth"
+)
+
+manage_project(
+    action="create_tree", 
+    project_id="ecommerce_platform", 
+    tree_id="feature-cart", 
+    tree_name="Shopping Cart", 
+    tree_description="Cart management and checkout"
+)
+
+# 3. Register specialized agents
+manage_agent(
+    action="register", 
+    project_id="ecommerce_platform", 
+    agent_id="auth_specialist", 
+    name="Authentication Specialist", 
+    call_agent="@security_auditor_agent"
+)
+
+manage_agent(
+    action="register", 
+    project_id="ecommerce_platform", 
+    agent_id="frontend_dev", 
+    name="Frontend Developer", 
+    call_agent="@coding_agent"
+)
+
+# 4. Assign agents to specific trees
+manage_agent(
+    action="assign", 
+    project_id="ecommerce_platform", 
+    agent_id="auth_specialist", 
+    tree_id="feature-auth"
+)
+
+manage_agent(
+    action="assign", 
+    project_id="ecommerce_platform", 
+    agent_id="frontend_dev", 
+    tree_id="feature-cart"
+)
+```
+
+### Task Management: Feature Development
+```python
+# 5. Create feature-specific tasks
+# Authentication feature tasks
+manage_task(
+    action="create",
+    title="Implement OAuth2 Google Login",
+    description="Add Google OAuth2 authentication with JWT tokens",
+    project_id="ecommerce_platform",
+    task_tree_id="feature-auth",
+    priority="high",
+    assignees=["@security_auditor_agent", "@coding_agent"],
+    labels=["authentication", "oauth2", "security"],
+    estimated_effort="medium"
+)
+
+# Shopping cart feature tasks
+manage_task(
+    action="create",
+    title="Build Shopping Cart Component",
+    description="React component for cart management",
+    project_id="ecommerce_platform",
+    task_tree_id="feature-cart",
+    priority="high",
+    assignees=["@coding_agent"],
+    labels=["frontend", "react", "cart"],
+    dependencies=["20250625001"]  # Depends on auth task
+)
+```
+
+### Work Execution with Context
+```python
+# 6. Start working on authentication feature
+manage_task(
+    action="get", 
+    task_id="20250625001", 
+    project_id="ecommerce_platform", 
+    task_tree_id="feature-auth"
+)
+# → Auto-generates context for auth feature
+# → Switches to @security_auditor_agent role
+# → Creates .cursor/rules/contexts/default_id/ecommerce_platform/context_20250625001.md
+
+# 7. Update progress
+manage_task(
+    action="update", 
+    task_id="20250625001", 
+    status="in_progress", 
+    project_id="ecommerce_platform", 
+    task_tree_id="feature-auth",
+    details="OAuth2 integration 80% complete"
+)
+
+# 8. Complete and move to next feature
+manage_task(
+    action="complete", 
+    task_id="20250625001", 
+    project_id="ecommerce_platform", 
+    task_tree_id="feature-auth"
+)
+
+# 9. Switch to cart feature
+manage_task(
+    action="get", 
+    task_id="20250625002", 
+    project_id="ecommerce_platform", 
+    task_tree_id="feature-cart"
+)
+# → Auto-switches context to cart feature
+# → Activates @coding_agent for frontend work
+```
+
+## 6. Visual Multi-Project Workflow
 ```mermaid
 flowchart TD
-    A["Create Project"] --> B["Register Agent"]
-    B --> C["Assign Agent to Tree"]
-    C --> D["Create Task"]
-    D --> E["Get Task (auto context)"]
-    E --> F["Work on Task"]
-    F --> G["Complete Task"]
+    A["Create Project"] --> B["Create Task Trees"]
+    B --> C["Register Agents"]
+    C --> D["Assign Agents to Trees"]
+    D --> E["Create Feature Tasks"]
+    E --> F["Get Task + Auto Context"]
+    F --> G["Agent Role Switch"]
+    G --> H["Work on Task"]
+    H --> I{"Task Complete?"}
+    I -->|No| J["Update Progress"]
+    J --> H
+    I -->|Yes| K["Complete Task"]
+    K --> L{"More Tasks in Tree?"}
+    L -->|Yes| E
+    L -->|No| M{"Switch Task Tree?"}
+    M -->|Yes| N["Select Different Tree"]
+    N --> E
+    M -->|No| O["Feature Complete"]
+    
+    subgraph "Storage Structure"
+        P[".cursor/rules/tasks/default_id/"]
+        P --> Q["project1/main/tasks.json"]
+        P --> R["project1/feature-auth/tasks.json"]
+        P --> S["project2/main/tasks.json"]
+    end
+    
+    subgraph "Context Generation"
+        T["Auto-Rule Generation"]
+        T --> U["Project Context"]
+        T --> V["Task Tree Context"]
+        T --> W["Agent Role Switch"]
+    end
 ```
 
-## 7. Best Practices
-- Always use MCP tools; never edit JSON files directly.
-- Use the `@` prefix for agent assignees.
-- Only fields and actions present in the real system are supported.
+## 7. Best Practices for Multi-Project Management
+
+### Project Organization
+- **Logical Separation**: Use separate projects for distinct applications/modules
+- **Meaningful Task Trees**: Create task trees for features, branches, or workflows
+- **Consistent Naming**: Use descriptive project_id and task_tree_id names
+  - Good: `"ecommerce_platform"`, `"feature-auth"`
+  - Avoid: `"proj1"`, `"tree_a"`
+
+### Task Management
+- **Always specify context**: Include `project_id` and `task_tree_id` in all operations
+- **Use MCP tools exclusively**: Never edit JSON files directly
+- **Agent assignment**: Use `@` prefix for agent assignees (e.g., `["@coding_agent"]`)
+- **Cross-tree dependencies**: Document dependencies between different task trees
+
+### File Organization
+- **Hierarchical storage**: Leverage the multi-level directory structure
+- **Regular validation**: Use `validate_tasks_json(project_id, task_tree_id)` regularly
+- **Backup strategy**: Consider backing up `.cursor/rules/brain/projects.json`
+
+### Workflow Optimization
+- **Context switching**: Minimize switching between projects for better focus
+- **Batch operations**: Group related tasks within the same task tree
+- **Progress tracking**: Regular updates to task status and details
+
+### Migration from Legacy
+- **Gradual transition**: Move from flat `tasks.json` to hierarchical structure
+- **Data validation**: Ensure all tasks have required `project_id` field
+- **Backup first**: Always backup before migration
+
+### Multi-Agent Coordination
+- **Clear responsibilities**: Assign specific agents to specific task trees
+- **Communication patterns**: Use task dependencies for agent coordination
+- **Role specialization**: Match agent expertise to task tree purpose
+
+## 8. Validation & Troubleshooting
+
+### Regular Health Checks
+```python
+# Validate project structure
+validate_tasks_json(project_id="ecommerce_platform", task_tree_id="feature-auth")
+
+# Check all projects
+manage_project(action="list")
+
+# Verify task trees
+manage_project(action="list_trees", project_id="ecommerce_platform")
+```
+
+### Common Issues
+- **Missing project_id**: Ensure all tasks include project_id field
+- **Invalid references**: Check task dependencies exist within accessible scope
+- **Context generation failures**: Verify auto_rule.mdc is being created
+- **Agent role issues**: Confirm agents are properly registered and assigned
 
 For more, see [Quick Start & Tutorials](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/quick_start.mdc).
