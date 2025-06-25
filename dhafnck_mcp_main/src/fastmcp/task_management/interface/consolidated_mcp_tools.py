@@ -554,14 +554,29 @@ class TaskOperationHandler:
         except Exception as e:
             return {"success": False, "error": f"Dependency operation failed: {str(e)}"}
     
-    def handle_subtask_operations(self, action, task_id, subtask_data=None):
+    def handle_subtask_operations(self, action, task_id, subtask_data=None, project_id=None, task_tree_id="main", user_id="default_id"):
         """Handle subtask operations"""
         logging.info(f"Subtask operation action: {action}, task_id: {task_id}, subtask_data: {subtask_data}")
         if not task_id:
             return {"success": False, "error": "task_id is required for subtask operations"}
         
+        # For backward compatibility, use default project if not provided
+        if not project_id:
+            project_id = "default_project"
+        
+        # Validate project and task tree exist (skip validation for default/test scenarios)
+        if project_id != "default_project" and not self._validate_project_tree(project_id, task_tree_id):
+            return {"success": False, "error": f"Project '{project_id}' or task tree '{task_tree_id}' not found"}
+        
+        # Get repository for this specific project/tree
         try:
-            response = self._task_app_service.manage_subtasks(task_id, action, subtask_data or {})
+            repository = self._repository_factory.create_repository(project_id, task_tree_id, user_id)
+            task_app_service = TaskApplicationService(repository, self._auto_rule_generator)
+        except Exception as e:
+            return {"success": False, "error": f"Failed to access task storage: {str(e)}"}
+        
+        try:
+            response = task_app_service.manage_subtasks(task_id, action, subtask_data or {})
             logging.info(f"Subtask operation result: {response}")
             
             if action in ["add_subtask", "add"]:
@@ -1269,6 +1284,14 @@ class ConsolidatedMCPTools:
     def register_tools(self, mcp: "FastMCP"):
         """Register all consolidated MCP tools using the orchestrator"""
         self._tool_orchestrator.register_all_tools(mcp)
+    
+    def manage_subtask(self, action: str, task_id: str, subtask_data: Dict[str, Any] = None, project_id: str = None, task_tree_id: str = "main", user_id: str = "default_id") -> Dict[str, Any]:
+        """Manage subtask operations - delegates to task handler"""
+        try:
+            return self._task_handler.handle_subtask_operations(action, task_id, subtask_data, project_id, task_tree_id, user_id)
+        except Exception as e:
+            logger.error(f"Error in manage_subtask: {e}")
+            return {"success": False, "error": str(e)}
 
 
 # ═══════════════════════════════════════════════════════════════════

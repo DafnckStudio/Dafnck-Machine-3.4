@@ -28,5 +28,20 @@
     "registered_agents": {},
     "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z"
+  },
+  "default_project": {
+    "id": "default_project",
+    "name": "Test Project",
+    "description": "Project for testing tasks",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Task Tree",
+        "description": "Main task tree for testing"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
   }
 }
