@@ -318,7 +318,18 @@ class Orchestrator:
             
             # Task age (older tasks get slight priority)
             if task.created_at:
-                age_days = (datetime.now() - task.created_at).days
+                # Ensure both datetimes are timezone-aware for comparison
+                now = datetime.now()
+                task_created = task.created_at
+                
+                if task.created_at.tzinfo is not None and now.tzinfo is None:
+                    from datetime import timezone
+                    now = now.replace(tzinfo=timezone.utc)
+                elif task.created_at.tzinfo is None and now.tzinfo is not None:
+                    from datetime import timezone
+                    task_created = task.created_at.replace(tzinfo=timezone.utc)
+                
+                age_days = (now - task_created).days
                 score += min(age_days * 0.1, 1.0)
             
             task_scores.append((task, score))
