@@ -29,7 +29,7 @@
       "title": "Validate project_id functionality",
       "description": "Test that project_id is correctly used in task operations and storage",
       "project_id": "dhafnck_mcp_main",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "details": null,
       "estimatedEffort": null,
@@ -44,14 +44,14 @@
       "subtasks": [],
       "dueDate": null,
       "created_at": "2025-06-25T19:01:39.265900+00:00",
-      "updated_at": "2025-06-25T19:01:39.265900+00:00"
+      "updated_at": "2025-06-25T19:05:59.495714+00:00"
     },
     {
       "id": "20250625003",
       "title": "Test hierarchical task storage",
       "description": "Verify that tasks are stored in the correct hierarchical path structure",
       "project_id": "dhafnck_mcp_main",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "details": null,
       "estimatedEffort": null,
@@ -67,7 +67,7 @@
       "subtasks": [],
       "dueDate": null,
       "created_at": "2025-06-25T19:01:46.915735+00:00",
-      "updated_at": "2025-06-25T19:01:46.915735+00:00"
+      "updated_at": "2025-06-25T19:25:52.344815+00:00"
     }
   ]
 }

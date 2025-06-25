@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Main objectif : buid mcp server dhafnck_mcp (dhafnck_mcp_main)
+
+ROOT_PATH on WSL Ubuntu: /home/<username>/agentic-project
+
+username : daihungpham
+
+project_id: dhafnck_mcp_main
+projet_path_root: /home/<username>/agentic-project/dhafnck_mcp_main
+---
+
+task_tree_id: v2.1---multiple-projects-support 

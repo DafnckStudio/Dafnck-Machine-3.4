@@ -1,0 +1,62 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+## 📝 Templates
+
+### Template 1: Individual Task Context File
+```markdown
+# TASK CONTEXT: [Task Title]
+
+**Task ID**: `[TASK_ID]`
+**Project ID**: `[project_id]`
+**Task tree ID**: `[task_tree_id]`
+**Status**: `[STATUS]`
+**Priority**: `[PRIORITY]`
+**Assignee**: `@[AGENT_NAME]`
+**Created**: `[DATE]`
+**Last Updated**: `[DATE]`
+
+## 🎯 Objective
+[Clear, concise description of what this task aims to achieve]
+
+## 📋 Requirements
+- [ ] Requirement 1
+- [ ] Requirement 2
+- [ ] Requirement 3
+
+## 🔧 Technical Details
+### Technologies/Frameworks
+- Technology 1
+- Technology 2
+
+### Key Files/Directories
+- `path/to/file1.py`
+- `path/to/directory/`
+
+### Dependencies
+- Dependency on Task ID: [TASK_ID]
+- Blocks Task ID: [TASK_ID]
+
+## 🚀 Progress Tracking
+### Completed Actions
+- [x] Action 1 - [Date] - [Agent]
+- [x] Action 2 - [Date] - [Agent]
+
+### Current Session Summary
+[What the AI agent do in this session, update continue]
+
+### Next Steps
+- [ ] Next action 1
+- [ ] Next action 2
+
+## 🔍 Context Notes
+### Agent Insights
+[Key insights or decisions made by the AI agent]
+
+### Challenges Encountered
+[Any issues or blockers encountered]
+
+### Solutions Applied
+[How challenges were resolved]
