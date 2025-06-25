@@ -9,8 +9,11 @@ from pathlib import Path
 from typing import Optional, List, Dict, Any
 from dataclasses import asdict
 
-from fastmcp import FastMCP
+from typing import TYPE_CHECKING
 from fastmcp.tools.tool_path import find_project_root
+
+if TYPE_CHECKING:
+    from fastmcp.server.server import FastMCP
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -696,7 +699,7 @@ class ToolRegistrationOrchestrator:
         self._project_manager = project_manager
         self._call_agent_use_case = call_agent_use_case
     
-    def register_all_tools(self, mcp: FastMCP):
+    def register_all_tools(self, mcp: "FastMCP"):
         """Register all MCP tools in organized categories"""
         logger.info("Registering tools via ToolRegistrationOrchestrator...")
         
@@ -719,7 +722,7 @@ class ToolRegistrationOrchestrator:
             status = "ENABLED" if enabled else "DISABLED"
             logger.info(f"  - {tool_name}: {status}")
     
-    def _register_project_tools(self, mcp: FastMCP):
+    def _register_project_tools(self, mcp: "FastMCP"):
         """Register project management tools"""
         if self._config.is_enabled("manage_project"):
             @mcp.tool()
@@ -782,7 +785,7 @@ class ToolRegistrationOrchestrator:
         else:
             logger.info("Skipped manage_project tool (disabled)")
     
-    def _register_task_tools(self, mcp: FastMCP):
+    def _register_task_tools(self, mcp: "FastMCP"):
         """Register task management tools"""
         if self._config.is_enabled("manage_task"):
             @mcp.tool()
@@ -872,7 +875,7 @@ class ToolRegistrationOrchestrator:
         else:
             logger.info("Skipped manage_subtask tool (disabled)")
     
-    def _register_agent_tools(self, mcp: FastMCP):
+    def _register_agent_tools(self, mcp: "FastMCP"):
         """Register agent management tools"""
         if self._config.is_enabled("manage_agent"):
             @mcp.tool()
@@ -1039,7 +1042,7 @@ class ToolRegistrationOrchestrator:
         else:
             logger.info("Skipped call_agent tool (disabled)")
     
-    def _register_cursor_tools(self, mcp: FastMCP):
+    def _register_cursor_tools(self, mcp: "FastMCP"):
         """Register cursor rules tools conditionally"""
         cursor_tools = ["update_auto_rule", "validate_rules", "manage_cursor_rules", "regenerate_auto_rule", "validate_tasks_json"]
         enabled_cursor_tools = [tool for tool in cursor_tools if self._config.is_enabled(tool)]
@@ -1101,6 +1104,6 @@ class ConsolidatedMCPTools:
             logger.warning("TASKS_JSON_PATH not set, using default.")
             return JsonTaskRepository()
     
-    def register_tools(self, mcp: FastMCP):
+    def register_tools(self, mcp: "FastMCP"):
         """Register all consolidated MCP tools using the orchestrator"""
         self._tool_orchestrator.register_all_tools(mcp)

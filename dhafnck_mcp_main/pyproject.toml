@@ -44,6 +44,8 @@ classifiers = [
 
 [dependency-groups]
 dev = [
+    "beautifulsoup4>=4.13.3",
+    "httpx>=0.28.1",
     "copychat>=0.5.2",
     "dirty-equals>=0.9.0",
     "fastapi>=0.115.12",

@@ -1,12 +1,21 @@
 {
   "mcpServers": {
-    "dhafnck_mcp": {
-      "command": "wsl.exe",
+    "dhafnck_mcp_test": {
+      "command": "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
       "args": [
-        "--cd", "/home/daihungpham/agentic-project",
-        "--exec", "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
-        "-m", "fastmcp.server.mcp_entry_point"
+        "/home/daihungpham/agentic-project/dhafnck_mcp_main/test_mcp_minimal.py"
       ],
+      "cwd": "/home/daihungpham/agentic-project",
+      "transport": "stdio",
+      "debug": true
+    },
+    "dhafnck_mcp": {
+      "command": "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
+      "args": [
+        "-m",
+        "fastmcp.server.mcp_entry_point"
+      ],
+      "cwd": "/home/daihungpham/agentic-project",
       "env": {
         "PYTHONPATH": "dhafnck_mcp_main/src",
         "TASKS_JSON_PATH": ".cursor/rules/tasks/tasks.json",

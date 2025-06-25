@@ -7,15 +7,21 @@ import asyncio
 import logging
 import sys
 import os
-from fastmcp import FastMCP
+from typing import TYPE_CHECKING
 
 # Package imports - no need for sys.path manipulation with proper package structure
 
 from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 
+if TYPE_CHECKING:
+    from fastmcp.server.server import FastMCP
 
-def create_consolidated_mcp_server() -> FastMCP:
+
+def create_consolidated_mcp_server() -> "FastMCP":
     """Create and configure the consolidated MCP server with multi-agent support"""
+    
+    # Import FastMCP at runtime to avoid circular imports
+    from fastmcp.server.server import FastMCP
     
     # Initialize FastMCP server
     mcp = FastMCP("Task Management Consolidated with Multi-Agent Support")

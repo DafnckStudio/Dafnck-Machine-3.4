@@ -64,6 +64,9 @@ from fastmcp.utilities.logging import get_logger
 from fastmcp.utilities.mcp_config import MCPConfig
 from fastmcp.utilities.types import MCPContent
 
+# Import the consolidated MCP tools
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
+
 if TYPE_CHECKING:
     from fastmcp.client import Client
     from fastmcp.client.transports import ClientTransport, ClientTransportT
@@ -136,6 +139,10 @@ class FastMCP(Generic[LifespanResultT]):
         dependencies: list[str] | None = None,
         include_tags: set[str] | None = None,
         exclude_tags: set[str] | None = None,
+        # Task Management Integration Parameters
+        enable_task_management: bool = True,
+        task_repository=None,
+        projects_file_path: str | None = None,
         # ---
         # ---
         # --- The following arguments are DEPRECATED ---
@@ -173,6 +180,20 @@ class FastMCP(Generic[LifespanResultT]):
         )
         self._tool_serializer = tool_serializer
 
+        # Initialize task management tools if enabled
+        self._consolidated_tools = None
+        if enable_task_management:
+            try:
+                logger.info("Initializing task management tools...")
+                self._consolidated_tools = ConsolidatedMCPTools(
+                    task_repository=task_repository,
+                    projects_file_path=projects_file_path
+                )
+                logger.info("Task management tools initialized successfully")
+            except Exception as e:
+                logger.error(f"Failed to initialize task management tools: {e}")
+                logger.warning("Continuing without task management tools")
+
         if lifespan is None:
             self._has_lifespan = False
             lifespan = default_lifespan
@@ -194,6 +215,15 @@ class FastMCP(Generic[LifespanResultT]):
                 if not isinstance(tool, Tool):
                     tool = Tool.from_function(tool, serializer=self._tool_serializer)
                 self.add_tool(tool)
+
+        # Register consolidated MCP tools if available
+        if self._consolidated_tools:
+            try:
+                logger.info("Registering consolidated MCP tools...")
+                self._consolidated_tools.register_tools(self)
+                logger.info("Consolidated MCP tools registered successfully")
+            except Exception as e:
+                logger.error(f"Failed to register consolidated MCP tools: {e}")
 
         self.include_tags = include_tags
         self.exclude_tags = exclude_tags
@@ -277,6 +307,40 @@ class FastMCP(Generic[LifespanResultT]):
     @property
     def instructions(self) -> str | None:
         return self._mcp_server.instructions
+
+    @property
+    def consolidated_tools(self) -> ConsolidatedMCPTools | None:
+        """Access to the consolidated MCP tools instance."""
+        return self._consolidated_tools
+
+    def register_task_management_tools(self, task_repository=None, projects_file_path: str | None = None) -> bool:
+        """Manually register task management tools if not already done.
+        
+        Args:
+            task_repository: Optional task repository to use
+            projects_file_path: Optional path to projects file
+            
+        Returns:
+            True if tools were registered successfully, False otherwise
+        """
+        if self._consolidated_tools is not None:
+            logger.warning("Task management tools are already registered")
+            return True
+            
+        try:
+            logger.info("Manually initializing task management tools...")
+            self._consolidated_tools = ConsolidatedMCPTools(
+                task_repository=task_repository,
+                projects_file_path=projects_file_path
+            )
+            
+            logger.info("Registering consolidated MCP tools...")
+            self._consolidated_tools.register_tools(self)
+            logger.info("Task management tools registered successfully")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to register task management tools: {e}")
+            return False
 
     async def run_async(
         self,
