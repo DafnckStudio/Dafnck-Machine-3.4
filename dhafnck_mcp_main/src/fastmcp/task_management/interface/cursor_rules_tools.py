@@ -496,7 +496,10 @@ class CursorRulesTools:
         
         @mcp.tool()
         def validate_tasks_json(
-            file_path: Annotated[Optional[str], Field(description="Target tasks.json file to validate (default: .cursor/rules/tasks/tasks.json). Supports relative and absolute paths")] = None,
+            file_path: Annotated[Optional[str], Field(description="Target tasks.json file to validate. If not provided, uses hierarchical path with project_id/task_tree_id")] = None,
+            project_id: Annotated[Optional[str], Field(description="Project identifier for hierarchical task validation")] = None,
+            task_tree_id: Annotated[Optional[str], Field(description="Task tree identifier (defaults to 'main')")] = "main",
+            user_id: Annotated[Optional[str], Field(description="User identifier (defaults to 'default_id')")] = "default_id",
             output_format: Annotated[str, Field(description="Validation report detail level. Available: summary (default), detailed, json")] = "summary"
         ) -> Dict[str, Any]:
             """🔍 TASKS.JSON INTEGRITY VALIDATOR - Comprehensive task database health analysis
@@ -522,9 +525,23 @@ class CursorRulesTools:
 📋 PARAMETERS:
 
 📁 FILE_PATH (optional): Target file for validation
-• Default: .cursor/rules/tasks/tasks.json (standard location)
+• If not provided: Uses hierarchical path with project_id/task_tree_id
 • Custom: Specify alternate tasks.json file path
 • Path Handling: Supports relative and absolute paths
+
+🏗️ PROJECT_ID (optional): Project identifier for hierarchical validation
+• When provided: Uses hierarchical storage structure
+• Format: .cursor/rules/tasks/{user_id}/{project_id}/{task_tree_id}/tasks.json
+• Example: "dhafnck_mcp_main", "chaxiaiv2"
+
+🌳 TASK_TREE_ID (optional): Task tree identifier
+• Default: "main" (primary task tree)
+• Custom: Specify alternate task tree (e.g., "v2.1---multiple-projects-support")
+• Used with project_id for hierarchical validation
+
+👤 USER_ID (optional): User identifier
+• Default: "default_id" (standard user)
+• Custom: Specify alternate user for multi-user scenarios
 
 📊 OUTPUT_FORMAT: Control validation report detail level
 • "summary" (default): High-level overview with critical issues
@@ -557,6 +574,22 @@ class CursorRulesTools:
 • Automation Ready: JSON output enables automated validation
             """
             try:
+                # Determine target file path
+                if file_path is None:
+                    if project_id:
+                        # Use hierarchical structure
+                        target_path = self.project_root / ".cursor" / "rules" / "tasks" / user_id / project_id / task_tree_id / "tasks.json"
+                    else:
+                        # Fallback to legacy path
+                        target_path = self.project_root / ".cursor" / "rules" / "tasks" / "tasks.json"
+                else:
+                    # Use provided file path
+                    import os
+                    if not os.path.isabs(file_path):
+                        target_path = self.project_root / file_path
+                    else:
+                        target_path = Path(file_path)
+                
                 # Import the validator class
                 import sys
                 import importlib.util
@@ -575,8 +608,8 @@ class CursorRulesTools:
                 validator_module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(validator_module)
                 
-                # Create validator instance
-                validator = validator_module.TasksValidator(file_path)
+                # Create validator instance with resolved path
+                validator = validator_module.TasksValidator(str(target_path))
                 
                 # Run validation
                 result = validator.validate()

@@ -43,28 +43,101 @@ class TasksValidator:
             results["summary"]["errors"] += 1
             return results
 
-        if not isinstance(data, list):
-            results["errors"].append(f"Root of {file_path} should be a list of tasks.")
+        # Handle both hierarchical structure (with metadata) and legacy list structure
+        if isinstance(data, dict):
+            # New hierarchical structure with metadata
+            if 'tasks' not in data:
+                results["errors"].append(f"Hierarchical tasks.json missing 'tasks' field in {file_path}")
+                results["total_issues"] += 1
+                results["summary"]["errors"] += 1
+                return results
+            
+            # Validate metadata if present
+            if 'metadata' in data:
+                metadata = data['metadata']
+                required_metadata = ['version', 'project_id', 'task_tree_id', 'user_id']
+                for field in required_metadata:
+                    if field not in metadata:
+                        results["missing_properties"].append(f"Missing metadata field: {field}")
+                        results["summary"]["missing_properties"] += 1
+            else:
+                results["warnings"].append("Missing metadata section in hierarchical structure")
+                results["summary"]["warnings"] += 1
+            
+            tasks = data['tasks']
+        elif isinstance(data, list):
+            # Legacy list structure
+            tasks = data
+            results["warnings"].append("Using legacy list structure; consider upgrading to hierarchical format")
+            results["summary"]["warnings"] += 1
+        else:
+            results["errors"].append(f"Root of {file_path} should be a dictionary (hierarchical) or list (legacy).")
             results["total_issues"] += 1
             results["summary"]["errors"] += 1
+            return results
         
-        # Basic check for task structure
-        for i, task in enumerate(data):
+        # Validate task structure
+        task_ids = set()
+        for i, task in enumerate(tasks):
             if not isinstance(task, dict):
                 results["errors"].append(f"Task at index {i} is not a dictionary.")
+                results["summary"]["errors"] += 1
                 continue
-            if 'id' not in task:
-                results["warnings"].append(f"Task at index {i} is missing 'id' field.")
-            if 'title' not in task:
-                 results["warnings"].append(f"Task at index {i} is missing 'title' field.")
+                
+            # Check required fields
+            required_fields = ['id', 'title', 'status', 'priority']
+            for field in required_fields:
+                if field not in task:
+                    results["missing_properties"].append(f"Task at index {i} missing required field: {field}")
+                    results["summary"]["missing_properties"] += 1
+            
+            # Check for duplicate IDs
+            if 'id' in task:
+                task_id = task['id']
+                if task_id in task_ids:
+                    results["errors"].append(f"Duplicate task ID found: {task_id}")
+                    results["summary"]["errors"] += 1
+                else:
+                    task_ids.add(task_id)
+            
+            # Validate status values
+            if 'status' in task:
+                valid_statuses = ['todo', 'in_progress', 'blocked', 'review', 'testing', 'done', 'cancelled']
+                if task['status'] not in valid_statuses:
+                    results["warnings"].append(f"Task {task.get('id', f'at index {i}')} has invalid status: {task['status']}")
+                    results["summary"]["warnings"] += 1
+            
+            # Validate priority values
+            if 'priority' in task:
+                valid_priorities = ['low', 'medium', 'high', 'urgent', 'critical']
+                if task['priority'] not in valid_priorities:
+                    results["warnings"].append(f"Task {task.get('id', f'at index {i}')} has invalid priority: {task['priority']}")
+                    results["summary"]["warnings"] += 1
+            
+            # Validate dependencies if present
+            if 'dependencies' in task and task['dependencies']:
+                for dep_id in task['dependencies']:
+                    if dep_id not in task_ids and dep_id not in [t.get('id') for t in tasks[i+1:]]:
+                        results["warnings"].append(f"Task {task.get('id', f'at index {i}')} references unknown dependency: {dep_id}")
+                        results["summary"]["warnings"] += 1
 
 
-        if not results["errors"] and not results["warnings"]:
-            results["validation_passed"] = True
+        # Add recommendations based on findings
+        if results["summary"]["missing_properties"] > 0:
+            results["recommendations"].append("Consider adding missing required fields to improve task management")
         
+        if results["summary"]["warnings"] > 0 and any("legacy list structure" in w for w in results["warnings"]):
+            results["recommendations"].append("Upgrade to hierarchical task structure for better organization")
+        
+        if results["summary"]["errors"] == 0 and results["summary"]["warnings"] == 0 and results["summary"]["missing_properties"] == 0:
+            results["validation_passed"] = True
+            results["recommendations"].append("Task structure is well-formed and compliant")
+        
+        # Calculate totals
         results["summary"]["errors"] = len(results["errors"])
         results["summary"]["warnings"] = len(results["warnings"])
-        results["total_issues"] = results["summary"]["errors"] + results["summary"]["warnings"]
+        results["summary"]["missing_properties"] = len(results["missing_properties"])
+        results["total_issues"] = results["summary"]["errors"] + results["summary"]["warnings"] + results["summary"]["missing_properties"]
             
         return results
 
