@@ -14,7 +14,9 @@ ROOT_PATH on WSL Ubuntu: /home/<username>/agentic-project
 username : daihungpham
 
 PLAN_ACTUAL : @migration_plan.md
-
+project_id: dhafnck_mcp_main
+task_tree_id: <name-branche-actual> (v2.1---multiple-projects-support)
+projet_path_root: /home/daihungpham/agentic-project/dhafnck_mcp_main
 
 # Main objectif : buid mcp server dhafnck_mcp (dhafnck_mcp_main)
 
@@ -63,7 +65,7 @@ MUST follow [dhafnck_mcp_Workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManageme
 see [dhafnck_mcp_MCP_Server_Documentation.mdc](mdc:cursor_agent/.cursor/rules/dhafnck_mcp_MCP_Server_Documentation.mdc) for more details
 
 - ALWAYS use the dhafnck_mcp MCP server for task operations
-- Use dhafnck_mcp MCP to manage [tasks.json](mdc:.cursor/rules/tasks/tasks.json)
+- Use dhafnck_mcp MCP to manage tasks
 - ALWAYS use the MCP server first; NEVER access `.cursor/rules/tasks/tasks.json` directly unless the user requests it (AI does not have permission)
 
 ## 🎯 **AUTO_RULE.MDC GENERATION AUTOMATIC** 

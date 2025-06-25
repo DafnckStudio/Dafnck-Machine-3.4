@@ -19,7 +19,6 @@ Respect project structure unless changes requested
 Monitor for requests that would exceed Pro plan token limits
 If a request would require paid usage beyond Pro limits, I must immediately terminate the response and inform you to start a new chat if you want to proceed with paid usage
 
-
 CONTINUE_AUTOMATIC : ON
 if CONTINUE_AUTOMATIC = OFF, terminate chat if task is completed, else continue same task
 
@@ -31,64 +30,63 @@ ROOT_PATH on WSL Ubuntu: /home/<username>/agentic-project
 username : daihungpham
 
 PLAN_ACTUAL : @migration_plan.md
+project_id: dhafnck_mcp_main
+task_tree_id: <name-branche-actual> (v2.1---multiple-projects-support)
+projet_path_root: /home/daihungpham/agentic-project/dhafnck_mcp_main
 
+# Main objectif : buid mcp server dhafnck_mcp (dhafnck_mcp_main)
 
-## Project Overview
-This is an agentic project with task management capabilities using MCP (Model Context Protocol) servers.
+**Tip: Read the logic in cursor_agent to fix issues in dhafnck_mcp_main.
 
-## Key Directories
-- `dhafnck_mcp_main/` - Main MCP task management implementation
-- `.cursor/rules/` - Cursor-specific rules and configurations
-- `.cursor/rules/tasks/` - Task management data
+**See the full Multi-Agent Orchestration documentation:**
+@.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc
 
-## Important Rules
+MUST follow @task-management.mdc
 
-### MCP Protocol Priority
-- **ALWAYS USE MCP TOOLS WHEN AVAILABLE**
-- Never create CLI scripts or direct API calls when MCP tools exist
-- Use proper MCP tool calls through the protocol interface
-- Follow MCP workflow patterns defined in documentation
+## Command executes: 
+- MUST do when use terminal commande: try exit commande 
+- when commande is longer than 20 sec force quit for see result
 
-### Path Management
-- **USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT = ON**
-- Root path: `/home/daihungpham/agentic-project`
-- Always use absolute paths when creating/updating files
+run terminal commande →
+    ├── force quit if run more than 20s
+    └── see result
 
-### Task Management
-- **MANDATORY: Use MCP dhafnck_mcp server for ALL task operations**
-- Use `manage_task` tool with MCP protocol - never direct database access
-- Task data located at: `.cursor/rules/tasks/tasks.json`
-- Follow workflow in: `.cursor/rules/02_AI-DOCS/TaskManagement/dhafnck_mcp_workflow.mdc`
+## Tools calls on chat need counter on background
 
-### Testing
-- Virtual environment: `dhafnck_mcp_main/.venv`
-- All tests located in: `dhafnck_mcp_main/tests/`
-- Run tests with: `cd dhafnck_mcp_main && uv sync && python -m pytest`
+## 📋 **IMPORTANT: CONTEXT SYNCHRONIZATION**
+- **Trigger**: Every time `get_task` or `do_next` is called via MCP server
+- **Target File**: `.cursor/rules/auto_rule.mdc`
+- **Purpose**: Provides precise, task-specific context and rules for AI assistant
+- **When get_task is called**: AI assistant should ALWAYS check this file (main_objectif.mdc) for updated context
+- **Auto-generated rules**: The `.cursor/rules/auto_rule.mdc` file is automatically updated with task-specific context
+- **Context precision**: This ensures the AI has the most precise and relevant context for the current task
+- **Role alignment**: AI behavior automatically adapts to the assigned role and current phase
 
-### Agent System
-- Agent configurations: `.cursor/rules/agents/`
-- Multi-agent orchestration docs: `.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/`
-- Automatic role switching based on task assignees
+## 🔄 **AUTOMATIC AGENT ROLE SWITCHING**
+- **Trigger**: Every time `get_task` or `do_next` is called via MCP server
+- **Process**: System automatically extracts assignee from task and calls appropriate agent
+- **Format**: All assignees use "@" prefix (e.g., `@coding_agent`, `@functional_tester_agent`)
+- **Agent Call**: Automatically executes `call_agent(name_agent="agent_name")` (strips "@" prefix)
+- **YAML Loading**: Loads specialized configuration from `cursor_agent/yaml-lib/[agent_name]/`
+- **Role Switch**: AI adopts the appropriate expertise, behavior, and knowledge for the task
+- **Primary Assignee**: Only the first assignee in the list triggers automatic switching
+- **Documentation**: See @.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc for complete details
 
-### Commands
-- Force quit commands running longer than 10 seconds
-- Always try exit command after terminal operations
+### Ensures context files is relative with task and subtask
+@contextmaster.mdc : ALWAYS trigger after complete task or subtask
 
-## Referenced Files
-- Main objectives: `.cursor/rules/main_objectif.mdc`
-- Migration plan: `.cursor/rules/migration_plan.md`
-- Auto-generated rules: `.cursor/rules/auto_rule.mdc`
+## Use MCP Server dhafnck_mcp when possible 
+MUST follow @dhafnck_mcp_Workflow.mdc
 
-## MCP Servers
-- `dhafnck_mcp` - Custom task management server (REQUIRED for all task operations)
-- `sequential-thinking` - Enhanced reasoning
-- `github` - GitHub integration
+see @dhafnck_mcp_MCP_Server_Documentation.mdc for more details
 
-## MCP Usage Guidelines
-- **FIRST PRIORITY**: Check if MCP tools are available for the task
-- **USE MCP TOOLS**: Instead of writing custom scripts or direct API calls
-- **TOOL EXAMPLES**:
-  - Task management: Use `manage_task`, `manage_project`, `manage_agent` tools
-  - Never bypass MCP by accessing JSON files directly
-  - Always follow the MCP workflow patterns
-- **DEBUGGING**: If MCP tools fail, fix the MCP server rather than bypassing it
+- ALWAYS use the dhafnck_mcp MCP server for task operations
+- Use dhafnck_mcp MCP to manage tasks
+- ALWAYS use the MCP server first; NEVER access `.cursor/rules/tasks/tasks.json` directly unless the user requests it (AI does not have permission)
+
+## 🎯 **AUTO_RULE.MDC GENERATION AUTOMATIC** 
+don't edit this file by ai, it generate automatic on task management
+
+## TEST MUST to activate virtual environment
+cursor_agent/.venv
+

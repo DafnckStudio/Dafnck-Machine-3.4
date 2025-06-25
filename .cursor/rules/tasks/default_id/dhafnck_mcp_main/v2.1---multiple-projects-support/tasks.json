@@ -1,0 +1,73 @@
+{
+  "tasks": [
+    {
+      "id": "20250625001",
+      "title": "Test new version project with hierarchical task management",
+      "description": "Validate the new project structure with project_id and task_tree_id functionality. Test task creation, assignment, and multi-agent orchestration in the updated system.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "done",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@task_planning_agent"
+      ],
+      "labels": [
+        "test",
+        "validation",
+        "hierarchical-tasks",
+        "project-structure"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-25T18:59:29.814213+00:00",
+      "updated_at": "2025-06-25T19:02:29.376617+00:00"
+    },
+    {
+      "id": "20250625002",
+      "title": "Validate project_id functionality",
+      "description": "Test that project_id is correctly used in task operations and storage",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test",
+        "project-id"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-25T19:01:39.265900+00:00",
+      "updated_at": "2025-06-25T19:01:39.265900+00:00"
+    },
+    {
+      "id": "20250625003",
+      "title": "Test hierarchical task storage",
+      "description": "Verify that tasks are stored in the correct hierarchical path structure",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@devops_agent"
+      ],
+      "labels": [
+        "test",
+        "storage",
+        "hierarchy"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-25T19:01:46.915735+00:00",
+      "updated_at": "2025-06-25T19:01:46.915735+00:00"
+    }
+  ]
+}
