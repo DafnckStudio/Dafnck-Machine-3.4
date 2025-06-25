@@ -11,7 +11,7 @@ from dataclasses import asdict
 from pydantic import Field
 
 from typing import TYPE_CHECKING
-from fastmcp.tools.tool_path import find_project_root
+from fastmcp.tools.tool_path import find_project_root, get_project_cursor_rules_dir, ensure_project_structure
 
 if TYPE_CHECKING:
     from fastmcp.server.server import FastMCP
@@ -45,6 +45,7 @@ from fastmcp.task_management.application.dtos import (
 
 # Infrastructure layer imports
 from fastmcp.task_management.infrastructure import JsonTaskRepository, FileAutoRuleGenerator, InMemoryTaskRepository
+from fastmcp.task_management.infrastructure.repositories.task_repository_factory import TaskRepositoryFactory
 from fastmcp.task_management.infrastructure.services.agent_converter import AgentConverter
 
 # Interface layer imports
@@ -61,28 +62,79 @@ from fastmcp.task_management.domain.entities.task_tree import TaskTree as TaskTr
 from fastmcp.task_management.domain.entities.task import Task
 from fastmcp.task_management.domain.services.orchestrator import Orchestrator
 
-# Constants
-PROJECT_ROOT = find_project_root()
-
-
 # ═══════════════════════════════════════════════════════════════════
 # 🛠️ CONFIGURATION AND PATH MANAGEMENT
 # ═══════════════════════════════════════════════════════════════════
 
 class PathResolver:
-    """Handles path resolution and directory management"""
+    """Handles dynamic path resolution and directory management for multiple projects"""
     
     def __init__(self):
-        self.project_root = PROJECT_ROOT
+        # Dynamic project root detection
+        self.project_root = find_project_root()
+        
+        # Ensure project structure exists
+        self.cursor_rules_dir = ensure_project_structure(self.project_root)
+        
+        # Resolve paths dynamically based on current project
         self.brain_dir = self._resolve_path(os.environ.get("BRAIN_DIR_PATH", ".cursor/rules/brain"))
         self.projects_file = self._resolve_path(os.environ.get("PROJECTS_FILE_PATH", self.brain_dir / "projects.json"))
         
+        logger.info(f"PathResolver initialized for project: {self.project_root}")
+        logger.info(f"Brain directory: {self.brain_dir}")
+        logger.info(f"Projects file: {self.projects_file}")
+        
     def _resolve_path(self, path):
+        """Resolve path relative to current project root"""
         p = Path(path)
         return p if p.is_absolute() else (self.project_root / p)
         
     def ensure_brain_dir(self):
+        """Ensure brain directory exists"""
         os.makedirs(self.brain_dir, exist_ok=True)
+        
+    def get_tasks_json_path(self, project_id: str = None, task_tree_id: str = "main", user_id: str = "default_id") -> Path:
+        """
+        Get the hierarchical tasks.json path for user/project/tree
+        
+        Args:
+            project_id: Project identifier (required for new structure)
+            task_tree_id: Task tree identifier (defaults to "main")
+            user_id: User identifier (defaults to "default_id")
+            
+        Returns:
+            Path to tasks.json file in hierarchical structure
+        """
+        if project_id:
+            # New hierarchical structure: .cursor/rules/tasks/{user_id}/{project_id}/{task_tree_id}/tasks.json
+            tasks_path = self._resolve_path(f".cursor/rules/tasks/{user_id}/{project_id}/{task_tree_id}/tasks.json")
+        else:
+            # Legacy fallback for backward compatibility
+            tasks_path = self._resolve_path(os.environ.get("TASKS_JSON_PATH", ".cursor/rules/tasks/tasks.json"))
+            
+        # Ensure the tasks directory exists
+        tasks_path.parent.mkdir(parents=True, exist_ok=True)
+        return tasks_path
+        
+    def get_legacy_tasks_json_path(self) -> Path:
+        """Get the legacy tasks.json path for migration purposes"""
+        tasks_path = self._resolve_path(".cursor/rules/tasks/tasks.json")
+        return tasks_path
+        
+    def get_auto_rule_path(self) -> Path:
+        """Get the auto_rule.mdc path for current project"""
+        return self._resolve_path(os.environ.get("AUTO_RULE_PATH", ".cursor/rules/auto_rule.mdc"))
+        
+    def get_cursor_agent_dir(self) -> Path:
+        """Get the cursor_agent directory path"""
+        # Check if we have a project-specific cursor_agent directory
+        project_cursor_agent = self.project_root / "cursor_agent"
+        if project_cursor_agent.exists():
+            return project_cursor_agent
+        
+        # Fallback to environment variable or default
+        cursor_agent_path = os.environ.get("CURSOR_AGENT_DIR_PATH", "dhafnck_mcp_main/yaml-lib")
+        return self._resolve_path(cursor_agent_path)
 
 
 class ProjectManager:
@@ -380,15 +432,20 @@ class ToolConfig:
 # ═══════════════════════════════════════════════════════════════════
 
 class TaskOperationHandler:
-    """Handles all task-related operations and business logic"""
+    """Handles all task-related operations and business logic with hierarchical storage"""
     
-    def __init__(self, task_app_service: TaskApplicationService, auto_rule_generator: AutoRuleGenerator):
-        self._task_app_service = task_app_service
+    def __init__(self, repository_factory: TaskRepositoryFactory, auto_rule_generator: AutoRuleGenerator, project_manager):
+        self._repository_factory = repository_factory
         self._auto_rule_generator = auto_rule_generator
+        self._project_manager = project_manager
     
-    def handle_core_operations(self, action, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date, project_id=None, force_full_generation=False):
-        """Handle core CRUD operations for tasks"""
-        logger.debug(f"Handling task action '{action}' with task_id '{task_id}'")
+    def handle_core_operations(self, action, project_id, task_tree_id, user_id, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date, force_full_generation=False):
+        """Handle core CRUD operations for tasks with hierarchical storage"""
+        logger.debug(f"Handling task action '{action}' with task_id '{task_id}' in project '{project_id}' tree '{task_tree_id}'")
+
+        # Validate project and task tree exist
+        if not self._validate_project_tree(project_id, task_tree_id):
+            return {"success": False, "error": f"Project '{project_id}' or task tree '{task_tree_id}' not found"}
 
         if labels:
             try:
@@ -396,25 +453,32 @@ class TaskOperationHandler:
             except ValueError as e:
                 return {"success": False, "error": f"Invalid label(s) provided: {e}"}
 
+        # Get repository for this specific project/tree
+        try:
+            repository = self._repository_factory.create_repository(project_id, task_tree_id, user_id)
+            task_app_service = TaskApplicationService(repository, self._auto_rule_generator)
+        except Exception as e:
+            return {"success": False, "error": f"Failed to access task storage: {str(e)}"}
+
         try:
             if action == "create":
-                return self._create_task(title, description, project_id, status, priority, details, estimated_effort, assignees, labels, due_date)
+                return self._create_task(task_app_service, title, description, project_id, status, priority, details, estimated_effort, assignees, labels, due_date)
             elif action == "update":
-                return self._update_task(task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date)
+                return self._update_task(task_app_service, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date)
             elif action == "get":
-                task_response = self._task_app_service.get_task(task_id, generate_rules=True, force_full_generation=force_full_generation)
+                task_response = task_app_service.get_task(task_id, generate_rules=True, force_full_generation=force_full_generation)
                 if task_response:
                     return {"success": True, "action": "get", "task": asdict(task_response)}
                 else:
                     return {"success": False, "action": "get", "error": f"Task with ID {task_id} not found."}
             elif action == "delete":
-                success = self._task_app_service.delete_task(task_id)
+                success = task_app_service.delete_task(task_id)
                 if success:
                     return {"success": True, "action": "delete"}
                 else:
                     return {"success": False, "action": "delete", "error": f"Task with ID {task_id} not found."}
             elif action == "complete":
-                return self._complete_task(task_id)
+                return self._complete_task(task_app_service, task_id)
             else:
                 return {"success": False, "error": f"Invalid core action: {action}"}
         except TaskNotFoundError as e:
@@ -428,14 +492,35 @@ class TaskOperationHandler:
             logger.error(f"An unexpected error occurred in core operations: {e}\n{traceback.format_exc()}")
             return {"success": False, "error": f"An unexpected error occurred: {str(e)}"}
     
-    def handle_list_search_next(self, action, status, priority, assignees, labels, limit, query):
-        """Handle list, search, and next actions"""
+    def _validate_project_tree(self, project_id: str, task_tree_id: str) -> bool:
+        """Validate if project and task tree combination exists"""
+        project_response = self._project_manager.get_project(project_id)
+        if not project_response.get("success"):
+            return False
+        
+        project = project_response.get("project", {})
+        task_trees = project.get("task_trees", {})
+        return task_tree_id in task_trees
+    
+    def handle_list_search_next(self, action, project_id, task_tree_id, user_id, status, priority, assignees, labels, limit, query):
+        """Handle list, search, and next actions with hierarchical storage"""
+        # Validate project and task tree exist
+        if not self._validate_project_tree(project_id, task_tree_id):
+            return {"success": False, "error": f"Project '{project_id}' or task tree '{task_tree_id}' not found"}
+        
+        # Get repository for this specific project/tree
+        try:
+            repository = self._repository_factory.create_repository(project_id, task_tree_id, user_id)
+            task_app_service = TaskApplicationService(repository, self._auto_rule_generator)
+        except Exception as e:
+            return {"success": False, "error": f"Failed to access task storage: {str(e)}"}
+        
         if action == "list":
-            return self._list_tasks(status, priority, assignees, labels, limit)
+            return self._list_tasks(task_app_service, status, priority, assignees, labels, limit)
         elif action == "search":
-            return self._search_tasks(query, limit)
+            return self._search_tasks(task_app_service, query, limit)
         elif action == "next":
-            return self._get_next_task()
+            return self._get_next_task(task_app_service)
         else:
             return {"success": False, "error": "Invalid action for list/search/next"}
     
@@ -510,7 +595,7 @@ class TaskOperationHandler:
             return {"success": False, "error": f"Subtask operation failed: {str(e)}"}
     
     # Private helper methods
-    def _create_task(self, title, description, project_id, status, priority, details, estimated_effort, assignees, labels, due_date):
+    def _create_task(self, task_app_service, title, description, project_id, status, priority, details, estimated_effort, assignees, labels, due_date):
         """Create a new task"""
         if not title:
             return {"success": False, "error": "Title is required for creating a task."}
@@ -527,7 +612,7 @@ class TaskOperationHandler:
             labels=labels,
             due_date=due_date
         )
-        response = self._task_app_service.create_task(request)
+        response = task_app_service.create_task(request)
         logging.info(f"Create task response: {response}")
 
         is_success = getattr(response, 'success', False)
@@ -547,7 +632,7 @@ class TaskOperationHandler:
                 "error": error_message
             }
     
-    def _update_task(self, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date):
+    def _update_task(self, task_app_service, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date):
         """Update an existing task"""
         if task_id is None:
             return {"success": False, "error": "Task ID is required for update action"}
@@ -570,7 +655,7 @@ class TaskOperationHandler:
             labels=labels,
             due_date=due_date
         )
-        response = self._task_app_service.update_task(request)
+        response = task_app_service.update_task(request)
 
         is_success = False
         task_data = None
@@ -591,12 +676,12 @@ class TaskOperationHandler:
         
         return {"success": False, "action": "update", "error": error_message}
     
-    def _complete_task(self, task_id):
+    def _complete_task(self, task_app_service, task_id):
         """Complete a task"""
         if not task_id:
             return {"success": False, "error": "task_id is required for completing a task"}
         try:
-            response = self._task_app_service.complete_task(task_id)
+            response = task_app_service.complete_task(task_id)
             if response.get("success"):
                 response["action"] = "complete"
             return response
@@ -606,7 +691,7 @@ class TaskOperationHandler:
             logger.error(f"Error completing task {task_id}: {e}")
             return {"success": False, "error": str(e)}
     
-    def _list_tasks(self, status, priority, assignees, labels, limit):
+    def _list_tasks(self, task_app_service, status, priority, assignees, labels, limit):
         """List tasks with optional filters"""
         try:
             request = ListTasksRequest(
@@ -617,7 +702,7 @@ class TaskOperationHandler:
                 limit=limit
             )
             
-            response = self._task_app_service.list_tasks(request)
+            response = task_app_service.list_tasks(request)
             return {
                 "success": True,
                 "tasks": [
@@ -637,14 +722,14 @@ class TaskOperationHandler:
         except Exception as e:
             return {"success": False, "error": f"Failed to list tasks: {str(e)}"}
     
-    def _search_tasks(self, query, limit):
+    def _search_tasks(self, task_app_service, query, limit):
         """Search tasks by query"""
         if not query:
             return {"success": False, "error": "query is required for searching tasks"}
         
         try:
             request = SearchTasksRequest(query=query, limit=limit or 10)
-            response = self._task_app_service.search_tasks(request)
+            response = task_app_service.search_tasks(request)
             
             return {
                 "success": True,
@@ -666,10 +751,10 @@ class TaskOperationHandler:
         except Exception as e:
             return {"success": False, "error": f"Failed to search tasks: {str(e)}"}
     
-    def _get_next_task(self):
+    def _get_next_task(self, task_app_service):
         """Get next recommended task"""
         try:
-            do_next_use_case = DoNextUseCase(self._task_app_service._task_repository, self._auto_rule_generator)
+            do_next_use_case = DoNextUseCase(task_app_service._task_repository, self._auto_rule_generator)
             response = do_next_use_case.execute()
             
             if response.has_next and response.next_item:
@@ -804,8 +889,10 @@ class ToolRegistrationOrchestrator:
             @mcp.tool()
             def manage_task(
                 action: Annotated[str, Field(description="Task action to perform. Available: create, get, update, delete, complete, list, search, next, add_dependency, remove_dependency")],
+                project_id: Annotated[str, Field(description="Project identifier (REQUIRED for all operations)")] = None,
+                task_tree_id: Annotated[str, Field(description="Task tree identifier (defaults to 'main')")] = "main",
+                user_id: Annotated[str, Field(description="User identifier (defaults to 'default_id')")] = "default_id",
                 task_id: Annotated[str, Field(description="Unique task identifier (required for get, update, delete, complete, dependency operations)")] = None,
-                project_id: Annotated[str, Field(description="Project identifier to associate task with")] = None,
                 title: Annotated[str, Field(description="Task title (required for create action)")] = None,
                 description: Annotated[str, Field(description="Detailed task description")] = None,
                 status: Annotated[str, Field(description="Task status. Available: todo, in_progress, blocked, review, testing, done, cancelled")] = None,
@@ -838,13 +925,19 @@ class ToolRegistrationOrchestrator:
 • remove_dependency: Remove task dependencies
 
 💡 USAGE EXAMPLES:
-• manage_task("create", title="Fix login bug", assignees=["coding_agent"])
-• manage_task("update", task_id="123", status="in_progress")
-• manage_task("next") - Get next task to work on
+• manage_task("create", project_id="my_project", title="Fix login bug", assignees=["coding_agent"])
+• manage_task("update", project_id="my_project", task_id="123", status="in_progress")
+• manage_task("list", project_id="my_project") - List tasks in project
+• manage_task("next", project_id="my_project") - Get next task to work on
 
 🔧 INTEGRATION: Auto-generates context rules and coordinates with agent assignment
+📋 HIERARCHICAL STORAGE: Tasks stored at .cursor/rules/tasks/{user_id}/{project_id}/{task_tree_id}/tasks.json
                 """
                 logger.debug(f"Received task management action: {action}")
+                
+                # Validate required project_id for all operations
+                if not project_id:
+                    return {"success": False, "error": "project_id is required for all task operations"}
 
                 core_actions = ["create", "get", "update", "delete", "complete"]
                 list_search_actions = ["list", "search", "next"]
@@ -852,16 +945,18 @@ class ToolRegistrationOrchestrator:
 
                 if action in core_actions:
                     return self._task_handler.handle_core_operations(
-                        action=action, task_id=task_id, title=title, description=description,
+                        action=action, project_id=project_id, task_tree_id=task_tree_id, user_id=user_id,
+                        task_id=task_id, title=title, description=description,
                         status=status, priority=priority, details=details,
                         estimated_effort=estimated_effort, assignees=assignees,
-                        labels=labels, due_date=due_date, project_id=project_id,
+                        labels=labels, due_date=due_date, 
                         force_full_generation=force_full_generation
                     )
                 
                 elif action in list_search_actions:
                     return self._task_handler.handle_list_search_next(
-                        action=action, status=status, priority=priority, assignees=assignees,
+                        action=action, project_id=project_id, task_tree_id=task_tree_id, user_id=user_id,
+                        status=status, priority=priority, assignees=assignees,
                         labels=labels, limit=limit, query=query
                     )
 
@@ -1154,38 +1249,23 @@ class ConsolidatedMCPTools:
         self._config = ToolConfig()
         self._path_resolver = PathResolver()
         
-        # Initialize repositories and services
-        self._task_repository = self._init_task_repository(task_repository)
+        # Initialize repositories and services with hierarchical support
+        self._repository_factory = TaskRepositoryFactory()
         self._auto_rule_generator = FileAutoRuleGenerator()
-        self._task_app_service = TaskApplicationService(
-            task_repository=self._task_repository,
-            auto_rule_generator=self._auto_rule_generator
-        )
         
         # Initialize managers and handlers
         self._project_manager = ProjectManager(self._path_resolver, projects_file_path)
-        self._call_agent_use_case = CallAgentUseCase(CURSOR_AGENT_DIR)
-        self._task_handler = TaskOperationHandler(self._task_app_service, self._auto_rule_generator)
+        # Use dynamic cursor agent directory from PathResolver
+        cursor_agent_dir = str(self._path_resolver.get_cursor_agent_dir())
+        self._call_agent_use_case = CallAgentUseCase(cursor_agent_dir)
+        self._task_handler = TaskOperationHandler(self._repository_factory, self._auto_rule_generator, self._project_manager)
         
         # Initialize tool registration orchestrator
         self._tool_orchestrator = ToolRegistrationOrchestrator(
             self._config, self._task_handler, self._project_manager, self._call_agent_use_case
         )
         
-        logger.info("ConsolidatedMCPTools initialized successfully.")
-        
-    def _init_task_repository(self, task_repository: Optional[TaskRepository]) -> TaskRepository:
-        """Initialize task repository with environment configuration"""
-        if task_repository:
-            return task_repository
-            
-        tasks_file_path = os.environ.get('TASKS_JSON_PATH')
-        if tasks_file_path:
-            logger.info(f"Found TASKS_JSON_PATH: {tasks_file_path}")
-            return JsonTaskRepository(file_path=tasks_file_path)
-        else:
-            logger.warning("TASKS_JSON_PATH not set, using default.")
-            return JsonTaskRepository()
+        logger.info("ConsolidatedMCPTools initialized successfully with hierarchical storage.")
     
     def register_tools(self, mcp: "FastMCP"):
         """Register all consolidated MCP tools using the orchestrator"""
@@ -1230,10 +1310,6 @@ class SimpleMultiAgentTools:
 
 # Constants for backward compatibility
 PROJECTS_FILE = "projects.json"
-
-def find_project_root() -> Path:
-    """Find project root directory"""
-    return PROJECT_ROOT
 
 def ensure_brain_dir(brain_dir: Optional[str] = None) -> Path:
     """Ensure brain directory exists"""

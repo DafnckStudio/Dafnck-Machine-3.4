@@ -10,10 +10,12 @@ from ...domain.enums.agent_roles import resolve_legacy_role
 
 @dataclass
 class CreateTaskRequest:
-    """Request DTO for creating a task"""
+    """Request DTO for creating a task with hierarchical storage support"""
     title: str
     description: str
-    project_id: Optional[str] = None
+    project_id: str  # Now required for hierarchical storage
+    task_tree_id: str = "main"  # Task tree identifier
+    user_id: str = "default_id"  # User identifier  
     status: Optional[str] = None
     priority: Optional[str] = None
     details: str = ""
@@ -78,8 +80,11 @@ class CreateTaskRequest:
 
 @dataclass
 class UpdateTaskRequest:
-    """Request DTO for updating a task"""
+    """Request DTO for updating a task with hierarchical storage support"""
     task_id: Any
+    project_id: Optional[str] = None  # Required for hierarchical operations
+    task_tree_id: Optional[str] = None  # Task tree identifier
+    user_id: Optional[str] = None  # User identifier
     title: Optional[str] = None
     description: Optional[str] = None
     status: Optional[str] = None
@@ -203,7 +208,10 @@ class CreateTaskResponse:
 
 @dataclass
 class ListTasksRequest:
-    """Request DTO for listing tasks"""
+    """Request DTO for listing tasks with hierarchical storage support"""
+    project_id: str  # Required for hierarchical operations
+    task_tree_id: str = "main"  # Task tree identifier
+    user_id: str = "default_id"  # User identifier
     status: Optional[str] = None
     priority: Optional[str] = None
     assignees: Optional[List[str]] = None
@@ -213,8 +221,11 @@ class ListTasksRequest:
 
 @dataclass
 class SearchTasksRequest:
-    """Request DTO for searching tasks"""
+    """Request DTO for searching tasks with hierarchical storage support"""
     query: str
+    project_id: str  # Required for hierarchical operations
+    task_tree_id: str = "main"  # Task tree identifier
+    user_id: str = "default_id"  # User identifier
     limit: int = 10
 
 

@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "dhafnck_mcp": {
+      "command": "wsl.exe",
+      "args": [
+        "--cd", "{{PROJECT_PATH}}",
+        "--exec", "{{PROJECT_PATH}}/dhafnck_mcp_main/.venv/bin/python",
+        "-m", "fastmcp.server.mcp_entry_point"
+      ],
+      "env": {
+        "PYTHONPATH": "dhafnck_mcp_main/src",
+        "PROJECT_ROOT_PATH": ".",
+        "TASKS_JSON_PATH": ".cursor/rules/tasks/tasks.json",
+        "TASK_JSON_BACKUP_PATH": ".cursor/rules/tasks/backup",
+        "MCP_TOOL_CONFIG": ".cursor/tool_config.json",
+        "AGENTS_OUTPUT_DIR": ".cursor/rules/agents",
+        "AUTO_RULE_PATH": ".cursor/rules/auto_rule.mdc",
+        "BRAIN_DIR_PATH": ".cursor/rules/brain",
+        "PROJECTS_FILE_PATH": ".cursor/rules/brain/projects.json",
+        "CURSOR_AGENT_DIR_PATH": "dhafnck_mcp_main/yaml-lib",
+        "AGENT_YAML_LIB_PATH": "dhafnck_mcp_main/yaml-lib"
+      },
+      "transport": "stdio",
+      "debug": true
+    }
+  }
+} 

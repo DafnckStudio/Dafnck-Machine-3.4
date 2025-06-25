@@ -166,25 +166,49 @@ class InMemoryTaskRepository(TaskRepository):
 
 
 class JsonTaskRepository(TaskRepository):
-    """JSON file-based implementation of TaskRepository"""
+    """JSON file-based implementation of TaskRepository with hierarchical user/project/tree support"""
     
-    def __init__(self, file_path: Optional[str] = None):
+    def __init__(self, file_path: Optional[str] = None, project_id: Optional[str] = None, 
+                 task_tree_id: Optional[str] = None, user_id: Optional[str] = None):
+        """
+        Initialize JsonTaskRepository with hierarchical support
+        
+        Args:
+            file_path: Direct file path (takes precedence over hierarchical params)
+            project_id: Project identifier for hierarchical storage
+            task_tree_id: Task tree identifier (defaults to "main")
+            user_id: User identifier (defaults to "default_id")
+        """
         project_root = find_project_root()
+        
+        # Store context for validation and operations
+        self.project_id = project_id
+        self.task_tree_id = task_tree_id or "main"
+        self.user_id = user_id or "default_id"
 
         def resolve_path(path):
             p = Path(path)
             return str(p if p.is_absolute() else (project_root / p))
 
         if file_path:
+            # Direct file path provided (used by factory)
             self._file_path = resolve_path(file_path)
         else:
+            # Legacy environment variable support
             env_path = os.environ.get("TASKS_JSON_PATH")
             if env_path:
                 self._file_path = resolve_path(env_path)
             else:
-                self._file_path = str(project_root / ".cursor" / "rules" / "tasks" / "tasks.json")
+                # Default hierarchical path: .cursor/rules/tasks/{user_id}/{project_id}/{task_tree_id}/tasks.json
+                if project_id:
+                    self._file_path = str(project_root / ".cursor" / "rules" / "tasks" / 
+                                        self.user_id / project_id / self.task_tree_id / "tasks.json")
+                else:
+                    # Fallback to old structure for backward compatibility
+                    self._file_path = str(project_root / ".cursor" / "rules" / "tasks" / "tasks.json")
 
         logging.info(f"JsonTaskRepository using file_path: {self._file_path}")
+        logging.info(f"Repository context - user_id: {self.user_id}, project_id: {self.project_id}, task_tree_id: {self.task_tree_id}")
 
         if self._file_path == ":memory:":
             raise ValueError(
