@@ -27,13 +27,13 @@ For your convenience, here is the required configuration:
 ```json
 {
     "dhafnck_mcp": {
-      "command": "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
+      "command": "/home/<username>/agentic-project/dhafnck_mcp_main/.venv/bin/python",
       "args": [
-        "/home/daihungpham/agentic-project/dhafnck_mcp_main/src/fastmcp/task_management/interface/consolidated_mcp_server.py"
+        "/home/<username>/agentic-project/dhafnck_mcp_main/src/fastmcp/task_management/interface/consolidated_mcp_server.py"
       ],
-      "cwd": "/home/daihungpham/agentic-project/dhafnck_mcp_main",
+      "cwd": "/home/<username>/agentic-project/dhafnck_mcp_main",
       "env": {
-        "PYTHONPATH": "/home/daihungpham/agentic-project/dhafnck_mcp_main/src"
+        "PYTHONPATH": "/home/<username>/agentic-project/dhafnck_mcp_main/src"
       }
     }
 }
@@ -41,7 +41,7 @@ For your convenience, here is the required configuration:
 
 **Important**: 
 - If your `mcp.json` file already has other servers configured, simply add `dhafnck_mcp` as a new key to the main JSON object.
-- The paths in this configuration are absolute and specific to the username `daihungpham`. If you are running this on a different machine or with a different username, you will need to update the paths accordingly.
+- The paths in this configuration are absolute and specific to the username `<username>`. If you are running this on a different machine or with a different username, you will need to update the paths accordingly.
 
 ## 3. Verification
 

@@ -1,0 +1,32 @@
+{
+  "proj1": {
+    "id": "proj1",
+    "name": "Project 1",
+    "description": "",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "proj2": {
+    "id": "proj2",
+    "name": "Project 2",
+    "description": "",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  }
+}

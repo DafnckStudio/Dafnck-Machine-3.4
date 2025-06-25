@@ -80,8 +80,8 @@ Update your `.cursor/mcp.json` configuration:
     "dhafnck_mcp": {
       "command": "wsl.exe",
       "args": [
-        "--cd", "/home/daihungpham/agentic-project",
-        "--exec", "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
+        "--cd", "/home/<username>/agentic-project",
+        "--exec", "/home/<username>/agentic-project/dhafnck_mcp_main/.venv/bin/python",
         "-m", "fastmcp.server.mcp_entry_point"
       ],
       "env": {

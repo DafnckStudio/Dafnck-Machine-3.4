@@ -50,6 +50,7 @@ class TestCreateTaskUseCase:
     def basic_request(self):
         """Create basic create task request"""
         return CreateTaskRequest(
+            project_id="test_project",
             title="Test Task",
             description="Test Description"
         )
@@ -58,6 +59,7 @@ class TestCreateTaskUseCase:
     def detailed_request(self):
         """Create detailed create task request"""
         return CreateTaskRequest(
+            project_id="test_project",
             title="Detailed Task",
             description="Detailed Description",
             priority="high",
@@ -102,6 +104,7 @@ class TestCreateTaskUseCase:
     def test_execute_with_invalid_priority(self, use_case):
         """Test creating task with invalid priority"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Test Task",
             description="Test Description",
             priority="invalid_priority"
@@ -113,6 +116,7 @@ class TestCreateTaskUseCase:
     def test_execute_with_invalid_estimated_effort(self, use_case):
         """Test creating task with invalid estimated effort"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Test Task",
             description="Test Description",
             estimated_effort="invalid_effort"
@@ -127,6 +131,7 @@ class TestCreateTaskUseCase:
     def test_execute_with_invalid_assignees(self, use_case):
         """Test creating task with invalid assignees"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Test Task",
             description="Test Description",
             assignees=["@invalid_agent", "@another_invalid"]
@@ -141,6 +146,7 @@ class TestCreateTaskUseCase:
     def test_execute_with_invalid_due_date(self, use_case):
         """Test creating task with invalid due date"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Test Task",
             description="Test Description",
             due_date="invalid_date"
@@ -155,6 +161,7 @@ class TestCreateTaskUseCase:
     def test_execute_with_empty_title(self, use_case):
         """Test creating task with empty title"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="",
             description="Test Description"
         )
@@ -165,6 +172,7 @@ class TestCreateTaskUseCase:
     def test_execute_with_empty_description(self, use_case):
         """Test creating task with empty description"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Test Task",
             description=""
         )
@@ -175,6 +183,7 @@ class TestCreateTaskUseCase:
     def test_execute_with_none_values(self, use_case):
         """Test creating task with None values"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Test Task",
             description="Test Description",
             priority=None,
@@ -194,6 +203,7 @@ class TestCreateTaskUseCase:
     def test_execute_with_empty_lists(self, use_case):
         """Test creating task with empty lists"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Test Task",
             description="Test Description",
             assignees=[],
@@ -258,7 +268,8 @@ class TestCreateTaskUseCase:
     def test_execute_multiple_tasks(self, use_case):
         """Test creating multiple tasks"""
         requests = [
-            CreateTaskRequest(title=f"Task {i}", description=f"Description {i}")
+            CreateTaskRequest(project_id="test_project",
+            title=f"Task {i}", description=f"Description {i}")
             for i in range(5)
         ]
         
@@ -277,6 +288,7 @@ class TestCreateTaskUseCase:
     def test_execute_with_special_characters(self, use_case):
         """Test creating task with special characters"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Task with \"quotes\" and 'apostrophes'",
             description="Description with <tags> & symbols",
             details="Details with émojis 🚀 and ünïcödé"
@@ -296,6 +308,7 @@ class TestCreateTaskUseCase:
         long_details = "Very long details " * 500
         
         request = CreateTaskRequest(
+            project_id="test_project",
             title=long_title,
             description=long_description,
             details=long_details
@@ -318,6 +331,7 @@ class TestCreateTaskUseCase:
         all_roles = [role.value for role in AgentRole]
         
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Task with all roles",
             description="Test all assignee roles",
             assignees=all_roles
@@ -333,6 +347,7 @@ class TestCreateTaskUseCase:
         many_labels = [f"label_{i}" for i in range(50)]
         
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Task with many labels",
             description="Test many labels",
             labels=many_labels
@@ -348,9 +363,9 @@ class TestCreateTaskUseCase:
     def test_execute_with_project_id(self, use_case):
         """Test creating task with project ID"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Project Task",
             description="Task for specific project",
-            project_id="test_project"
         )
         
         result = use_case.execute(request)
@@ -363,7 +378,8 @@ class TestCreateTaskUseCase:
         tasks = []
         for i in range(3):
             request = CreateTaskRequest(
-                title=f"Task {i}",
+                project_id="test_project",
+            title=f"Task {i}",
                 description=f"Description {i}"
             )
             result = use_case.execute(request)
@@ -406,7 +422,8 @@ class TestCreateTaskUseCase:
         
         def create_task_worker(worker_id):
             request = CreateTaskRequest(
-                title=f"Concurrent Task {worker_id}",
+                project_id="test_project",
+            title=f"Concurrent Task {worker_id}",
                 description=f"Created by worker {worker_id}"
             )
             result = use_case.execute(request)
@@ -447,7 +464,8 @@ class TestCreateTaskUseCase:
         
         for date_str in date_formats:
             request = CreateTaskRequest(
-                title=f"Task with date {date_str}",
+                project_id="test_project",
+            title=f"Task with date {date_str}",
                 description="Test date format",
                 due_date=date_str
             )
@@ -458,6 +476,7 @@ class TestCreateTaskUseCase:
     def test_execute_auto_rule_generation_with_assignee(self, use_case, auto_rule_generator):
         """Test auto rule generation extracts role from assignee"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Test Task",
             description="Test Description",
             assignees=["@coding_agent"]
@@ -477,6 +496,7 @@ class TestCreateTaskUseCase:
     def test_execute_auto_rule_generation_no_assignee(self, use_case, auto_rule_generator):
         """Test auto rule generation with no assignee"""
         request = CreateTaskRequest(
+            project_id="test_project",
             title="Test Task",
             description="Test Description"
         )

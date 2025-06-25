@@ -18,16 +18,16 @@ def mcp_tools():
     """Fixture to provide an instance of ConsolidatedMCPTools."""
     tools = ConsolidatedMCPTools()
     # Ensure a clean state for project tests
-    tools._multi_agent_tools._projects = {}
-    tools._multi_agent_tools._save_projects()
+    tools._project_manager._projects = {}
+    tools._project_manager._save_projects()
     return tools
 
 def test_create_project(mcp_tools):
     """Test creating a new project."""
-    result = mcp_tools._multi_agent_tools.create_project(
-        project_id="test_project",
-        name="Test Project",
-        description="A project for testing"
+    result = mcp_tools._project_manager.create_project(
+        "test_project",
+        "Test Project",
+        "A project for testing"
     )
     assert result["success"]
     assert result["project"]["id"] == "test_project"
@@ -36,34 +36,34 @@ def test_create_project(mcp_tools):
 def test_get_project(mcp_tools):
     """Test getting an existing project."""
     # First, create a project
-    mcp_tools._multi_agent_tools.create_project(
-        project_id="test_project_2",
-        name="Test Project 2",
-        description="Another project for testing"
+    mcp_tools._project_manager.create_project(
+        "test_project_2",
+        "Test Project 2",
+        "Another project for testing"
     )
 
     # Now, get the project
-    result = mcp_tools._multi_agent_tools.get_project(project_id="test_project_2")
+    result = mcp_tools._project_manager.get_project("test_project_2")
     assert result["success"]
     assert result["project"]["id"] == "test_project_2"
 
 def test_get_nonexistent_project(mcp_tools):
     """Test getting a project that does not exist."""
-    result = mcp_tools._multi_agent_tools.get_project(project_id="nonexistent_project")
+    result = mcp_tools._project_manager.get_project("nonexistent_project")
     assert not result["success"]
     assert "not found" in result["error"]
 
 def test_list_projects(mcp_tools):
     """Test listing all projects."""
     # Create a couple of projects
-    mcp_tools._multi_agent_tools.create_project(
-        project_id="proj1", name="Project 1"
+    mcp_tools._project_manager.create_project(
+        "proj1", "Project 1"
     )
-    mcp_tools._multi_agent_tools.create_project(
-        project_id="proj2", name="Project 2"
+    mcp_tools._project_manager.create_project(
+        "proj2", "Project 2"
     )
 
-    result = mcp_tools._multi_agent_tools.list_projects()
+    result = mcp_tools._project_manager.list_projects()
     assert result["success"]
     assert result["count"] == 2
     project_ids = [p["id"] for p in result["projects"]]

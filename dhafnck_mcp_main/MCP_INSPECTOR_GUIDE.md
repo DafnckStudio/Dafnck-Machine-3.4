@@ -7,8 +7,8 @@ The MCP Inspector is working correctly with your DhafnckMCP server! Here's how t
 ### 1. Start the MCP Inspector
 
 ```bash
-cd /home/daihungpham/agentic-project/dhafnck_mcp_main
-npx @modelcontextprotocol/inspector /home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python -m fastmcp.server.mcp_entry_point
+cd /home/<username>/agentic-project/dhafnck_mcp_main
+npx @modelcontextprotocol/inspector /home/<username>/agentic-project/dhafnck_mcp_main/.venv/bin/python -m fastmcp.server.mcp_entry_point
 ```
 
 ### 2. Access the Inspector
@@ -152,7 +152,7 @@ If you're experiencing MCP connection issues in WSL environment (Cursor on Windo
 
 ```bash
 # Activate virtual environment
-cd /home/daihungpham/agentic-project/dhafnck_mcp_main
+cd /home/<username>/agentic-project/dhafnck_mcp_main
 source .venv/bin/activate
 
 # Test module import
@@ -206,9 +206,9 @@ This MCP server integrates seamlessly with Cursor IDE through the `.cursor/mcp.j
 {
   "mcpServers": {
     "dhafnck_mcp": {
-      "command": "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
+      "command": "/home/<username>/agentic-project/dhafnck_mcp_main/.venv/bin/python",
       "args": ["-m", "fastmcp.server.mcp_entry_point"],
-      "cwd": "/home/daihungpham/agentic-project",
+      "cwd": "/home/<username>/agentic-project",
       "env": { ... }
     }
   }

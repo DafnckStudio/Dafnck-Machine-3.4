@@ -4,7 +4,7 @@ The DhafnckMCP system now supports **project-specific task management** that wor
 
 ## 🎯 What This Solves
 
-**Before**: Task management was tied to `/home/daihungpham/agentic-project`
+**Before**: Task management was tied to `/home/<username>/agentic-project`
 **Now**: Each project has its own `.cursor/rules/` structure and can be located anywhere
 
 ## 📁 Project Structure
@@ -170,7 +170,7 @@ manage_project(
 
 ### For Existing Projects
 
-If you have an existing project at `/home/daihungpham/agentic-project`:
+If you have an existing project at `/home/<username>/agentic-project`:
 
 1. **Backup existing data**:
 ```bash

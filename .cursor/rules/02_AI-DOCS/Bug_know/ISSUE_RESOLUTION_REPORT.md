@@ -51,7 +51,7 @@ from fastmcp.task_management.application.dtos import CreateTaskRequest, UpdateTa
 
 ### **1. Created Native MCP Server with DDD Integration**
 
-**File**: `/home/daihungpham/agentic-project/dhafnck_mcp_main/src/native_mcp_server.py`
+**File**: `/home/<username>/agentic-project/dhafnck_mcp_main/src/native_mcp_server.py`
 
 **Key Features:**
 - ✅ Uses **native MCP protocol** (`mcp.server.Server`)
@@ -62,20 +62,20 @@ from fastmcp.task_management.application.dtos import CreateTaskRequest, UpdateTa
 
 ### **2. Updated MCP Configuration**
 
-**File**: `/home/daihungpham/agentic-project/.cursor/mcp.json`
+**File**: `/home/<username>/agentic-project/.cursor/mcp.json`
 
 **Change:**
 ```json
 {
   "mcpServers": {
     "dhafnck_mcp": {
-      "command": "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
+      "command": "/home/<username>/agentic-project/dhafnck_mcp_main/.venv/bin/python",
       "args": [
-        "/home/daihungpham/agentic-project/dhafnck_mcp_main/src/native_mcp_server.py"  // ← Changed from consolidated_mcp_server.py
+        "/home/<username>/agentic-project/dhafnck_mcp_main/src/native_mcp_server.py"  // ← Changed from consolidated_mcp_server.py
       ],
-      "cwd": "/home/daihungpham/agentic-project",
+      "cwd": "/home/<username>/agentic-project",
       "env": {
-        "PYTHONPATH": "/home/daihungpham/agentic-project/dhafnck_mcp_main/src"
+        "PYTHONPATH": "/home/<username>/agentic-project/dhafnck_mcp_main/src"
       }
     }
   }

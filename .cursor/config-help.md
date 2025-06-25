@@ -40,8 +40,8 @@ cat /proc/version | head -1
     "dhafnck_mcp": {
       "command": "wsl.exe",
       "args": [
-        "--cd", "/home/daihungpham/agentic-project",
-        "--exec", "/home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python",
+        "--cd", "/home/<username>/agentic-project",
+        "--exec", "/home/<username>/agentic-project/dhafnck_mcp_main/.venv/bin/python",
         "-m", "fastmcp.server.mcp_entry_point"
       ],
       "env": {
@@ -85,20 +85,20 @@ cat /proc/version | head -1
 
 echo "🔗 WSL MCP Bridge starting..." >&2
 echo "📍 Working directory: $(pwd)" >&2
-echo "📍 Python path: /home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python" >&2
+echo "📍 Python path: /home/<username>/agentic-project/dhafnck_mcp_main/.venv/bin/python" >&2
 
 # Set environment variables
-export PYTHONPATH="/home/daihungpham/agentic-project/dhafnck_mcp_main/src"
-export TASKS_JSON_PATH="/home/daihungpham/agentic-project/.cursor/rules/tasks/tasks.json"
-export PROJECT_ROOT_PATH="/home/daihungpham/agentic-project"
+export PYTHONPATH="/home/<username>/agentic-project/dhafnck_mcp_main/src"
+export TASKS_JSON_PATH="/home/<username>/agentic-project/.cursor/rules/tasks/tasks.json"
+export PROJECT_ROOT_PATH="/home/<username>/agentic-project"
 export PYTHONUNBUFFERED=1
 
 # Change to the correct directory
-cd /home/daihungpham/agentic-project
+cd /home/<username>/agentic-project
 
 # Start the MCP server
 echo "🚀 Starting dhafnck_mcp server..." >&2
-exec /home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python -m fastmcp.server.mcp_entry_point
+exec /home/<username>/agentic-project/dhafnck_mcp_main/.venv/bin/python -m fastmcp.server.mcp_entry_point
 ```
 
 **Configuration for Bridge Script:**
@@ -109,9 +109,9 @@ exec /home/daihungpham/agentic-project/dhafnck_mcp_main/.venv/bin/python -m fast
       "command": "wsl",
       "args": [
         "-e",
-        "/home/daihungpham/agentic-project/dhafnck_mcp_main/wsl_mcp_bridge.sh"
+        "/home/<username>/agentic-project/dhafnck_mcp_main/wsl_mcp_bridge.sh"
       ],
-      "cwd": "/home/daihungpham/agentic-project"
+      "cwd": "/home/<username>/agentic-project"
     }
   }
 }

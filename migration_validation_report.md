@@ -51,7 +51,7 @@
 ## Migration Results
 
 - **Legacy Tasks Migrated:** 0 (file was empty)
-- **Backup Created:** `/home/daihungpham/agentic-project/.cursor/rules/tasks/backup/tasks_backup_20250625_194239.json`
+- **Backup Created:** `/home/<username>/agentic-project/.cursor/rules/tasks/backup/tasks_backup_20250625_194239.json`
 - **Legacy File Archived:** `tasks_legacy_20250625_200220.json`
 - **Projects Configured:** 6 projects from projects.json
 - **Task Trees:** 7 total (including multiple trees for migration_workflow_test)

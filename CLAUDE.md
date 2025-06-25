@@ -34,9 +34,9 @@ list_dir: Get a list of files and folders in a specific directory”
 ---
 
 when open claude:
-- read `/home/daihungpham/agentic-project/.cursor/rules/dhafnck_mcp.mdc`
-- read `/home/daihungpham/agentic-project/.cursor/rules/agents.mdc`
-- read `/home/daihungpham/agentic-project/.cursor/rules/memory.mdc`
+- read `/home/<username>/agentic-project/.cursor/rules/dhafnck_mcp.mdc`
+- read `/home/<username>/agentic-project/.cursor/rules/agents.mdc`
+- read `/home/<username>/agentic-project/.cursor/rules/memory.mdc`
 - read `.cursor/rules/need-update-this-file-if-change-project-tree.mdc`
 
 when get_task() or next_task() : read `.cursor/rules/auto_rule.mdc`

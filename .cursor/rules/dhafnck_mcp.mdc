@@ -61,7 +61,7 @@ MUST follow [task_management_workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskMana
 
 ## [auto_rule.mdc](mdc:.cursor/rules/auto_rule.mdc) : AI CAN READ, AI CAN'T EDIT
 
-
+## Agent Auto-Switch to role when call_agent() or assigned task see [Agent_Auto_Switch_Workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc)
 
 ## TEST MUST to activate virtual environment
 dhafnck_mcp_main/.venv

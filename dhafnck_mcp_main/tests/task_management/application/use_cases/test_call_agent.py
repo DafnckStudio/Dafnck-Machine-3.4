@@ -72,7 +72,7 @@ job_desc:
     def test_execute_no_yaml_files_found(self, temp_agent_dir):
         """Test execution when agent directory exists but has no YAML files"""
         # Create empty agent directory
-        empty_agent_dir = temp_agent_dir / "yaml-lib" / "empty_agent"
+        empty_agent_dir = temp_agent_dir / "empty_agent"
         empty_agent_dir.mkdir(parents=True)
         
         call_agent_use_case = CallAgentUseCase(temp_agent_dir)
@@ -84,7 +84,7 @@ job_desc:
     def test_execute_with_nested_yaml_files(self, temp_agent_dir):
         """Test execution with YAML files in nested directories"""
         # Create nested directory structure
-        agent_dir = temp_agent_dir / "yaml-lib" / "nested_agent"
+        agent_dir = temp_agent_dir / "nested_agent"
         contexts_dir = agent_dir / "contexts"
         rules_dir = agent_dir / "rules"
         contexts_dir.mkdir(parents=True)
@@ -117,7 +117,7 @@ rules:
     def test_execute_with_invalid_yaml_file(self, temp_agent_dir):
         """Test execution with invalid YAML file"""
         # Create agent directory with invalid YAML
-        agent_dir = temp_agent_dir / "yaml-lib" / "invalid_agent"
+        agent_dir = temp_agent_dir / "invalid_agent"
         agent_dir.mkdir(parents=True)
         
         invalid_yaml = agent_dir / "invalid.yaml"
@@ -145,7 +145,7 @@ rules:
 
     def test_execute_with_file_read_permission_error(self, temp_agent_dir):
         """Test execution with file permission error"""
-        agent_dir = temp_agent_dir / "yaml-lib" / "permission_agent"
+        agent_dir = temp_agent_dir / "permission_agent"
         agent_dir.mkdir(parents=True)
         
         call_agent_use_case = CallAgentUseCase(temp_agent_dir)
@@ -158,7 +158,7 @@ rules:
 
     def test_execute_with_yaml_content_variations(self, temp_agent_dir):
         """Test execution with different YAML content structures"""
-        agent_dir = temp_agent_dir / "yaml-lib" / "varied_agent"
+        agent_dir = temp_agent_dir / "varied_agent"
         agent_dir.mkdir(parents=True)
         
         # Create YAML with single key matching filename
@@ -202,7 +202,7 @@ simple: "just a string"
 
     def test_execute_with_yaml_load_exception(self, temp_agent_dir):
         """Test execution when YAML loading raises an exception"""
-        agent_dir = temp_agent_dir / "yaml-lib" / "error_agent"
+        agent_dir = temp_agent_dir / "error_agent"
         agent_dir.mkdir(parents=True)
         
         (agent_dir / "test.yaml").write_text("valid: yaml")
@@ -222,13 +222,13 @@ simple: "just a string"
         with patch('fastmcp.task_management.application.use_cases.call_agent.generate_docs_for_assignees'):
             result = call_agent_use_case.execute("test_agent")
             
-            assert "Looking for agent in:" in caplog.text
+            assert "CallAgentUseCase debug - base_dir:" in caplog.text
             if result["success"]:
                 assert "Generated agent documentation for:" in caplog.text
 
     def test_execute_handles_empty_yaml_content(self, temp_agent_dir):
         """Test execution with empty YAML files"""
-        agent_dir = temp_agent_dir / "yaml-lib" / "empty_yaml_agent"
+        agent_dir = temp_agent_dir / "empty_yaml_agent"
         agent_dir.mkdir(parents=True)
         
         # Create empty YAML file
