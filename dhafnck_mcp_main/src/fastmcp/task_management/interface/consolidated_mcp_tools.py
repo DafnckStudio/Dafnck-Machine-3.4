@@ -25,7 +25,6 @@ from fastmcp.task_management.application import (
     DoNextUseCase,
     CallAgentUseCase
 )
-from fastmcp.task_management.application.use_cases.call_agent import CURSOR_AGENT_DIR
 
 # DTO imports
 from fastmcp.task_management.application.dtos import (
@@ -1256,7 +1255,7 @@ class ConsolidatedMCPTools:
         # Initialize managers and handlers
         self._project_manager = ProjectManager(self._path_resolver, projects_file_path)
         # Use dynamic cursor agent directory from PathResolver
-        cursor_agent_dir = str(self._path_resolver.get_cursor_agent_dir())
+        cursor_agent_dir = self._path_resolver.get_cursor_agent_dir()
         self._call_agent_use_case = CallAgentUseCase(cursor_agent_dir)
         self._task_handler = TaskOperationHandler(self._repository_factory, self._auto_rule_generator, self._project_manager)
         

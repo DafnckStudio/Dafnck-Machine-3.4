@@ -50,5 +50,20 @@
     "registered_agents": {},
     "agent_assignments": {},
     "created_at": "2025-06-25T23:31:23.727424Z"
+  },
+  "chaxiaiv2_admin_dashboard": {
+    "id": "chaxiaiv2_admin_dashboard",
+    "name": "ChaxiAI v2 Admin Dashboard",
+    "description": "D\u00e9veloppement d'un Dashboard d'Administration complet pour ChaxiAI v2 avec 5 onglets principaux de gestion (Overview, Users, Subscriptions, Support, Chatbots)",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
   }
 }
