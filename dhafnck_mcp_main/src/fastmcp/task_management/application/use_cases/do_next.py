@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from ...domain import TaskRepository, TaskStatus, Priority, AutoRuleGenerator
 from ...infrastructure.services.agent_doc_generator import generate_agent_docs, generate_docs_for_assignees
+from ...infrastructure.services.context_generate import generate_task_context_if_needed
 
 
 @dataclass
@@ -100,6 +101,14 @@ class DoNextUseCase:
             # Check if task has incomplete subtasks
             next_subtask = self._find_next_subtask(task)
             if next_subtask:
+                # Generate context file if it doesn't exist
+                try:
+                    generate_task_context_if_needed(task)
+                except Exception as e:
+                    # Log warning but don't fail the operation
+                    import logging
+                    logging.warning(f"Context file generation failed for task {task.id}: {e}")
+                
                 # Trigger auto rule generation for the parent task (with error handling)
                 try:
                     self._auto_rule_generator.generate_rules_for_task(task)
@@ -124,6 +133,14 @@ class DoNextUseCase:
                 )
             else:
                 # Task itself is the next item to work on
+                # Generate context file if it doesn't exist
+                try:
+                    generate_task_context_if_needed(task)
+                except Exception as e:
+                    # Log warning but don't fail the operation
+                    import logging
+                    logging.warning(f"Context file generation failed for task {task.id}: {e}")
+                
                 try:
                     self._auto_rule_generator.generate_rules_for_task(task)
                 except Exception as e:

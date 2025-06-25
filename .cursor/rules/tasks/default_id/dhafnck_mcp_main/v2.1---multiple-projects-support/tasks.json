@@ -68,6 +68,29 @@
       "dueDate": null,
       "created_at": "2025-06-25T19:01:46.915735+00:00",
       "updated_at": "2025-06-25T19:25:52.344815+00:00"
+    },
+    {
+      "id": "20250625004",
+      "title": "Test automatic context file creation",
+      "description": "Verify that context files are automatically created when get_task or do_next is called",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test",
+        "context",
+        "automation"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-25T20:57:21.132844+00:00",
+      "updated_at": "2025-06-25T20:57:21.132844+00:00"
     }
   ]
 }
