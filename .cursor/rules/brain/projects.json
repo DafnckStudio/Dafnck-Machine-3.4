@@ -1,4 +1,4 @@
-{  
+{
   "dhafnck_mcp_main": {
     "id": "dhafnck_mcp_main",
     "name": "MCP Server dhafnck_mcp",
@@ -18,5 +18,37 @@
     "registered_agents": {},
     "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z"
+  },
+  "test_project": {
+    "id": "test_project",
+    "name": "test_project",
+    "description": "AI-powered project with MCP server integration",
+    "path": "/tmp/test_setup/test_ai_project",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree for test_project"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-06-25T23:29:31.621308Z"
+  },
+  "chaxiaiv2": {
+    "id": "chaxiaiv2",
+    "name": "chaxiaiv2",
+    "description": "AI-powered project with MCP server integration",
+    "path": "/home/daihungpham/__projects__/chaxiai/chaxiaiv2",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree for chaxiaiv2"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-06-25T23:31:23.727424Z"
   }
 }
