@@ -6,8 +6,9 @@ import logging
 import traceback
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Annotated
 from dataclasses import asdict
+from pydantic import Field
 
 from typing import TYPE_CHECKING
 from fastmcp.tools.tool_path import find_project_root
@@ -727,22 +728,34 @@ class ToolRegistrationOrchestrator:
         if self._config.is_enabled("manage_project"):
             @mcp.tool()
             def manage_project(
-                action: str,
-                project_id: str = None,
-                name: str = None,
-                description: str = None,
-                tree_id: str = None,
-                tree_name: str = None,
-                tree_description: str = None
+                action: Annotated[str, Field(description="Project action to perform. Available: create, get, list, create_tree, get_tree_status, orchestrate, dashboard")],
+                project_id: Annotated[str, Field(description="Unique project identifier")] = None,
+                name: Annotated[str, Field(description="Project name (required for create action)")] = None,
+                description: Annotated[str, Field(description="Project description (optional for create action)")] = None,
+                tree_id: Annotated[str, Field(description="Task tree identifier (required for tree operations)")] = None,
+                tree_name: Annotated[str, Field(description="Task tree name (required for create_tree action)")] = None,
+                tree_description: Annotated[str, Field(description="Task tree description (optional for create_tree action)")] = None
             ) -> Dict[str, Any]:
-                """Multi-agent project lifecycle management.
-                
-                Actions: create, get, list, create_tree, get_tree_status, orchestrate, dashboard
-                
-                Examples:
-                - action="create", project_id="my_project", name="Project Name"
-                - action="get", project_id="my_project"
-                - action="orchestrate", project_id="my_project"
+                """🚀 PROJECT LIFECYCLE MANAGER - Multi-agent project orchestration and management
+
+⭐ WHAT IT DOES: Complete project lifecycle management with task trees and agent coordination
+📋 WHEN TO USE: Creating projects, managing task trees, orchestrating multi-agent workflows
+
+🎯 ACTIONS AVAILABLE:
+• create: Initialize new project with basic structure
+• get: Retrieve project details and current status
+• list: Show all available projects
+• create_tree: Add task tree structure to project
+• get_tree_status: Check task tree completion status
+• orchestrate: Execute multi-agent project workflow
+• dashboard: View comprehensive project analytics
+
+💡 USAGE EXAMPLES:
+• manage_project("create", project_id="web_app", name="E-commerce Website")
+• manage_project("orchestrate", project_id="web_app")
+• manage_project("dashboard", project_id="web_app")
+
+🔧 INTEGRATION: Coordinates with task management and agent assignment systems
                 """
                 
                 if action == "create":
@@ -790,26 +803,46 @@ class ToolRegistrationOrchestrator:
         if self._config.is_enabled("manage_task"):
             @mcp.tool()
             def manage_task(
-                action: str,
-                task_id: str = None,
-                project_id: str = None,
-                title: str = None,
-                description: str = None,
-                status: str = None,
-                priority: str = None,
-                details: str = None,
-                estimated_effort: str = None,
-                assignees: List[str] = None,
-                labels: List[str] = None,
-                due_date: str = None,
-                dependency_data: Dict[str, Any] = None,
-                query: str = None,
-                limit: int = None,
-                force_full_generation: bool = False
+                action: Annotated[str, Field(description="Task action to perform. Available: create, get, update, delete, complete, list, search, next, add_dependency, remove_dependency")],
+                task_id: Annotated[str, Field(description="Unique task identifier (required for get, update, delete, complete, dependency operations)")] = None,
+                project_id: Annotated[str, Field(description="Project identifier to associate task with")] = None,
+                title: Annotated[str, Field(description="Task title (required for create action)")] = None,
+                description: Annotated[str, Field(description="Detailed task description")] = None,
+                status: Annotated[str, Field(description="Task status. Available: todo, in_progress, blocked, review, testing, done, cancelled")] = None,
+                priority: Annotated[str, Field(description="Task priority level. Available: low, medium, high, urgent, critical")] = None,
+                details: Annotated[str, Field(description="Additional task details and context")] = None,
+                estimated_effort: Annotated[str, Field(description="Estimated effort/time required. Available: quick, short, small, medium, large, xlarge, epic, massive")] = None,
+                assignees: Annotated[List[str], Field(description="List of assigned agents. Use agent names like 'coding_agent', 'devops_agent', etc.")] = None,
+                labels: Annotated[List[str], Field(description="Task labels for categorization. Examples: urgent, bug, feature, frontend, backend, security, testing, etc.")] = None,
+                due_date: Annotated[str, Field(description="Task due date in ISO format (YYYY-MM-DD) or relative format")] = None,
+                dependency_data: Annotated[Dict[str, Any], Field(description="Dependency data containing 'dependency_id' for dependency operations")] = None,
+                query: Annotated[str, Field(description="Search query string for search action")] = None,
+                limit: Annotated[int, Field(description="Maximum number of results to return for list/search actions")] = None,
+                force_full_generation: Annotated[bool, Field(description="Force full auto-rule generation even if task context exists")] = False
             ) -> Dict[str, Any]:
-                """Unified task management: create, update, delete, list, search tasks and dependencies.
-                
-                Actions: create, get, update, delete, complete, list, search, next, add_dependency, remove_dependency
+                """📝 UNIFIED TASK MANAGER - Complete task lifecycle and dependency management
+
+⭐ WHAT IT DOES: Comprehensive task operations with status tracking, dependencies, and search
+📋 WHEN TO USE: Creating tasks, updating status, managing dependencies, searching tasks
+
+🎯 ACTIONS AVAILABLE:
+• create: Create new task with full metadata
+• get: Retrieve specific task details
+• update: Modify existing task properties
+• delete: Remove task from system
+• complete: Mark task as completed
+• list: Show tasks with filtering options
+• search: Find tasks by content/keywords
+• next: Get next priority task to work on
+• add_dependency: Link task dependencies
+• remove_dependency: Remove task dependencies
+
+💡 USAGE EXAMPLES:
+• manage_task("create", title="Fix login bug", assignees=["coding_agent"])
+• manage_task("update", task_id="123", status="in_progress")
+• manage_task("next") - Get next task to work on
+
+🔧 INTEGRATION: Auto-generates context rules and coordinates with agent assignment
                 """
                 logger.debug(f"Received task management action: {action}")
 
@@ -847,16 +880,28 @@ class ToolRegistrationOrchestrator:
         if self._config.is_enabled("manage_subtask"):
             @mcp.tool()
             def manage_subtask(
-                action: str,
-                task_id: str = None,
-                subtask_data: Dict[str, Any] = None
+                action: Annotated[str, Field(description="Subtask action to perform. Available: add, complete, list, update, remove")],
+                task_id: Annotated[str, Field(description="Parent task identifier (required for all subtask operations)")] = None,
+                subtask_data: Annotated[Dict[str, Any], Field(description="Subtask data containing title, description, and other subtask properties")] = None
             ) -> Dict[str, Any]:
-                """Manages subtasks: creation, completion, updates, removal, and listing.
-                
-                Args:
-                    action: Subtask action ('add', 'complete', 'list', etc.)
-                    task_id: Parent task ID
-                    subtask_data: Subtask operation data
+                """📋 SUBTASK MANAGER - Task breakdown and progress tracking
+
+⭐ WHAT IT DOES: Manages subtasks within parent tasks for detailed progress tracking
+📋 WHEN TO USE: Breaking down complex tasks, tracking granular progress, organizing work
+
+🎯 ACTIONS AVAILABLE:
+• add: Create new subtask under parent task
+• complete: Mark subtask as finished
+• list: Show all subtasks for a task
+• update: Modify subtask properties
+• remove: Delete subtask from parent
+
+💡 USAGE EXAMPLES:
+• manage_subtask("add", task_id="123", subtask_data={"title": "Write tests"})
+• manage_subtask("complete", task_id="123", subtask_data={"subtask_id": "sub_456"})
+• manage_subtask("list", task_id="123")
+
+🔧 INTEGRATION: Works with parent task system and progress tracking
                 """
                 if task_id is None:
                     return {"success": False, "error": "task_id is required"}
@@ -880,21 +925,35 @@ class ToolRegistrationOrchestrator:
         if self._config.is_enabled("manage_agent"):
             @mcp.tool()
             def manage_agent(
-                action: str,
-                project_id: str = None,
-                agent_id: str = None,
-                name: str = None,
-                call_agent: str = None,
-                tree_id: str = None
+                action: Annotated[str, Field(description="Agent action to perform. Available: register, assign, get, list, get_assignments, unassign, update, unregister, rebalance")],
+                project_id: Annotated[str, Field(description="Project identifier (required for most agent operations)")] = None,
+                agent_id: Annotated[str, Field(description="Agent identifier (required for register, assign, get, update, unregister operations)")] = None,
+                name: Annotated[str, Field(description="Agent display name (required for register action)")] = None,
+                call_agent: Annotated[str, Field(description="Agent call reference (e.g., '@coding-agent', '@devops-agent')")] = None,
+                tree_id: Annotated[str, Field(description="Task tree identifier (required for assign action)")] = None
             ) -> Dict[str, Any]:
-                """Multi-agent team management and intelligent assignment.
-                
-                Actions: register, assign, get, list, get_assignments, unassign, update, unregister, rebalance
-                
-                Examples:
-                - action="register", project_id="my_project", agent_id="frontend_expert", name="Frontend Specialist"
-                - action="assign", project_id="my_project", agent_id="frontend_expert", tree_id="ui_components"
-                - action="list", project_id="my_project"
+                """🤖 MULTI-AGENT TEAM MANAGER - Agent registration and intelligent task assignment
+
+⭐ WHAT IT DOES: Complete agent lifecycle management with intelligent workload distribution
+📋 WHEN TO USE: Registering agents, assigning to task trees, managing team capacity
+
+🎯 ACTIONS AVAILABLE:
+• register: Add new agent to project team
+• assign: Assign agent to specific task tree
+• get: Retrieve agent details and status
+• list: Show all registered agents
+• get_assignments: View current agent assignments
+• unassign: Remove agent from task tree
+• update: Modify agent properties
+• unregister: Remove agent from project
+• rebalance: Optimize workload distribution
+
+💡 USAGE EXAMPLES:
+• manage_agent("register", project_id="web_app", agent_id="frontend_dev", name="Frontend Developer")
+• manage_agent("assign", project_id="web_app", agent_id="frontend_dev", tree_id="ui_tasks")
+• manage_agent("list", project_id="web_app")
+
+🔧 INTEGRATION: Coordinates with project management and task assignment systems
                 """
                 
                 if action == "register":
@@ -1017,17 +1076,41 @@ class ToolRegistrationOrchestrator:
         if self._config.is_enabled("call_agent"):
             @mcp.tool()
             def call_agent(
-                name_agent: str
+                name_agent: Annotated[str, Field(description="Agent name with '_agent' suffix (e.g., 'coding_agent', 'devops_agent', 'system_architect_agent'). Use exact agent directory name from yaml-lib folder.")]
             ) -> Dict[str, Any]:
-                """Retrieves agent configuration and documentation from YAML files.
-                
-                Args:
-                    name_agent (str): Agent directory name with _agent suffix (e.g., "devops_agent")
-                
-                Returns:
-                    Dict with agent information and combined YAML content
-                
-                Examples: "devops_agent", "coding_agent", "system_architect_agent"
+                """🤖 AGENT CONFIGURATION RETRIEVER - Load specialized agent roles and capabilities
+
+⭐ WHAT IT DOES: Loads complete agent configuration including role, context, rules, and tools from YAML files
+📋 WHEN TO USE: Switch AI assistant to specialized role, get agent capabilities, understand agent expertise
+
+🎯 AGENT ROLES AVAILABLE:
+• Development: coding_agent, development_orchestrator_agent, code_reviewer_agent
+• Testing: test_orchestrator_agent, functional_tester_agent, performance_load_tester_agent
+• Architecture: system_architect_agent, tech_spec_agent, prd_architect_agent
+• DevOps: devops_agent, security_auditor_agent, health_monitor_agent
+• Design: ui_designer_agent, ux_researcher_agent, design_system_agent
+• Management: task_planning_agent, project_initiator_agent, uber_orchestrator_agent
+• Research: market_research_agent, deep_research_agent, mcp_researcher_agent
+• Content: documentation_agent, content_strategy_agent, branding_agent
+
+📋 PARAMETER:
+• name_agent (str): Agent name with '_agent' suffix (e.g., "coding_agent", "devops_agent")
+• Use exact agent directory name from yaml-lib folder
+
+🔄 RETURNS:
+• success: Boolean indicating if agent was found
+• agent_info: Complete agent configuration with role, contexts, rules, tools
+• yaml_content: Full YAML configuration for the agent
+• available_agents: List of all available agents (if requested agent not found)
+
+💡 USAGE EXAMPLES:
+• call_agent("coding_agent") - Load coding specialist configuration
+• call_agent("system_architect_agent") - Load system architecture expert
+• call_agent("task_planning_agent") - Load task management specialist
+• call_agent("security_auditor_agent") - Load security expert configuration
+
+🔧 INTEGRATION: This tool automatically switches AI assistant context to match the loaded agent's
+expertise, behavioral rules, and specialized knowledge for optimal task performance.
                 """
                 try:
                     result = self._call_agent_use_case.execute(name_agent)
