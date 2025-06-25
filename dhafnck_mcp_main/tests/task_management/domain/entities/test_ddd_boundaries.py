@@ -324,7 +324,7 @@ class TestDDDLayerBoundaries:
         import fastmcp.task_management.infrastructure.repositories.json_task_repository
         
         # Interface layer (outermost) - depends on all inner layers
-        import fastmcp.task_management.interface.mcp_tools
+        import fastmcp.task_management.interface.consolidated_mcp_tools
         
         # All imports should succeed without circular dependencies
         assert True  # If we get here, no circular imports exist

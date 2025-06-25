@@ -24,11 +24,9 @@ class TestCallAgentUseCase:
         """Create a temporary directory structure for testing"""
         with tempfile.TemporaryDirectory() as temp_dir:
             cursor_agent_dir = Path(temp_dir)
-            yaml_lib_dir = cursor_agent_dir / "yaml-lib"
-            yaml_lib_dir.mkdir()
             
-            # Create test agent directory
-            test_agent_dir = yaml_lib_dir / "test_agent"
+            # Create test agent directory directly under cursor_agent_dir
+            test_agent_dir = cursor_agent_dir / "test_agent"
             test_agent_dir.mkdir()
             
             # Create test YAML file

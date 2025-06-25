@@ -1190,3 +1190,57 @@ class ConsolidatedMCPTools:
     def register_tools(self, mcp: "FastMCP"):
         """Register all consolidated MCP tools using the orchestrator"""
         self._tool_orchestrator.register_all_tools(mcp)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# 🧪 SIMPLIFIED MULTI-AGENT TOOLS (FOR TESTING AND BACKWARD COMPATIBILITY)
+# ═══════════════════════════════════════════════════════════════════
+
+class SimpleMultiAgentTools:
+    """Simplified multi-agent tools for testing and backward compatibility"""
+    
+    def __init__(self, projects_file_path: Optional[str] = None):
+        self._path_resolver = PathResolver()
+        self._project_manager = ProjectManager(self._path_resolver, projects_file_path)
+    
+    def create_project(self, project_id: str, name: str, description: str = None) -> Dict[str, Any]:
+        """Create a new project"""
+        return self._project_manager.create_project({
+            'project_id': project_id,
+            'name': name,
+            'description': description or f"Project: {name}"
+        })
+    
+    def register_agent(self, project_id: str, agent_id: str, name: str, call_agent: str = None) -> Dict[str, Any]:
+        """Register an agent to a project"""
+        return self._project_manager.register_agent(project_id, {
+            'agent_id': agent_id,
+            'name': name,
+            'call_agent': call_agent or f"@{agent_id}"
+        })
+    
+    def get_agents(self, project_id: str) -> Dict[str, Any]:
+        """Get all agents for a project"""
+        return self._project_manager.get_agents(project_id)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# 🔧 UTILITY FUNCTIONS AND CONSTANTS
+# ═══════════════════════════════════════════════════════════════════
+
+# Constants for backward compatibility
+PROJECTS_FILE = "projects.json"
+
+def find_project_root() -> Path:
+    """Find project root directory"""
+    return PROJECT_ROOT
+
+def ensure_brain_dir(brain_dir: Optional[str] = None) -> Path:
+    """Ensure brain directory exists"""
+    if brain_dir:
+        brain_path = Path(brain_dir)
+    else:
+        brain_path = PathResolver().brain_dir
+    
+    brain_path.mkdir(parents=True, exist_ok=True)
+    return brain_path
