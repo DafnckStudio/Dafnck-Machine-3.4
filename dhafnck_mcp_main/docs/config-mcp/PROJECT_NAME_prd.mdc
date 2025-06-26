@@ -1,0 +1,15 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Setup Phase 1
+This is begin phase of project setup,
+Begin chat session, AI need read on projet root 
+when launch chat session need find on $PROJECT_PATH/$PROJECT_NAME/README.md existe or not
+if exist replace all content here call_agent() for replace all content by Product Requirements Documents (PRD)
+if not exist demande user descripte his idea for make PRD product
+
+All content on this file need clear, then replace by call_agent() documentation
+
+Next phase: read .cursor/rules/$PROJECT_NAME_technical_architect.mdc

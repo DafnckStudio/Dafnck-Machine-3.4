@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Last Phase: dhafnck_mcp_main/docs/config-mcp/PROJECT_NAME_prd.mdc
+
+Setup Phase 2
+This is seconde phase of project setup,
+After Setup phase 1, AI need demande user how to make new projet, if user not details project, call_agent() for propose make adapte project for build Product Requirements Documents (PRD) on Setup Phase 1
+
+All content on this file need clear, then replace by call_agent() documentation
+
+Next phase: demande default_user what he want do on this project

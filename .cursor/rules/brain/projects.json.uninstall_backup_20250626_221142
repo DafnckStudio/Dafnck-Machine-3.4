@@ -1,0 +1,80 @@
+{
+  "dhafnck_mcp_main": {
+    "id": "dhafnck_mcp_main",
+    "name": "DhafnckMCP - Advanced MCP Server Framework",
+    "description": "A comprehensive MCP server framework with integrated task management, multi-agent orchestration, and cursor rules integration capabilities. Built with FastMCP and Domain-Driven Design architecture.",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      },
+      "v1.0.0beta": {
+        "id": "v1.0.0beta",
+        "name": "Version 1.0.0 Beta Development",
+        "description": "Current development branch focusing on beta testing, test suite stabilization, and performance optimization."
+      }
+    },
+    "registered_agents": {
+      "coding_agent": {
+        "id": "coding_agent",
+        "name": "Coding Agent",
+        "call_agent": "@coding-agent"
+      },
+      "test_orchestrator_agent": {
+        "id": "test_orchestrator_agent",
+        "name": "Test Orchestrator Agent",
+        "call_agent": "@test-orchestrator-agent"
+      }
+    },
+    "agent_assignments": {
+      "coding_agent": [
+        "v1.0.0beta"
+      ],
+      "test_orchestrator_agent": [
+        "v1.0.0beta"
+      ]
+    },
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "chaxiaiv2": {
+    "id": "chaxiaiv2",
+    "name": "ChaxiAI v2 - Futuristic Taxi Chatbot Platform",
+    "description": "\ud83d\ude97 ChaxiAI v2 - Plateforme SaaS de Chatbots IA pour l'Industrie du Taxi\n\n## \ud83c\udfaf Vue d'ensemble\nChaxiAI v2 est une plateforme SaaS r\u00e9volutionnaire qui permet aux compagnies de taxi d'exploiter la puissance de l'IA conversationnelle pour automatiser les r\u00e9servations, am\u00e9liorer l'exp\u00e9rience client et optimiser leurs op\u00e9rations via WhatsApp et interfaces web.\n\n## \ud83d\udee0\ufe0f Stack Technique\n- **Frontend**: Next.js 14, React 18, TypeScript\n- **Backend**: Firebase (Auth, Firestore, Storage, Admin)\n- **Styling**: Tailwind CSS avec animations personnalis\u00e9es\n- **Animations**: Framer Motion pour des transitions fluides\n- **Paiements**: Stripe pour la gestion des abonnements\n- **Communication**: WhatsApp Business API, Nodemailer\n- **Orchestration**: Multi-Agent MCP Server (dhafnck_mcp)\n- **D\u00e9ploiement**: Vercel (frontend), Firebase (backend)\n\n## \ud83d\ude80 Fonctionnalit\u00e9s Cl\u00e9s\n- \ud83e\udd16 **Chatbots IA Sp\u00e9cialis\u00e9s**: IA conversationnelle form\u00e9e pour l'industrie du taxi\n- \ud83d\udcf1 **Int\u00e9gration WhatsApp**: API WhatsApp Business pour communication client\n- \ud83d\udd10 **Authentification Google**: Connexion s\u00e9curis\u00e9e avec Firebase Auth\n- \ud83d\udcca **Tableau de Bord Analytics**: M\u00e9triques en temps r\u00e9el et insights business\n- \ud83d\udcb3 **Gestion Abonnements**: Syst\u00e8me de facturation Stripe multi-niveaux\n- \ud83d\udcc5 **Int\u00e9gration Calendrier**: Synchronisation Google Calendar pour planification\n- \ud83c\udf19 **Interface Futuriste**: Th\u00e8me sombre avec accents bleus et animations\n- \ud83d\udd04 **Orchestration Multi-Agents**: Syst\u00e8me MCP pour gestion de t\u00e2ches automatis\u00e9e\n\n## \ud83d\udcc8 Objectifs Business\n- **P\u00e9n\u00e9tration March\u00e9**: 5% du march\u00e9 europ\u00e9en de transformation digitale taxi (24 mois)\n- **Revenus**: \u20ac500K ARR Ann\u00e9e 1, \u20ac2M ARR Ann\u00e9e 2\n- **Clients**: 500+ compagnies de taxi embarqu\u00e9es Ann\u00e9e 1\n- **Satisfaction**: 90%+ satisfaction client, <10% churn mensuel\n\n## \ud83c\udfd7\ufe0f Architecture Syst\u00e8me\n- **Multi-Agent Orchestration**: Syst\u00e8me dhafnck_mcp pour coordination agents\n- **Microservices**: Services Firebase d\u00e9coupl\u00e9s et scalables\n- **Real-time**: WebSockets pour mises \u00e0 jour instantan\u00e9es\n- **S\u00e9curit\u00e9**: Conformit\u00e9 GDPR, chiffrement end-to-end\n- **Performance**: <200ms temps r\u00e9ponse API, 99.9% uptime\n\n## \ud83d\udcf1 Int\u00e9grations\n- **WhatsApp Business API**: Communication client automatis\u00e9e\n- **Google Services**: OAuth2, Calendar, Maps APIs\n- **Stripe**: Traitement paiements et gestion abonnements\n- **N8N**: Automatisation workflows et int\u00e9grations tierces\n- **Firebase**: Authentification, base de donn\u00e9es, stockage\n\n## \ud83c\udfa8 Design System\n- **Th\u00e8me**: Interface sombre futuriste avec accents bleus (#1e40af, #3b82f6)\n- **Typographie**: Famille de polices Inter pour lisibilit\u00e9 moderne\n- **Responsive**: Design mobile-first avec CSS Grid/Flexbox\n- **Icons**: Biblioth\u00e8que Lucide React pour coh\u00e9rence\n- **Animations**: Framer Motion pour micro-interactions fluides\n\n## \ud83d\udd12 S\u00e9curit\u00e9 & Conformit\u00e9\n- **GDPR**: Conformit\u00e9 protection donn\u00e9es europ\u00e9ennes\n- **PCI DSS**: Standards s\u00e9curit\u00e9 industrie cartes paiement\n- **JWT**: Authentification API s\u00e9curis\u00e9e\n- **Chiffrement**: Protection donn\u00e9es sensibles end-to-end\n- **Audits**: \u00c9valuations s\u00e9curit\u00e9 et vuln\u00e9rabilit\u00e9s r\u00e9guli\u00e8res\n\n## \ud83d\udcca M\u00e9triques Succ\u00e8s\n- **MAU**: 1000+ utilisateurs actifs mensuels Ann\u00e9e 1\n- **Interactions**: 10,000+ interactions clients quotidiennes\n- **Temps R\u00e9ponse**: <3 secondes g\u00e9n\u00e9ration r\u00e9ponse chatbot\n- **NPS**: >50 Net Promoter Score\n- **CLV**: >\u20ac1,200 valeur vie client\n\n## \ud83c\udf0d D\u00e9ploiement & Scalabilit\u00e9\n- **Production**: Vercel pour frontend, Firebase pour backend\n- **Monitoring**: Surveillance temps r\u00e9el avec alertes automatiques\n- **Backup**: Sauvegardes automatiques quotidiennes, r\u00e9tention 30 jours\n- **Scalabilit\u00e9**: Support 10,000+ compagnies taxi, 100,000+ interactions/jour\n- **CDN**: Int\u00e9gration CDN pour livraison contenu globale\n\n## \ud83d\udd04 Workflow D\u00e9veloppement\n- **Multi-Agent**: Orchestration avec agents sp\u00e9cialis\u00e9s (@coding-agent, @test-orchestrator-agent, etc.)\n- **Task Management**: Syst\u00e8me MCP pour gestion t\u00e2ches hi\u00e9rarchiques\n- **CI/CD**: D\u00e9ploiement automatis\u00e9 avec tests int\u00e9gr\u00e9s\n- **Code Quality**: Reviews code, tests unitaires, couverture >80%\n\nProjet Path: /home/daihungpham/__projects__/chaxiai/chaxiaiv2\nStatus: D\u00e9veloppement Actif | Phase: MVP Enhancement\nDerni\u00e8re MAJ: Janvier 2025",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      },
+      "dashboard_enhancements": {
+        "id": "dashboard_enhancements",
+        "name": "Dashboard Enhancements",
+        "description": "ChaxiAI Dashboard Enhancement Tasks - 28 tasks across 3 phases for completing the remaining 5-10% of dashboard functionality"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "chaxiaiv2_dashboard_enhancements": {
+    "id": "chaxiaiv2_dashboard_enhancements",
+    "name": "ChaxiAI Dashboard Enhancements",
+    "description": "Implementation of remaining dashboard features and enhancements for ChaxiAI v2 project based on technical analysis",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      },
+      "dashboard_enhancements": {
+        "id": "dashboard_enhancements",
+        "name": "Dashboard Enhancement Tasks",
+        "description": "Comprehensive task breakdown for implementing remaining dashboard features based on project analysis"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  }
+}

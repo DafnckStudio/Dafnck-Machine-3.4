@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "test_simple": {
-      "command": "node",
-      "args": ["-e", "console.log('Test MCP server'); process.stdin.pipe(process.stdout);"],
-      "transport": "stdio"
-    }
-  }
-} 
