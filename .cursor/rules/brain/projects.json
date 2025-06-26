@@ -8,33 +8,25 @@
         "id": "main",
         "name": "Main Tasks",
         "description": "Main task tree"
-      },
-      "v1.0.0beta": {
-        "id": "v1.0.0beta",
-        "name": "Version 1.0.0 Beta Development",
-        "description": "Current development branch focusing on beta testing, test suite stabilization, and performance optimization."
       }
     },
-    "registered_agents": {
-      "coding_agent": {
-        "id": "coding_agent",
-        "name": "Coding Agent",
-        "call_agent": "@coding-agent"
-      },
-      "test_orchestrator_agent": {
-        "id": "test_orchestrator_agent",
-        "name": "Test Orchestrator Agent",
-        "call_agent": "@test-orchestrator-agent"
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "my_awesome_app": {
+    "id": "my_awesome_app",
+    "name": "My Awesome Application Platform",
+    "description": "A comprehensive web application platform for managing customer relationships and business operations with advanced analytics and reporting capabilities",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
       }
     },
-    "agent_assignments": {
-      "coding_agent": [
-        "v1.0.0beta"
-      ],
-      "test_orchestrator_agent": [
-        "v1.0.0beta"
-      ]
-    },
+    "registered_agents": {},
+    "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z"
   }
 }

@@ -77,10 +77,9 @@ def clean_test_projects(projects_file):
         print(f"❌ Error reading projects file: {e}")
         return
     
-    # Comprehensive test project patterns based on actual test projects found
-    test_project_patterns = [
-        # Basic test patterns
-        "test",
+    # Define CLEAR test project patterns - only obvious test projects
+    obvious_test_patterns = [
+        # Basic test patterns - clearly test projects
         "test_project",
         "test_project2", 
         "test_project3",
@@ -89,14 +88,18 @@ def clean_test_projects(projects_file):
         "test_isolated",
         "test_isolated_mcp",
         "isolation_test",
-        "project1",
+        "proj1",  # Generic test project names
+        "proj2",
+        "project1",  # Generic test project names  
         "project2",
+        "default_project",  # Default test project
+        "workflow_proj",  # Test workflow project
         
         # Auto-detection test patterns
         "test_auto_detect",
         "test_from_tmp",
         
-        # E2E test patterns (exact matches and patterns)
+        # E2E test patterns (exact matches)
         "e2e_project_1",
         "e2e_lifecycle_project",
         
@@ -107,9 +110,11 @@ def clean_test_projects(projects_file):
     
     # Regex patterns for dynamic test projects (with timestamps)
     test_project_regex_patterns = [
-        r"e2e_querying_project_\d+",
-        r"e2e_collaboration_project_\d+", 
-        r"e2e_dependency_project_\d+",
+        r"^e2e_querying_project_\d+$",
+        r"^e2e_collaboration_project_\d+$", 
+        r"^e2e_dependency_project_\d+$",
+        r"^test_.*_\d+$",  # test_something_123456
+        r"^temp_.*$",      # temp_anything
     ]
     
     # Track what we're removing
@@ -123,39 +128,80 @@ def clean_test_projects(projects_file):
         # Check if this looks like a test project
         is_test_project = False
         
-        # Check by exact ID match
-        if project_id.lower() in [p.lower() for p in test_project_patterns]:
+        # 1. Check by exact ID match with obvious test patterns
+        if project_id.lower() in [p.lower() for p in obvious_test_patterns]:
             is_test_project = True
+            print(f"🎯 Test project (exact match): {project_id}")
         
-        # Check by regex patterns for dynamic test projects
-        for pattern in test_project_regex_patterns:
-            if re.match(pattern, project_id):
-                is_test_project = True
-                break
+        # 2. Check by regex patterns for dynamic test projects
+        if not is_test_project:
+            for pattern in test_project_regex_patterns:
+                if re.match(pattern, project_id, re.IGNORECASE):
+                    is_test_project = True
+                    print(f"🎯 Test project (regex match): {project_id}")
+                    break
         
-        # Check by name containing test keywords
-        if isinstance(project, dict) and "name" in project:
+        # 3. Check for obvious test project names (very specific)
+        if not is_test_project and isinstance(project, dict) and "name" in project:
             project_name = project["name"].lower()
-            test_keywords = ["test", "isolated", "e2e", "migration", "temp"]
-            if any(keyword in project_name for keyword in test_keywords):
+            # Only flag if name explicitly says it's for testing
+            obvious_test_names = [
+                "test project",
+                "e2e test project", 
+                "migration test project",
+                "isolated test",
+                "temp project",
+                "testing project"
+            ]
+            if any(test_name in project_name for test_name in obvious_test_names):
                 is_test_project = True
+                print(f"🎯 Test project (test name): {project_id}")
         
-        # Check for test-specific creation dates (like the hardcoded test date)
-        if isinstance(project, dict) and "created_at" in project:
-            if project["created_at"] == "2025-01-01T00:00:00Z":
-                is_test_project = True
-        
-        # Check for test-specific paths (temp directories)
-        if isinstance(project, dict) and "path" in project:
+        # 4. Check for test-specific paths (temp directories)
+        if not is_test_project and isinstance(project, dict) and "path" in project:
             project_path = project["path"].lower()
-            if "/tmp/" in project_path or "temp" in project_path:
+            if "/tmp/" in project_path or "/temp/" in project_path:
                 is_test_project = True
+                print(f"🎯 Test project (temp path): {project_id}")
         
-        # Check for test-specific descriptions
-        if isinstance(project, dict) and "description" in project:
+        # 5. Check for explicit test descriptions
+        if not is_test_project and isinstance(project, dict) and "description" in project:
             description = project["description"].lower()
-            if any(keyword in description for keyword in ["test", "testing", "e2e", "migration"]):
+            # Only flag if description explicitly mentions it's for testing
+            test_phrases = [
+                "for testing",
+                "test project", 
+                "e2e testing",
+                "migration testing",
+                "temporary project",
+                "testing purposes"
+            ]
+            if any(phrase in description for phrase in test_phrases):
                 is_test_project = True
+                print(f"🎯 Test project (test description): {project_id}")
+        
+        # PROTECTION: If project has a meaningful name that doesn't look like a test,
+        # and has a real description, protect it even if other criteria match
+        if is_test_project and isinstance(project, dict):
+            project_name = project.get("name", "").lower()
+            project_desc = project.get("description", "").lower()
+            
+            # Signs of a legitimate project
+            has_meaningful_name = (
+                len(project_name) > 10 and  # Longer than simple test names
+                not any(word in project_name for word in ["test", "temp", "proj"]) and
+                any(word in project_name for word in ["framework", "server", "application", "system", "platform"])
+            )
+            
+            has_meaningful_description = (
+                len(project_desc) > 50 and  # Substantial description
+                not any(phrase in project_desc for phrase in ["for testing", "test project"]) and
+                any(word in project_desc for word in ["comprehensive", "framework", "production", "development"])
+            )
+            
+            if has_meaningful_name or has_meaningful_description:
+                is_test_project = False
+                print(f"🛡️  Protecting project with meaningful content: {project_id}")
         
         if is_test_project:
             removed_projects.append(project_id)
