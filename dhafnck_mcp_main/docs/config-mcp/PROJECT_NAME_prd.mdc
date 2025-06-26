@@ -3,13 +3,20 @@ description:
 globs: 
 alwaysApply: true
 ---
-Setup Phase 1
-This is begin phase of project setup,
-Begin chat session, AI need read on projet root 
-when launch chat session need find on $PROJECT_PATH/$PROJECT_NAME/README.md existe or not
-if exist replace all content here call_agent() for replace all content by Product Requirements Documents (PRD)
-if not exist demande user descripte his idea for make PRD product
+<PRD content will be write here>
 
-All content on this file need clear, then replace by call_agent() documentation
+-- begin clear --
+**Setup Phase 1: PRD Generate**
 
-Next phase: read .cursor/rules/$PROJECT_NAME_technical_architect.mdc
+This is the beginning phase of the project setup.
+
+- When a chat session begins, the AI should read from the project root.
+- Upon launching the chat session, the AI must check if `$PROJECT_PATH/$PROJECT_NAME/README.md` exists.
+  - If it exists, replace all content here by calling `call_agent()` to generate the Product Requirements Document (PRD) based on the README.
+  - If it does not exist, prompt the user to describe their idea so the AI can create a PRD for the product.
+- Write PRD content
+
+**IMPORTANT** All content in this area (from begin clear to end clear) should be cleared before go to next step, add reference link this file to .cursor/rules/dhafnck_mcp.mdc
+
+**Next phase:** Read `.cursor/rules/$PROJECT_NAME_technical_architect.mdc`
+-- end clear --

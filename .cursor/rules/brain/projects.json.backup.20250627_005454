@@ -59,17 +59,18 @@
   },
   "project_test": {
     "id": "project_test",
-    "name": "Framework for Managing MDC/MD File Rules",
-    "description": "A framework to manage rule files written in .mdx extension, exportable to .md or .mdc, displayable on HTML web, with graphical dependency visualization and easy linking between files using markdown path links.",
+    "name": "project_test",
+    "description": "AI-powered project with MCP server integration",
+    "path": "/home/daihungpham/project_test",
     "task_trees": {
       "main": {
         "id": "main",
         "name": "Main Tasks",
-        "description": "Main task tree"
+        "description": "Main task tree for project_test"
       }
     },
     "registered_agents": {},
     "agent_assignments": {},
-    "created_at": "2025-01-01T00:00:00Z"
+    "created_at": "2025-06-27T00:31:43.220149Z"
   }
 }

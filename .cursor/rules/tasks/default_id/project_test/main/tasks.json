@@ -1,0 +1,28 @@
+{
+  "tasks": [
+    {
+      "id": "20250627001",
+      "title": "Draft PRD for Framework Managing MDC/MD File Rules",
+      "description": "Create a Product Requirements Document (PRD) for a framework that manages rule files written in .mdx, can export to .md or .mdc, display on HTML web, visualize dependencies graphically, and support easy linking between files using markdown path links.",
+      "project_id": "project_test",
+      "status": "in_progress",
+      "priority": "high",
+      "details": "- Use Next.js for the web framework.\n- Core features for MVP:\n  1. Import .md and .mdc files and convert them to .mdx.\n  2. Import .mdx files and convert them to .md and .mdc.\n  3. Export .md, .mdc, and .mdx files organized by categories (folders).\n  4. Dependency visualization as a graph, similar to Obsidian.\n  5. List and search files.\n- Focus on delivering these features in the MVP version.\n- PRD should be generated in Markdown format for easy review and collaboration.",
+      "estimatedEffort": null,
+      "assignees": [
+        "@prd_architect_agent"
+      ],
+      "labels": [
+        "prd",
+        "framework",
+        "mdx",
+        "dependency-visualization"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T22:57:38.501062+00:00",
+      "updated_at": "2025-06-26T23:02:25.684227+00:00"
+    }
+  ]
+}

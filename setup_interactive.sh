@@ -275,8 +275,9 @@ get_project_name() {
     
     # Check if project already exists in brain/projects.json
     local check_result=$(check_existing_project "$PROJECT_NAME")
+    local first_line=$(echo "$check_result" | head -n 1)
     
-    if [[ "$check_result" == "exists" ]]; then
+    if [[ "$first_line" == "exists" ]]; then
         echo ""
         print_warning "⚠️  Project '$PROJECT_NAME' already exists in the system!"
         echo -e "${RED}WARNING: If you continue, the existing project will be completely deleted.${NC}"
@@ -284,8 +285,7 @@ get_project_name() {
         echo ""
         
         # Get existing project path
-        local existing_path_info=$(check_existing_project "$PROJECT_NAME")
-        local existing_path=$(echo "$existing_path_info" | tail -n 1)
+        local existing_path=$(echo "$check_result" | tail -n 1)
         
         if [[ "$existing_path" != "unknown_path" && "$existing_path" != "exists" ]]; then
             echo -e "${YELLOW}Existing project location: $existing_path${NC}"

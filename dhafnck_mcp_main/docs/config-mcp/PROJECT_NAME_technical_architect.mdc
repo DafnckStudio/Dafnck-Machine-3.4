@@ -3,12 +3,20 @@ description:
 globs: 
 alwaysApply: true
 ---
-Last Phase: dhafnck_mcp_main/docs/config-mcp/PROJECT_NAME_prd.mdc
+<Technical Architecture content will be write here>
 
-Setup Phase 2
-This is seconde phase of project setup,
-After Setup phase 1, AI need demande user how to make new projet, if user not details project, call_agent() for propose make adapte project for build Product Requirements Documents (PRD) on Setup Phase 1
+-- begin clear --
+**Previous Phase:** `dhafnck_mcp_main/docs/config-mcp/PROJECT_NAME_prd.mdc`
 
-All content on this file need clear, then replace by call_agent() documentation
+**Setup Phase 2: Technical Architecture Generate**
 
-Next phase: demande default_user what he want do on this project
+This is the second phase of the project setup.
+
+- After completing Setup Phase 1, the AI should ask the user how they want to proceed with the new project.
+- If the user does not provide detailed project information, the AI should use `call_agent()` to propose an appropriate project structure to support the Product Requirements Document (PRD) created in Setup Phase 1.
+- Write Technical Architecture content 
+
+**IMPORTANT** All content in this area (from begin clear to end clear) should be cleared before go to next step, add reference link this file to .cursor/rules/dhafnck_mcp.mdc
+
+**Next phase:** Ask the default_user what they want to do next in this project.
+-- end clear --
