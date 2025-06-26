@@ -255,6 +255,83 @@ def clean_test_task_files():
         print("✨ No test task directories found to clean")
 
 
+def clean_test_context_files():
+    """Clean up test context files from .cursor/rules/contexts/ directories"""
+    # Find the workspace root that contains test data
+    current_dir = Path(__file__).parent
+    
+    # Walk up the directory tree to find .cursor directories with test data
+    workspace_root = None
+    check_dir = current_dir
+    
+    # Look for workspace indicators (go up max 10 levels)
+    for _ in range(10):
+        if (check_dir / ".cursor").exists():
+            projects_file = check_dir / ".cursor" / "rules" / "brain" / "projects.json"
+            if projects_file.exists():
+                # Check if this projects.json has test data by looking for test projects
+                try:
+                    with open(projects_file, 'r') as f:
+                        data = json.load(f)
+                    # Look for test project indicators
+                    test_indicators = ["test", "proj1", "proj2", "e2e", "migration", "default_project"]
+                    has_test_data = any(
+                        any(indicator in project_id.lower() for indicator in test_indicators)
+                        for project_id in data.keys()
+                    )
+                    if has_test_data:
+                        workspace_root = check_dir
+                        break
+                except (json.JSONDecodeError, Exception):
+                    pass
+        
+        parent = check_dir.parent
+        if parent == check_dir:  # reached filesystem root
+            break
+        check_dir = parent
+    
+    # Fallback: use the agentic-project workspace
+    if workspace_root is None:
+        workspace_root = Path("/home/daihungpham/agentic-project")
+    
+    cursor_rules_dir = workspace_root / ".cursor" / "rules"
+    contexts_dir = cursor_rules_dir / "contexts"
+    
+    if not contexts_dir.exists():
+        print("ℹ️  No contexts directory found")
+        return
+    
+    # Look for test user directories and test project directories
+    removed_dirs = []
+    
+    for user_dir in contexts_dir.iterdir():
+        if not user_dir.is_dir():
+            continue
+            
+        # Check if this is a test user directory
+        if user_dir.name == "default_id":  # Default test user
+            for project_dir in user_dir.iterdir():
+                if not project_dir.is_dir():
+                    continue
+                
+                # Check if this looks like a test project directory
+                project_name = project_dir.name
+                if any(pattern in project_name.lower() for pattern in [
+                    "test", "e2e", "migration", "temp", "proj1", "proj2", "default_project", "workflow", "project_a"
+                ]):
+                    try:
+                        shutil.rmtree(project_dir)
+                        removed_dirs.append(str(project_dir))
+                        print(f"🗑️  Removed test context directory: {project_dir}")
+                    except Exception as e:
+                        print(f"❌ Error removing {project_dir}: {e}")
+    
+    if removed_dirs:
+        print(f"📁 Cleaned {len(removed_dirs)} test context directories")
+    else:
+        print("✨ No test context directories found to clean")
+
+
 def main():
     """Main cleanup function"""
     print("🧹 Starting comprehensive test data cleanup...")
@@ -271,6 +348,9 @@ def main():
     
     # Clean test task files
     clean_test_task_files()
+    
+    # Clean test context files
+    clean_test_context_files()
     
     print("✅ Cleanup completed!")
     if backup_file:
