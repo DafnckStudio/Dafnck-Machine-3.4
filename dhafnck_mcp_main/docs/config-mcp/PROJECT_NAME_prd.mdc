@@ -15,8 +15,9 @@ This is the beginning phase of the project setup.
   - If it exists, replace all content here by calling `call_agent()` to generate the Product Requirements Document (PRD) based on the README.
   - If it does not exist, prompt the user to describe their idea so the AI can create a PRD for the product.
 - Write PRD content
+- Add reference link this file to .cursor/rules/dhafnck_mcp.mdc (## On chat:  **Begin chat session**: AI read <`.cursor/rules/PROJECT_NAME_prd.mdc`(name + link absolute from root)> )
 
-**IMPORTANT** All content in this area (from begin clear to end clear) should be cleared before go to next step, add reference link this file to .cursor/rules/dhafnck_mcp.mdc
+**IMPORTANT** All content in this area (from begin clear to end clear) should be cleared before go to next step
 
 **Next phase:** Read `.cursor/rules/$PROJECT_NAME_technical_architect.mdc`
 -- end clear --
