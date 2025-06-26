@@ -14,7 +14,7 @@ from typing import Dict, Any, Optional
 from contextlib import contextmanager
 
 
-class TestEnvironmentConfig:
+class IsolatedTestEnvironmentConfig:
     """Configuration for isolated test environment"""
     
     def __init__(self, test_id: Optional[str] = None):
@@ -178,7 +178,7 @@ def isolated_test_environment(test_id: Optional[str] = None):
             # All files have .test.json suffix
             pass
     """
-    config = TestEnvironmentConfig(test_id)
+    config = IsolatedTestEnvironmentConfig(test_id)
     
     try:
         yield config
