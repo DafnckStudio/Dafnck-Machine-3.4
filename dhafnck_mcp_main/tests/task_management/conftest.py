@@ -194,6 +194,14 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "application: Application layer tests")
     config.addinivalue_line("markers", "infrastructure: Infrastructure layer tests")
     config.addinivalue_line("markers", "interface: Interface layer tests")
+    
+    # Register cleanup plugin
+    try:
+        from .utilities.pytest_cleanup_plugin import cleanup_plugin
+        config.pluginmanager.register(cleanup_plugin, "test_data_cleanup")
+    except ImportError:
+        # Fallback if plugin import fails
+        pass
 
 
 # Event loop fixture for async tests
@@ -202,4 +210,58 @@ def event_loop():
     """Create an instance of the default event loop for the test session."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
-    loop.close() 
+    loop.close()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def cleanup_all_test_data():
+    """Session-scoped fixture to clean up all test data after test session completes."""
+    yield
+    # Clean up all test projects and data after all tests complete
+    try:
+        import subprocess
+        import sys
+        from pathlib import Path
+        
+        # Run the comprehensive cleanup script
+        script_path = Path(__file__).parent / "utilities" / "cleanup_test_data.py"
+        if script_path.exists():
+            print("\n🧹 Running comprehensive test data cleanup...")
+            result = subprocess.run([sys.executable, str(script_path)], 
+                                  capture_output=True, text=True)
+            if result.returncode == 0:
+                print("✅ All test data cleanup completed successfully")
+                # Print cleanup output for visibility
+                if result.stdout:
+                    print(result.stdout)
+            else:
+                print(f"⚠️  Test data cleanup had issues:")
+                if result.stderr:
+                    print(result.stderr)
+                if result.stdout:
+                    print(result.stdout)
+        else:
+            print(f"⚠️  Cleanup script not found at: {script_path}")
+    except Exception as e:
+        print(f"❌ Error during test data cleanup: {e}")
+
+
+@pytest.fixture(autouse=True)
+def isolate_test_environment():
+    """Fixture to ensure test isolation by using temporary directories when possible."""
+    # Store original environment variables
+    original_env = {}
+    env_vars_to_isolate = ['TASKS_JSON_PATH', 'PROJECT_ROOT', 'CURSOR_RULES_PATH']
+    
+    for var in env_vars_to_isolate:
+        if var in os.environ:
+            original_env[var] = os.environ[var]
+    
+    yield
+    
+    # Restore original environment variables
+    for var in env_vars_to_isolate:
+        if var in original_env:
+            os.environ[var] = original_env[var]
+        elif var in os.environ:
+            del os.environ[var] 

@@ -16,65 +16,25 @@
       "dependencies": [],
       "subtasks": [],
       "dueDate": null,
-      "created_at": "2025-06-26T01:54:20.785749+00:00",
-      "updated_at": "2025-06-26T01:54:20.785749+00:00"
+      "created_at": "2025-06-26T09:56:15.979525+00:00",
+      "updated_at": "2025-06-26T09:56:15.979525+00:00"
     },
     {
       "id": "20250626002",
-      "title": "Auto Rule Integration Test",
-      "description": "Test rule generation on get_task",
+      "title": "Persistence Test",
+      "description": "Test persistence",
       "project_id": null,
       "status": "todo",
-      "priority": "high",
+      "priority": "medium",
       "details": "",
       "estimatedEffort": "",
-      "assignees": [
-        "senior_developer"
-      ],
+      "assignees": [],
       "labels": [],
       "dependencies": [],
       "subtasks": [],
       "dueDate": null,
-      "created_at": "2025-06-26T07:39:20.868467+00:00",
-      "updated_at": "2025-06-26T07:39:20.868467+00:00"
-    },
-    {
-      "id": "20250626003",
-      "title": "Auto Rule Integration Test",
-      "description": "Test rule generation on get_task",
-      "project_id": null,
-      "status": "todo",
-      "priority": "high",
-      "details": "",
-      "estimatedEffort": "",
-      "assignees": [
-        "senior_developer"
-      ],
-      "labels": [],
-      "dependencies": [],
-      "subtasks": [],
-      "dueDate": null,
-      "created_at": "2025-06-26T07:40:57.767417+00:00",
-      "updated_at": "2025-06-26T07:40:57.767417+00:00"
-    },
-    {
-      "id": "20250626004",
-      "title": "Auto Rule Integration Test",
-      "description": "Test rule generation on get_task",
-      "project_id": null,
-      "status": "todo",
-      "priority": "high",
-      "details": "",
-      "estimatedEffort": "",
-      "assignees": [
-        "senior_developer"
-      ],
-      "labels": [],
-      "dependencies": [],
-      "subtasks": [],
-      "dueDate": null,
-      "created_at": "2025-06-26T07:56:08.174307+00:00",
-      "updated_at": "2025-06-26T07:56:08.174307+00:00"
+      "created_at": "2025-06-26T09:56:16.004324+00:00",
+      "updated_at": "2025-06-26T09:56:16.004324+00:00"
     }
   ],
   "metadata": {

@@ -42,6 +42,28 @@ def setup_teardown(mcp_server_instance):
     yield
     # No explicit teardown needed as everything is in-memory and function-scoped.
 
+@pytest.fixture(scope="session", autouse=True)
+def cleanup_test_projects():
+    """Session-scoped fixture to clean up test projects after all tests complete."""
+    yield
+    # Clean up test projects after all tests in this session complete
+    try:
+        import subprocess
+        import sys
+        from pathlib import Path
+        
+        # Run the cleanup script
+        script_path = Path(__file__).parent.parent / "utilities" / "cleanup_test_data.py"
+        if script_path.exists():
+            result = subprocess.run([sys.executable, str(script_path)], 
+                                  capture_output=True, text=True)
+            if result.returncode == 0:
+                print("✅ E2E test cleanup completed successfully")
+            else:
+                print(f"⚠️  E2E test cleanup had issues: {result.stderr}")
+    except Exception as e:
+        print(f"❌ Error during E2E test cleanup: {e}")
+
 
 class TestE2EUserJourneys:
     """End-to-end tests for critical user journeys."""

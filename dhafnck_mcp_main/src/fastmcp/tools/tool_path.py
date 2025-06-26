@@ -8,9 +8,11 @@ def find_project_root(start_path: Path = None) -> Path:
     
     Priority order:
     1. PROJECT_ROOT_PATH environment variable (if set)
-    2. Current working directory (if it contains .cursor/rules/ or .git)
-    3. Search upwards from start_path for project markers
-    4. Fallback to current working directory
+    2. Search upwards for ___root___ file (highest priority explicit marker)
+    3. Current working directory (if it contains ___root___ file)
+    4. Search upwards for .git directory
+    5. Search upwards for other project markers (.cursor/rules/, etc.)
+    6. Fallback to current working directory
     
     This makes the system project-agnostic and portable across different locations.
 
@@ -27,9 +29,9 @@ def find_project_root(start_path: Path = None) -> Path:
         if project_root.exists():
             return project_root
     
-    # Priority 2: Check current working directory first for .git specifically
+    # Priority 2: Check current working directory first for ___root___ file
     cwd = Path.cwd()
-    if (cwd / ".git").exists():
+    if (cwd / "___root___").exists():
         return cwd
     
     # Priority 3: Search upwards from start_path
@@ -48,12 +50,17 @@ def find_project_root(start_path: Path = None) -> Path:
     if current.is_file():
         current = current.parent
     
-    # Search upwards for .git first (highest priority)
+    # Search upwards for ___root___ file first (highest priority)
+    for parent in [current] + list(current.parents):
+        if (parent / "___root___").exists():
+            return parent
+    
+    # Search upwards for .git second (high priority)
     for parent in [current] + list(current.parents):
         if (parent / ".git").exists():
             return parent
     
-    # If no .git found, search for other project markers
+    # If no ___root___ or .git found, search for other project markers
     for parent in [current] + list(current.parents):
         if _is_project_root(parent):
             return parent
@@ -71,7 +78,11 @@ def _is_project_root(path: Path) -> bool:
     Returns:
         bool: True if path appears to be a project root
     """
-    # Check for .git directory (highest priority)
+    # Check for ___root___ file (highest priority explicit marker)
+    if (path / "___root___").exists():
+        return True
+    
+    # Check for .git directory (high priority)
     if (path / ".git").exists():
         return True
     

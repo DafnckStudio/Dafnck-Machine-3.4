@@ -42,6 +42,29 @@ from fastmcp.task_management.interface.consolidated_mcp_server import create_con
 from fastmcp import FastMCP
 
 
+@pytest.fixture(scope="session", autouse=True)
+def cleanup_migration_test_projects():
+    """Session-scoped fixture to clean up migration test projects after all tests complete."""
+    yield
+    # Clean up test projects after all tests in this session complete
+    try:
+        import subprocess
+        import sys
+        from pathlib import Path
+        
+        # Run the cleanup script
+        script_path = Path(__file__).parent.parent / "utilities" / "cleanup_test_data.py"
+        if script_path.exists():
+            result = subprocess.run([sys.executable, str(script_path)], 
+                                  capture_output=True, text=True)
+            if result.returncode == 0:
+                print("✅ Migration test cleanup completed successfully")
+            else:
+                print(f"⚠️  Migration test cleanup had issues: {result.stderr}")
+    except Exception as e:
+        print(f"❌ Error during migration test cleanup: {e}")
+
+
 class TestMigrationIntegration:
     """Comprehensive migration integration tests for task management module."""
     

@@ -6,6 +6,7 @@ from typing import Optional, Dict, Any
 from datetime import datetime
 
 from ...domain.entities.task import Task
+from ....tools.tool_path import find_project_root
 
 
 class ContextGenerator:
@@ -17,9 +18,9 @@ class ContextGenerator:
             self.context_root_path = Path(context_root_path)
         else:
             # Default path: .cursor/rules/contexts/
-            # Get current working directory and navigate to cursor rules
-            current_dir = Path.cwd()
-            self.context_root_path = current_dir / ".cursor" / "rules" / "contexts"
+            # Use find_project_root to get the correct workspace root
+            project_root = find_project_root()
+            self.context_root_path = project_root / ".cursor" / "rules" / "contexts"
     
     def generate_context_file_if_not_exists(self, task: Task, user_id: str = "default_id") -> bool:
         """
