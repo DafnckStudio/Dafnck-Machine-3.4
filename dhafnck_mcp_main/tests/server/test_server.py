@@ -25,7 +25,7 @@ class TestCreateServer:
 
     async def test_non_ascii_description(self):
         """Test that FastMCP handles non-ASCII characters in descriptions correctly"""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool(
             description=(
@@ -54,7 +54,7 @@ class TestTools:
     async def test_mcp_tool_name(self):
         """Test MCPTool name for add_tool (key != tool.name)."""
 
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def fn(x: int) -> int:
@@ -67,7 +67,7 @@ class TestTools:
     async def test_mcp_tool_custom_name(self):
         """Test MCPTool name for add_tool (key != tool.name)."""
 
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool(name="custom_name")
         def fn(x: int) -> int:
@@ -106,7 +106,7 @@ class TestTools:
 
         g_tool = FunctionTool.from_function(g, name="g-tool")
 
-        mcp = FastMCP(tools=[f, g_tool])
+        mcp = FastMCP(tools=[f, g_tool], enable_task_management=False)
 
         tools = await mcp.get_tools()
         assert len(tools) == 2
@@ -160,7 +160,7 @@ class TestToolDecorator:
         assert result[0].text == "3"  # type: ignore[attr-defined]
 
     async def test_tool_decorator_with_description(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool(description="Add two numbers")
         def add(x: int, y: int) -> int:
@@ -284,7 +284,7 @@ class TestToolDecorator:
     
     async def test_tool_decorator_with_tags(self):
         """Test that the tool decorator properly sets tags."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool(tags={"example", "test-tag"})
         def sample_tool(x: int) -> int:

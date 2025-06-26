@@ -573,8 +573,8 @@ class TestDynamicChanges:
 
     async def test_adding_tool_after_mounting(self):
         """Test that tools added after mounting are accessible."""
-        main_app = FastMCP("MainApp")
-        sub_app = FastMCP("SubApp")
+        main_app = FastMCP("MainApp", enable_task_management=False)
+        sub_app = FastMCP("SubApp", enable_task_management=False)
 
         # Mount the sub-app before adding any tools
         main_app.mount(sub_app, "sub")
@@ -622,8 +622,8 @@ class TestDynamicChanges:
         assert "sub_temp_tool" not in tools
 
     async def test_cache_expiration(self):
-        main_app = FastMCP("MainApp", cache_expiration_seconds=2)
-        sub_app = FastMCP("SubApp")
+        main_app = FastMCP("MainApp", cache_expiration_seconds=2, enable_task_management=False)
+        sub_app = FastMCP("SubApp", enable_task_management=False)
         tools = await main_app.get_tools()
         assert len(tools) == 0
 
@@ -932,8 +932,8 @@ class TestAsProxyKwarg:
 
     
     async def test_as_proxy_mounts_still_have_live_link(self):
-        mcp = FastMCP("Main")
-        sub = FastMCP("Sub")
+        mcp = FastMCP("Main", enable_task_management=False)
+        sub = FastMCP("Sub", enable_task_management=False)
 
         mcp.mount(sub, "sub", as_proxy=True)
 

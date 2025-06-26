@@ -10,7 +10,7 @@ import pytest
 
 async def test_tool_annotations_in_tool_manager():
     """Test that tool annotations are correctly stored in the tool manager."""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     @mcp.tool(
         annotations=ToolAnnotations(
@@ -36,7 +36,7 @@ async def test_tool_annotations_in_tool_manager():
 
 async def test_tool_annotations_in_mcp_protocol():
     """Test that tool annotations are correctly propagated to MCP tools list."""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     @mcp.tool(
         annotations=ToolAnnotations(
@@ -61,7 +61,7 @@ async def test_tool_annotations_in_mcp_protocol():
 
 async def test_tool_annotations_in_client_api():
     """Test that tool annotations are correctly accessible via client API."""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     @mcp.tool(
         annotations=ToolAnnotations(
@@ -88,7 +88,7 @@ async def test_tool_annotations_in_client_api():
 
 async def test_provide_tool_annotations_as_dict_to_decorator():
     """Test that tool annotations are correctly accessible via client API."""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     @mcp.tool(
         annotations={
@@ -115,7 +115,7 @@ async def test_provide_tool_annotations_as_dict_to_decorator():
 
 async def test_direct_tool_annotations_in_tool_manager():
     """Test direct ToolAnnotations object is correctly stored in tool manager."""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     annotations = ToolAnnotations(
         title="Direct Tool",
@@ -145,7 +145,7 @@ async def test_direct_tool_annotations_in_tool_manager():
 
 async def test_direct_tool_annotations_in_client_api():
     """Test direct ToolAnnotations object is correctly accessible via client API."""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     annotations = ToolAnnotations(
         title="Direct Tool",
@@ -174,7 +174,7 @@ async def test_direct_tool_annotations_in_client_api():
 
 async def test_add_tool_method_annotations():
     """Test that tool annotations work with add_tool method."""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     def create_item(name: str, value: int) -> dict[str, Any]:
         """Create a new item."""
@@ -205,7 +205,7 @@ async def test_add_tool_method_annotations():
 
 async def test_tool_functionality_with_annotations():
     """Test that tool functionality is preserved when using annotations."""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     def create_item(name: str, value: int) -> dict[str, Any]:
         """Create a new item."""

@@ -31,7 +31,7 @@ from fastmcp.utilities.types import Audio, File, Image
 
 @pytest.fixture
 def tool_server():
-    mcp = FastMCP()
+    mcp = FastMCP(enable_task_management=False)
 
     @mcp.tool
     def add(x: int, y: int) -> int:
@@ -139,7 +139,7 @@ class TestTools:
 
     async def test_call_tool_error_as_client_raw(self):
         """Test raising and catching errors from a tool."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
         client = Client(transport=FastMCPTransport(mcp))
 
         @mcp.tool
@@ -170,7 +170,7 @@ class TestTools:
 
 class TestToolTags:
     def create_server(self, include_tags=None, exclude_tags=None):
-        mcp = FastMCP(include_tags=include_tags, exclude_tags=exclude_tags)
+        mcp = FastMCP(include_tags=include_tags, exclude_tags=exclude_tags, enable_task_management=False)
 
         @mcp.tool(tags={"a", "b"})
         def tool_1() -> int:
@@ -240,7 +240,7 @@ class TestToolTags:
 
 class TestToolReturnTypes:
     async def test_string(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def string_tool() -> str:
@@ -251,7 +251,7 @@ class TestToolReturnTypes:
             assert result[0].text == "Hello, world!"  # type: ignore[attr-defined]
 
     async def test_bytes(self, tmp_path: Path):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def bytes_tool() -> bytes:
@@ -262,7 +262,7 @@ class TestToolReturnTypes:
             assert result[0].text == '"Hello, world!"'  # type: ignore[attr-defined]
 
     async def test_uuid(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         test_uuid = uuid.uuid4()
 
@@ -275,7 +275,7 @@ class TestToolReturnTypes:
             assert result[0].text == pydantic_core.to_json(test_uuid).decode()  # type: ignore[attr-defined]
 
     async def test_path(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         test_path = Path("/tmp/test.txt")
 
@@ -288,7 +288,7 @@ class TestToolReturnTypes:
             assert result[0].text == pydantic_core.to_json(test_path).decode()  # type: ignore[attr-defined]
 
     async def test_datetime(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         dt = datetime.datetime(2025, 4, 25, 1, 2, 3)
 
@@ -301,7 +301,7 @@ class TestToolReturnTypes:
             assert result[0].text == pydantic_core.to_json(dt).decode()  # type: ignore[attr-defined]
 
     async def test_image(self, tmp_path: Path):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def image_tool(path: str) -> Image:
@@ -322,7 +322,7 @@ class TestToolReturnTypes:
             assert decoded == b"fake png data"
 
     async def test_audio(self, tmp_path: Path):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def audio_tool(path: str) -> Audio:
@@ -343,7 +343,7 @@ class TestToolReturnTypes:
             assert decoded == b"fake wav data"
 
     async def test_file(self, tmp_path: Path):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def file_tool(path: str) -> File:
@@ -480,7 +480,7 @@ class TestToolReturnTypes:
 
 class TestToolParameters:
     async def test_parameter_descriptions_with_field_annotations(self):
-        mcp = FastMCP("Test Server")
+        mcp = FastMCP("Test Server", enable_task_management=False)
 
         @mcp.tool
         def greet(
@@ -505,7 +505,7 @@ class TestToolParameters:
             assert tool.inputSchema["required"] == ["name"]
 
     async def test_parameter_descriptions_with_field_defaults(self):
-        mcp = FastMCP("Test Server")
+        mcp = FastMCP("Test Server", enable_task_management=False)
 
         @mcp.tool
         def greet(
@@ -530,7 +530,7 @@ class TestToolParameters:
             assert tool.inputSchema["required"] == ["name"]
 
     async def test_tool_with_bytes_input(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def process_image(image: bytes) -> Image:
@@ -545,7 +545,7 @@ class TestToolParameters:
             assert result[0].data == base64.b64encode(b"fake png data").decode()
 
     async def test_tool_with_invalid_input(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def my_tool(x: int) -> int:
@@ -560,7 +560,7 @@ class TestToolParameters:
 
     async def test_tool_int_coercion(self):
         """Test string-to-int type coercion."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def add_one(x: int) -> int:
@@ -573,7 +573,7 @@ class TestToolParameters:
 
     async def test_tool_bool_coercion(self):
         """Test string-to-bool type coercion."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def toggle(flag: bool) -> bool:
@@ -588,7 +588,7 @@ class TestToolParameters:
             assert result[0].text == "true"  # type: ignore[attr-defined]
 
     async def test_annotated_field_validation(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def analyze(x: Annotated[int, Field(ge=1)]) -> None:
@@ -599,7 +599,7 @@ class TestToolParameters:
                 await client.call_tool("analyze", {"x": 0})
 
     async def test_default_field_validation(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def analyze(x: int = Field(ge=1)) -> None:
@@ -610,7 +610,7 @@ class TestToolParameters:
                 await client.call_tool("analyze", {"x": 0})
 
     async def test_default_field_is_still_required_if_no_default_specified(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def analyze(x: int = Field()) -> None:
@@ -621,7 +621,7 @@ class TestToolParameters:
                 await client.call_tool("analyze", {})
 
     async def test_literal_type_validation_error(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def analyze(x: Literal["a", "b"]) -> None:
@@ -632,7 +632,7 @@ class TestToolParameters:
                 await client.call_tool("analyze", {"x": "c"})
 
     async def test_literal_type_validation_success(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def analyze(x: Literal["a", "b"]) -> str:
@@ -643,7 +643,7 @@ class TestToolParameters:
             assert result[0].text == "a"  # type: ignore[attr-defined]
 
     async def test_enum_type_validation_error(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         class MyEnum(Enum):
             RED = "red"
@@ -659,7 +659,7 @@ class TestToolParameters:
                 await client.call_tool("analyze", {"x": "some-color"})
 
     async def test_enum_type_validation_success(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         class MyEnum(Enum):
             RED = "red"
@@ -675,7 +675,7 @@ class TestToolParameters:
             assert result[0].text == "red"  # type: ignore[attr-defined]
 
     async def test_union_type_validation(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def analyze(x: int | float) -> str:
@@ -692,7 +692,7 @@ class TestToolParameters:
                 await client.call_tool("analyze", {"x": "not a number"})
 
     async def test_path_type(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def send_path(path: Path) -> str:
@@ -707,7 +707,7 @@ class TestToolParameters:
             assert result[0].text == str(test_path)  # type: ignore[attr-defined]
 
     async def test_path_type_error(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def send_path(path: Path) -> str:
@@ -718,7 +718,7 @@ class TestToolParameters:
                 await client.call_tool("send_path", {"path": 1})
 
     async def test_uuid_type(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def send_uuid(x: uuid.UUID) -> str:
@@ -732,7 +732,7 @@ class TestToolParameters:
             assert result[0].text == str(test_uuid)  # type: ignore[attr-defined]
 
     async def test_uuid_type_error(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def send_uuid(x: uuid.UUID) -> str:
@@ -743,7 +743,7 @@ class TestToolParameters:
                 await client.call_tool("send_uuid", {"x": "not a uuid"})
 
     async def test_datetime_type(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def send_datetime(x: datetime.datetime) -> str:
@@ -756,7 +756,7 @@ class TestToolParameters:
             assert result[0].text == dt.isoformat()  # type: ignore[attr-defined]
 
     async def test_datetime_type_parse_string(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def send_datetime(x: datetime.datetime) -> str:
@@ -769,7 +769,7 @@ class TestToolParameters:
             assert result[0].text == "2021-01-01T00:00:00"  # type: ignore[attr-defined]
 
     async def test_datetime_type_error(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def send_datetime(x: datetime.datetime) -> str:
@@ -780,7 +780,7 @@ class TestToolParameters:
                 await client.call_tool("send_datetime", {"x": "not a datetime"})
 
     async def test_date_type(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def send_date(x: datetime.date) -> str:
@@ -791,7 +791,7 @@ class TestToolParameters:
             assert result[0].text == datetime.date.today().isoformat()  # type: ignore[attr-defined]
 
     async def test_date_type_parse_string(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def send_date(x: datetime.date) -> str:
@@ -802,7 +802,7 @@ class TestToolParameters:
             assert result[0].text == "2021-01-01"  # type: ignore[attr-defined]
 
     async def test_timedelta_type(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def send_timedelta(x: datetime.timedelta) -> str:
@@ -815,7 +815,7 @@ class TestToolParameters:
             assert result[0].text == "1 day, 0:00:00"  # type: ignore[attr-defined]
 
     async def test_timedelta_type_parse_int(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def send_timedelta(x: datetime.timedelta) -> str:
@@ -831,7 +831,7 @@ class TestToolContextInjection:
 
     async def test_context_detection(self):
         """Test that context parameters are properly detected."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def tool_with_context(x: int, ctx: Context) -> str:
@@ -844,7 +844,7 @@ class TestToolContextInjection:
 
     async def test_context_injection(self):
         """Test that context is properly injected into tool calls."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def tool_with_context(x: int, ctx: Context) -> str:
@@ -860,7 +860,7 @@ class TestToolContextInjection:
 
     async def test_async_context(self):
         """Test that context works in async functions."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         async def async_tool(x: int, ctx: Context) -> str:
@@ -875,7 +875,7 @@ class TestToolContextInjection:
 
     async def test_optional_context(self):
         """Test that context is optional."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def no_context(x: int) -> int:
@@ -889,7 +889,7 @@ class TestToolContextInjection:
 
     async def test_context_resource_access(self):
         """Test that context can access resources."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("test://data")
         def test_resource() -> str:
@@ -911,7 +911,7 @@ class TestToolContextInjection:
 
     async def test_tool_decorator_with_tags(self):
         """Test that the tool decorator properly sets tags."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool(tags={"example", "test-tag"})
         def sample_tool(x: int) -> int:
@@ -925,7 +925,7 @@ class TestToolContextInjection:
 
     async def test_callable_object_with_context(self):
         """Test that a callable object can be used as a tool with context."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         class MyTool:
             async def __call__(self, x: int, ctx: Context) -> int:
@@ -940,7 +940,7 @@ class TestToolContextInjection:
 
 class TestToolEnabled:
     async def test_toggle_enabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def sample_tool(x: int) -> int:
@@ -961,7 +961,7 @@ class TestToolEnabled:
         assert sample_tool.enabled
 
     async def test_tool_disabled_in_decorator(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool(enabled=False)
         def sample_tool(x: int) -> int:
@@ -975,7 +975,7 @@ class TestToolEnabled:
                 await client.call_tool("sample_tool", {"x": 5})
 
     async def test_tool_toggle_enabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool(enabled=False)
         def sample_tool(x: int) -> int:
@@ -988,7 +988,7 @@ class TestToolEnabled:
             assert len(tools) == 1
 
     async def test_tool_toggle_disabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def sample_tool(x: int) -> int:
@@ -1004,7 +1004,7 @@ class TestToolEnabled:
                 await client.call_tool("sample_tool", {"x": 5})
 
     async def test_get_tool_and_disable(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def sample_tool(x: int) -> int:
@@ -1023,7 +1023,7 @@ class TestToolEnabled:
                 await client.call_tool("sample_tool", {"x": 5})
 
     async def test_cant_call_disabled_tool(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool(enabled=False)
         def sample_tool(x: int) -> int:
@@ -1036,7 +1036,7 @@ class TestToolEnabled:
 
 class TestResource:
     async def test_text_resource(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         def get_text():
             return "Hello, world!"
@@ -1051,7 +1051,7 @@ class TestResource:
             assert result[0].text == "Hello, world!"  # type: ignore[attr-defined]
 
     async def test_binary_resource(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         def get_binary():
             return b"Binary data"
@@ -1069,7 +1069,7 @@ class TestResource:
             assert result[0].blob == base64.b64encode(b"Binary data").decode()  # type: ignore[attr-defined]
 
     async def test_file_resource_text(self, tmp_path: Path):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         # Create a text file
         text_file = tmp_path / "test.txt"
@@ -1085,7 +1085,7 @@ class TestResource:
             assert result[0].text == "Hello from file!"  # type: ignore[attr-defined]
 
     async def test_file_resource_binary(self, tmp_path: Path):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         # Create a binary file
         binary_file = tmp_path / "test.bin"
@@ -1106,7 +1106,7 @@ class TestResource:
 
 class TestResourceTags:
     def create_server(self, include_tags=None, exclude_tags=None):
-        mcp = FastMCP(include_tags=include_tags, exclude_tags=exclude_tags)
+        mcp = FastMCP(include_tags=include_tags, exclude_tags=exclude_tags, enable_task_management=False)
 
         @mcp.resource("resource://1", tags={"a", "b"})
         def resource_1() -> str:
@@ -1173,7 +1173,7 @@ class TestResourceTags:
 
 class TestResourceContext:
     async def test_resource_with_context_annotation_gets_context(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://test")
         def resource_with_context(ctx: Context) -> str:
@@ -1187,7 +1187,7 @@ class TestResourceContext:
 
 class TestResourceEnabled:
     async def test_toggle_enabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://data")
         def sample_resource() -> str:
@@ -1208,7 +1208,7 @@ class TestResourceEnabled:
         assert sample_resource.enabled
 
     async def test_resource_disabled_in_decorator(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://data", enabled=False)
         def sample_resource() -> str:
@@ -1222,7 +1222,7 @@ class TestResourceEnabled:
                 await client.read_resource(AnyUrl("resource://data"))
 
     async def test_resource_toggle_enabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://data", enabled=False)
         def sample_resource() -> str:
@@ -1235,7 +1235,7 @@ class TestResourceEnabled:
             assert len(resources) == 1
 
     async def test_resource_toggle_disabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://data")
         def sample_resource() -> str:
@@ -1251,7 +1251,7 @@ class TestResourceEnabled:
                 await client.read_resource(AnyUrl("resource://data"))
 
     async def test_get_resource_and_disable(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://data")
         def sample_resource() -> str:
@@ -1270,7 +1270,7 @@ class TestResourceEnabled:
                 await client.read_resource(AnyUrl("resource://data"))
 
     async def test_cant_read_disabled_resource(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://data", enabled=False)
         def sample_resource() -> str:
@@ -1285,7 +1285,7 @@ class TestResourceTemplates:
     async def test_resource_with_params_not_in_uri(self):
         """Test that a resource with function parameters raises an error if the URI
         parameters don't match"""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         with pytest.raises(
             ValueError,
@@ -1298,7 +1298,7 @@ class TestResourceTemplates:
 
     async def test_resource_with_uri_params_without_args(self):
         """Test that a resource with URI parameters is automatically a template"""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         with pytest.raises(
             ValueError,
@@ -1311,7 +1311,7 @@ class TestResourceTemplates:
 
     async def test_resource_with_untyped_params(self):
         """Test that a resource with untyped parameters raises an error"""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param}")
         def get_data(param) -> str:
@@ -1319,7 +1319,7 @@ class TestResourceTemplates:
 
     async def test_resource_matching_params(self):
         """Test that a resource with matching URI and function parameters works"""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{name}/data")
         def get_data(name: str) -> str:
@@ -1331,7 +1331,7 @@ class TestResourceTemplates:
 
     async def test_resource_mismatched_params(self):
         """Test that mismatched parameters raise an error"""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         with pytest.raises(
             ValueError,
@@ -1344,7 +1344,7 @@ class TestResourceTemplates:
 
     async def test_resource_multiple_params(self):
         """Test that multiple parameters work correctly"""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{org}/{repo}/data")
         def get_data(org: str, repo: str) -> str:
@@ -1358,7 +1358,7 @@ class TestResourceTemplates:
 
     async def test_resource_multiple_mismatched_params(self):
         """Test that mismatched parameters raise an error"""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         with pytest.raises(
             ValueError,
@@ -1370,7 +1370,7 @@ class TestResourceTemplates:
                 return f"Data for {org}"
 
         """Test that a resource with no parameters works as a regular resource"""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://static")
         def get_static_data() -> str:
@@ -1382,7 +1382,7 @@ class TestResourceTemplates:
 
     async def test_template_with_varkwargs(self):
         """Test that a template can have **kwargs."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("test://{x}/{y}/{z}")
         def func(**kwargs: int) -> int:
@@ -1394,7 +1394,7 @@ class TestResourceTemplates:
 
     async def test_template_with_default_params(self):
         """Test that a template can have default parameters."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("math://add/{x}")
         def add(x: int, y: int = 10) -> int:
@@ -1417,7 +1417,7 @@ class TestResourceTemplates:
 
     async def test_template_to_resource_conversion(self):
         """Test that a template can be converted to a resource."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{name}/data")
         def get_data(name: str) -> str:
@@ -1435,7 +1435,7 @@ class TestResourceTemplates:
             assert result[0].text == "Data for test"  # type: ignore[attr-defined]
 
     async def test_template_decorator_with_tags(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param}", tags={"template", "test-tag"})
         def template_resource(param: str) -> str:
@@ -1446,7 +1446,7 @@ class TestResourceTemplates:
         assert template.tags == {"template", "test-tag"}
 
     async def test_template_decorator_wildcard_param(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param*}")
         def template_resource(param: str) -> str:
@@ -1462,7 +1462,7 @@ class TestResourceTemplates:
         matching template.
 
         """
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param*}")
         def template_resource(param: str) -> str:
@@ -1484,7 +1484,7 @@ class TestResourceTemplates:
         If a wildcard template is defined second, it will *not* take priority over
         another matching template.
         """
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{x}/{y}")
         def template_resource_with_params(x: str, y: str) -> str:
@@ -1504,7 +1504,7 @@ class TestResourceTemplates:
 
 class TestResourceTemplatesTags:
     def create_server(self, include_tags=None, exclude_tags=None):
-        mcp = FastMCP(include_tags=include_tags, exclude_tags=exclude_tags)
+        mcp = FastMCP(include_tags=include_tags, exclude_tags=exclude_tags, enable_task_management=False)
 
         @mcp.resource("resource://1/{param}", tags={"a", "b"})
         def template_resource_1(param: str) -> str:
@@ -1577,7 +1577,7 @@ class TestResourceTemplatesTags:
 
 class TestResourceTemplateContext:
     async def test_resource_template_context(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param}")
         def resource_template(param: str, ctx: Context) -> str:
@@ -1589,7 +1589,7 @@ class TestResourceTemplateContext:
             assert result[0].text.startswith("Resource template: test 1")  # type: ignore[attr-defined]
 
     async def test_resource_template_context_with_callable_object(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         class MyResource:
             def __call__(self, param: str, ctx: Context) -> str:
@@ -1607,7 +1607,7 @@ class TestResourceTemplateContext:
 
 class TestResourceTemplateEnabled:
     async def test_toggle_enabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param}")
         def sample_template(param: str) -> str:
@@ -1628,7 +1628,7 @@ class TestResourceTemplateEnabled:
         assert sample_template.enabled
 
     async def test_template_disabled_in_decorator(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param}", enabled=False)
         def sample_template(param: str) -> str:
@@ -1642,7 +1642,7 @@ class TestResourceTemplateEnabled:
                 await client.read_resource(AnyUrl("resource://test"))
 
     async def test_template_toggle_enabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param}", enabled=False)
         def sample_template(param: str) -> str:
@@ -1655,7 +1655,7 @@ class TestResourceTemplateEnabled:
             assert len(templates) == 1
 
     async def test_template_toggle_disabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param}")
         def sample_template(param: str) -> str:
@@ -1671,7 +1671,7 @@ class TestResourceTemplateEnabled:
                 await client.read_resource(AnyUrl("resource://test"))
 
     async def test_get_template_and_disable(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param}")
         def sample_template(param: str) -> str:
@@ -1690,7 +1690,7 @@ class TestResourceTemplateEnabled:
                 await client.read_resource(AnyUrl("resource://test"))
 
     async def test_cant_read_disabled_template(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param}", enabled=False)
         def sample_template(param: str) -> str:
@@ -1706,7 +1706,7 @@ class TestPrompts:
 
     async def test_prompt_decorator(self):
         """Test that the prompt decorator registers prompts correctly."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt
         def fn() -> str:
@@ -1722,7 +1722,7 @@ class TestPrompts:
 
     async def test_prompt_decorator_with_name(self):
         """Test prompt decorator with custom name."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt(name="custom_name")
         def fn() -> str:
@@ -1737,7 +1737,7 @@ class TestPrompts:
 
     async def test_prompt_decorator_with_description(self):
         """Test prompt decorator with custom description."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt(description="A custom description")
         def fn() -> str:
@@ -1751,7 +1751,7 @@ class TestPrompts:
         assert content[0].content.text == "Hello, world!"  # type: ignore[attr-defined]
 
     async def test_prompt_decorator_with_parens(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt
         def fn() -> str:
@@ -1764,7 +1764,7 @@ class TestPrompts:
 
     async def test_list_prompts(self):
         """Test listing prompts through MCP protocol."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt
         def fn(name: str, optional: str = "default") -> str:
@@ -1787,7 +1787,7 @@ class TestPrompts:
 
     async def test_get_prompt(self):
         """Test getting a prompt through MCP protocol."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt
         def fn(name: str) -> str:
@@ -1803,7 +1803,7 @@ class TestPrompts:
 
     async def test_get_prompt_with_resource(self):
         """Test getting a prompt that returns resource content."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt
         def fn() -> PromptMessage:
@@ -1830,14 +1830,14 @@ class TestPrompts:
 
     async def test_get_unknown_prompt(self):
         """Test error when getting unknown prompt."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
         with pytest.raises(McpError, match="Unknown prompt"):
             async with Client(mcp) as client:
                 await client.get_prompt("unknown")
 
     async def test_get_prompt_missing_args(self):
         """Test error when required arguments are missing."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt
         def prompt_fn(name: str) -> str:
@@ -1849,7 +1849,7 @@ class TestPrompts:
 
     async def test_resource_decorator_with_tags(self):
         """Test that the resource decorator supports tags."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://data", tags={"example", "test-tag"})
         def get_data() -> str:
@@ -1862,7 +1862,7 @@ class TestPrompts:
 
     async def test_template_decorator_with_tags(self):
         """Test that the template decorator properly sets tags."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.resource("resource://{param}", tags={"template", "test-tag"})
         def template_resource(param: str) -> str:
@@ -1874,7 +1874,7 @@ class TestPrompts:
 
     async def test_prompt_decorator_with_tags(self):
         """Test that the prompt decorator properly sets tags."""
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt(tags={"example", "test-tag"})
         def sample_prompt() -> str:
@@ -1888,7 +1888,7 @@ class TestPrompts:
 
 class TestPromptEnabled:
     async def test_toggle_enabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt
         def sample_prompt() -> str:
@@ -1909,7 +1909,7 @@ class TestPromptEnabled:
         assert sample_prompt.enabled
 
     async def test_prompt_disabled_in_decorator(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt(enabled=False)
         def sample_prompt() -> str:
@@ -1923,7 +1923,7 @@ class TestPromptEnabled:
                 await client.get_prompt("sample_prompt")
 
     async def test_prompt_toggle_enabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt(enabled=False)
         def sample_prompt() -> str:
@@ -1936,7 +1936,7 @@ class TestPromptEnabled:
             assert len(prompts) == 1
 
     async def test_prompt_toggle_disabled(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt
         def sample_prompt() -> str:
@@ -1952,7 +1952,7 @@ class TestPromptEnabled:
                 await client.get_prompt("sample_prompt")
 
     async def test_get_prompt_and_disable(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt
         def sample_prompt() -> str:
@@ -1971,7 +1971,7 @@ class TestPromptEnabled:
                 await client.get_prompt("sample_prompt")
 
     async def test_cant_get_disabled_prompt(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt(enabled=False)
         def sample_prompt() -> str:
@@ -1984,7 +1984,7 @@ class TestPromptEnabled:
 
 class TestPromptContext:
     async def test_prompt_context(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.prompt
         def prompt_fn(name: str, ctx: Context) -> str:
@@ -1998,7 +1998,7 @@ class TestPromptContext:
             assert message.role == "user"
 
     async def test_prompt_context_with_callable_object(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         class MyPrompt:
             def __call__(self, name: str, ctx: Context) -> str:
@@ -2016,7 +2016,7 @@ class TestPromptContext:
 
 class TestPromptTags:
     def create_server(self, include_tags=None, exclude_tags=None):
-        mcp = FastMCP(include_tags=include_tags, exclude_tags=exclude_tags)
+        mcp = FastMCP(include_tags=include_tags, exclude_tags=exclude_tags, enable_task_management=False)
 
         @mcp.prompt(tags={"a", "b"})
         def prompt_1() -> str:

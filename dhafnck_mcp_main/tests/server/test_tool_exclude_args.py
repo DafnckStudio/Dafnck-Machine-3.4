@@ -9,7 +9,7 @@ from fastmcp.tools.tool import Tool
 
 async def test_tool_exclude_args_in_tool_manager():
     """Test that tool args are excluded in the tool manager."""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     @mcp.tool(exclude_args=["state"])
     def echo(message: str, state: dict[str, Any] | None = None) -> str:
@@ -27,7 +27,7 @@ async def test_tool_exclude_args_in_tool_manager():
 
 async def test_tool_exclude_args_without_default_value_raises_error():
     """Test that excluding args without default values raises ValueError"""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     with pytest.raises(ValueError):
 
@@ -42,7 +42,7 @@ async def test_tool_exclude_args_without_default_value_raises_error():
 
 async def test_add_tool_method_exclude_args():
     """Test that tool exclude_args work with the add_tool method."""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     def create_item(
         name: str, value: int, state: dict[str, Any] | None = None
@@ -69,7 +69,7 @@ async def test_add_tool_method_exclude_args():
 
 async def test_tool_functionality_with_exclude_args():
     """Test that tool functionality is preserved when using exclude_args."""
-    mcp = FastMCP("Test Server")
+    mcp = FastMCP("Test Server", enable_task_management=False)
 
     def create_item(
         name: str, value: int, state: dict[str, Any] | None = None
