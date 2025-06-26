@@ -13,9 +13,9 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Configuration
-SOURCE_PROJECT="/home/daihungpham/agentic-project"
-USERNAME="daihungpham"
+# Configuration - Auto-detected
+SOURCE_PROJECT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+USERNAME="$(whoami)"
 
 # Function to print colored output
 print_status() {
