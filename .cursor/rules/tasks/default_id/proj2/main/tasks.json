@@ -251,6 +251,111 @@
       "dueDate": null,
       "created_at": "2025-06-26T01:49:43.285548+00:00",
       "updated_at": "2025-06-26T01:49:43.285548+00:00"
+    },
+    {
+      "id": "20250626013",
+      "title": "Project 2 Task",
+      "description": "Task for project 2",
+      "project_id": "proj2",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@test_agent"
+      ],
+      "labels": [
+        "project2"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:51:24.266319+00:00",
+      "updated_at": "2025-06-26T01:51:24.266319+00:00"
+    },
+    {
+      "id": "20250626014",
+      "title": "Project 2 Task",
+      "description": "Task for project 2",
+      "project_id": "proj2",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@test_agent"
+      ],
+      "labels": [
+        "project2"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:52:18.318942+00:00",
+      "updated_at": "2025-06-26T01:52:18.318942+00:00"
+    },
+    {
+      "id": "20250626015",
+      "title": "Project 2 Task",
+      "description": "Task for project 2",
+      "project_id": "proj2",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@test_agent"
+      ],
+      "labels": [
+        "project2"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:54:58.497445+00:00",
+      "updated_at": "2025-06-26T01:54:58.497445+00:00"
+    },
+    {
+      "id": "20250626016",
+      "title": "Project 2 Task",
+      "description": "Task for project 2",
+      "project_id": "proj2",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@test_agent"
+      ],
+      "labels": [
+        "project2"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:55:10.427649+00:00",
+      "updated_at": "2025-06-26T01:55:10.427649+00:00"
+    },
+    {
+      "id": "20250626017",
+      "title": "Project 2 Task",
+      "description": "Task for project 2",
+      "project_id": "proj2",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@test_agent"
+      ],
+      "labels": [
+        "project2"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:55:26.052141+00:00",
+      "updated_at": "2025-06-26T01:55:26.052141+00:00"
     }
   ]
 }

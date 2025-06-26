@@ -226,7 +226,8 @@ class TestE2EUserJourneys:
         Tests the system's ability to filter and search for tasks.
         """
         # 0. Create a project first
-        project_id = "e2e_querying_project"
+        import time
+        project_id = f"e2e_querying_project_{int(time.time())}"
         create_project_response_list = await mcp_server_instance._mcp_call_tool(
             "manage_project",
             {
@@ -288,7 +289,8 @@ class TestE2EUserJourneys:
         Tests a scenario involving multiple agents collaborating on a task.
         """
         # 0. Create a project first
-        project_id = "e2e_collaboration_project"
+        import time
+        project_id = f"e2e_collaboration_project_{int(time.time())}"
         create_project_response_list = await mcp_server_instance._mcp_call_tool(
             "manage_project",
             {
@@ -366,7 +368,8 @@ class TestE2EUserJourneys:
         Tests a scenario involving task dependencies.
         """
         # 0. Create a project first
-        project_id = "e2e_dependency_project"
+        import time
+        project_id = f"e2e_dependency_project_{int(time.time())}"
         create_project_response_list = await mcp_server_instance._mcp_call_tool(
             "manage_project",
             {

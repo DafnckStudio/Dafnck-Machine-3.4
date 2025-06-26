@@ -705,19 +705,29 @@ class TestConsolidatedMCPTools:
     
     def test_handle_do_next(self, consolidated_tools):
         """Test getting next recommended task"""
+        # First create a project
+        project_result = consolidated_tools._multi_agent_tools.create_project(
+            "test_project", "Test Project", "Project for testing"
+        )
+        assert project_result["success"] is True
+        
         # Create some tasks
         consolidated_tools._handle_core_task_operations(
-            action="create", task_id=None, title="High Priority Task", description="Urgent",
+            action="create", project_id="test_project", task_tree_id="main", user_id="default_id",
+            task_id=None, title="High Priority Task", description="Urgent",
             status=None, priority="critical", details=None, estimated_effort=None,
             assignees=["@coding_agent"], labels=["feature"], due_date=None
         )
         consolidated_tools._handle_core_task_operations(
-            action="create", task_id=None, title="Low Priority Task", description="Not urgent",
+            action="create", project_id="test_project", task_tree_id="main", user_id="default_id",
+            task_id=None, title="Low Priority Task", description="Not urgent",
             status=None, priority="low", details=None, estimated_effort=None,
             assignees=["@coding_agent"], labels=["enhancement"], due_date=None
         )
         
-        result = consolidated_tools._handle_do_next()
+        result = consolidated_tools._handle_do_next(
+            project_id="test_project", task_tree_id="main", user_id="default_id"
+        )
         
         assert result["success"] is True
         assert result["action"] == "next"
@@ -805,13 +815,13 @@ class TestConsolidatedMCPTools:
         assert project_result["success"] is True
         
         # Create two tasks
-        task1_result = consolidated_tools.task_handler.handle_core_operations(
+        task1_result = consolidated_tools._handle_core_task_operations(
             action="create", project_id="test_project", task_tree_id="main", user_id="default_id",
             task_id=None, title="Task 1", description="First task",
             status=None, priority="high", details=None, estimated_effort=None,
             assignees=["@coding_agent"], labels=["feature"], due_date=None
         )
-        task2_result = consolidated_tools.task_handler.handle_core_operations(
+        task2_result = consolidated_tools._handle_core_task_operations(
             action="create", project_id="test_project", task_tree_id="main", user_id="default_id",
             task_id=None, title="Task 2", description="Second task",
             status=None, priority="high", details=None, estimated_effort=None,
@@ -822,9 +832,12 @@ class TestConsolidatedMCPTools:
         task2_id = task2_result["task"]["id"]
         
         # Add dependency (task2 depends on task1)
-        result = consolidated_tools.task_handler.handle_dependency_operations(
+        result = consolidated_tools._handle_dependency_operations(
             action="add_dependency",
             task_id=task2_id,
+            project_id="test_project",
+            task_tree_id="main",
+            user_id="default_id",
             dependency_data={"dependency_id": task1_id}
         )
         
@@ -833,8 +846,17 @@ class TestConsolidatedMCPTools:
     
     def test_error_handling_invalid_task_id(self, consolidated_tools):
         """Test error handling for invalid task ID"""
+        # First create a project
+        project_result = consolidated_tools._multi_agent_tools.create_project(
+            "test_project", "Test Project", "Project for testing"
+        )
+        assert project_result["success"] is True
+        
         result = consolidated_tools._handle_core_task_operations(
             action="get",
+            project_id="test_project",
+            task_tree_id="main",
+            user_id="default_id",
             task_id="nonexistent_id",
             title=None, description=None, status=None, priority=None,
             details=None, estimated_effort=None, assignees=None, labels=None, due_date=None
@@ -845,8 +867,17 @@ class TestConsolidatedMCPTools:
     
     def test_error_handling_invalid_action(self, consolidated_tools):
         """Test error handling for invalid action"""
+        # First create a project
+        project_result = consolidated_tools._multi_agent_tools.create_project(
+            "test_project", "Test Project", "Project for testing"
+        )
+        assert project_result["success"] is True
+        
         result = consolidated_tools._handle_core_task_operations(
             action="invalid_action",
+            project_id="test_project",
+            task_tree_id="main",
+            user_id="default_id",
             task_id=None, title="Test", description="Test", status=None, priority=None,
             details=None, estimated_effort=None, assignees=None, labels=None, due_date=None
         )
@@ -890,7 +921,7 @@ class TestIntegrationScenarios:
         assert agent_result["success"] is True
         
         # Create task
-        task_result = consolidated_tools.task_handler.handle_core_operations(
+        task_result = consolidated_tools._handle_core_task_operations(
             action="create", project_id="workflow_test", task_tree_id="main", user_id="default_id",
             task_id=None, title="Workflow Task", description="Complete workflow task",
             status=None, priority="high", details=None, estimated_effort=None,
@@ -900,18 +931,15 @@ class TestIntegrationScenarios:
         task_id = task_result["task"]["id"]
         
         # Add subtask
-        subtask_result = consolidated_tools.task_handler.handle_subtask_operations(
-            action="add_subtask",
+        subtask_result = consolidated_tools._handle_subtask_operations(
+            action="add",
             task_id=task_id,
-            subtask_data={"title": "Workflow Subtask", "description": "Subtask for workflow"},
-            project_id="workflow_test",
-            task_tree_id="main",
-            user_id="default_id"
+            subtask_data={"title": "Workflow Subtask", "description": "Subtask for workflow"}
         )
         assert subtask_result["success"] is True
         
         # Complete task
-        complete_result = consolidated_tools.task_handler.handle_core_operations(
+        complete_result = consolidated_tools._handle_core_task_operations(
             action="complete", project_id="workflow_test", task_tree_id="main", user_id="default_id",
             task_id=task_id, title=None, description=None, status=None, priority=None,
             details=None, estimated_effort=None, assignees=None, labels=None, due_date=None
@@ -936,13 +964,13 @@ class TestIntegrationScenarios:
         assert list_result["count"] == 2
         
         # Create tasks in different projects
-        task1_result = consolidated_tools.task_handler.handle_core_operations(
+        task1_result = consolidated_tools._handle_core_task_operations(
             action="create", project_id="proj1", task_tree_id="main", user_id="default_id",
             task_id=None, title="Project 1 Task", description="Task for project 1",
             status=None, priority="high", details=None, estimated_effort=None,
             assignees=["@coding_agent"], labels=["project1"], due_date=None
         )
-        task2_result = consolidated_tools.task_handler.handle_core_operations(
+        task2_result = consolidated_tools._handle_core_task_operations(
             action="create", project_id="proj2", task_tree_id="main", user_id="default_id",
             task_id=None, title="Project 2 Task", description="Task for project 2",
             status=None, priority="medium", details=None, estimated_effort=None,
@@ -952,10 +980,9 @@ class TestIntegrationScenarios:
         assert task1_result["success"] is True
         assert task2_result["success"] is True
         
-        # Search across all tasks (using proj1 as base, but search should work across projects)
-        search_result = consolidated_tools.task_handler.handle_list_search_next(
-            action="search", project_id="proj1", task_tree_id="main", user_id="default_id",
-            status=None, priority=None, assignees=None, labels=None, limit=10, query="project"
+        # Search across tasks in proj1
+        search_result = consolidated_tools._handle_search_tasks(
+            project_id="proj1", task_tree_id="main", user_id="default_id", query="project"
         )
         assert search_result["success"] is True
         # Should find at least the task from proj1

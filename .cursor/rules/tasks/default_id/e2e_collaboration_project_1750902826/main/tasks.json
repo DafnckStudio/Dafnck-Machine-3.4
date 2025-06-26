@@ -1,0 +1,23 @@
+{
+  "tasks": [
+    {
+      "id": "20250626001",
+      "title": "Collaborative Task",
+      "description": "A task requiring collaboration between two agents.",
+      "project_id": "e2e_collaboration_project_1750902826",
+      "status": "todo",
+      "priority": "critical",
+      "details": "Coding part completed by @coding-agent.",
+      "estimatedEffort": null,
+      "assignees": [
+        "@test-agent"
+      ],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:53:46.544370+00:00",
+      "updated_at": "2025-06-26T01:53:46.567422+00:00"
+    }
+  ]
+}

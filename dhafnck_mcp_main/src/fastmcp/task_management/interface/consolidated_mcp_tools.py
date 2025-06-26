@@ -515,39 +515,51 @@ class TaskOperationHandler:
             return {"success": False, "error": f"Failed to access task storage: {str(e)}"}
         
         if action == "list":
-            return self._list_tasks(task_app_service, status, priority, assignees, labels, limit)
+            return self._list_tasks(task_app_service, project_id, task_tree_id, user_id, status, priority, assignees, labels, limit)
         elif action == "search":
-            return self._search_tasks(task_app_service, query, limit)
+            return self._search_tasks(task_app_service, project_id, task_tree_id, user_id, query, limit)
         elif action == "next":
             return self._get_next_task(task_app_service)
         else:
             return {"success": False, "error": "Invalid action for list/search/next"}
     
-    def handle_dependency_operations(self, action, task_id, dependency_data=None):
-        """Handle dependency operations (add, remove, get, clear, get_blocking)"""
+    def handle_dependency_operations(self, action, task_id, project_id, task_tree_id, user_id, dependency_data=None):
+        """Handle dependency operations (add, remove, get, clear, get_blocking) with hierarchical storage"""
         if not task_id:
             return {"success": False, "error": "task_id is required for dependency operations"}
+        
+        # Validate project and task tree exist
+        if not self._validate_project_tree(project_id, task_tree_id):
+            return {"success": False, "error": f"Project '{project_id}' or task tree '{task_tree_id}' not found"}
+        
+        # Get repository for this specific project/tree
+        try:
+            repository = self._repository_factory.create_repository(project_id, task_tree_id, user_id)
+            task_app_service = TaskApplicationService(repository, self._auto_rule_generator)
+        except Exception as e:
+            return {"success": False, "error": f"Failed to access task storage: {str(e)}"}
+        
         try:
             if action == "add_dependency":
                 if not dependency_data or "dependency_id" not in dependency_data:
                     return {"success": False, "error": "dependency_data with dependency_id is required"}
                 
                 request = AddDependencyRequest(task_id=task_id, dependency_id=dependency_data["dependency_id"])
-                response = self._task_app_service.add_dependency(request)
+                response = task_app_service.add_dependency(request)
                 return {"success": response.success, "action": "add_dependency", "task_id": response.task_id, "dependencies": response.dependencies, "message": response.message}
             elif action == "remove_dependency":
                 if not dependency_data or "dependency_id" not in dependency_data:
                     return {"success": False, "error": "dependency_data with dependency_id is required"}
-                response = self._task_app_service.remove_dependency(task_id, dependency_data["dependency_id"])
+                response = task_app_service.remove_dependency(task_id, dependency_data["dependency_id"])
                 return {"success": response.success, "action": "remove_dependency", "task_id": response.task_id, "dependencies": response.dependencies, "message": response.message}
             elif action == "get_dependencies":
-                response = self._task_app_service.get_dependencies(task_id)
+                response = task_app_service.get_dependencies(task_id)
                 return {"success": True, "action": "get_dependencies", **response}
             elif action == "clear_dependencies":
-                response = self._task_app_service.clear_dependencies(task_id)
+                response = task_app_service.clear_dependencies(task_id)
                 return {"success": response.success, "action": "clear_dependencies", "task_id": response.task_id, "dependencies": response.dependencies, "message": response.message}
             elif action == "get_blocking_tasks":
-                response = self._task_app_service.get_blocking_tasks(task_id)
+                response = task_app_service.get_blocking_tasks(task_id)
                 return {"success": True, "action": "get_blocking_tasks", **response}
             else:
                 return {"success": False, "error": f"Unknown dependency action: {action}"}
@@ -985,7 +997,8 @@ class ToolRegistrationOrchestrator:
 
                 elif action in dependency_actions:
                     return self._task_handler.handle_dependency_operations(
-                        action=action, task_id=task_id, dependency_data=dependency_data
+                        action=action, task_id=task_id, project_id=project_id, 
+                        task_tree_id=task_tree_id, user_id=user_id, dependency_data=dependency_data
                     )
                 
                 else:
@@ -1348,9 +1361,12 @@ class ConsolidatedMCPTools:
         """Handle subtask operations - delegates to task handler"""
         return self._task_handler.handle_subtask_operations(*args, **kwargs)
     
-    def _handle_dependency_operations(self, *args, **kwargs) -> Dict[str, Any]:
+    def _handle_dependency_operations(self, action=None, task_id=None, project_id="default_project", task_tree_id="main", user_id="default_id", dependency_data=None, **kwargs) -> Dict[str, Any]:
         """Handle dependency operations - delegates to task handler"""
-        return self._task_handler.handle_dependency_operations(*args, **kwargs)
+        try:
+            return self._task_handler.handle_dependency_operations(action, task_id, project_id, task_tree_id, user_id, dependency_data)
+        except Exception as e:
+            return {"success": False, "error": str(e)}
     
     # Multi-agent tools accessor for tests
     @property

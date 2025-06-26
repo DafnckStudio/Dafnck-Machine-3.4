@@ -115,8 +115,8 @@
     "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z"
   },
-  "e2e_querying_project": {
-    "id": "e2e_querying_project",
+  "e2e_querying_project_1750902924": {
+    "id": "e2e_querying_project_1750902924",
     "name": "E2E Querying Test Project",
     "description": "",
     "task_trees": {
@@ -130,8 +130,8 @@
     "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z"
   },
-  "e2e_collaboration_project": {
-    "id": "e2e_collaboration_project",
+  "e2e_collaboration_project_1750902924": {
+    "id": "e2e_collaboration_project_1750902924",
     "name": "E2E Collaboration Test Project",
     "description": "",
     "task_trees": {
@@ -145,8 +145,8 @@
     "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z"
   },
-  "e2e_dependency_project": {
-    "id": "e2e_dependency_project",
+  "e2e_dependency_project_1750902924": {
+    "id": "e2e_dependency_project_1750902924",
     "name": "E2E Dependency Test Project",
     "description": "",
     "task_trees": {
