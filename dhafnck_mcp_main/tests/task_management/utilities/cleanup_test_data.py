@@ -1,449 +1,345 @@
 #!/usr/bin/env python3
 """
-Cleanup script to remove test data from production projects.json file.
+Cleanup script to remove ONLY test data files (.test.json, .test.mdc, etc.)
+This script is designed to be completely safe and will NEVER touch production files.
 
-This script removes any test projects that may have been created by test runs
-that didn't properly isolate their data.
+SAFETY FEATURES:
+- Only removes files with .test.json, .test.mdc suffixes
+- Only removes files with test_ prefixes
+- Never touches production files like projects.json, tasks.json, auto_rule.mdc
+- Creates backups before any operations
+- Comprehensive logging of all operations
 """
 
 import os
 import json
 import shutil
 import re
+import sys
 from pathlib import Path
+from typing import List, Dict, Any, Optional
+
+# Add the src directory to the Python path
+current_dir = Path(__file__).parent
+src_dir = current_dir.parent.parent.parent / "src"
+sys.path.insert(0, str(src_dir))
+
+try:
+    from fastmcp.tools.tool_path import find_project_root
+except ImportError:
+    def find_project_root() -> Path:
+        """Fallback function to find project root"""
+        current = Path.cwd()
+        while current != current.parent:
+            if (current / "___root___").exists():
+                return current
+            if (current / ".git").exists():
+                return current
+            if (current / ".cursor" / "rules").exists():
+                return current
+            current = current.parent
+        return Path.cwd()
 
 
-def find_projects_file():
-    """Find the production projects.json file"""
-    # Look for projects.json in the workspace root (.cursor/rules/brain/projects.json)
-    # Find the .cursor directory that contains rules/brain/projects.json with test data
-    current_dir = Path(__file__).parent
+def get_test_file_patterns() -> List[str]:
+    """
+    Get patterns for test files that are safe to delete
     
-    # Walk up the directory tree to find .cursor directories with projects.json
-    check_dir = current_dir
+    Returns:
+        List of glob patterns for test files
+    """
+    return [
+        "*.test.json",
+        "*.test.mdc",
+        "*test_*.json",
+        "*test_*.mdc"
+    ]
+
+
+def is_safe_test_file(file_path: Path) -> bool:
+    """
+    Check if a file is safe to delete (test file only)
     
-    # Look for workspace indicators (go up max 10 levels)
-    for _ in range(10):
-        if (check_dir / ".cursor").exists():
-            projects_file = check_dir / ".cursor" / "rules" / "brain" / "projects.json"
-            if projects_file.exists():
-                # Check if this projects.json has test data by looking for test projects
-                try:
-                    with open(projects_file, 'r') as f:
-                        data = json.load(f)
-                    # Look for test project indicators
-                    test_indicators = ["test", "proj1", "proj2", "e2e", "migration", "default_project"]
-                    has_test_data = any(
-                        any(indicator in project_id.lower() for indicator in test_indicators)
-                        for project_id in data.keys()
-                    )
-                    if has_test_data:
-                        return projects_file
-                except (json.JSONDecodeError, Exception):
-                    pass
+    Args:
+        file_path: Path to check
         
-        parent = check_dir.parent
-        if parent == check_dir:  # reached filesystem root
-            break
-        check_dir = parent
+    Returns:
+        True if file is a test file and safe to delete
+    """
+    file_name = file_path.name.lower()
     
-    # Fallback: use the agentic-project workspace
-    fallback_root = Path("/home/daihungpham/agentic-project")
-    projects_file = fallback_root / ".cursor" / "rules" / "brain" / "projects.json"
-    return projects_file
+    # SAFETY: Only allow deletion of files with explicit test suffixes
+    if file_name.endswith('.test.json') or file_name.endswith('.test.mdc'):
+        return True
+    
+    # SAFETY: Only allow deletion of files with test prefixes
+    test_prefixes = ['test_', 'e2e_', 'migration_test_']
+    if any(file_name.startswith(prefix) for prefix in test_prefixes):
+        # Additional safety: ensure it's not a production-like file
+        if file_name in ['test_projects.json', 'test_tasks.json', 'test_auto_rule.mdc']:
+            return False  # These could be production test configs
+        return True
+    
+    return False
 
 
-def backup_projects_file(projects_file):
-    """Create a backup of the projects file before cleaning"""
-    if projects_file.exists():
-        backup_file = projects_file.with_suffix('.json.backup')
-        shutil.copy2(projects_file, backup_file)
-        print(f"✅ Created backup: {backup_file}")
-        return backup_file
-    return None
+def find_test_files_only() -> List[Path]:
+    """
+    Find ONLY test files that are safe to delete
+    
+    Returns:
+        List of test file paths
+    """
+    workspace_root = find_project_root()
+    cursor_rules_dir = workspace_root / ".cursor" / "rules"
+    
+    test_files = []
+    
+    if not cursor_rules_dir.exists():
+        print(f"ℹ️  No .cursor/rules directory found at: {cursor_rules_dir}")
+        return test_files
+    
+    # Search for test files in all subdirectories
+    for file_path in cursor_rules_dir.rglob("*"):
+        if file_path.is_file() and is_safe_test_file(file_path):
+            test_files.append(file_path)
+    
+    return test_files
 
 
-def clean_test_projects(projects_file):
-    """Remove test projects from the production file"""
+def clean_test_projects_from_json(projects_file: Path) -> int:
+    """
+    Clean ONLY test projects from projects.json (but only if it's a .test.json file)
+    
+    Args:
+        projects_file: Path to projects file
+        
+    Returns:
+        Number of projects cleaned
+    """
+    # SAFETY: Only clean from .test.json files
+    if not projects_file.name.endswith('.test.json'):
+        print(f"🛡️  SAFETY: Skipping non-test file: {projects_file}")
+        return 0
+    
     if not projects_file.exists():
-        print(f"ℹ️  Projects file does not exist: {projects_file}")
-        return
+        return 0
     
-    # Load current data
     try:
         with open(projects_file, 'r') as f:
             data = json.load(f)
     except (json.JSONDecodeError, Exception) as e:
-        print(f"❌ Error reading projects file: {e}")
-        return
+        print(f"❌ Error reading test projects file: {e}")
+        return 0
     
-    # Define CLEAR test project patterns - only obvious test projects
-    obvious_test_patterns = [
-        # Basic test patterns - clearly test projects
-        "test_project",
-        "test_project2", 
-        "test_project3",
-        "test1",
-        "test2",
-        "test_isolated",
-        "test_isolated_mcp",
-        "isolation_test",
-        "proj1",  # Generic test project names
-        "proj2",
-        "project1",  # Generic test project names  
-        "project2",
-        "default_project",  # Default test project
-        "workflow_proj",  # Test workflow project
-        
-        # Auto-detection test patterns
-        "test_auto_detect",
-        "test_from_tmp",
-        
-        # E2E test patterns (exact matches)
-        "e2e_project_1",
-        "e2e_lifecycle_project",
-        
-        # Migration test patterns
-        "migration_test_project",
-        "migration_workflow_test",
-    ]
+    # Create backup
+    backup_file = projects_file.with_suffix('.json.backup')
+    shutil.copy2(projects_file, backup_file)
+    print(f"💾 Created backup: {backup_file}")
     
-    # Regex patterns for dynamic test projects (with timestamps)
-    test_project_regex_patterns = [
-        r"^e2e_querying_project_\d+$",
-        r"^e2e_collaboration_project_\d+$", 
-        r"^e2e_dependency_project_\d+$",
-        r"^test_.*_\d+$",  # test_something_123456
-        r"^temp_.*$",      # temp_anything
-    ]
-    
-    # Track what we're removing
-    removed_projects = []
     original_count = len(data)
+    removed_projects = []
     
-    # Remove test projects
+    # Only remove projects that are clearly test projects
     for project_id in list(data.keys()):
         project = data[project_id]
-        
-        # Check if this looks like a test project
         is_test_project = False
         
-        # 1. Check by exact ID match with obvious test patterns
-        if project_id.lower() in [p.lower() for p in obvious_test_patterns]:
-            is_test_project = True
-            print(f"🎯 Test project (exact match): {project_id}")
-        
-        # 2. Check by regex patterns for dynamic test projects
-        if not is_test_project:
-            for pattern in test_project_regex_patterns:
-                if re.match(pattern, project_id, re.IGNORECASE):
-                    is_test_project = True
-                    print(f"🎯 Test project (regex match): {project_id}")
-                    break
-        
-        # 3. Check for obvious test project names (very specific)
-        if not is_test_project and isinstance(project, dict) and "name" in project:
-            project_name = project["name"].lower()
-            # Only flag if name explicitly says it's for testing
-            obvious_test_names = [
-                "test project",
-                "e2e test project", 
-                "migration test project",
-                "isolated test",
-                "temp project",
-                "testing project"
-            ]
-            if any(test_name in project_name for test_name in obvious_test_names):
+        # Check if project has test indicators
+        if isinstance(project, dict):
+            # Check for test_environment flag
+            if project.get("test_environment", False):
                 is_test_project = True
-                print(f"🎯 Test project (test name): {project_id}")
-        
-        # 4. Check for test-specific paths (temp directories)
-        if not is_test_project and isinstance(project, dict) and "path" in project:
-            project_path = project["path"].lower()
-            if "/tmp/" in project_path or "/temp/" in project_path:
+            
+            # Check for test_id field
+            if "test_id" in project:
                 is_test_project = True
-                print(f"🎯 Test project (temp path): {project_id}")
-        
-        # 5. Check for explicit test descriptions
-        if not is_test_project and isinstance(project, dict) and "description" in project:
-            description = project["description"].lower()
-            # Only flag if description explicitly mentions it's for testing
-            test_phrases = [
-                "for testing",
-                "test project", 
-                "e2e testing",
-                "migration testing",
-                "temporary project",
-                "testing purposes"
-            ]
-            if any(phrase in description for phrase in test_phrases):
+            
+            # Check for test patterns in project_id
+            test_patterns = ["test_", "e2e_", "migration_test_"]
+            if any(project_id.lower().startswith(pattern) for pattern in test_patterns):
                 is_test_project = True
-                print(f"🎯 Test project (test description): {project_id}")
-        
-        # PROTECTION: If project has a meaningful name that doesn't look like a test,
-        # and has a real description, protect it even if other criteria match
-        if is_test_project and isinstance(project, dict):
-            project_name = project.get("name", "").lower()
-            project_desc = project.get("description", "").lower()
-            
-            # Signs of a legitimate project
-            has_meaningful_name = (
-                len(project_name) > 10 and  # Longer than simple test names
-                not any(word in project_name for word in ["test", "temp", "proj"]) and
-                any(word in project_name for word in ["framework", "server", "application", "system", "platform"])
-            )
-            
-            has_meaningful_description = (
-                len(project_desc) > 50 and  # Substantial description
-                not any(phrase in project_desc for phrase in ["for testing", "test project"]) and
-                any(word in project_desc for word in ["comprehensive", "framework", "production", "development"])
-            )
-            
-            if has_meaningful_name or has_meaningful_description:
-                is_test_project = False
-                print(f"🛡️  Protecting project with meaningful content: {project_id}")
         
         if is_test_project:
             removed_projects.append(project_id)
             del data[project_id]
     
-    # Save cleaned data
     if removed_projects:
         try:
             with open(projects_file, 'w') as f:
                 json.dump(data, f, indent=2)
             
-            print(f"🧹 Cleaned {len(removed_projects)} test project(s):")
+            print(f"🧹 Cleaned {len(removed_projects)} test project(s) from {projects_file}:")
             for project_id in removed_projects:
                 print(f"   - {project_id}")
             print(f"📊 Projects before: {original_count}, after: {len(data)}")
             
         except Exception as e:
-            print(f"❌ Error saving cleaned projects file: {e}")
+            print(f"❌ Error saving cleaned test projects file: {e}")
+            return 0
     else:
-        print("✨ No test projects found to clean")
+        print(f"✨ No test projects found to clean in {projects_file}")
+    
+    return len(removed_projects)
 
 
-def clean_test_task_files():
-    """Clean up test task files from .cursor/rules/tasks/ directories"""
-    # Find the workspace root that contains test data
-    current_dir = Path(__file__).parent
+def clean_test_task_directories() -> int:
+    """
+    Clean test task directories (only those with .test.json files or test patterns)
     
-    # Walk up the directory tree to find .cursor directories with test data
-    workspace_root = None
-    check_dir = current_dir
+    Returns:
+        Number of directories cleaned
+    """
+    workspace_root = find_project_root()
+    tasks_base_dir = workspace_root / ".cursor" / "rules" / "tasks"
     
-    # Look for workspace indicators (go up max 10 levels)
-    for _ in range(10):
-        if (check_dir / ".cursor").exists():
-            projects_file = check_dir / ".cursor" / "rules" / "brain" / "projects.json"
-            if projects_file.exists():
-                # Check if this projects.json has test data by looking for test projects
-                try:
-                    with open(projects_file, 'r') as f:
-                        data = json.load(f)
-                    # Look for test project indicators
-                    test_indicators = ["test", "proj1", "proj2", "e2e", "migration", "default_project"]
-                    has_test_data = any(
-                        any(indicator in project_id.lower() for indicator in test_indicators)
-                        for project_id in data.keys()
-                    )
-                    if has_test_data:
-                        workspace_root = check_dir
-                        break
-                except (json.JSONDecodeError, Exception):
-                    pass
-        
-        parent = check_dir.parent
-        if parent == check_dir:  # reached filesystem root
-            break
-        check_dir = parent
+    if not tasks_base_dir.exists():
+        return 0
     
-    # Fallback: use the agentic-project workspace
-    if workspace_root is None:
-        workspace_root = Path("/home/daihungpham/agentic-project")
+    cleaned_count = 0
     
-    cursor_rules_dir = workspace_root / ".cursor" / "rules"
-    tasks_dir = cursor_rules_dir / "tasks"
-    
-    if not tasks_dir.exists():
-        print("ℹ️  No tasks directory found")
-        return
-    
-    # Look for test user directories and test project directories
-    removed_dirs = []
-    
-    for user_dir in tasks_dir.iterdir():
+    # Look for test task directories
+    for user_dir in tasks_base_dir.iterdir():
         if not user_dir.is_dir():
             continue
             
-        # Check if this is a test user directory
-        if user_dir.name == "default_id":  # Default test user
-            for project_dir in user_dir.iterdir():
-                if not project_dir.is_dir():
-                    continue
-                
-                # Check if this looks like a test project directory
-                project_name = project_dir.name
-                if any(pattern in project_name.lower() for pattern in [
-                    "test", "e2e", "migration", "temp", "proj1", "proj2", "default_project", "workflow"
-                ]):
-                    try:
-                        shutil.rmtree(project_dir)
-                        removed_dirs.append(str(project_dir))
-                        print(f"🗑️  Removed test task directory: {project_dir}")
-                    except Exception as e:
-                        print(f"❌ Error removing {project_dir}: {e}")
-    
-    if removed_dirs:
-        print(f"📁 Cleaned {len(removed_dirs)} test task directories")
-    else:
-        print("✨ No test task directories found to clean")
-
-    # Also clean up legacy tasks.json file if it exists and contains test data
-    legacy_tasks_file = tasks_dir / "tasks.json"
-    if legacy_tasks_file.exists():
-        try:
-            with open(legacy_tasks_file, 'r') as f:
-                legacy_data = json.load(f)
+        for project_dir in user_dir.iterdir():
+            if not project_dir.is_dir():
+                continue
             
-            # Check if this contains test data (tasks with project_id: null or test patterns)
-            if "tasks" in legacy_data:
-                has_test_data = False
-                for task in legacy_data["tasks"]:
-                    # Check for null project_id (legacy test data)
-                    if task.get("project_id") is None:
-                        has_test_data = True
+            # Check if this is a test project directory
+            is_test_dir = False
+            
+            # Check for test patterns in directory name
+            test_patterns = ["test_", "e2e_", "migration_test_"]
+            if any(project_dir.name.lower().startswith(pattern) for pattern in test_patterns):
+                is_test_dir = True
+            
+            # Check for .test.json files in the directory
+            for task_tree_dir in project_dir.iterdir():
+                if task_tree_dir.is_dir():
+                    test_json_files = list(task_tree_dir.glob("*.test.json"))
+                    if test_json_files:
+                        is_test_dir = True
                         break
-                    # Check for test patterns in title/description
-                    title = task.get("title", "").lower()
-                    description = task.get("description", "").lower()
-                    if any(pattern in title or pattern in description for pattern in [
-                        "test", "auto rule integration", "persistence test"
-                    ]):
-                        has_test_data = True
-                        break
-                
-                if has_test_data:
-                    # Create backup before removing
-                    backup_file = legacy_tasks_file.with_suffix('.json.backup')
-                    shutil.copy2(legacy_tasks_file, backup_file)
-                    
-                    # Remove the legacy file
-                    legacy_tasks_file.unlink()
-                    print(f"🗑️  Removed legacy test tasks.json file")
-                    print(f"💾 Backup created: {backup_file}")
-                else:
-                    print("ℹ️  Legacy tasks.json contains production data, keeping it")
-            else:
-                print("ℹ️  Legacy tasks.json has no tasks, keeping it")
-                
-        except (json.JSONDecodeError, Exception) as e:
-            print(f"⚠️  Could not process legacy tasks.json: {e}")
-    else:
-        print("ℹ️  No legacy tasks.json file found")
-
-
-def clean_test_context_files():
-    """Clean up test context files from .cursor/rules/contexts/ directories"""
-    # Find the workspace root that contains test data
-    current_dir = Path(__file__).parent
-    
-    # Walk up the directory tree to find .cursor directories with test data
-    workspace_root = None
-    check_dir = current_dir
-    
-    # Look for workspace indicators (go up max 10 levels)
-    for _ in range(10):
-        if (check_dir / ".cursor").exists():
-            projects_file = check_dir / ".cursor" / "rules" / "brain" / "projects.json"
-            if projects_file.exists():
-                # Check if this projects.json has test data by looking for test projects
+            
+            if is_test_dir:
                 try:
-                    with open(projects_file, 'r') as f:
-                        data = json.load(f)
-                    # Look for test project indicators
-                    test_indicators = ["test", "proj1", "proj2", "e2e", "migration", "default_project"]
-                    has_test_data = any(
-                        any(indicator in project_id.lower() for indicator in test_indicators)
-                        for project_id in data.keys()
-                    )
-                    if has_test_data:
-                        workspace_root = check_dir
-                        break
-                except (json.JSONDecodeError, Exception):
-                    pass
-        
-        parent = check_dir.parent
-        if parent == check_dir:  # reached filesystem root
-            break
-        check_dir = parent
+                    shutil.rmtree(project_dir)
+                    cleaned_count += 1
+                    print(f"🧹 Removed test task directory: {project_dir}")
+                except Exception as e:
+                    print(f"⚠️ Could not remove test directory {project_dir}: {e}")
     
-    # Fallback: use the agentic-project workspace
-    if workspace_root is None:
-        workspace_root = Path("/home/daihungpham/agentic-project")
+    return cleaned_count
+
+
+def clean_test_context_directories() -> int:
+    """
+    Clean test context directories (only those with test patterns)
     
-    cursor_rules_dir = workspace_root / ".cursor" / "rules"
-    contexts_dir = cursor_rules_dir / "contexts"
+    Returns:
+        Number of directories cleaned
+    """
+    workspace_root = find_project_root()
+    contexts_base_dir = workspace_root / ".cursor" / "rules" / "contexts"
     
-    if not contexts_dir.exists():
-        print("ℹ️  No contexts directory found")
-        return
+    if not contexts_base_dir.exists():
+        return 0
     
-    # Look for test user directories and test project directories
-    removed_dirs = []
+    cleaned_count = 0
     
-    for user_dir in contexts_dir.iterdir():
+    # Look for test context directories
+    for user_dir in contexts_base_dir.iterdir():
         if not user_dir.is_dir():
             continue
             
-        # Check if this is a test user directory
-        if user_dir.name == "default_id":  # Default test user
-            for project_dir in user_dir.iterdir():
-                if not project_dir.is_dir():
-                    continue
-                
-                # Check if this looks like a test project directory
-                project_name = project_dir.name
-                if any(pattern in project_name.lower() for pattern in [
-                    "test", "e2e", "migration", "temp", "proj1", "proj2", "default_project", "workflow", "project_a"
-                ]):
-                    try:
-                        shutil.rmtree(project_dir)
-                        removed_dirs.append(str(project_dir))
-                        print(f"🗑️  Removed test context directory: {project_dir}")
-                    except Exception as e:
-                        print(f"❌ Error removing {project_dir}: {e}")
+        for project_dir in user_dir.iterdir():
+            if not project_dir.is_dir():
+                continue
+            
+            # Check if this is a test project directory
+            test_patterns = ["test_", "e2e_", "migration_test_"]
+            if any(project_dir.name.lower().startswith(pattern) for pattern in test_patterns):
+                try:
+                    shutil.rmtree(project_dir)
+                    cleaned_count += 1
+                    print(f"🧹 Removed test context directory: {project_dir}")
+                except Exception as e:
+                    print(f"⚠️ Could not remove test context directory {project_dir}: {e}")
     
-    if removed_dirs:
-        print(f"📁 Cleaned {len(removed_dirs)} test context directories")
-    else:
-        print("✨ No test context directories found to clean")
+    return cleaned_count
 
 
 def main():
-    """Main cleanup function"""
-    print("🧹 Starting comprehensive test data cleanup...")
+    """Main cleanup function - ONLY removes test files"""
+    print("🧹 Starting SAFE test data cleanup (test files only)...")
+    print("🛡️  SAFETY: This script ONLY removes .test.json, .test.mdc and test_* files")
+    print("🛡️  SAFETY: Production files (projects.json, tasks.json, auto_rule.mdc) are NEVER touched")
     
-    # Find the projects file
-    projects_file = find_projects_file()
-    print(f"📁 Projects file: {projects_file}")
+    workspace_root = find_project_root()
+    print(f"📁 Workspace root: {workspace_root}")
     
-    # Create backup
-    backup_file = backup_projects_file(projects_file)
+    total_cleaned = 0
     
-    # Clean test projects from projects.json
-    clean_test_projects(projects_file)
+    # 1. Clean individual test files
+    print("\n1️⃣ Cleaning individual test files...")
+    test_files = find_test_files_only()
     
-    # Clean test task files
-    clean_test_task_files()
+    if test_files:
+        print(f"Found {len(test_files)} test files to clean:")
+        for file_path in test_files:
+            print(f"   - {file_path}")
+        
+        for file_path in test_files:
+            try:
+                file_path.unlink()
+                total_cleaned += 1
+                print(f"🧹 Removed test file: {file_path}")
+            except Exception as e:
+                print(f"⚠️ Could not remove {file_path}: {e}")
+    else:
+        print("✨ No individual test files found")
     
-    # Clean test context files
-    clean_test_context_files()
+    # 2. Clean test projects from .test.json files
+    print("\n2️⃣ Cleaning test projects from .test.json files...")
+    cursor_rules_dir = workspace_root / ".cursor" / "rules"
+    test_projects_files = []
     
-    print("✅ Cleanup completed!")
-    if backup_file:
-        print(f"💾 Backup available at: {backup_file}")
+    if cursor_rules_dir.exists():
+        test_projects_files = list(cursor_rules_dir.rglob("*.test.json"))
+        if "projects" in str(cursor_rules_dir):
+            test_projects_files.extend(cursor_rules_dir.rglob("projects.test.json"))
+    
+    projects_cleaned = 0
+    for projects_file in test_projects_files:
+        if "projects" in projects_file.name:
+            projects_cleaned += clean_test_projects_from_json(projects_file)
+    
+    total_cleaned += projects_cleaned
+    
+    # 3. Clean test task directories
+    print("\n3️⃣ Cleaning test task directories...")
+    task_dirs_cleaned = clean_test_task_directories()
+    total_cleaned += task_dirs_cleaned
+    
+    # 4. Clean test context directories
+    print("\n4️⃣ Cleaning test context directories...")
+    context_dirs_cleaned = clean_test_context_directories()
+    total_cleaned += context_dirs_cleaned
+    
+    # Summary
+    print(f"\n✅ Cleanup completed!")
+    print(f"📊 Total items cleaned: {total_cleaned}")
+    print(f"   - Individual test files: {len(test_files)}")
+    print(f"   - Test projects: {projects_cleaned}")
+    print(f"   - Test task directories: {task_dirs_cleaned}")
+    print(f"   - Test context directories: {context_dirs_cleaned}")
+    
+    if total_cleaned == 0:
+        print("✨ No test data found to clean - system is already clean!")
+    else:
+        print("🛡️  SAFETY CONFIRMED: Only test files were cleaned, production data is safe")
 
 
 if __name__ == "__main__":

@@ -1,24 +1,30 @@
-"""Tests for MCP Tools with Complete Test Data Isolation"""
+"""Tests for Consolidated MCP Tools v2 (Updated from old MCPTaskTools) - Using Test Isolation"""
 
 import sys
 import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
 import pytest
 import tempfile
-from pathlib import Path
+import os
+import shutil
 from unittest.mock import Mock, patch
 
 # Import test isolation system
 from test_environment_config import isolated_test_environment
 
+# Updated import to use consolidated v2 tools
+from fastmcp.task_management.interface.consolidated_mcp_tools import ConsolidatedMCPTools
 
-class TestMCPToolsIsolated:
-    """Test MCP tools functionality with complete test isolation"""
+
+class TestConsolidatedMCPToolsIsolated:
+    """Test consolidated MCP tools v2 functionality with complete test isolation"""
     
     def test_production_data_safety_verification(self):
         """Verify that production data is never touched during testing"""
         import json
+        from pathlib import Path
         
         # Check production files exist and are untouched
         production_projects = Path(".cursor/rules/brain/projects.json")
@@ -170,7 +176,7 @@ class TestMCPToolsIsolated:
 
 # Run tests if executed directly
 if __name__ == "__main__":
-    test_instance = TestMCPToolsIsolated()
+    test_instance = TestConsolidatedMCPToolsIsolated()
     
     print("🧪 Running isolated MCP tools tests...")
     

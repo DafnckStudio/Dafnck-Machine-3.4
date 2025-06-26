@@ -1,0 +1,227 @@
+{
+  "tasks": [
+    {
+      "id": "20250626001",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626001.001",
+          "assignees": []
+        },
+        {
+          "title": "First subtask",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626001.002",
+          "assignees": []
+        },
+        {
+          "title": "Workflow Subtask",
+          "description": "Subtask for workflow",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626001.003",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T11:10:48.140763+00:00",
+      "updated_at": "2025-06-26T11:10:51.483431+00:00"
+    },
+    {
+      "id": "20250626002",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626002.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T11:10:48.162899+00:00",
+      "updated_at": "2025-06-26T11:10:48.168993+00:00"
+    },
+    {
+      "id": "20250626003",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626003.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T11:10:48.185180+00:00",
+      "updated_at": "2025-06-26T11:10:48.192327+00:00"
+    },
+    {
+      "id": "20250626004",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T11:10:48.207999+00:00",
+      "updated_at": "2025-06-26T11:10:48.214619+00:00"
+    },
+    {
+      "id": "20250626005",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T11:10:48.230897+00:00",
+      "updated_at": "2025-06-26T11:10:48.230897+00:00"
+    },
+    {
+      "id": "20250626006",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T11:10:48.253683+00:00",
+      "updated_at": "2025-06-26T11:10:48.253683+00:00"
+    },
+    {
+      "id": "20250626007",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T11:10:48.272784+00:00",
+      "updated_at": "2025-06-26T11:10:48.272784+00:00"
+    },
+    {
+      "id": "20250626008",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T11:10:48.302095+00:00",
+      "updated_at": "2025-06-26T11:10:48.305118+00:00"
+    },
+    {
+      "id": "20250626009",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T11:10:51.085062+00:00",
+      "updated_at": "2025-06-26T11:10:51.085062+00:00"
+    }
+  ]
+}

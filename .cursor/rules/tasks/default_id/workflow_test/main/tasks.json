@@ -1,0 +1,25 @@
+{
+  "tasks": [
+    {
+      "id": "20250626001",
+      "title": "Workflow Task",
+      "description": "Complete workflow task",
+      "project_id": "workflow_test",
+      "status": "done",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "workflow"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T11:10:51.480232+00:00",
+      "updated_at": "2025-06-26T11:10:51.486714+00:00"
+    }
+  ]
+}
