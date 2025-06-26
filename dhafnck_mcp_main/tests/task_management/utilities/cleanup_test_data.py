@@ -254,6 +254,49 @@ def clean_test_task_files():
     else:
         print("✨ No test task directories found to clean")
 
+    # Also clean up legacy tasks.json file if it exists and contains test data
+    legacy_tasks_file = tasks_dir / "tasks.json"
+    if legacy_tasks_file.exists():
+        try:
+            with open(legacy_tasks_file, 'r') as f:
+                legacy_data = json.load(f)
+            
+            # Check if this contains test data (tasks with project_id: null or test patterns)
+            if "tasks" in legacy_data:
+                has_test_data = False
+                for task in legacy_data["tasks"]:
+                    # Check for null project_id (legacy test data)
+                    if task.get("project_id") is None:
+                        has_test_data = True
+                        break
+                    # Check for test patterns in title/description
+                    title = task.get("title", "").lower()
+                    description = task.get("description", "").lower()
+                    if any(pattern in title or pattern in description for pattern in [
+                        "test", "auto rule integration", "persistence test"
+                    ]):
+                        has_test_data = True
+                        break
+                
+                if has_test_data:
+                    # Create backup before removing
+                    backup_file = legacy_tasks_file.with_suffix('.json.backup')
+                    shutil.copy2(legacy_tasks_file, backup_file)
+                    
+                    # Remove the legacy file
+                    legacy_tasks_file.unlink()
+                    print(f"🗑️  Removed legacy test tasks.json file")
+                    print(f"💾 Backup created: {backup_file}")
+                else:
+                    print("ℹ️  Legacy tasks.json contains production data, keeping it")
+            else:
+                print("ℹ️  Legacy tasks.json has no tasks, keeping it")
+                
+        except (json.JSONDecodeError, Exception) as e:
+            print(f"⚠️  Could not process legacy tasks.json: {e}")
+    else:
+        print("ℹ️  No legacy tasks.json file found")
+
 
 def clean_test_context_files():
     """Clean up test context files from .cursor/rules/contexts/ directories"""

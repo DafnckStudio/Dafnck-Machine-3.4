@@ -1,1 +1,40 @@
-{}
+{
+  "dhafnck_mcp_main": {
+    "id": "dhafnck_mcp_main",
+    "name": "DhafnckMCP - Advanced MCP Server Framework",
+    "description": "A comprehensive MCP server framework with integrated task management, multi-agent orchestration, and cursor rules integration capabilities. Built with FastMCP and Domain-Driven Design architecture.",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      },
+      "v1.0.0beta": {
+        "id": "v1.0.0beta",
+        "name": "Version 1.0.0 Beta Development",
+        "description": "Current development branch focusing on beta testing, test suite stabilization, and performance optimization."
+      }
+    },
+    "registered_agents": {
+      "coding_agent": {
+        "id": "coding_agent",
+        "name": "Coding Agent",
+        "call_agent": "@coding-agent"
+      },
+      "test_orchestrator_agent": {
+        "id": "test_orchestrator_agent",
+        "name": "Test Orchestrator Agent",
+        "call_agent": "@test-orchestrator-agent"
+      }
+    },
+    "agent_assignments": {
+      "coding_agent": [
+        "v1.0.0beta"
+      ],
+      "test_orchestrator_agent": [
+        "v1.0.0beta"
+      ]
+    },
+    "created_at": "2025-01-01T00:00:00Z"
+  }
+}
