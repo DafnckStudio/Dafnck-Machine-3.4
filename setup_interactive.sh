@@ -353,8 +353,6 @@ get_project_name() {
     done
 }
 
-
-
 # Function to ask about Claude Code installation
 ask_claude_code_installation() {
     clear
@@ -875,8 +873,12 @@ process_template_files() {
     local prd_target="$PROJECT_PATH/.cursor/rules/${PROJECT_NAME}_prd.mdc"
     
     if [[ -f "$prd_source" ]]; then
-        # Replace placeholders in content
-        sed "s|\$PROJECT_PATH/\$PROJECT_NAME|$PROJECT_PATH|g" "$prd_source" > "$prd_target"
+        # Replace all placeholders in content
+        sed -e "s|\\$PROJECT_PATH/\\$PROJECT_NAME|$PROJECT_PATH|g" \
+            -e "s|\\$PROJECT_NAME|$PROJECT_NAME|g" \
+            -e "s|\\.cursor/rules/\\$PROJECT_NAME_prd.mdc|.cursor/rules/${PROJECT_NAME}_prd.mdc|g" \
+            -e "s|\\.cursor/rules/\\$PROJECT_NAME_technical_architect.mdc|.cursor/rules/${PROJECT_NAME}_technical_architect.mdc|g" \
+            "$prd_source" > "$prd_target"
         print_success "Created PRD template: ${PROJECT_NAME}_prd.mdc"
     else
         print_warning "PRD template not found: $prd_source"
@@ -887,8 +889,12 @@ process_template_files() {
     local tech_target="$PROJECT_PATH/.cursor/rules/${PROJECT_NAME}_technical_architect.mdc"
     
     if [[ -f "$tech_source" ]]; then
-        # Replace placeholders in content
-        sed "s|\$PROJECT_PATH/\$PROJECT_NAME|$PROJECT_PATH|g" "$tech_source" > "$tech_target"
+        # Replace all placeholders in content
+        sed -e "s|\\$PROJECT_PATH/\\$PROJECT_NAME|$PROJECT_PATH|g" \
+            -e "s|\\$PROJECT_NAME|$PROJECT_NAME|g" \
+            -e "s|\\.cursor/rules/\\$PROJECT_NAME_prd.mdc|.cursor/rules/${PROJECT_NAME}_prd.mdc|g" \
+            -e "s|\\.cursor/rules/\\$PROJECT_NAME_technical_architect.mdc|.cursor/rules/${PROJECT_NAME}_technical_architect.mdc|g" \
+            "$tech_source" > "$tech_target"
         print_success "Created Technical Architect template: ${PROJECT_NAME}_technical_architect.mdc"
     else
         print_warning "Technical Architect template not found: $tech_source"

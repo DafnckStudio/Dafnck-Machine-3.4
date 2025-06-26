@@ -6,7 +6,7 @@ alwaysApply: true
 <Technical Architecture content will be write here>
 
 -- begin clear --
-**Previous Phase:** `.cursor/rules/PROJECT_NAME_prd.mdc`
+**Previous Phase:** `.cursor/rules/$PROJECT_NAME_prd.mdc`
 
 **Setup Phase 2: Technical Architecture Generate**
 
@@ -15,7 +15,7 @@ This is the second phase of the project setup.
 - After completing Setup Phase 1, the AI should ask the user how they want to proceed with the new project.
 - If the user does not provide detailed project information, the AI should use `call_agent()` to propose an appropriate project structure to support the Product Requirements Document (PRD) created in Setup Phase 1.
 - Write Technical Architecture content 
-- Add reference link this file to .cursor/rules/dhafnck_mcp.mdc (## On chat:  **Begin chat session**: AI read <`.cursor/rules/PROJECT_NAME_technical_architect.mdc`(name + link absolute from root)> )
+- Add reference link this file to .cursor/rules/dhafnck_mcp.mdc (## On chat:  **Begin chat session**: AI read <`.cursor/rules/$PROJECT_NAME_technical_architect.mdc`(name + link absolute from root)> )
 
 **IMPORTANT** All content in this area (from begin clear to end clear) should be cleared before go to next step
 
