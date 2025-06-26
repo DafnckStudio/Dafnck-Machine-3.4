@@ -146,6 +146,7 @@ async def fastmcp_openapi_server(
         client=api_client,
         name="Test App",
         route_maps=GET_ROUTE_MAPS,
+        enable_task_management=False,
     )
 
 
@@ -189,6 +190,7 @@ async def test_create_openapi_server_with_timeout(
         name="Test App",
         timeout=1.0,
         route_maps=GET_ROUTE_MAPS,
+        enable_task_management=False,
     )
     assert server._timeout == 1.0
 
@@ -213,7 +215,7 @@ class TestTools:
         """
         By default, tools exclude GET methods
         """
-        server = FastMCPOpenAPI.from_fastapi(fastapi_app)
+        server = FastMCPOpenAPI.from_fastapi(fastapi_app, enable_task_management=False)
         assert len(await server.get_tools()) == 8
         assert len(await server.get_resources()) == 0
         assert len(await server.get_resource_templates()) == 0
@@ -694,6 +696,7 @@ class TestOpenAPI30Compatibility:
             client=client,
             name="Product API 3.0",
             route_maps=GET_ROUTE_MAPS,
+            enable_task_management=False,
         )
 
     
@@ -884,6 +887,7 @@ class TestOpenAPI31Compatibility:
             client=client,
             name="Order API 3.1",
             route_maps=GET_ROUTE_MAPS,
+            enable_task_management=False,
         )
 
     
@@ -2012,6 +2016,7 @@ class TestRouteMapWildcard:
             openapi_spec=basic_openapi_spec,
             client=mock_basic_client,
             route_maps=route_maps,
+            enable_task_management=False,
         )
 
         # All operations should be mapped to tools
@@ -2229,6 +2234,7 @@ class TestRouteMapTags:
             openapi_spec=tagged_openapi_spec,
             client=mock_client,
             route_maps=route_maps,
+            enable_task_management=False,
         )
 
         tools_dict = await server._tool_manager.get_tools()

@@ -1,0 +1,2666 @@
+{
+  "tasks": [
+    {
+      "id": "20250626001",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:57:02.139719+00:00",
+      "updated_at": "2025-06-26T00:57:02.139719+00:00"
+    },
+    {
+      "id": "20250626002",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:57:02.172866+00:00",
+      "updated_at": "2025-06-26T00:57:02.172866+00:00"
+    },
+    {
+      "id": "20250626003",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T00:57:02.176834+00:00",
+      "updated_at": "2025-06-26T00:57:02.176834+00:00"
+    },
+    {
+      "id": "20250626004",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:01:32.044300+00:00",
+      "updated_at": "2025-06-26T01:01:32.044300+00:00"
+    },
+    {
+      "id": "20250626005",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:01:32.072090+00:00",
+      "updated_at": "2025-06-26T01:01:32.072090+00:00"
+    },
+    {
+      "id": "20250626006",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:01:32.075163+00:00",
+      "updated_at": "2025-06-26T01:01:32.075163+00:00"
+    },
+    {
+      "id": "20250626007",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:05:34.361697+00:00",
+      "updated_at": "2025-06-26T01:05:34.361697+00:00"
+    },
+    {
+      "id": "20250626008",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:05:34.386986+00:00",
+      "updated_at": "2025-06-26T01:05:34.386986+00:00"
+    },
+    {
+      "id": "20250626009",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:05:34.389987+00:00",
+      "updated_at": "2025-06-26T01:05:34.389987+00:00"
+    },
+    {
+      "id": "20250626010",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:08:02.316939+00:00",
+      "updated_at": "2025-06-26T01:08:02.316939+00:00"
+    },
+    {
+      "id": "20250626011",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:08:02.342745+00:00",
+      "updated_at": "2025-06-26T01:08:02.342745+00:00"
+    },
+    {
+      "id": "20250626012",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:08:02.345591+00:00",
+      "updated_at": "2025-06-26T01:08:02.345591+00:00"
+    },
+    {
+      "id": "20250626013",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:09:33.267468+00:00",
+      "updated_at": "2025-06-26T01:09:33.267468+00:00"
+    },
+    {
+      "id": "20250626014",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:09:33.293197+00:00",
+      "updated_at": "2025-06-26T01:09:33.293197+00:00"
+    },
+    {
+      "id": "20250626015",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:09:33.296636+00:00",
+      "updated_at": "2025-06-26T01:09:33.296636+00:00"
+    },
+    {
+      "id": "20250626016",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:09:49.343122+00:00",
+      "updated_at": "2025-06-26T01:09:49.343122+00:00"
+    },
+    {
+      "id": "20250626017",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:09:49.367914+00:00",
+      "updated_at": "2025-06-26T01:09:49.367914+00:00"
+    },
+    {
+      "id": "20250626018",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:09:49.370686+00:00",
+      "updated_at": "2025-06-26T01:09:49.370686+00:00"
+    },
+    {
+      "id": "20250626019",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:14:33.339290+00:00",
+      "updated_at": "2025-06-26T01:14:33.339290+00:00"
+    },
+    {
+      "id": "20250626020",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:14:33.368294+00:00",
+      "updated_at": "2025-06-26T01:14:33.368294+00:00"
+    },
+    {
+      "id": "20250626021",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:14:33.371966+00:00",
+      "updated_at": "2025-06-26T01:14:33.371966+00:00"
+    },
+    {
+      "id": "20250626022",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:23:22.543902+00:00",
+      "updated_at": "2025-06-26T01:23:22.543902+00:00"
+    },
+    {
+      "id": "20250626023",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:23:22.577056+00:00",
+      "updated_at": "2025-06-26T01:23:22.577056+00:00"
+    },
+    {
+      "id": "20250626024",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:23:22.580753+00:00",
+      "updated_at": "2025-06-26T01:23:22.580753+00:00"
+    },
+    {
+      "id": "20250626025",
+      "title": "Parent Task",
+      "description": "Parent",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626025.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:27:47.465984+00:00",
+      "updated_at": "2025-06-26T01:27:47.469087+00:00"
+    },
+    {
+      "id": "20250626026",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:28:30.442594+00:00",
+      "updated_at": "2025-06-26T01:28:30.442594+00:00"
+    },
+    {
+      "id": "20250626027",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:28:30.469190+00:00",
+      "updated_at": "2025-06-26T01:28:30.469190+00:00"
+    },
+    {
+      "id": "20250626028",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:28:30.472569+00:00",
+      "updated_at": "2025-06-26T01:28:30.472569+00:00"
+    },
+    {
+      "id": "20250626029",
+      "title": "Parent Task",
+      "description": "Parent",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626029.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:31.921126+00:00",
+      "updated_at": "2025-06-26T01:28:31.924443+00:00"
+    },
+    {
+      "id": "20250626030",
+      "title": "Parent Task",
+      "description": "Parent",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626030.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:31.939245+00:00",
+      "updated_at": "2025-06-26T01:28:31.943096+00:00"
+    },
+    {
+      "id": "20250626031",
+      "title": "Task 1",
+      "description": "First task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:31.956101+00:00",
+      "updated_at": "2025-06-26T01:28:31.956101+00:00"
+    },
+    {
+      "id": "20250626032",
+      "title": "Task 2",
+      "description": "Second task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:31.959779+00:00",
+      "updated_at": "2025-06-26T01:28:31.959779+00:00"
+    },
+    {
+      "id": "20250626033",
+      "title": "Test Task",
+      "description": "Test Description",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:34:15.887679+00:00",
+      "updated_at": "2025-06-26T01:34:15.887679+00:00"
+    },
+    {
+      "id": "20250626034",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:34:29.366466+00:00",
+      "updated_at": "2025-06-26T01:34:29.366466+00:00"
+    },
+    {
+      "id": "20250626035",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:35:03.529518+00:00",
+      "updated_at": "2025-06-26T01:35:03.529518+00:00"
+    },
+    {
+      "id": "20250626036",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:36:52.553447+00:00",
+      "updated_at": "2025-06-26T01:36:52.553447+00:00"
+    },
+    {
+      "id": "20250626037",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:36:52.582571+00:00",
+      "updated_at": "2025-06-26T01:36:52.582571+00:00"
+    },
+    {
+      "id": "20250626038",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:36:52.586969+00:00",
+      "updated_at": "2025-06-26T01:36:52.586969+00:00"
+    },
+    {
+      "id": "20250626039",
+      "title": "Parent Task",
+      "description": "Parent",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626039.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:53.945663+00:00",
+      "updated_at": "2025-06-26T01:36:53.949411+00:00"
+    },
+    {
+      "id": "20250626040",
+      "title": "Parent Task",
+      "description": "Parent",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626040.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:53.962969+00:00",
+      "updated_at": "2025-06-26T01:36:53.967192+00:00"
+    },
+    {
+      "id": "20250626041",
+      "title": "Task 1",
+      "description": "First task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:53.981791+00:00",
+      "updated_at": "2025-06-26T01:36:53.981791+00:00"
+    },
+    {
+      "id": "20250626042",
+      "title": "Task 2",
+      "description": "Second task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:53.986478+00:00",
+      "updated_at": "2025-06-26T01:36:53.986478+00:00"
+    },
+    {
+      "id": "20250626043",
+      "title": "Test Task",
+      "description": "Test Description",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.084294+00:00",
+      "updated_at": "2025-06-26T01:36:55.084294+00:00"
+    },
+    {
+      "id": "20250626044",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.113784+00:00",
+      "updated_at": "2025-06-26T01:36:55.113784+00:00"
+    },
+    {
+      "id": "20250626045",
+      "title": "Integration Test Task",
+      "description": "Complete workflow test",
+      "project_id": "test_project",
+      "status": "done",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "integration",
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.197499+00:00",
+      "updated_at": "2025-06-26T01:36:55.219382+00:00"
+    },
+    {
+      "id": "20250626046",
+      "title": "Bulk Task 0",
+      "description": "Bulk task number 0",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.286145+00:00",
+      "updated_at": "2025-06-26T01:36:55.286145+00:00"
+    },
+    {
+      "id": "20250626047",
+      "title": "Bulk Task 1",
+      "description": "Bulk task number 1",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.290292+00:00",
+      "updated_at": "2025-06-26T01:36:55.290292+00:00"
+    },
+    {
+      "id": "20250626048",
+      "title": "Bulk Task 2",
+      "description": "Bulk task number 2",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.294193+00:00",
+      "updated_at": "2025-06-26T01:36:55.294193+00:00"
+    },
+    {
+      "id": "20250626049",
+      "title": "Bulk Task 3",
+      "description": "Bulk task number 3",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.298079+00:00",
+      "updated_at": "2025-06-26T01:36:55.298079+00:00"
+    },
+    {
+      "id": "20250626050",
+      "title": "Bulk Task 4",
+      "description": "Bulk task number 4",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.302155+00:00",
+      "updated_at": "2025-06-26T01:36:55.302155+00:00"
+    },
+    {
+      "id": "20250626051",
+      "title": "Bulk Task 5",
+      "description": "Bulk task number 5",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.306349+00:00",
+      "updated_at": "2025-06-26T01:36:55.306349+00:00"
+    },
+    {
+      "id": "20250626052",
+      "title": "Bulk Task 6",
+      "description": "Bulk task number 6",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.310083+00:00",
+      "updated_at": "2025-06-26T01:36:55.310083+00:00"
+    },
+    {
+      "id": "20250626053",
+      "title": "Bulk Task 7",
+      "description": "Bulk task number 7",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.313977+00:00",
+      "updated_at": "2025-06-26T01:36:55.313977+00:00"
+    },
+    {
+      "id": "20250626054",
+      "title": "Bulk Task 8",
+      "description": "Bulk task number 8",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.317868+00:00",
+      "updated_at": "2025-06-26T01:36:55.317868+00:00"
+    },
+    {
+      "id": "20250626055",
+      "title": "Bulk Task 9",
+      "description": "Bulk task number 9",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:55.322182+00:00",
+      "updated_at": "2025-06-26T01:36:55.322182+00:00"
+    },
+    {
+      "id": "20250626056",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:38:33.638818+00:00",
+      "updated_at": "2025-06-26T01:38:33.638818+00:00"
+    },
+    {
+      "id": "20250626057",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:38:33.668389+00:00",
+      "updated_at": "2025-06-26T01:38:33.668389+00:00"
+    },
+    {
+      "id": "20250626058",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:38:33.672613+00:00",
+      "updated_at": "2025-06-26T01:38:33.672613+00:00"
+    },
+    {
+      "id": "20250626059",
+      "title": "Parent Task",
+      "description": "Parent",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626059.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:35.134565+00:00",
+      "updated_at": "2025-06-26T01:38:35.138394+00:00"
+    },
+    {
+      "id": "20250626060",
+      "title": "Parent Task",
+      "description": "Parent",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626060.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:35.149250+00:00",
+      "updated_at": "2025-06-26T01:38:35.153460+00:00"
+    },
+    {
+      "id": "20250626061",
+      "title": "Task 1",
+      "description": "First task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:35.169245+00:00",
+      "updated_at": "2025-06-26T01:38:35.169245+00:00"
+    },
+    {
+      "id": "20250626062",
+      "title": "Task 2",
+      "description": "Second task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:35.173365+00:00",
+      "updated_at": "2025-06-26T01:38:35.173365+00:00"
+    },
+    {
+      "id": "20250626063",
+      "title": "Test Task",
+      "description": "Test Description",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.258933+00:00",
+      "updated_at": "2025-06-26T01:38:36.258933+00:00"
+    },
+    {
+      "id": "20250626064",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.287344+00:00",
+      "updated_at": "2025-06-26T01:38:36.287344+00:00"
+    },
+    {
+      "id": "20250626065",
+      "title": "Integration Test Task",
+      "description": "Complete workflow test",
+      "project_id": "test_project",
+      "status": "done",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "integration",
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.367231+00:00",
+      "updated_at": "2025-06-26T01:38:36.391488+00:00"
+    },
+    {
+      "id": "20250626066",
+      "title": "Bulk Task 0",
+      "description": "Bulk task number 0",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.451666+00:00",
+      "updated_at": "2025-06-26T01:38:36.451666+00:00"
+    },
+    {
+      "id": "20250626067",
+      "title": "Bulk Task 1",
+      "description": "Bulk task number 1",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.455836+00:00",
+      "updated_at": "2025-06-26T01:38:36.455836+00:00"
+    },
+    {
+      "id": "20250626068",
+      "title": "Bulk Task 2",
+      "description": "Bulk task number 2",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.459772+00:00",
+      "updated_at": "2025-06-26T01:38:36.459772+00:00"
+    },
+    {
+      "id": "20250626069",
+      "title": "Bulk Task 3",
+      "description": "Bulk task number 3",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.464439+00:00",
+      "updated_at": "2025-06-26T01:38:36.464439+00:00"
+    },
+    {
+      "id": "20250626070",
+      "title": "Bulk Task 4",
+      "description": "Bulk task number 4",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.468308+00:00",
+      "updated_at": "2025-06-26T01:38:36.468308+00:00"
+    },
+    {
+      "id": "20250626071",
+      "title": "Bulk Task 5",
+      "description": "Bulk task number 5",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.472390+00:00",
+      "updated_at": "2025-06-26T01:38:36.472390+00:00"
+    },
+    {
+      "id": "20250626072",
+      "title": "Bulk Task 6",
+      "description": "Bulk task number 6",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.476219+00:00",
+      "updated_at": "2025-06-26T01:38:36.476219+00:00"
+    },
+    {
+      "id": "20250626073",
+      "title": "Bulk Task 7",
+      "description": "Bulk task number 7",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.480205+00:00",
+      "updated_at": "2025-06-26T01:38:36.480205+00:00"
+    },
+    {
+      "id": "20250626074",
+      "title": "Bulk Task 8",
+      "description": "Bulk task number 8",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.484183+00:00",
+      "updated_at": "2025-06-26T01:38:36.484183+00:00"
+    },
+    {
+      "id": "20250626075",
+      "title": "Bulk Task 9",
+      "description": "Bulk task number 9",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:36.488495+00:00",
+      "updated_at": "2025-06-26T01:38:36.488495+00:00"
+    },
+    {
+      "id": "20250626076",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:42:26.140969+00:00",
+      "updated_at": "2025-06-26T01:42:26.140969+00:00"
+    },
+    {
+      "id": "20250626077",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:42:26.172698+00:00",
+      "updated_at": "2025-06-26T01:42:26.172698+00:00"
+    },
+    {
+      "id": "20250626078",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:42:26.176160+00:00",
+      "updated_at": "2025-06-26T01:42:26.176160+00:00"
+    },
+    {
+      "id": "20250626079",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:42:26.235859+00:00",
+      "updated_at": "2025-06-26T01:42:26.235859+00:00"
+    },
+    {
+      "id": "20250626080",
+      "title": "Updated Test Task Title",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:42:26.268739+00:00",
+      "updated_at": "2025-06-26T01:42:26.284070+00:00"
+    },
+    {
+      "id": "20250626081",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:42:26.314064+00:00",
+      "updated_at": "2025-06-26T01:42:26.314064+00:00"
+    },
+    {
+      "id": "20250626082",
+      "title": "Task 1",
+      "description": "First task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:44:58.016561+00:00",
+      "updated_at": "2025-06-26T01:44:58.016561+00:00"
+    },
+    {
+      "id": "20250626083",
+      "title": "Task 2",
+      "description": "Second task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:44:58.021154+00:00",
+      "updated_at": "2025-06-26T01:44:58.021154+00:00"
+    },
+    {
+      "id": "20250626084",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:46:11.458000+00:00",
+      "updated_at": "2025-06-26T01:46:11.458000+00:00"
+    },
+    {
+      "id": "20250626085",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:46:11.493016+00:00",
+      "updated_at": "2025-06-26T01:46:11.493016+00:00"
+    },
+    {
+      "id": "20250626086",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:46:11.499165+00:00",
+      "updated_at": "2025-06-26T01:46:11.499165+00:00"
+    },
+    {
+      "id": "20250626087",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:46:11.563710+00:00",
+      "updated_at": "2025-06-26T01:46:11.563710+00:00"
+    },
+    {
+      "id": "20250626088",
+      "title": "Updated Test Task Title",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:46:11.596653+00:00",
+      "updated_at": "2025-06-26T01:46:11.615530+00:00"
+    },
+    {
+      "id": "20250626089",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:46:11.651450+00:00",
+      "updated_at": "2025-06-26T01:46:11.651450+00:00"
+    },
+    {
+      "id": "20250626090",
+      "title": "Parent Task",
+      "description": "Parent",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626090.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:12.978258+00:00",
+      "updated_at": "2025-06-26T01:46:12.982536+00:00"
+    },
+    {
+      "id": "20250626091",
+      "title": "Parent Task",
+      "description": "Parent",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626091.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:12.993312+00:00",
+      "updated_at": "2025-06-26T01:46:12.997955+00:00"
+    },
+    {
+      "id": "20250626092",
+      "title": "Task 1",
+      "description": "First task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:13.011676+00:00",
+      "updated_at": "2025-06-26T01:46:13.011676+00:00"
+    },
+    {
+      "id": "20250626093",
+      "title": "Task 2",
+      "description": "Second task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:13.016221+00:00",
+      "updated_at": "2025-06-26T01:46:13.016221+00:00"
+    },
+    {
+      "id": "20250626094",
+      "title": "Test Task",
+      "description": "Test Description",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.045270+00:00",
+      "updated_at": "2025-06-26T01:46:14.045270+00:00"
+    },
+    {
+      "id": "20250626095",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.073261+00:00",
+      "updated_at": "2025-06-26T01:46:14.073261+00:00"
+    },
+    {
+      "id": "20250626096",
+      "title": "Integration Test Task",
+      "description": "Complete workflow test",
+      "project_id": "test_project",
+      "status": "done",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "integration",
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.149696+00:00",
+      "updated_at": "2025-06-26T01:46:14.175354+00:00"
+    },
+    {
+      "id": "20250626097",
+      "title": "Bulk Task 0",
+      "description": "Bulk task number 0",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.237253+00:00",
+      "updated_at": "2025-06-26T01:46:14.237253+00:00"
+    },
+    {
+      "id": "20250626098",
+      "title": "Bulk Task 1",
+      "description": "Bulk task number 1",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.242420+00:00",
+      "updated_at": "2025-06-26T01:46:14.242420+00:00"
+    },
+    {
+      "id": "20250626099",
+      "title": "Bulk Task 2",
+      "description": "Bulk task number 2",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.246881+00:00",
+      "updated_at": "2025-06-26T01:46:14.246881+00:00"
+    },
+    {
+      "id": "20250626100",
+      "title": "Bulk Task 3",
+      "description": "Bulk task number 3",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.251472+00:00",
+      "updated_at": "2025-06-26T01:46:14.251472+00:00"
+    },
+    {
+      "id": "20250626101",
+      "title": "Bulk Task 4",
+      "description": "Bulk task number 4",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.255853+00:00",
+      "updated_at": "2025-06-26T01:46:14.255853+00:00"
+    },
+    {
+      "id": "20250626102",
+      "title": "Bulk Task 5",
+      "description": "Bulk task number 5",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.260814+00:00",
+      "updated_at": "2025-06-26T01:46:14.260814+00:00"
+    },
+    {
+      "id": "20250626103",
+      "title": "Bulk Task 6",
+      "description": "Bulk task number 6",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.267343+00:00",
+      "updated_at": "2025-06-26T01:46:14.267343+00:00"
+    },
+    {
+      "id": "20250626104",
+      "title": "Bulk Task 7",
+      "description": "Bulk task number 7",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.272146+00:00",
+      "updated_at": "2025-06-26T01:46:14.272146+00:00"
+    },
+    {
+      "id": "20250626105",
+      "title": "Bulk Task 8",
+      "description": "Bulk task number 8",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.278264+00:00",
+      "updated_at": "2025-06-26T01:46:14.278264+00:00"
+    },
+    {
+      "id": "20250626106",
+      "title": "Bulk Task 9",
+      "description": "Bulk task number 9",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:14.283725+00:00",
+      "updated_at": "2025-06-26T01:46:14.283725+00:00"
+    },
+    {
+      "id": "20250626107",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:49:41.485278+00:00",
+      "updated_at": "2025-06-26T01:49:41.485278+00:00"
+    },
+    {
+      "id": "20250626108",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:49:41.513052+00:00",
+      "updated_at": "2025-06-26T01:49:41.513052+00:00"
+    },
+    {
+      "id": "20250626109",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T01:49:41.517230+00:00",
+      "updated_at": "2025-06-26T01:49:41.517230+00:00"
+    },
+    {
+      "id": "20250626110",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:49:41.572531+00:00",
+      "updated_at": "2025-06-26T01:49:41.572531+00:00"
+    },
+    {
+      "id": "20250626111",
+      "title": "Updated Test Task Title",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:49:41.601156+00:00",
+      "updated_at": "2025-06-26T01:49:41.618498+00:00"
+    },
+    {
+      "id": "20250626112",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T01:49:41.649755+00:00",
+      "updated_at": "2025-06-26T01:49:41.649755+00:00"
+    },
+    {
+      "id": "20250626113",
+      "title": "Test Task",
+      "description": "Test Description",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Test details",
+      "estimatedEffort": "small",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:43.004513+00:00",
+      "updated_at": "2025-06-26T01:49:43.004513+00:00"
+    },
+    {
+      "id": "20250626114",
+      "title": "Test Task",
+      "description": "Test Description",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Test details",
+      "estimatedEffort": "small",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:43.021107+00:00",
+      "updated_at": "2025-06-26T01:49:43.021107+00:00"
+    },
+    {
+      "id": "20250626115",
+      "title": "Updated Task",
+      "description": "Updated Description",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "critical",
+      "details": "Updated details",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@test_agent"
+      ],
+      "labels": [
+        "bugfix"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:43.049661+00:00",
+      "updated_at": "2025-06-26T01:49:43.054812+00:00"
+    },
+    {
+      "id": "20250626116",
+      "title": "Test Task",
+      "description": "Test Description",
+      "project_id": "test_project",
+      "status": "done",
+      "priority": "high",
+      "details": "Test details",
+      "estimatedEffort": "small",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:43.087085+00:00",
+      "updated_at": "2025-06-26T01:49:43.095092+00:00"
+    },
+    {
+      "id": "20250626117",
+      "title": "Task 1",
+      "description": "Desc 1",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:43.107394+00:00",
+      "updated_at": "2025-06-26T01:49:43.107394+00:00"
+    },
+    {
+      "id": "20250626118",
+      "title": "Task 2",
+      "description": "Desc 2",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@test_agent"
+      ],
+      "labels": [
+        "bugfix"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:43.112889+00:00",
+      "updated_at": "2025-06-26T01:49:43.112889+00:00"
+    },
+    {
+      "id": "20250626119",
+      "title": "Parent Task",
+      "description": "Parent",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626119.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:43.182420+00:00",
+      "updated_at": "2025-06-26T01:49:43.188463+00:00"
+    },
+    {
+      "id": "20250626120",
+      "title": "Parent Task",
+      "description": "Parent",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626120.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:43.200630+00:00",
+      "updated_at": "2025-06-26T01:49:43.205821+00:00"
+    },
+    {
+      "id": "20250626121",
+      "title": "Task 1",
+      "description": "First task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:43.222716+00:00",
+      "updated_at": "2025-06-26T01:49:43.222716+00:00"
+    },
+    {
+      "id": "20250626122",
+      "title": "Task 2",
+      "description": "Second task",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "feature"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:43.227674+00:00",
+      "updated_at": "2025-06-26T01:49:43.227674+00:00"
+    },
+    {
+      "id": "20250626123",
+      "title": "Test Task",
+      "description": "Test Description",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:44.345355+00:00",
+      "updated_at": "2025-06-26T01:49:44.345355+00:00"
+    },
+    {
+      "id": "20250626124",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:44.376872+00:00",
+      "updated_at": "2025-06-26T01:49:44.376872+00:00"
+    },
+    {
+      "id": "20250626125",
+      "title": "Integration Test Task",
+      "description": "Complete workflow test",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "integration",
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:44.452968+00:00",
+      "updated_at": "2025-06-26T01:49:44.452968+00:00"
+    }
+  ]
+}

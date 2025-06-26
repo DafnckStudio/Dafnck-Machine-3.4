@@ -1,0 +1,3070 @@
+{
+  "tasks": [
+    {
+      "id": "20250626001",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626001.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626001",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626001.002",
+          "assignees": []
+        },
+        {
+          "title": "First subtask",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626001.003",
+          "assignees": []
+        },
+        {
+          "title": "First subtask",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626001.004",
+          "assignees": []
+        },
+        {
+          "title": "First subtask",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626001.005",
+          "assignees": []
+        },
+        {
+          "title": "First subtask",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626001.006",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T00:57:00.903231+00:00",
+      "updated_at": "2025-06-26T01:49:41.813190+00:00"
+    },
+    {
+      "id": "20250626002",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626002.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626002",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626002.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T00:57:00.920988+00:00",
+      "updated_at": "2025-06-26T01:05:35.083595+00:00"
+    },
+    {
+      "id": "20250626003",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626003.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626003",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626003.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T00:57:00.940856+00:00",
+      "updated_at": "2025-06-26T01:05:35.086462+00:00"
+    },
+    {
+      "id": "20250626004",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626004",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626004.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T00:57:00.962957+00:00",
+      "updated_at": "2025-06-26T01:08:03.260036+00:00"
+    },
+    {
+      "id": "20250626005",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626005",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626005.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T00:57:00.990216+00:00",
+      "updated_at": "2025-06-26T01:08:03.263747+00:00"
+    },
+    {
+      "id": "20250626006",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626006",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626006.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T00:57:01.012391+00:00",
+      "updated_at": "2025-06-26T01:08:03.267522+00:00"
+    },
+    {
+      "id": "20250626007",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626007",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626007.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T00:57:01.030110+00:00",
+      "updated_at": "2025-06-26T01:09:33.920145+00:00"
+    },
+    {
+      "id": "20250626008",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626008",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626008.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T00:57:01.056184+00:00",
+      "updated_at": "2025-06-26T01:09:33.923340+00:00"
+    },
+    {
+      "id": "20250626009",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626009.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626009",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626009.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:01:30.944883+00:00",
+      "updated_at": "2025-06-26T01:09:33.926592+00:00"
+    },
+    {
+      "id": "20250626010",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626010.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626010",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626010.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:01:30.959808+00:00",
+      "updated_at": "2025-06-26T01:09:49.998487+00:00"
+    },
+    {
+      "id": "20250626011",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626011.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626011",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626011.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:01:30.977502+00:00",
+      "updated_at": "2025-06-26T01:09:50.002188+00:00"
+    },
+    {
+      "id": "20250626012",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626012",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626012.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:01:30.996350+00:00",
+      "updated_at": "2025-06-26T01:09:50.005581+00:00"
+    },
+    {
+      "id": "20250626013",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626013",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626013.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:01:31.017065+00:00",
+      "updated_at": "2025-06-26T01:14:34.318814+00:00"
+    },
+    {
+      "id": "20250626014",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626014",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626014.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:01:31.038352+00:00",
+      "updated_at": "2025-06-26T01:14:34.323701+00:00"
+    },
+    {
+      "id": "20250626015",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626015",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626015.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:01:31.055914+00:00",
+      "updated_at": "2025-06-26T01:14:34.327609+00:00"
+    },
+    {
+      "id": "20250626016",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626016",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626016.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:01:31.077867+00:00",
+      "updated_at": "2025-06-26T01:23:23.374553+00:00"
+    },
+    {
+      "id": "20250626017",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626017.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626017",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626017.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:05:33.296678+00:00",
+      "updated_at": "2025-06-26T01:23:23.378995+00:00"
+    },
+    {
+      "id": "20250626018",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626018.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626018",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626018.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:05:33.312518+00:00",
+      "updated_at": "2025-06-26T01:23:23.382868+00:00"
+    },
+    {
+      "id": "20250626019",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626019.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626019",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626019.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:05:33.332698+00:00",
+      "updated_at": "2025-06-26T01:28:31.248642+00:00"
+    },
+    {
+      "id": "20250626020",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626020",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626020.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:05:33.352042+00:00",
+      "updated_at": "2025-06-26T01:28:31.254088+00:00"
+    },
+    {
+      "id": "20250626021",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626021",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626021.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:05:33.371133+00:00",
+      "updated_at": "2025-06-26T01:28:31.258819+00:00"
+    },
+    {
+      "id": "20250626022",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626022",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626022.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:05:33.392670+00:00",
+      "updated_at": "2025-06-26T01:36:53.456758+00:00"
+    },
+    {
+      "id": "20250626023",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626023",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626023.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:05:33.407663+00:00",
+      "updated_at": "2025-06-26T01:36:53.461312+00:00"
+    },
+    {
+      "id": "20250626024",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626024",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626024.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:05:33.428491+00:00",
+      "updated_at": "2025-06-26T01:36:53.466261+00:00"
+    },
+    {
+      "id": "20250626025",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626025",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626025.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:05:35.316923+00:00",
+      "updated_at": "2025-06-26T01:38:34.448456+00:00"
+    },
+    {
+      "id": "20250626026",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626026.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626026",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626026.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:08:01.228964+00:00",
+      "updated_at": "2025-06-26T01:38:34.452797+00:00"
+    },
+    {
+      "id": "20250626027",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626027.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626027",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626027.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:08:01.247297+00:00",
+      "updated_at": "2025-06-26T01:38:34.457069+00:00"
+    },
+    {
+      "id": "20250626028",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626028.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask for 20250626028",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626028.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:08:01.270089+00:00",
+      "updated_at": "2025-06-26T01:46:12.427213+00:00"
+    },
+    {
+      "id": "20250626029",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626029",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626029.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:08:01.295868+00:00",
+      "updated_at": "2025-06-26T01:46:12.432705+00:00"
+    },
+    {
+      "id": "20250626030",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626030",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626030.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:08:01.318178+00:00",
+      "updated_at": "2025-06-26T01:46:12.437518+00:00"
+    },
+    {
+      "id": "20250626031",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626031",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626031.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:08:01.340938+00:00",
+      "updated_at": "2025-06-26T01:49:42.597278+00:00"
+    },
+    {
+      "id": "20250626032",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626032",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626032.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:08:01.360513+00:00",
+      "updated_at": "2025-06-26T01:49:42.602162+00:00"
+    },
+    {
+      "id": "20250626033",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask for 20250626033",
+          "description": "Workflow testing subtask",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626033.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:08:01.385612+00:00",
+      "updated_at": "2025-06-26T01:49:42.607254+00:00"
+    },
+    {
+      "id": "20250626034",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Test Subtask",
+          "description": "Test subtask description",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626034.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:08:03.550652+00:00",
+      "updated_at": "2025-06-26T01:34:29.369682+00:00"
+    },
+    {
+      "id": "20250626035",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626035.001",
+          "assignees": []
+        },
+        {
+          "title": "Test Subtask",
+          "description": "Test subtask description",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626035.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:32.284097+00:00",
+      "updated_at": "2025-06-26T01:35:03.534309+00:00"
+    },
+    {
+      "id": "20250626036",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626036.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:32.303980+00:00",
+      "updated_at": "2025-06-26T01:09:32.311381+00:00"
+    },
+    {
+      "id": "20250626037",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626037.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:32.326853+00:00",
+      "updated_at": "2025-06-26T01:09:32.334802+00:00"
+    },
+    {
+      "id": "20250626038",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:32.350066+00:00",
+      "updated_at": "2025-06-26T01:09:32.358175+00:00"
+    },
+    {
+      "id": "20250626039",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:32.372822+00:00",
+      "updated_at": "2025-06-26T01:09:32.372822+00:00"
+    },
+    {
+      "id": "20250626040",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:32.393954+00:00",
+      "updated_at": "2025-06-26T01:09:32.393954+00:00"
+    },
+    {
+      "id": "20250626041",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:32.412670+00:00",
+      "updated_at": "2025-06-26T01:09:32.412670+00:00"
+    },
+    {
+      "id": "20250626042",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:32.435187+00:00",
+      "updated_at": "2025-06-26T01:09:32.438558+00:00"
+    },
+    {
+      "id": "20250626043",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:34.145400+00:00",
+      "updated_at": "2025-06-26T01:09:34.145400+00:00"
+    },
+    {
+      "id": "20250626044",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626044.001",
+          "assignees": []
+        },
+        {
+          "title": "Test Subtask",
+          "description": "Test subtask description",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626044.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:48.324181+00:00",
+      "updated_at": "2025-06-26T01:36:55.117896+00:00"
+    },
+    {
+      "id": "20250626045",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626045.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626045.002",
+          "assignees": []
+        },
+        {
+          "title": "Subtask 2",
+          "description": "Second subtask",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626045.003",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:48.341599+00:00",
+      "updated_at": "2025-06-26T01:36:55.215271+00:00"
+    },
+    {
+      "id": "20250626046",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626046.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:48.361889+00:00",
+      "updated_at": "2025-06-26T01:09:48.368303+00:00"
+    },
+    {
+      "id": "20250626047",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:48.382430+00:00",
+      "updated_at": "2025-06-26T01:09:48.388866+00:00"
+    },
+    {
+      "id": "20250626048",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:48.403044+00:00",
+      "updated_at": "2025-06-26T01:09:48.403044+00:00"
+    },
+    {
+      "id": "20250626049",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:48.424699+00:00",
+      "updated_at": "2025-06-26T01:09:48.424699+00:00"
+    },
+    {
+      "id": "20250626050",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:48.441610+00:00",
+      "updated_at": "2025-06-26T01:09:48.441610+00:00"
+    },
+    {
+      "id": "20250626051",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:48.472591+00:00",
+      "updated_at": "2025-06-26T01:09:48.477386+00:00"
+    },
+    {
+      "id": "20250626052",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:09:50.230936+00:00",
+      "updated_at": "2025-06-26T01:09:50.230936+00:00"
+    },
+    {
+      "id": "20250626053",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626053.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:14:32.156658+00:00",
+      "updated_at": "2025-06-26T01:14:32.161309+00:00"
+    },
+    {
+      "id": "20250626054",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626054.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:14:32.177956+00:00",
+      "updated_at": "2025-06-26T01:14:32.186556+00:00"
+    },
+    {
+      "id": "20250626055",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626055.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:14:32.202613+00:00",
+      "updated_at": "2025-06-26T01:14:32.210714+00:00"
+    },
+    {
+      "id": "20250626056",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:14:32.227728+00:00",
+      "updated_at": "2025-06-26T01:14:32.236092+00:00"
+    },
+    {
+      "id": "20250626057",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:14:32.252637+00:00",
+      "updated_at": "2025-06-26T01:14:32.252637+00:00"
+    },
+    {
+      "id": "20250626058",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:14:32.275461+00:00",
+      "updated_at": "2025-06-26T01:14:32.275461+00:00"
+    },
+    {
+      "id": "20250626059",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:14:32.294785+00:00",
+      "updated_at": "2025-06-26T01:14:32.294785+00:00"
+    },
+    {
+      "id": "20250626060",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:14:32.321794+00:00",
+      "updated_at": "2025-06-26T01:14:32.325826+00:00"
+    },
+    {
+      "id": "20250626061",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:14:34.598514+00:00",
+      "updated_at": "2025-06-26T01:14:34.598514+00:00"
+    },
+    {
+      "id": "20250626062",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626062.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:23:21.161457+00:00",
+      "updated_at": "2025-06-26T01:23:21.165965+00:00"
+    },
+    {
+      "id": "20250626063",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626063.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:23:21.182765+00:00",
+      "updated_at": "2025-06-26T01:23:21.191437+00:00"
+    },
+    {
+      "id": "20250626064",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626064.001",
+          "assignees": []
+        },
+        {
+          "title": "Test Subtask",
+          "description": "Test subtask description",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626064.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:23:21.209437+00:00",
+      "updated_at": "2025-06-26T01:38:36.292983+00:00"
+    },
+    {
+      "id": "20250626065",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626065.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask 2",
+          "description": "Second subtask",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626065.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:23:21.235148+00:00",
+      "updated_at": "2025-06-26T01:38:36.386049+00:00"
+    },
+    {
+      "id": "20250626066",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:23:21.259961+00:00",
+      "updated_at": "2025-06-26T01:23:21.259961+00:00"
+    },
+    {
+      "id": "20250626067",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:23:21.282695+00:00",
+      "updated_at": "2025-06-26T01:23:21.282695+00:00"
+    },
+    {
+      "id": "20250626068",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:23:21.302279+00:00",
+      "updated_at": "2025-06-26T01:23:21.302279+00:00"
+    },
+    {
+      "id": "20250626069",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:23:21.328351+00:00",
+      "updated_at": "2025-06-26T01:23:21.333503+00:00"
+    },
+    {
+      "id": "20250626070",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:23:23.654376+00:00",
+      "updated_at": "2025-06-26T01:23:23.654376+00:00"
+    },
+    {
+      "id": "20250626071",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626071.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:29.293017+00:00",
+      "updated_at": "2025-06-26T01:28:29.298443+00:00"
+    },
+    {
+      "id": "20250626072",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626072.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:29.315479+00:00",
+      "updated_at": "2025-06-26T01:28:29.326234+00:00"
+    },
+    {
+      "id": "20250626073",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626073.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:29.342814+00:00",
+      "updated_at": "2025-06-26T01:28:29.350936+00:00"
+    },
+    {
+      "id": "20250626074",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:29.367738+00:00",
+      "updated_at": "2025-06-26T01:28:29.381522+00:00"
+    },
+    {
+      "id": "20250626075",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:29.399351+00:00",
+      "updated_at": "2025-06-26T01:28:29.399351+00:00"
+    },
+    {
+      "id": "20250626076",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:29.424171+00:00",
+      "updated_at": "2025-06-26T01:28:29.424171+00:00"
+    },
+    {
+      "id": "20250626077",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:29.445227+00:00",
+      "updated_at": "2025-06-26T01:28:29.445227+00:00"
+    },
+    {
+      "id": "20250626078",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:29.470010+00:00",
+      "updated_at": "2025-06-26T01:28:29.474133+00:00"
+    },
+    {
+      "id": "20250626079",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:28:31.519634+00:00",
+      "updated_at": "2025-06-26T01:28:31.519634+00:00"
+    },
+    {
+      "id": "20250626080",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626080.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:51.413476+00:00",
+      "updated_at": "2025-06-26T01:36:51.418461+00:00"
+    },
+    {
+      "id": "20250626081",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626081.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:51.437403+00:00",
+      "updated_at": "2025-06-26T01:36:51.446672+00:00"
+    },
+    {
+      "id": "20250626082",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626082.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:51.462984+00:00",
+      "updated_at": "2025-06-26T01:36:51.471365+00:00"
+    },
+    {
+      "id": "20250626083",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:51.487563+00:00",
+      "updated_at": "2025-06-26T01:36:51.496538+00:00"
+    },
+    {
+      "id": "20250626084",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:51.512435+00:00",
+      "updated_at": "2025-06-26T01:36:51.512435+00:00"
+    },
+    {
+      "id": "20250626085",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:51.537583+00:00",
+      "updated_at": "2025-06-26T01:36:51.537583+00:00"
+    },
+    {
+      "id": "20250626086",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:51.557739+00:00",
+      "updated_at": "2025-06-26T01:36:51.557739+00:00"
+    },
+    {
+      "id": "20250626087",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:51.582441+00:00",
+      "updated_at": "2025-06-26T01:36:51.587113+00:00"
+    },
+    {
+      "id": "20250626088",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:36:53.726073+00:00",
+      "updated_at": "2025-06-26T01:36:53.726073+00:00"
+    },
+    {
+      "id": "20250626089",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626089.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:32.394086+00:00",
+      "updated_at": "2025-06-26T01:38:32.399572+00:00"
+    },
+    {
+      "id": "20250626090",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626090.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:32.417375+00:00",
+      "updated_at": "2025-06-26T01:38:32.428204+00:00"
+    },
+    {
+      "id": "20250626091",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626091.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:32.447822+00:00",
+      "updated_at": "2025-06-26T01:38:32.459170+00:00"
+    },
+    {
+      "id": "20250626092",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:32.480091+00:00",
+      "updated_at": "2025-06-26T01:38:32.491078+00:00"
+    },
+    {
+      "id": "20250626093",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:32.508468+00:00",
+      "updated_at": "2025-06-26T01:38:32.508468+00:00"
+    },
+    {
+      "id": "20250626094",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:32.534912+00:00",
+      "updated_at": "2025-06-26T01:38:32.534912+00:00"
+    },
+    {
+      "id": "20250626095",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Test Subtask",
+          "description": "Test subtask description",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626095.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:32.558113+00:00",
+      "updated_at": "2025-06-26T01:46:14.077668+00:00"
+    },
+    {
+      "id": "20250626096",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask 1",
+          "description": "First subtask",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626096.001",
+          "assignees": []
+        },
+        {
+          "title": "Subtask 2",
+          "description": "Second subtask",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626096.002",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:32.587424+00:00",
+      "updated_at": "2025-06-26T01:46:14.170481+00:00"
+    },
+    {
+      "id": "20250626097",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:38:34.707397+00:00",
+      "updated_at": "2025-06-26T01:38:34.707397+00:00"
+    },
+    {
+      "id": "20250626098",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626098.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:10.146055+00:00",
+      "updated_at": "2025-06-26T01:46:10.152052+00:00"
+    },
+    {
+      "id": "20250626099",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626099.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:10.172558+00:00",
+      "updated_at": "2025-06-26T01:46:10.183014+00:00"
+    },
+    {
+      "id": "20250626100",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626100.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:10.201489+00:00",
+      "updated_at": "2025-06-26T01:46:10.213631+00:00"
+    },
+    {
+      "id": "20250626101",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:10.232356+00:00",
+      "updated_at": "2025-06-26T01:46:10.243199+00:00"
+    },
+    {
+      "id": "20250626102",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:10.260519+00:00",
+      "updated_at": "2025-06-26T01:46:10.260519+00:00"
+    },
+    {
+      "id": "20250626103",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:10.284820+00:00",
+      "updated_at": "2025-06-26T01:46:10.284820+00:00"
+    },
+    {
+      "id": "20250626104",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:10.305769+00:00",
+      "updated_at": "2025-06-26T01:46:10.305769+00:00"
+    },
+    {
+      "id": "20250626105",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:10.333900+00:00",
+      "updated_at": "2025-06-26T01:46:10.338904+00:00"
+    },
+    {
+      "id": "20250626106",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:46:12.704090+00:00",
+      "updated_at": "2025-06-26T01:46:12.704090+00:00"
+    },
+    {
+      "id": "20250626107",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "New Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626107.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:40.348517+00:00",
+      "updated_at": "2025-06-26T01:49:40.354065+00:00"
+    },
+    {
+      "id": "20250626108",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Subtask to complete",
+          "description": "",
+          "completed": true,
+          "assignee": "",
+          "id": "20250626108.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:40.371098+00:00",
+      "updated_at": "2025-06-26T01:49:40.381653+00:00"
+    },
+    {
+      "id": "20250626109",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Updated Subtask",
+          "description": "",
+          "completed": false,
+          "assignee": "",
+          "id": "20250626109.001",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:40.398878+00:00",
+      "updated_at": "2025-06-26T01:49:40.411637+00:00"
+    },
+    {
+      "id": "20250626110",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:40.428383+00:00",
+      "updated_at": "2025-06-26T01:49:40.438795+00:00"
+    },
+    {
+      "id": "20250626111",
+      "title": "Parent Task",
+      "description": "Parent task for subtask testing",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "test"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:40.456017+00:00",
+      "updated_at": "2025-06-26T01:49:40.456017+00:00"
+    },
+    {
+      "id": "20250626112",
+      "title": "A new task",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing",
+        "happy-path"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:40.478990+00:00",
+      "updated_at": "2025-06-26T01:49:40.478990+00:00"
+    },
+    {
+      "id": "20250626113",
+      "title": "Task for get test",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:40.500466+00:00",
+      "updated_at": "2025-06-26T01:49:40.500466+00:00"
+    },
+    {
+      "id": "20250626114",
+      "title": "An updated task title",
+      "description": "This is a test task.",
+      "project_id": "default_project",
+      "status": "in_progress",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:40.526485+00:00",
+      "updated_at": "2025-06-26T01:49:40.532494+00:00"
+    },
+    {
+      "id": "20250626115",
+      "title": "Task to Update",
+      "description": "This task will be updated with an invalid status",
+      "project_id": "default_project",
+      "status": "todo",
+      "priority": "low",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:42.857658+00:00",
+      "updated_at": "2025-06-26T01:49:42.857658+00:00"
+    }
+  ]
+}

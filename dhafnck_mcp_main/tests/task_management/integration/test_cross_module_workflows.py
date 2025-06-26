@@ -56,7 +56,7 @@ def test_project_task_workflow(mcp_tools):
         details=None,
         estimated_effort=None,
         due_date=None,
-        project_id=None,
+        project_id=project_id,
     )
     assert get_task_result["success"] is True
     assert get_task_result["task"]["title"] == task_title
@@ -75,7 +75,7 @@ def test_project_task_workflow(mcp_tools):
         details=None,
         estimated_effort=None,
         due_date=None,
-        project_id=None,
+        project_id=project_id,
     )
     assert update_task_result["success"] is True
     assert update_task_result["task"]["title"] == updated_title
@@ -92,7 +92,7 @@ def test_project_task_workflow(mcp_tools):
         details=None,
         estimated_effort=None,
         due_date=None,
-        project_id=None,
+        project_id=project_id,
     )
     assert delete_task_result["success"] is True
 
@@ -108,6 +108,6 @@ def test_project_task_workflow(mcp_tools):
         details=None,
         estimated_effort=None,
         due_date=None,
-        project_id=None,
+        project_id=project_id,
     )
     assert get_deleted_task_result["success"] is False 

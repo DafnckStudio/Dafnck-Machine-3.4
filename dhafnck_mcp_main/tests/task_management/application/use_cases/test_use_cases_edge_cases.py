@@ -127,6 +127,7 @@ class TestCreateTaskEdgeCases:
         request = CreateTaskRequest(
             title="Test Task",
             description="Test description",
+            project_id="test_project",
             priority="invalid_priority"  # Invalid priority
         )
         
@@ -141,6 +142,7 @@ class TestCreateTaskEdgeCases:
         request = CreateTaskRequest(
             title="Test Task",
             description="Test description",
+            project_id="test_project",
             estimated_effort="invalid_effort"  # Invalid effort
         )
         
@@ -153,7 +155,8 @@ class TestCreateTaskEdgeCases:
         """Test handling repository save failure during task creation"""
         request = CreateTaskRequest(
             title="Test Task",
-            description="Test description"
+            description="Test description",
+            project_id="test_project"
         )
         
         mock_repository.get_next_id.return_value = TaskId.generate()
@@ -197,7 +200,7 @@ class TestListTasksEdgeCases:
 
     def test_list_tasks_repository_error(self, list_tasks_use_case, mock_repository):
         """Test handling repository error during listing"""
-        request = ListTasksRequest()
+        request = ListTasksRequest(project_id="test_project")
         mock_repository.find_by_criteria.side_effect = Exception("Database connection error")
         
         with pytest.raises(Exception, match="Database connection error"):

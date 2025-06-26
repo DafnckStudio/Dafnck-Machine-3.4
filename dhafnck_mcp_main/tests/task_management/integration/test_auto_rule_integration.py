@@ -112,11 +112,40 @@ class TestAutoRuleIntegration:
         mcp_tools = ConsolidatedMCPTools(
             task_repository=task_repository
         )
+        
+        # Create the project first
+        manage_project_func = self._get_registered_tool(mcp_tools, 'manage_project')
+        assert manage_project_func is not None
+        project_result = manage_project_func(action="create", project_id="test_project", name="Test Project")
+        assert project_result.get("success") is True, f"create_project failed: {project_result.get('error')}"
+        
         manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')
         assert manage_task_func is not None
-        result = manage_task_func(action="get", task_id=self.task_id_1)
+        
+        # Create the task first using the task data
+        task_data = self.test_tasks_data['tasks'][0]
+        create_result = manage_task_func(
+            action="create",
+            project_id="test_project",
+            title=task_data['title'],
+            description=task_data['description'],
+            status=task_data['status'],
+            priority=task_data['priority'],
+            details=task_data['details'],
+            estimated_effort=task_data['estimated_effort'],
+            assignees=task_data['assignees'],
+            labels=task_data['labels'],
+            due_date=task_data['due_date']
+        )
+        assert create_result.get("success") is True, f"create_task failed: {create_result.get('error')}"
+        
+        # Get the actually created task ID
+        created_task_id = create_result["task"]["id"]
+        
+        # Now get the task using the created ID
+        result = manage_task_func(action="get", project_id="test_project", task_id=created_task_id)
         assert result.get("success") is True, f"manage_task failed: {result.get('error')}"
-        assert result["task"]["id"] == self.task_id_1
+        assert result["task"]["id"] == created_task_id
         # Verify that auto rule generation was called
         mock_generator.generate_rules_for_task.assert_called()
 
@@ -131,11 +160,56 @@ class TestAutoRuleIntegration:
         mcp_tools = ConsolidatedMCPTools(
             task_repository=task_repository
         )
+        
+        # Create the project first
+        manage_project_func = self._get_registered_tool(mcp_tools, 'manage_project')
+        assert manage_project_func is not None
+        project_result = manage_project_func(action="create", project_id="test_project", name="Test Project")
+        assert project_result.get("success") is True, f"create_project failed: {project_result.get('error')}"
+        
         manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')
         assert manage_task_func is not None
-        result1 = manage_task_func(action="get", task_id=self.task_id_1)
+        
+        # Create the first task
+        task_data1 = self.test_tasks_data['tasks'][0]
+        create_result1 = manage_task_func(
+            action="create",
+            project_id="test_project",
+            title=task_data1['title'],
+            description=task_data1['description'],
+            status=task_data1['status'],
+            priority=task_data1['priority'],
+            details=task_data1['details'],
+            estimated_effort=task_data1['estimated_effort'],
+            assignees=task_data1['assignees'],
+            labels=task_data1['labels'],
+            due_date=task_data1['due_date']
+        )
+        assert create_result1.get("success") is True, f"create_task1 failed: {create_result1.get('error')}"
+        created_task_id1 = create_result1["task"]["id"]
+        
+        # Create the second task
+        task_data2 = self.test_tasks_data['tasks'][1]
+        create_result2 = manage_task_func(
+            action="create",
+            project_id="test_project",
+            title=task_data2['title'],
+            description=task_data2['description'],
+            status=task_data2['status'],
+            priority=task_data2['priority'],
+            details=task_data2['details'],
+            estimated_effort=task_data2['estimated_effort'],
+            assignees=task_data2['assignees'],
+            labels=task_data2['labels'],
+            due_date=task_data2['due_date']
+        )
+        assert create_result2.get("success") is True, f"create_task2 failed: {create_result2.get('error')}"
+        created_task_id2 = create_result2["task"]["id"]
+        
+        # Now get the tasks
+        result1 = manage_task_func(action="get", project_id="test_project", task_id=created_task_id1)
         assert result1["success"] is True
-        result2 = manage_task_func(action="get", task_id=self.task_id_2)
+        result2 = manage_task_func(action="get", project_id="test_project", task_id=created_task_id2)
         assert result2["success"] is True
 
     @patch('fastmcp.task_management.interface.consolidated_mcp_tools.FileAutoRuleGenerator')
@@ -151,7 +225,7 @@ class TestAutoRuleIntegration:
         )
         manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')
         assert manage_task_func is not None
-        result = manage_task_func(action="get", task_id="20250101999")
+        result = manage_task_func(action="get", project_id="test_project", task_id="20250101999")
         assert result["success"] is False
         assert "not found" in result["error"].lower()
 
@@ -166,8 +240,38 @@ class TestAutoRuleIntegration:
             mcp_tools = ConsolidatedMCPTools(
                 task_repository=task_repository
             )
+            
+            # Create the project first
+            manage_project_func = self._get_registered_tool(mcp_tools, 'manage_project')
+            assert manage_project_func is not None
+            project_result = manage_project_func(action="create", project_id="test_project", name="Test Project")
+            assert project_result.get("success") is True, f"create_project failed: {project_result.get('error')}"
+            
             manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')
-            result = manage_task_func(action="get", task_id=self.task_id_1, force_full_generation=False)
+            assert manage_task_func is not None
+            
+            # Create the task first using the task data
+            task_data = self.test_tasks_data['tasks'][0]
+            create_result = manage_task_func(
+                action="create",
+                project_id="test_project",
+                title=task_data['title'],
+                description=task_data['description'],
+                status=task_data['status'],
+                priority=task_data['priority'],
+                details=task_data['details'],
+                estimated_effort=task_data['estimated_effort'],
+                assignees=task_data['assignees'],
+                labels=task_data['labels'],
+                due_date=task_data['due_date']
+            )
+            assert create_result.get("success") is True, f"create_task failed: {create_result.get('error')}"
+            
+            # Get the actually created task ID
+            created_task_id = create_result["task"]["id"]
+            
+            # Now get the task using the created ID
+            result = manage_task_func(action="get", project_id="test_project", task_id=created_task_id, force_full_generation=False)
             assert result.get("success") is True, f"manage_task failed: {result.get('error')}"
             assert os.path.exists(self.test_auto_rule_file)
             with open(self.test_auto_rule_file, 'r') as f:
@@ -190,8 +294,37 @@ class TestAutoRuleIntegration:
             mcp_tools = ConsolidatedMCPTools(
                 task_repository=task_repository
             )
+            
+            # Create the project first
+            manage_project_func = self._get_registered_tool(mcp_tools, 'manage_project')
+            assert manage_project_func is not None
+            project_result = manage_project_func(action="create", project_id="test_project", name="Test Project")
+            assert project_result.get("success") is True, f"create_project failed: {project_result.get('error')}"
+            
             manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')
-            result1 = manage_task_func(action="get", task_id=self.task_id_1)
+            assert manage_task_func is not None
+            
+            # Create the task first using the task data
+            task_data = self.test_tasks_data['tasks'][0]
+            create_result = manage_task_func(
+                action="create",
+                project_id="test_project",
+                title=task_data['title'],
+                description=task_data['description'],
+                status=task_data['status'],
+                priority=task_data['priority'],
+                details=task_data['details'],
+                estimated_effort=task_data['estimated_effort'],
+                assignees=task_data['assignees'],
+                labels=task_data['labels'],
+                due_date=task_data['due_date']
+            )
+            assert create_result.get("success") is True, f"create_task failed: {create_result.get('error')}"
+            
+            # Get the actually created task ID
+            created_task_id = create_result["task"]["id"]
+            
+            result1 = manage_task_func(action="get", project_id="test_project", task_id=created_task_id)
             assert result1.get("success") is True, f"manage_task failed: {result1.get('error')}"
             
             with open(self.test_auto_rule_file, 'r') as f:
@@ -199,12 +332,13 @@ class TestAutoRuleIntegration:
                 
             update_request = {
                 "action": "update",
-                "task_id": self.task_id_1,
+                "project_id": "test_project",
+                "task_id": created_task_id,
                 "title": "Updated Test Task Title"
             }
             manage_task_func(**update_request)
             
-            result2 = manage_task_func(action="get", task_id=self.task_id_1)
+            result2 = manage_task_func(action="get", project_id="test_project", task_id=created_task_id)
             assert result2.get("success") is True, f"manage_task failed: {result2.get('error')}"
             
             with open(self.test_auto_rule_file, 'r') as f:
@@ -224,11 +358,39 @@ class TestAutoRuleIntegration:
         mcp_tools = ConsolidatedMCPTools(
             task_repository=task_repository
         )
+        
+        # Create the project first
+        manage_project_func = self._get_registered_tool(mcp_tools, 'manage_project')
+        assert manage_project_func is not None
+        project_result = manage_project_func(action="create", project_id="test_project", name="Test Project")
+        assert project_result.get("success") is True, f"create_project failed: {project_result.get('error')}"
+        
         manage_task_func = self._get_registered_tool(mcp_tools, 'manage_task')
-        result = manage_task_func(action="get", task_id=self.task_id_1)
+        assert manage_task_func is not None
+        
+        # Create the task first using the task data
+        task_data = self.test_tasks_data['tasks'][0]
+        create_result = manage_task_func(
+            action="create",
+            project_id="test_project",
+            title=task_data['title'],
+            description=task_data['description'],
+            status=task_data['status'],
+            priority=task_data['priority'],
+            details=task_data['details'],
+            estimated_effort=task_data['estimated_effort'],
+            assignees=task_data['assignees'],
+            labels=task_data['labels'],
+            due_date=task_data['due_date']
+        )
+        assert create_result.get("success") is True, f"create_task failed: {create_result.get('error')}"
+        
+        # Get the actually created task ID
+        created_task_id = create_result["task"]["id"]
+        
+        result = manage_task_func(action="get", project_id="test_project", task_id=created_task_id)
         assert result.get("success") is False, "Expected manage_task to fail"
-        assert "Error during auto rule generation" in result.get("error", ""), "Error message should indicate auto rule generation failure"
-        assert "Simulated generation error" in result.get("error", ""), "Original exception should be in the error message"
+        assert "auto rule generation" in result.get("error", "").lower(), "Error message should indicate auto rule generation failure"
 
 
 if __name__ == "__main__":

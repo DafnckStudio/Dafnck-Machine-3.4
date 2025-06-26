@@ -17,9 +17,9 @@ from fastmcp.task_management.interface.consolidated_mcp_server import (
 class TestConsolidatedMCPServer:
     """Test the consolidated MCP server functionality"""
     
-    @patch('fastmcp.task_management.interface.consolidated_mcp_server.FastMCP')
     @patch('fastmcp.task_management.interface.consolidated_mcp_server.ConsolidatedMCPTools')
-    def test_create_consolidated_mcp_server(self, mock_tools_class, mock_fastmcp_class):
+    @patch('fastmcp.server.server.FastMCP')
+    def test_create_consolidated_mcp_server(self, mock_fastmcp_class, mock_tools_class):
         """Test creating the consolidated MCP server"""
         # Setup mocks
         mock_mcp = Mock()

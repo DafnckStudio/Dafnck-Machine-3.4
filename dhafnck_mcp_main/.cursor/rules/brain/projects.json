@@ -43,5 +43,46 @@
     "registered_agents": {},
     "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z"
+  },
+  "test_project": {
+    "id": "test_project",
+    "name": "Test Project",
+    "description": "",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "e2e_project_1": {
+    "id": "e2e_project_1",
+    "name": "E2E Test Project",
+    "description": "A project for E2E testing.",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {
+      "agent_001": {
+        "id": "agent_001",
+        "name": "Test Agent 1",
+        "call_agent": "@agent-001-agent"
+      },
+      "agent_002": {
+        "id": "agent_002",
+        "name": "Test Agent 2",
+        "call_agent": "@agent-002-agent"
+      }
+    },
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
   }
 }

@@ -1,0 +1,38 @@
+{
+  "tasks": [
+    {
+      "id": "20250626001",
+      "title": "Task 1 (blocked)",
+      "description": "This task is blocked.",
+      "project_id": "e2e_dependency_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:42.025629+00:00",
+      "updated_at": "2025-06-26T01:49:42.025629+00:00"
+    },
+    {
+      "id": "20250626002",
+      "title": "Task 2 (blocking)",
+      "description": "This task is a blocker.",
+      "project_id": "e2e_dependency_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T01:49:42.030114+00:00",
+      "updated_at": "2025-06-26T01:49:42.030114+00:00"
+    }
+  ]
+}

@@ -1,0 +1,323 @@
+{
+  "tasks": [
+    {
+      "id": "20250626001",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:11:03.221396+00:00",
+      "updated_at": "2025-06-26T00:11:03.221396+00:00"
+    },
+    {
+      "id": "20250626002",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:11:14.753594+00:00",
+      "updated_at": "2025-06-26T00:11:14.753594+00:00"
+    },
+    {
+      "id": "20250626003",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:25:15.130695+00:00",
+      "updated_at": "2025-06-26T00:25:15.130695+00:00"
+    },
+    {
+      "id": "20250626004",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:25:23.133497+00:00",
+      "updated_at": "2025-06-26T00:25:23.133497+00:00"
+    },
+    {
+      "id": "20250626005",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:26:01.903104+00:00",
+      "updated_at": "2025-06-26T00:26:01.903104+00:00"
+    },
+    {
+      "id": "20250626006",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:26:11.250610+00:00",
+      "updated_at": "2025-06-26T00:26:11.250610+00:00"
+    },
+    {
+      "id": "20250626007",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:26:53.591287+00:00",
+      "updated_at": "2025-06-26T00:26:53.591287+00:00"
+    },
+    {
+      "id": "20250626008",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T00:26:53.592000+00:00",
+      "updated_at": "2025-06-26T00:26:53.592000+00:00"
+    },
+    {
+      "id": "20250626009",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:27:02.645018+00:00",
+      "updated_at": "2025-06-26T00:27:02.645018+00:00"
+    },
+    {
+      "id": "20250626010",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:27:02.656740+00:00",
+      "updated_at": "2025-06-26T00:27:02.656740+00:00"
+    },
+    {
+      "id": "20250626011",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T00:27:02.657277+00:00",
+      "updated_at": "2025-06-26T00:27:02.657277+00:00"
+    },
+    {
+      "id": "20250626012",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:30:33.544629+00:00",
+      "updated_at": "2025-06-26T00:30:33.544629+00:00"
+    },
+    {
+      "id": "20250626013",
+      "title": "Test Auto Rule Generation Trigger",
+      "description": "Test that auto_rule.mdc is generated when get_task is called",
+      "project_id": "test_project",
+      "status": "todo",
+      "priority": "high",
+      "details": "Integration test for auto rule generation system",
+      "estimatedEffort": "small",
+      "assignees": [
+        "system_architect"
+      ],
+      "labels": [
+        "auto-generation",
+        "testing",
+        "integration"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-23",
+      "created_at": "2025-06-26T00:30:33.557242+00:00",
+      "updated_at": "2025-06-26T00:30:33.557242+00:00"
+    },
+    {
+      "id": "20250626014",
+      "title": "Test Senior Developer Rules",
+      "description": "Test auto rule generation for senior developer role",
+      "project_id": "test_project",
+      "status": "in_progress",
+      "priority": "medium",
+      "details": "Test role-specific rule generation",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "development",
+        "testing"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-24",
+      "created_at": "2025-06-26T00:30:33.557723+00:00",
+      "updated_at": "2025-06-26T00:30:33.557723+00:00"
+    }
+  ]
+}

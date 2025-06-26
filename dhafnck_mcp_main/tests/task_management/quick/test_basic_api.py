@@ -168,6 +168,7 @@ def test_dto_structure():
         create_dto = CreateTaskRequest(
             title="Test Task",
             description="Test Description",
+            project_id="test_project",
             priority="high",
             assignees=["qa_engineer"],  # This will be transformed to functional_tester_agent
             labels=["test"]

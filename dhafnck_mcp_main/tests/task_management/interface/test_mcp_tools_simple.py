@@ -75,10 +75,11 @@ class TestMCPToolsSimple:
         """Test that the task service has basic functionality."""
         from fastmcp.task_management.application.dtos.task_dto import CreateTaskRequest
         
-        # Test that we can create a task request
+        # Test that we can create a task request with required project_id
         request = CreateTaskRequest(
             title="Test Task",
             description="Test Description",
+            project_id="test_project",  # Required parameter
             priority="medium",
             assignees=["qa_engineer"]
         )
@@ -86,6 +87,7 @@ class TestMCPToolsSimple:
         assert request is not None
         assert request.title == "Test Task"
         assert request.description == "Test Description"
+        assert request.project_id == "test_project"
         assert request.priority == "medium"
         # The logic for adding functional_tester_agent is inside the use case, not the DTO
         assert "@functional_tester_agent" in request.assignees

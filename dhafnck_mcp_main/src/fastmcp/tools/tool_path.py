@@ -27,9 +27,9 @@ def find_project_root(start_path: Path = None) -> Path:
         if project_root.exists():
             return project_root
     
-    # Priority 2: Check current working directory first
+    # Priority 2: Check current working directory first for .git specifically
     cwd = Path.cwd()
-    if _is_project_root(cwd):
+    if (cwd / ".git").exists():
         return cwd
     
     # Priority 3: Search upwards from start_path
@@ -48,7 +48,12 @@ def find_project_root(start_path: Path = None) -> Path:
     if current.is_file():
         current = current.parent
     
-    # Search upwards for project markers
+    # Search upwards for .git first (highest priority)
+    for parent in [current] + list(current.parents):
+        if (parent / ".git").exists():
+            return parent
+    
+    # If no .git found, search for other project markers
     for parent in [current] + list(current.parents):
         if _is_project_root(parent):
             return parent

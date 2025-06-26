@@ -26,7 +26,7 @@ from fastmcp.server.server import FastMCP
 @pytest.fixture
 def fastmcp_server():
     """Fixture that creates a FastMCP server with tools, resources, and prompts."""
-    server = FastMCP("TestServer")
+    server = FastMCP("TestServer", enable_task_management=False)
 
     # Add a tool
     @server.tool
@@ -68,7 +68,7 @@ def fastmcp_server():
 @pytest.fixture
 def tagged_resources_server():
     """Fixture that creates a FastMCP server with tagged resources and templates."""
-    server = FastMCP("TaggedResourcesServer")
+    server = FastMCP("TaggedResourcesServer", enable_task_management=False)
 
     # Add a resource with tags
     @server.resource(
@@ -342,7 +342,7 @@ async def test_initialize_result_disconnected(fastmcp_server):
 async def test_server_info_custom_version():
     """Test that custom version is properly set in serverInfo."""
     # Test with custom version
-    server_with_version = FastMCP("CustomVersionServer", version="1.2.3")
+    server_with_version = FastMCP("CustomVersionServer", version="1.2.3", enable_task_management=False)
     client = Client(transport=FastMCPTransport(server_with_version))
 
     async with client:
@@ -351,7 +351,7 @@ async def test_server_info_custom_version():
         assert result.serverInfo.version == "1.2.3"
 
     # Test without version (backward compatibility)
-    server_without_version = FastMCP("DefaultVersionServer")
+    server_without_version = FastMCP("DefaultVersionServer", enable_task_management=False)
     client = Client(transport=FastMCPTransport(server_without_version))
 
     async with client:
@@ -402,7 +402,7 @@ async def test_concurrent_client_context_managers():
     https://github.com/jlowin/fastmcp/pull/643
     """
     # Create a simple server
-    server = FastMCP("Test Server")
+    server = FastMCP("Test Server", enable_task_management=False)
 
     @server.tool
     def echo(text: str) -> str:
@@ -574,7 +574,7 @@ async def test_tagged_template_functionality(tagged_resources_server):
 class TestErrorHandling:
     
     async def test_general_tool_exceptions_are_not_masked_by_default(self):
-        mcp = FastMCP("TestServer")
+        mcp = FastMCP("TestServer", enable_task_management=False)
 
         @mcp.tool
         def error_tool():
@@ -590,7 +590,7 @@ class TestErrorHandling:
 
     
     async def test_general_tool_exceptions_are_masked_when_enabled(self):
-        mcp = FastMCP("TestServer", mask_error_details=True)
+        mcp = FastMCP("TestServer", mask_error_details=True, enable_task_management=False)
 
         @mcp.tool
         def error_tool():
@@ -606,7 +606,7 @@ class TestErrorHandling:
 
     
     async def test_specific_tool_errors_are_sent_to_client(self):
-        mcp = FastMCP("TestServer")
+        mcp = FastMCP("TestServer", enable_task_management=False)
 
         @mcp.tool
         def custom_error_tool():
@@ -622,7 +622,7 @@ class TestErrorHandling:
 
     
     async def test_general_resource_exceptions_are_not_masked_by_default(self):
-        mcp = FastMCP("TestServer")
+        mcp = FastMCP("TestServer", enable_task_management=False)
 
         @mcp.resource(uri="exception://resource")
         async def exception_resource():
@@ -639,7 +639,7 @@ class TestErrorHandling:
 
     
     async def test_general_resource_exceptions_are_masked_when_enabled(self):
-        mcp = FastMCP("TestServer", mask_error_details=True)
+        mcp = FastMCP("TestServer", mask_error_details=True, enable_task_management=False)
 
         @mcp.resource(uri="exception://resource")
         async def exception_resource():
@@ -656,7 +656,7 @@ class TestErrorHandling:
 
     
     async def test_resource_errors_are_sent_to_client(self):
-        mcp = FastMCP("TestServer")
+        mcp = FastMCP("TestServer", enable_task_management=False)
 
         @mcp.resource(uri="error://resource")
         async def error_resource():
@@ -671,7 +671,7 @@ class TestErrorHandling:
 
     
     async def test_general_template_exceptions_are_not_masked_by_default(self):
-        mcp = FastMCP("TestServer")
+        mcp = FastMCP("TestServer", enable_task_management=False)
 
         @mcp.resource(uri="exception://resource/{id}")
         async def exception_resource(id: str):
@@ -688,7 +688,7 @@ class TestErrorHandling:
 
     
     async def test_general_template_exceptions_are_masked_when_enabled(self):
-        mcp = FastMCP("TestServer", mask_error_details=True)
+        mcp = FastMCP("TestServer", mask_error_details=True, enable_task_management=False)
 
         @mcp.resource(uri="exception://resource/{id}")
         async def exception_resource(id: str):
@@ -705,7 +705,7 @@ class TestErrorHandling:
 
     
     async def test_template_errors_are_sent_to_client(self):
-        mcp = FastMCP("TestServer")
+        mcp = FastMCP("TestServer", enable_task_management=False)
 
         @mcp.resource(uri="error://resource/{id}")
         async def error_resource(id: str):

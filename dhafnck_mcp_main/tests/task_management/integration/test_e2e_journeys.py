@@ -113,11 +113,25 @@ class TestE2EUserJourneys:
         Tests the full lifecycle of a task from creation to completion,
         including subtask management.
         """
+        # 0. Create a project first
+        project_id = "e2e_lifecycle_project"
+        create_project_response_list = await mcp_server_instance._mcp_call_tool(
+            "manage_project",
+            {
+                "action": "create",
+                "project_id": project_id,
+                "name": "E2E Lifecycle Test Project"
+            }
+        )
+        create_project_response = json.loads(create_project_response_list[0].text)
+        assert create_project_response["success"]
+        
         # 1. Create a new task
         create_task_response_list = await mcp_server_instance._mcp_call_tool(
             "manage_task",
             {
                 "action": "create",
+                "project_id": project_id,
                 "title": "E2E Full Lifecycle Task",
                 "description": "A task to test the full lifecycle.",
                 "priority": "high",
@@ -131,7 +145,7 @@ class TestE2EUserJourneys:
         # 2. Get the task to verify creation
         get_task_response_list = await mcp_server_instance._mcp_call_tool(
             "manage_task",
-            {"action": "get", "task_id": task_id}
+            {"action": "get", "project_id": project_id, "task_id": task_id}
         )
         get_task_response = json.loads(get_task_response_list[0].text)
         assert get_task_response["success"]
@@ -143,6 +157,7 @@ class TestE2EUserJourneys:
             "manage_task",
             {
                 "action": "update",
+                "project_id": project_id,
                 "task_id": task_id,
                 "status": "in_progress"
             }
@@ -187,13 +202,13 @@ class TestE2EUserJourneys:
         assert completed_subtask["completed"]
 
         # 6. Complete the main task
-        complete_task_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "complete", "task_id": task_id})
+        complete_task_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "complete", "project_id": project_id, "task_id": task_id})
         complete_task_response = json.loads(complete_task_response_list[0].text)
         print(f"DEBUG: complete_task_response = {complete_task_response}")
         assert complete_task_response["success"]
 
         # 7. Verify the task is marked as 'done'
-        final_get_task_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "get", "task_id": task_id})
+        final_get_task_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "get", "project_id": project_id, "task_id": task_id})
         final_get_task_response = json.loads(final_get_task_response_list[0].text)
         assert final_get_task_response["success"]
         assert final_get_task_response["task"]["status"] == "done"
@@ -201,7 +216,7 @@ class TestE2EUserJourneys:
         # 8. Delete the task
         delete_task_response_list = await mcp_server_instance._mcp_call_tool(
             "manage_task",
-            {"action": "delete", "task_id": task_id}
+            {"action": "delete", "project_id": project_id, "task_id": task_id}
         )
         delete_task_response = json.loads(delete_task_response_list[0].text)
         assert delete_task_response["success"]
@@ -210,11 +225,25 @@ class TestE2EUserJourneys:
         """
         Tests the system's ability to filter and search for tasks.
         """
+        # 0. Create a project first
+        project_id = "e2e_querying_project"
+        create_project_response_list = await mcp_server_instance._mcp_call_tool(
+            "manage_project",
+            {
+                "action": "create",
+                "project_id": project_id,
+                "name": "E2E Querying Test Project"
+            }
+        )
+        create_project_response = json.loads(create_project_response_list[0].text)
+        assert create_project_response["success"]
+        
         # 1. Create a single task
         create_response_list = await mcp_server_instance._mcp_call_tool(
             "manage_task",
             {
                 "action": "create",
+                "project_id": project_id,
                 "title": "High priority task",
                 "description": "A non-empty description for testing.",
                 "priority": "high",
@@ -226,13 +255,13 @@ class TestE2EUserJourneys:
         assert create_response["success"], f"Task creation failed: {create_response.get('error')}"
 
         # 2. List all tasks to see what's in the repo
-        all_tasks_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "list"})
+        all_tasks_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "list", "project_id": project_id})
         all_tasks_response = json.loads(all_tasks_response_list[0].text)
         assert all_tasks_response["success"], "Listing all tasks failed"
         assert len(all_tasks_response["tasks"]) == 1, f"Expected 1 task, but found {len(all_tasks_response['tasks'])}"
 
         # 3. List tasks filtered by status and priority
-        list_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "list", "status": "in_progress", "priority": "high"})
+        list_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "list", "project_id": project_id, "status": "in_progress", "priority": "high"})
         list_response = json.loads(list_response_list[0].text)
         assert list_response["success"]
         assert len(list_response["tasks"]) == 1
@@ -242,14 +271,14 @@ class TestE2EUserJourneys:
         assert task["priority"] == "high"
 
         # 4. Search for the task
-        search_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "search", "query": "High priority"})
+        search_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "search", "project_id": project_id, "query": "High priority"})
         search_response = json.loads(search_response_list[0].text)
         assert search_response["success"]
         assert len(search_response["tasks"]) == 1
         assert search_response["tasks"][0]["title"] == "High priority task"
 
         # 5. Get next recommended task (should be one of the high priority tasks)
-        next_task_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "next"})
+        next_task_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "next", "project_id": project_id})
         next_task_response = json.loads(next_task_response_list[0].text)
         assert next_task_response["success"]
         assert next_task_response["next_item"]["task"]["priority"] == "high"
@@ -258,12 +287,26 @@ class TestE2EUserJourneys:
         """
         Tests a scenario involving multiple agents collaborating on a task.
         """
+        # 0. Create a project first
+        project_id = "e2e_collaboration_project"
+        create_project_response_list = await mcp_server_instance._mcp_call_tool(
+            "manage_project",
+            {
+                "action": "create",
+                "project_id": project_id,
+                "name": "E2E Collaboration Test Project"
+            }
+        )
+        create_project_response = json.loads(create_project_response_list[0].text)
+        assert create_project_response["success"]
+        
         # 1. Create a task and assign it to multiple agents
         agents = ["@coding-agent", "@test-agent"]
         create_response_list = await mcp_server_instance._mcp_call_tool(
             "manage_task",
             {
                 "action": "create",
+                "project_id": project_id,
                 "title": "Collaborative Task",
                 "description": "A task requiring collaboration between two agents.",
                 "priority": "critical",
@@ -275,7 +318,7 @@ class TestE2EUserJourneys:
         task_id = create_response["task"]["id"]
 
         # 2. Get the task and verify the assignees
-        get_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "get", "task_id": task_id})
+        get_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "get", "project_id": project_id, "task_id": task_id})
         get_response = json.loads(get_response_list[0].text)
         assert get_response["success"]
         
@@ -289,6 +332,7 @@ class TestE2EUserJourneys:
             "manage_task",
             {
                 "action": "update",
+                "project_id": project_id,
                 "task_id": task_id,
                 "details": "Coding part completed by @coding-agent.",
             }
@@ -302,6 +346,7 @@ class TestE2EUserJourneys:
             "manage_task",
             {
                 "action": "update",
+                "project_id": project_id,
                 "task_id": task_id,
                 "assignees": updated_assignees,
             }
@@ -310,7 +355,7 @@ class TestE2EUserJourneys:
         assert update_assignees_response["success"], "Updating assignees failed"
 
         # 5. Verify the remaining assignee
-        final_get_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "get", "task_id": task_id})
+        final_get_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "get", "project_id": project_id, "task_id": task_id})
         final_get_response = json.loads(final_get_response_list[0].text)
         assert final_get_response["success"]
         assert len(final_get_response["task"]["assignees"]) == 1
@@ -320,13 +365,26 @@ class TestE2EUserJourneys:
         """
         Tests a scenario involving task dependencies.
         """
+        # 0. Create a project first
+        project_id = "e2e_dependency_project"
+        create_project_response_list = await mcp_server_instance._mcp_call_tool(
+            "manage_project",
+            {
+                "action": "create",
+                "project_id": project_id,
+                "name": "E2E Dependency Test Project"
+            }
+        )
+        create_project_response = json.loads(create_project_response_list[0].text)
+        assert create_project_response["success"]
+        
         # 1. Create two tasks
         task1_response_list = await mcp_server_instance._mcp_call_tool(
-            "manage_task", {"action": "create", "title": "Task 1 (blocked)", "description": "This task is blocked."}
+            "manage_task", {"action": "create", "project_id": project_id, "title": "Task 1 (blocked)", "description": "This task is blocked."}
         )
         task1_response = json.loads(task1_response_list[0].text)
         task2_response_list = await mcp_server_instance._mcp_call_tool(
-            "manage_task", {"action": "create", "title": "Task 2 (blocking)", "description": "This task is a blocker."}
+            "manage_task", {"action": "create", "project_id": project_id, "title": "Task 2 (blocking)", "description": "This task is a blocker."}
         )
         task2_response = json.loads(task2_response_list[0].text)
         
@@ -341,6 +399,7 @@ class TestE2EUserJourneys:
             "manage_task",
             {
                 "action": "add_dependency",
+                "project_id": project_id,
                 "task_id": task1_id,
                 "dependency_data": {"type": "blocked_by", "dependency_id": task2_id}
             }
@@ -349,19 +408,19 @@ class TestE2EUserJourneys:
         assert add_dep_response["success"]
 
         # 3. Verify dependency
-        get_task1_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "get", "task_id": task1_id})
+        get_task1_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "get", "project_id": project_id, "task_id": task1_id})
         get_task1_response = json.loads(get_task1_response_list[0].text)
         assert get_task1_response["success"]
         assert task2_id in get_task1_response["task"]["dependencies"]
 
         # 4. Complete blocking task
-        complete_task2_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "complete", "task_id": task2_id})
+        complete_task2_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "complete", "project_id": project_id, "task_id": task2_id})
         complete_task2_response = json.loads(complete_task2_response_list[0].text)
         assert complete_task2_response["success"]
 
         # 5. Verify dependency is resolved (optional, depends on implementation)
         # For now, just check that the task status is updated
-        get_task1_after_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "get", "task_id": task1_id})
+        get_task1_after_response_list = await mcp_server_instance._mcp_call_tool("manage_task", {"action": "get", "project_id": project_id, "task_id": task1_id})
         get_task1_after_response = json.loads(get_task1_after_response_list[0].text)
         assert get_task1_after_response["success"]
         # Assuming the system automatically unblocks the task

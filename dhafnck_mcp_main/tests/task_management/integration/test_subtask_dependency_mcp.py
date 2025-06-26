@@ -48,11 +48,13 @@ class TestSubtaskDependencyMCPIntegration:
         
         task1_request = CreateTaskRequest(
             title="Test Task 1",
-            description="First test task"
+            description="First test task",
+            project_id="test_project"
         )
         task2_request = CreateTaskRequest(
             title="Test Task 2",
-            description="Second test task"
+            description="Second test task",
+            project_id="test_project"
         )
         
         self.task1_response = self.mcp_tools._task_service.create_task(task1_request)

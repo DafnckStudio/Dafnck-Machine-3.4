@@ -705,10 +705,13 @@ class TaskOperationHandler:
             logger.error(f"Error completing task {task_id}: {e}")
             return {"success": False, "error": str(e)}
     
-    def _list_tasks(self, task_app_service, status, priority, assignees, labels, limit):
+    def _list_tasks(self, task_app_service, project_id, task_tree_id, user_id, status, priority, assignees, labels, limit):
         """List tasks with optional filters"""
         try:
             request = ListTasksRequest(
+                project_id=project_id,
+                task_tree_id=task_tree_id,
+                user_id=user_id,
                 status=status,
                 priority=priority,
                 assignees=assignees,
@@ -1267,12 +1270,18 @@ class ConsolidatedMCPTools:
         self._repository_factory = TaskRepositoryFactory()
         self._auto_rule_generator = FileAutoRuleGenerator()
         
+        # Initialize default task repository and application service
+        # Use a default project_id for the repository when not specified
+        self._task_repository = task_repository or self._repository_factory.create_repository(project_id="default_project")
+        self._task_app_service = TaskApplicationService(self._task_repository, self._auto_rule_generator)
+        
         # Initialize managers and handlers
         self._project_manager = ProjectManager(self._path_resolver, projects_file_path)
         # Use dynamic cursor agent directory from PathResolver
         cursor_agent_dir = self._path_resolver.get_cursor_agent_dir()
         self._call_agent_use_case = CallAgentUseCase(cursor_agent_dir)
         self._task_handler = TaskOperationHandler(self._repository_factory, self._auto_rule_generator, self._project_manager)
+        self._cursor_rules_tools = CursorRulesTools()
         
         # Initialize tool registration orchestrator
         self._tool_orchestrator = ToolRegistrationOrchestrator(
@@ -1292,6 +1301,71 @@ class ConsolidatedMCPTools:
         except Exception as e:
             logger.error(f"Error in manage_subtask: {e}")
             return {"success": False, "error": str(e)}
+    
+    # Helper methods for testing and internal use
+    def _handle_core_task_operations(self, action=None, project_id="default_project", task_tree_id="main", user_id="default_id", task_id=None, title=None, description=None, status=None, priority=None, details=None, estimated_effort=None, assignees=None, labels=None, due_date=None, force_full_generation=False, **kwargs) -> Dict[str, Any]:
+        """Handle core task operations - delegates to task handler"""
+        try:
+            return self._task_handler.handle_core_operations(action, project_id, task_tree_id, user_id, task_id, title, description, status, priority, details, estimated_effort, assignees, labels, due_date, force_full_generation)
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    def _handle_complete_task(self, project_id="default_project", task_tree_id="main", user_id="default_id", task_id=None, **kwargs) -> Dict[str, Any]:
+        """Handle task completion - delegates to task handler"""
+        try:
+            return self._task_handler.handle_core_operations("complete", project_id, task_tree_id, user_id, task_id, None, None, None, None, None, None, None, None, None)
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    def _handle_list_tasks(self, project_id="default_project", task_tree_id="main", user_id="default_id", status=None, priority=None, assignees=None, labels=None, limit=None, **kwargs) -> Dict[str, Any]:
+        """Handle task listing - delegates to task handler"""
+        try:
+            return self._task_handler.handle_list_search_next("list", project_id, task_tree_id, user_id, status, priority, assignees, labels, limit, None)
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    def _handle_search_tasks(self, project_id="default_project", task_tree_id="main", user_id="default_id", query=None, **kwargs) -> Dict[str, Any]:
+        """Handle task searching - delegates to task handler"""
+        try:
+            return self._task_handler.handle_list_search_next("search", project_id, task_tree_id, user_id, None, None, None, None, None, query)
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    def _handle_do_next(self, project_id="default_project", task_tree_id="main", user_id="default_id", **kwargs) -> Dict[str, Any]:
+        """Handle next task retrieval - delegates to task handler"""
+        try:
+            return self._task_handler.handle_list_search_next("next", project_id, task_tree_id, user_id, None, None, None, None, None, None)
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    def _handle_subtask_operations(self, *args, **kwargs) -> Dict[str, Any]:
+        """Handle subtask operations - delegates to task handler"""
+        return self._task_handler.handle_subtask_operations(*args, **kwargs)
+    
+    def _handle_dependency_operations(self, *args, **kwargs) -> Dict[str, Any]:
+        """Handle dependency operations - delegates to task handler"""
+        return self._task_handler.handle_dependency_operations(*args, **kwargs)
+    
+    # Multi-agent tools accessor for tests
+    @property
+    def _multi_agent_tools(self):
+        """Access to multi-agent tools for testing"""
+        return self._project_manager
+    
+    @property
+    def task_handler(self):
+        """Access to task handler for testing"""
+        return self._task_handler
+    
+    @property
+    def call_agent_use_case(self):
+        """Access to call agent use case for testing"""
+        return self._call_agent_use_case
+    
+    @property
+    def cursor_rules_tools(self):
+        """Access to cursor rules tools for testing"""
+        return self._cursor_rules_tools
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -1304,26 +1378,96 @@ class SimpleMultiAgentTools:
     def __init__(self, projects_file_path: Optional[str] = None):
         self._path_resolver = PathResolver()
         self._project_manager = ProjectManager(self._path_resolver, projects_file_path)
+        # Expose orchestrator for testing
+        self._orchestrator = self._project_manager._orchestrator
+        
+        # Expose attributes that tests expect
+        self._projects_file = self._project_manager._projects_file
+        self._brain_dir = self._project_manager._brain_dir
+        self._agent_converter = self._project_manager._agent_converter
     
     def create_project(self, project_id: str, name: str, description: str = None) -> Dict[str, Any]:
         """Create a new project"""
-        return self._project_manager.create_project({
-            'project_id': project_id,
-            'name': name,
-            'description': description or f"Project: {name}"
-        })
+        return self._project_manager.create_project(
+            project_id=project_id,
+            name=name,
+            description=description or f"Project: {name}"
+        )
     
     def register_agent(self, project_id: str, agent_id: str, name: str, call_agent: str = None) -> Dict[str, Any]:
         """Register an agent to a project"""
-        return self._project_manager.register_agent(project_id, {
-            'agent_id': agent_id,
-            'name': name,
-            'call_agent': call_agent or f"@{agent_id}"
-        })
+        return self._project_manager.register_agent(
+            project_id=project_id,
+            agent_id=agent_id,
+            name=name,
+            call_agent=call_agent or f"@{agent_id.replace('_', '-')}-agent"
+        )
+    
+    def get_project(self, project_id: str) -> Dict[str, Any]:
+        """Get project details"""
+        return self._project_manager.get_project(project_id)
     
     def get_agents(self, project_id: str) -> Dict[str, Any]:
         """Get all agents for a project"""
         return self._project_manager.get_agents(project_id)
+    
+    def orchestrate_project(self, project_id: str) -> Dict[str, Any]:
+        """Orchestrate project workload"""
+        # Check if project exists first
+        if project_id not in self._projects:
+            return {"success": False, "error": f"Project {project_id} not found"}
+        
+        try:
+            # Convert simplified project data to domain entities
+            project_entity = self._project_manager._convert_to_project_entity(project_id)
+            
+            # Run orchestration using project manager's orchestrator (for test mocking)
+            orchestration_result = self._project_manager._orchestrator.orchestrate_project(project_entity)
+            
+            # Update the simplified project data with any new assignments
+            self._project_manager._update_project_from_entity(project_id, project_entity)
+            
+            return {
+                "success": True, 
+                "message": "Project orchestration completed",
+                "orchestration_result": orchestration_result
+            }
+        except Exception as e:
+            return {
+                "success": False, 
+                "error": f"Orchestration failed: {str(e)}"
+            }
+    
+    def get_orchestration_dashboard(self, project_id: str) -> Dict[str, Any]:
+        """Get orchestration dashboard"""
+        return self._project_manager.get_orchestration_dashboard(project_id)
+    
+    def create_task_tree(self, project_id: str, tree_id: str, tree_name: str, tree_description: str = "") -> Dict[str, Any]:
+        """Create a new task tree in project"""
+        return self._project_manager.create_task_tree(project_id, tree_id, tree_name, tree_description)
+    
+    def get_task_tree_status(self, project_id: str, tree_id: str) -> Dict[str, Any]:
+        """Get task tree status"""
+        return self._project_manager.get_task_tree_status(project_id, tree_id)
+    
+    def assign_agent_to_tree(self, project_id: str, agent_id: str, tree_id: str) -> Dict[str, Any]:
+        """Assign agent to task tree"""
+        return self._project_manager.assign_agent_to_tree(project_id, agent_id, tree_id)
+    
+    def list_projects(self) -> Dict[str, Any]:
+        """List all projects"""
+        return self._project_manager.list_projects()
+    
+    # Properties for testing compatibility
+    @property
+    def _projects(self):
+        """Access to internal projects data for testing"""
+        return self._project_manager._projects
+    
+    @property
+    def project_manager(self):
+        """Access to project manager for testing"""
+        return self._project_manager
 
 
 # ═══════════════════════════════════════════════════════════════════
