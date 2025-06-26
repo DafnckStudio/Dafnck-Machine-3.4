@@ -36,6 +36,47 @@ print_header() {
     echo -e "${BLUE}========================================${NC}"
 }
 
+# Function to initialize file tracking
+init_file_tracking() {
+    print_status "Initializing file tracking..."
+    
+    TRACKING_FILE="$PROJECT_PATH/dhafnck_mcp.txt"
+    
+    # Create tracking file with header
+    cat > "$TRACKING_FILE" << EOF
+# dhafnck_mcp Setup Tracking File
+# This file tracks all files and directories created by setup.sh
+# Generated on: $(date -Iseconds)
+# Project: $PROJECT_NAME
+# Path: $PROJECT_PATH
+
+# Format: Each line contains a file or directory path relative to project root
+# Directories are marked with trailing /
+# Files created by setup.sh are listed here for safe removal
+
+EOF
+    
+    # Add the tracking file itself to the list
+    echo "dhafnck_mcp.txt" >> "$TRACKING_FILE"
+}
+
+# Function to log created files/directories
+log_created_item() {
+    local item="$1"
+    local item_type="$2"  # "file" or "dir"
+    
+    # Convert absolute path to relative path
+    local relative_path="${item#$PROJECT_PATH/}"
+    
+    # Add trailing slash for directories
+    if [ "$item_type" = "dir" ]; then
+        relative_path="${relative_path}/"
+    fi
+    
+    # Add to tracking file
+    echo "$relative_path" >> "$TRACKING_FILE"
+}
+
 # Function to validate inputs
 validate_inputs() {
     if [ $# -ne 2 ]; then
@@ -70,13 +111,29 @@ create_project_structure() {
     # Create main project directory
     mkdir -p "$PROJECT_PATH"
     
-    # Create .cursor directory structure
-    mkdir -p "$PROJECT_PATH/.cursor/rules"
-    mkdir -p "$PROJECT_PATH/.cursor/rules/brain"
-    mkdir -p "$PROJECT_PATH/.cursor/rules/contexts/default_id/$PROJECT_NAME"
-    mkdir -p "$PROJECT_PATH/.cursor/rules/tasks/default_id/$PROJECT_NAME/main"
-    mkdir -p "$PROJECT_PATH/.cursor/rules/agents"
-    mkdir -p "$PROJECT_PATH/.cursor/rules/02_AI-DOCS"
+    # Create .cursor directory structure and log each directory
+    local dirs_to_create=(
+        ".cursor/"
+        ".cursor/rules/"
+        ".cursor/rules/brain/"
+        ".cursor/rules/contexts/"
+        ".cursor/rules/contexts/default_id/"
+        ".cursor/rules/contexts/default_id/$PROJECT_NAME/"
+        ".cursor/rules/tasks/"
+        ".cursor/rules/tasks/default_id/"
+        ".cursor/rules/tasks/default_id/$PROJECT_NAME/"
+        ".cursor/rules/tasks/default_id/$PROJECT_NAME/main/"
+        ".cursor/rules/agents/"
+        ".cursor/rules/02_AI-DOCS/"
+    )
+    
+    for dir in "${dirs_to_create[@]}"; do
+        local full_path="$PROJECT_PATH/$dir"
+        if [ ! -d "$full_path" ]; then
+            mkdir -p "$full_path"
+            log_created_item "$full_path" "dir"
+        fi
+    done
     
     print_status "Directory structure created successfully"
 }
@@ -85,21 +142,55 @@ create_project_structure() {
 copy_rule_files() {
     print_status "Copying essential rule files..."
     
-    # Copy core rule files
-    cp "$SOURCE_PROJECT/.cursor/rules/dhafnck_mcp.mdc" "$PROJECT_PATH/.cursor/rules/"
-    cp "$SOURCE_PROJECT/.cursor/rules/agents.mdc" "$PROJECT_PATH/.cursor/rules/"
-    cp "$SOURCE_PROJECT/.cursor/rules/memory.mdc" "$PROJECT_PATH/.cursor/rules/"
-    cp "$SOURCE_PROJECT/.cursor/rules/global_rule.txt" "$PROJECT_PATH/.cursor/rules/"
+    # Copy core rule files and log each one
+    local core_files=(
+        "dhafnck_mcp.mdc"
+        "agents.mdc"
+        "memory.mdc"
+        "global_rule.txt"
+    )
     
-    # Copy AI documentation
-    cp -r "$SOURCE_PROJECT/.cursor/rules/02_AI-DOCS" "$PROJECT_PATH/.cursor/rules/"
+    for file in "${core_files[@]}"; do
+        if [ -f "$SOURCE_PROJECT/.cursor/rules/$file" ]; then
+            cp "$SOURCE_PROJECT/.cursor/rules/$file" "$PROJECT_PATH/.cursor/rules/"
+            log_created_item "$PROJECT_PATH/.cursor/rules/$file" "file"
+        fi
+    done
     
-    # Copy agent configurations
-    cp -r "$SOURCE_PROJECT/.cursor/rules/agents" "$PROJECT_PATH/.cursor/rules/"
+    # Copy AI documentation directory
+    if [ -d "$SOURCE_PROJECT/.cursor/rules/02_AI-DOCS" ]; then
+        cp -r "$SOURCE_PROJECT/.cursor/rules/02_AI-DOCS" "$PROJECT_PATH/.cursor/rules/"
+        # Log all files in the copied directory
+        find "$PROJECT_PATH/.cursor/rules/02_AI-DOCS" -type f | while read -r file; do
+            log_created_item "$file" "file"
+        done
+        find "$PROJECT_PATH/.cursor/rules/02_AI-DOCS" -type d | while read -r dir; do
+            log_created_item "$dir" "dir"
+        done
+    fi
     
-    # Copy tools
+    # Copy agent configurations directory
+    if [ -d "$SOURCE_PROJECT/.cursor/rules/agents" ]; then
+        cp -r "$SOURCE_PROJECT/.cursor/rules/agents" "$PROJECT_PATH/.cursor/rules/"
+        # Log all files in the copied directory
+        find "$PROJECT_PATH/.cursor/rules/agents" -type f | while read -r file; do
+            log_created_item "$file" "file"
+        done
+        find "$PROJECT_PATH/.cursor/rules/agents" -type d | while read -r dir; do
+            log_created_item "$dir" "dir"
+        done
+    fi
+    
+    # Copy tools directory
     if [ -d "$SOURCE_PROJECT/.cursor/rules/tools" ]; then
         cp -r "$SOURCE_PROJECT/.cursor/rules/tools" "$PROJECT_PATH/.cursor/rules/"
+        # Log all files in the copied directory
+        find "$PROJECT_PATH/.cursor/rules/tools" -type f | while read -r file; do
+            log_created_item "$file" "file"
+        done
+        find "$PROJECT_PATH/.cursor/rules/tools" -type d | while read -r dir; do
+            log_created_item "$dir" "dir"
+        done
     fi
     
     print_status "Rule files copied successfully"
@@ -110,7 +201,8 @@ create_project_config() {
     print_status "Creating project-specific configuration files..."
     
     # Create project-specific need-update file
-    cat > "$PROJECT_PATH/.cursor/rules/need-update-this-file-if-change-project-tree.mdc" << EOF
+    local need_update_file="$PROJECT_PATH/.cursor/rules/need-update-this-file-if-change-project-tree.mdc"
+    cat > "$need_update_file" << EOF
 ---
 description: 
 globs: 
@@ -128,9 +220,11 @@ projet_path_root: $PROJECT_PATH
 
 task_tree_id: main
 EOF
+    log_created_item "$need_update_file" "file"
 
     # Create empty auto_rule.mdc (will be generated by MCP)
-    cat > "$PROJECT_PATH/.cursor/rules/auto_rule.mdc" << EOF
+    local auto_rule_file="$PROJECT_PATH/.cursor/rules/auto_rule.mdc"
+    cat > "$auto_rule_file" << EOF
 
 ### DO NOT EDIT - THIS FILE IS AUTOMATICALLY GENERATED ###
 # Last generated: $(date -Iseconds)
@@ -152,9 +246,11 @@ EOF
 
 ### --- END OF GENERATED RULES --- ###
 EOF
+    log_created_item "$auto_rule_file" "file"
 
     # Create empty tasks.json
-    cat > "$PROJECT_PATH/.cursor/rules/tasks/default_id/$PROJECT_NAME/main/tasks.json" << EOF
+    local tasks_file="$PROJECT_PATH/.cursor/rules/tasks/default_id/$PROJECT_NAME/main/tasks.json"
+    cat > "$tasks_file" << EOF
 {
   "tasks": [],
   "metadata": {
@@ -167,6 +263,7 @@ EOF
   }
 }
 EOF
+    log_created_item "$tasks_file" "file"
 
     print_status "Project-specific configuration files created"
 }
@@ -176,7 +273,8 @@ update_brain_projects() {
     print_status "Updating brain/projects.json..."
     
     # Create brain/projects.json for the new project
-    cat > "$PROJECT_PATH/.cursor/rules/brain/projects.json" << EOF
+    local brain_file="$PROJECT_PATH/.cursor/rules/brain/projects.json"
+    cat > "$brain_file" << EOF
 {
   "$PROJECT_NAME": {
     "id": "$PROJECT_NAME",
@@ -195,29 +293,33 @@ update_brain_projects() {
   }
 }
 EOF
+    log_created_item "$brain_file" "file"
 
     # Also update the source project's brain file to include the new project
     if [ -f "$SOURCE_PROJECT/.cursor/rules/brain/projects.json" ]; then
         # Create a backup
         cp "$SOURCE_PROJECT/.cursor/rules/brain/projects.json" "$SOURCE_PROJECT/.cursor/rules/brain/projects.json.backup"
         
-        # Add new project to existing brain file (simple append, could be improved with jq)
+        # Add new project to existing brain file
         python3 << EOF
 import json
 import os
 from datetime import datetime
 
 brain_file = "$SOURCE_PROJECT/.cursor/rules/brain/projects.json"
+project_name = "$PROJECT_NAME"
+project_path = "$PROJECT_PATH"
+
 new_project = {
-    "id": "$PROJECT_NAME",
-    "name": "$PROJECT_NAME", 
+    "id": project_name,
+    "name": project_name, 
     "description": "AI-powered project with MCP server integration",
-    "path": "$PROJECT_PATH",
+    "path": project_path,
     "task_trees": {
         "main": {
             "id": "main",
             "name": "Main Tasks",
-            "description": "Main task tree for $PROJECT_NAME"
+            "description": f"Main task tree for {project_name}"
         }
     },
     "registered_agents": {},
@@ -229,7 +331,7 @@ try:
     with open(brain_file, 'r') as f:
         brain_data = json.load(f)
     
-    brain_data["$PROJECT_NAME"] = new_project
+    brain_data[project_name] = new_project
     
     with open(brain_file, 'w') as f:
         json.dump(brain_data, f, indent=2)
@@ -237,10 +339,324 @@ try:
     print("Brain file updated successfully")
 except Exception as e:
     print(f"Error updating brain file: {e}")
+    exit(1)
 EOF
+        
+        if [ $? -ne 0 ]; then
+            print_error "Failed to update brain file"
+            exit 1
+        fi
     fi
     
     print_status "Brain projects file updated"
+}
+
+# Function to create project-specific uninstall script
+create_uninstall_script() {
+    print_status "Creating project-specific uninstall script..."
+    
+    cat > "$PROJECT_PATH/uninstall.sh" << 'UNINSTALL_EOF'
+#!/bin/bash
+
+# Project-Specific Uninstall Script
+# This script was automatically generated during project setup
+# It will completely remove this project and all its files
+
+set -e
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Project-specific configuration (auto-generated)
+PROJECT_NAME="PROJECT_NAME_PLACEHOLDER"
+PROJECT_PATH="PROJECT_PATH_PLACEHOLDER"
+SOURCE_PROJECT="SOURCE_PROJECT_PLACEHOLDER"
+USERNAME="USERNAME_PLACEHOLDER"
+
+# Function to print colored output
+print_status() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+print_header() {
+    echo -e "${BLUE}========================================${NC}"
+    echo -e "${BLUE} Project Uninstall: $PROJECT_NAME${NC}"
+    echo -e "${BLUE}========================================${NC}"
+}
+
+# Function to confirm uninstall
+confirm_uninstall() {
+    print_warning "⚠️  WARNING: This will remove files created by setup.sh:"
+    echo -e "  - Project: ${YELLOW}$PROJECT_NAME${NC}"
+    echo -e "  - Only files/directories created by setup.sh will be removed"
+    echo -e "  - Existing project files will be preserved"
+    echo -e "  - Project entry from brain/projects.json will be removed"
+    echo ""
+    
+    # Show files that will be removed
+    local tracking_file="$PROJECT_PATH/dhafnck_mcp.txt"
+    if [ -f "$tracking_file" ]; then
+        print_status "Files/directories that will be removed:"
+        local count=0
+        while IFS= read -r line; do
+            # Skip comments and empty lines
+            [[ "$line" =~ ^#.*$ ]] && continue
+            [[ -z "$line" ]] && continue
+            
+            echo -e "  - $line"
+            ((count++))
+            
+            # Limit display to first 15 items
+            if [ $count -ge 15 ]; then
+                local total_lines=$(grep -v '^#' "$tracking_file" | grep -v '^$' | wc -l)
+                if [ $total_lines -gt 15 ]; then
+                    echo -e "  ... and $((total_lines - 15)) more items"
+                fi
+                break
+            fi
+        done < <(grep -v '^#' "$tracking_file" | grep -v '^$')
+        echo ""
+    else
+        print_error "Tracking file not found: $tracking_file"
+        exit 1
+    fi
+    
+    read -p "Are you sure you want to proceed? (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        print_status "Uninstall cancelled by user."
+        exit 0
+    fi
+}
+
+# Function to create backup
+create_backup() {
+    print_status "Creating backup before uninstall..."
+    
+    local backup_dir="/tmp/uninstall_backup_${PROJECT_NAME}_$(date +%Y%m%d_%H%M%S)"
+    mkdir -p "$backup_dir"
+    
+    # Backup critical files
+    if [ -f "$PROJECT_PATH/.cursor/rules/auto_rule.mdc" ]; then
+        cp "$PROJECT_PATH/.cursor/rules/auto_rule.mdc" "$backup_dir/"
+    fi
+    
+    if [ -f "$PROJECT_PATH/.cursor/rules/need-update-this-file-if-change-project-tree.mdc" ]; then
+        cp "$PROJECT_PATH/.cursor/rules/need-update-this-file-if-change-project-tree.mdc" "$backup_dir/"
+    fi
+    
+    if [ -f "$PROJECT_PATH/.cursor/rules/tasks/default_id/$PROJECT_NAME/main/tasks.json" ]; then
+        mkdir -p "$backup_dir/tasks"
+        cp "$PROJECT_PATH/.cursor/rules/tasks/default_id/$PROJECT_NAME/main/tasks.json" "$backup_dir/tasks/"
+    fi
+    
+    print_status "Backup created at: $backup_dir"
+    echo "$backup_dir" > "/tmp/last_uninstall_backup_${PROJECT_NAME}.txt"
+}
+
+# Function to remove from brain projects
+remove_from_brain() {
+    print_status "Removing project from brain/projects.json..."
+    
+    local brain_file="$SOURCE_PROJECT/.cursor/rules/brain/projects.json"
+    
+    if [ -f "$brain_file" ]; then
+        cp "$brain_file" "${brain_file}.uninstall_backup_$(date +%Y%m%d_%H%M%S)"
+        
+        python3 << EOF
+import json
+
+brain_file = "$brain_file"
+project_name = "$PROJECT_NAME"
+
+try:
+    with open(brain_file, 'r') as f:
+        brain_data = json.load(f)
+    
+    if project_name in brain_data:
+        del brain_data[project_name]
+        
+        with open(brain_file, 'w') as f:
+            json.dump(brain_data, f, indent=2)
+        
+        print(f"Project '{project_name}' removed from brain file")
+    else:
+        print(f"Project '{project_name}' not found in brain file")
+        
+except Exception as e:
+    print(f"Error updating brain file: {e}")
+    exit(1)
+EOF
+        
+        if [ $? -eq 0 ]; then
+            print_status "✅ Removed from brain/projects.json"
+        else
+            print_error "❌ Failed to update brain file"
+            return 1
+        fi
+    else
+        print_warning "Brain file not found: $brain_file"
+    fi
+}
+
+# Function to remove tracked files
+remove_tracked_files() {
+    print_status "Removing files created by setup.sh..."
+    
+    local tracking_file="$PROJECT_PATH/dhafnck_mcp.txt"
+    
+    if [ ! -f "$tracking_file" ]; then
+        print_error "Tracking file not found: $tracking_file"
+        print_error "Cannot determine which files to remove safely."
+        exit 1
+    fi
+    
+    print_status "Reading tracking file: $tracking_file"
+    
+    local files_removed=0
+    local dirs_removed=0
+    local failed_removals=0
+    
+    # Read tracking file in reverse order (files first, then directories)
+    # First pass: remove files
+    while IFS= read -r line; do
+        # Skip comments and empty lines
+        [[ "$line" =~ ^#.*$ ]] && continue
+        [[ -z "$line" ]] && continue
+        
+        # Skip directories in first pass
+        [[ "$line" =~ .*/$  ]] && continue
+        
+        local full_path="$PROJECT_PATH/$line"
+        
+        if [ -f "$full_path" ]; then
+            if rm -f "$full_path" 2>/dev/null; then
+                print_status "Removed file: $line"
+                ((files_removed++))
+            else
+                print_warning "Failed to remove file: $line"
+                ((failed_removals++))
+            fi
+        fi
+    done < "$tracking_file"
+    
+    # Second pass: remove empty directories (in reverse order)
+    tac "$tracking_file" | while IFS= read -r line; do
+        # Skip comments and empty lines
+        [[ "$line" =~ ^#.*$ ]] && continue
+        [[ -z "$line" ]] && continue
+        
+        # Only process directories
+        [[ "$line" =~ .*/$  ]] || continue
+        
+        local full_path="$PROJECT_PATH/$line"
+        
+        if [ -d "$full_path" ]; then
+            # Only remove if directory is empty
+            if rmdir "$full_path" 2>/dev/null; then
+                print_status "Removed empty directory: $line"
+                ((dirs_removed++))
+            else
+                print_warning "Directory not empty, keeping: $line"
+            fi
+        fi
+    done
+    
+    print_status "✅ Removal summary:"
+    print_status "  - Files removed: $files_removed"
+    print_status "  - Directories removed: $dirs_removed"
+    if [ $failed_removals -gt 0 ]; then
+        print_warning "  - Failed removals: $failed_removals"
+    fi
+}
+
+# Function to display summary
+display_summary() {
+    print_header
+    echo -e "${GREEN}🗑️  dhafnck_mcp files removed successfully!${NC}"
+    echo ""
+    echo -e "${BLUE}Removed:${NC}"
+    echo -e "  - Project: $PROJECT_NAME"
+    echo -e "  - Files created by setup.sh (see backup for details)"
+    echo -e "  - Brain registry entry"
+    echo -e "  - Empty directories (where possible)"
+    echo ""
+    echo -e "${BLUE}Preserved:${NC}"
+    echo -e "  - Existing project files"
+    echo -e "  - Non-empty directories"
+    echo -e "  - User-created content"
+    echo ""
+    
+    local backup_file="/tmp/last_uninstall_backup_${PROJECT_NAME}.txt"
+    if [ -f "$backup_file" ]; then
+        local backup_dir=$(cat "$backup_file")
+        echo -e "${BLUE}Backup Location:${NC}"
+        echo -e "  - ${YELLOW}$backup_dir${NC}"
+        echo ""
+    fi
+    
+    echo -e "${GREEN}dhafnck_mcp uninstall completed successfully!${NC}"
+    print_header
+}
+
+# Main execution
+main() {
+    print_header
+    
+    # Validate that we have a tracking file
+    if [ ! -f "$PROJECT_PATH/dhafnck_mcp.txt" ]; then
+        print_error "dhafnck_mcp tracking file not found: $PROJECT_PATH/dhafnck_mcp.txt"
+        print_error "This project may not have been set up with the enhanced setup.sh script"
+        print_error "Cannot safely determine which files to remove."
+        exit 1
+    fi
+    
+    print_status "Project: $PROJECT_NAME"
+    print_status "Path: $PROJECT_PATH"
+    
+    # Confirm uninstall
+    confirm_uninstall
+    
+    # Create backup
+    create_backup
+    
+    # Remove from brain
+    remove_from_brain
+    
+    # Remove tracked files
+    remove_tracked_files
+    
+    # Display summary
+    display_summary
+}
+
+# Run main function
+main "$@"
+UNINSTALL_EOF
+
+    # Replace placeholders with actual values
+    sed -i "s|PROJECT_NAME_PLACEHOLDER|$PROJECT_NAME|g" "$PROJECT_PATH/uninstall.sh"
+    sed -i "s|PROJECT_PATH_PLACEHOLDER|$PROJECT_PATH|g" "$PROJECT_PATH/uninstall.sh"
+    sed -i "s|SOURCE_PROJECT_PLACEHOLDER|$SOURCE_PROJECT|g" "$PROJECT_PATH/uninstall.sh"
+    sed -i "s|USERNAME_PLACEHOLDER|$USERNAME|g" "$PROJECT_PATH/uninstall.sh"
+    
+    # Make it executable
+    chmod +x "$PROJECT_PATH/uninstall.sh"
+    log_created_item "$PROJECT_PATH/uninstall.sh" "file"
+    
+    print_status "Project-specific uninstall script created and configured"
 }
 
 # Function to create CLAUDE.md for the new project
@@ -299,6 +715,7 @@ NEVER create files unless they're absolutely necessary for achieving your goal.
 ALWAYS prefer editing an existing file to creating a new one.
 NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
 EOF
+    log_created_item "$PROJECT_PATH/CLAUDE.md" "file"
 
     print_status "CLAUDE.md created for the new project"
 }
@@ -310,13 +727,15 @@ copy_mcp_config() {
     # Copy MCP-related files if they exist
     if [ -f "$SOURCE_PROJECT/mcp_project_template.json" ]; then
         cp "$SOURCE_PROJECT/mcp_project_template.json" "$PROJECT_PATH/"
+        log_created_item "$PROJECT_PATH/mcp_project_template.json" "file"
         
         # Update the template with project-specific information
         sed -i "s/dhafnck_mcp_main/$PROJECT_NAME/g" "$PROJECT_PATH/mcp_project_template.json"
     fi
     
     # Create a project-specific MCP configuration note
-    cat > "$PROJECT_PATH/MCP_SETUP_NOTES.md" << EOF
+    local mcp_notes_file="$PROJECT_PATH/MCP_SETUP_NOTES.md"
+    cat > "$mcp_notes_file" << EOF
 # MCP Server Setup Notes for $PROJECT_NAME
 
 ## Configuration
@@ -357,6 +776,7 @@ $PROJECT_PATH/
 └── CLAUDE.md                        # Project instructions
 \`\`\`
 EOF
+    log_created_item "$mcp_notes_file" "file"
 
     print_status "MCP configuration setup completed"
 }
@@ -388,6 +808,8 @@ validate_setup() {
         ".cursor/rules/brain/projects.json"
         ".cursor/rules/tasks/default_id/$PROJECT_NAME/main/tasks.json"
         "CLAUDE.md"
+        "uninstall.sh"
+        "dhafnck_mcp.txt"
     )
     
     local missing_files=()
@@ -425,9 +847,11 @@ display_summary() {
     echo -e "  2. Claude will automatically load the configuration"
     echo -e "  3. Start creating tasks with MCP tools"
     echo -e "  4. Read MCP_SETUP_NOTES.md for detailed usage"
+    echo -e "  5. To remove project later: ${YELLOW}cd $PROJECT_PATH && ./uninstall.sh${NC}"
     echo ""
     echo -e "${BLUE}Key Files Created:${NC}"
     echo -e "  - CLAUDE.md (project instructions)"
+    echo -e "  - uninstall.sh (project removal script)"
     echo -e "  - .cursor/rules/ (AI configuration)"
     echo -e "  - MCP_SETUP_NOTES.md (usage guide)"
     echo ""
@@ -442,6 +866,9 @@ main() {
     # Validate inputs
     validate_inputs "$@"
     
+    # Initialize file tracking
+    init_file_tracking
+    
     # Create project structure
     create_project_structure
     
@@ -453,6 +880,9 @@ main() {
     
     # Update brain projects
     update_brain_projects
+    
+    # Create project-specific uninstall script
+    create_uninstall_script
     
     # Create CLAUDE.md
     create_claude_md
