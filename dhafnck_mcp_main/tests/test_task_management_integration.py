@@ -148,7 +148,8 @@ class TestCoreTaskManagementTools:
         subtask_result = mock_fastmcp_server.tools["manage_subtask"](
             action="add",
             task_id=task_id,
-            subtask_data={"title": "Test Subtask", "description": "Test subtask description"}
+            subtask_data={"title": "Test Subtask", "description": "Test subtask description"},
+            project_id="test_project"
         )
         
         assert subtask_result["success"] is True
@@ -159,7 +160,8 @@ class TestCoreTaskManagementTools:
         # List subtasks
         list_result = mock_fastmcp_server.tools["manage_subtask"](
             action="list",
-            task_id=task_id
+            task_id=task_id,
+            project_id="test_project"
         )
         
         assert list_result["success"] is True
@@ -355,26 +357,30 @@ class TestIntegrationWorkflows:
         subtask1 = mock_fastmcp_server.tools["manage_subtask"](
             action="add",
             task_id=task_id,
-            subtask_data={"title": "Subtask 1", "description": "First subtask"}
+            subtask_data={"title": "Subtask 1", "description": "First subtask"},
+            project_id="test_project"
         )
         
         subtask2 = mock_fastmcp_server.tools["manage_subtask"](
             action="add",
             task_id=task_id,
-            subtask_data={"title": "Subtask 2", "description": "Second subtask"}
+            subtask_data={"title": "Subtask 2", "description": "Second subtask"},
+            project_id="test_project"
         )
         
         # Complete subtasks
         mock_fastmcp_server.tools["manage_subtask"](
             action="complete",
             task_id=task_id,
-            subtask_data={"subtask_id": subtask1["result"]["subtask"]["id"]}
+            subtask_data={"subtask_id": subtask1["result"]["subtask"]["id"]},
+            project_id="test_project"
         )
     
         mock_fastmcp_server.tools["manage_subtask"](
             action="complete",
             task_id=task_id,
-            subtask_data={"subtask_id": subtask2["result"]["subtask"]["id"]}
+            subtask_data={"subtask_id": subtask2["result"]["subtask"]["id"]},
+            project_id="test_project"
         )
         
         # Complete main task

@@ -955,7 +955,7 @@ class TestEnableDisable:
         """
         Tests that a transformed tool can run even if the parent tool is disabled
         """
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool(enabled=False)
         def add(x: int, y: int = 10) -> int:
@@ -977,7 +977,7 @@ class TestEnableDisable:
                 await client.call_tool("add", {"x": 1, "y": 2})
 
     async def test_disable_transformed_tool(self):
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool(enabled=False)
         def add(x: int, y: int = 10) -> int:

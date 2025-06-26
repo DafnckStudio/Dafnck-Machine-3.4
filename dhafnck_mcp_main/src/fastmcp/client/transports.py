@@ -775,7 +775,7 @@ class MCPConfigTransport(ClientTransport):
 
         # otherwise create a composite client
         else:
-            composite_server = FastMCP()
+            composite_server = FastMCP(enable_task_management=False)
 
             for name, server in self.config.mcpServers.items():
                 server_client = Client(transport=server.to_transport())

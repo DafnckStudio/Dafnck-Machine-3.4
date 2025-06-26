@@ -169,7 +169,7 @@ task_context:
   status: "in_progress"
 ```
 
-See [Agent Auto-Switch Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/agent_auto_switch_workflow.mdc) for details.
+See [Agent Auto-Switch Workflow](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc) for details.
 
 ## 5. Complete Multi-Project Workflow Example
 

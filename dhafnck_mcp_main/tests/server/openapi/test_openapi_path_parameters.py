@@ -292,6 +292,7 @@ async def test_array_query_param_with_fastapi():
     mcp = FastMCP.from_fastapi(
         app,
         route_maps=[RouteMap(methods=["GET"], pattern=r".*", mcp_type=MCPType.TOOL)],
+        enable_task_management=False,  # Disable automatic loading of dhafnck_mcp tools
     )
 
     # Test with the client

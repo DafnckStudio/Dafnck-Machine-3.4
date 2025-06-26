@@ -32,7 +32,7 @@ class TestConsolidatedMCPServer:
         result = create_consolidated_mcp_server()
         
         # Verify FastMCP was initialized with correct name
-        mock_fastmcp_class.assert_called_once_with("Task Management Consolidated with Multi-Agent Support")
+        mock_fastmcp_class.assert_called_once_with("Task Management DDD")
         
         # Verify tools were initialized and registered
         mock_tools_class.assert_called_once()

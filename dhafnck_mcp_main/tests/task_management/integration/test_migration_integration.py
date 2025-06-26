@@ -123,6 +123,16 @@ class TestMigrationIntegration:
             "bulk_operations_max_time": 1.5  # 1.5 seconds for 10 tasks (adjusted for JSON I/O overhead)
         }
 
+    def _ensure_test_project(self, mcp_tools):
+        """Helper method to ensure a test project exists."""
+        project_result = mcp_tools._multi_agent_tools.create_project(
+            "migration_test_project", "Migration Test Project", "Project for testing migration"
+        )
+        if not project_result["success"]:
+            # Project might already exist, which is fine
+            pass
+        return "migration_test_project"
+
     # ================================
     # 1. MCP TOOLS TESTING
     # ================================
@@ -160,6 +170,7 @@ class TestMigrationIntegration:
     def test_mcp_tools_functionality_preserved(self, mcp_tools_instance):
         """Test that all MCP tools maintain their core functionality after migration."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
         
         # Test task management tool using internal methods for direct testing
         create_result = mcp_tools._handle_core_task_operations(
@@ -174,7 +185,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=["migration", "test"],
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert create_result["success"] is True
@@ -193,14 +204,14 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert get_result["success"] is True
         assert get_result["task"]["title"] == "Migration Test Task"
         
         # Test subtask management
-        subtask_result = mcp_tools._handle_subtask_operations(
+        subtask_result = mcp_tools._handle_subtask_operations(project_id=project_id, 
             action="add_subtask",
             task_id=task_id,
             subtask_data={"title": "Migration subtask test"}
@@ -209,7 +220,7 @@ class TestMigrationIntegration:
         
         # Test project management using multi-agent tools
         project_result = mcp_tools._multi_agent_tools.create_project(
-            project_id="migration_test_project",
+            project_id=project_id,
             name="Migration Test Project",
             description="Test project for migration validation"
         )
@@ -217,7 +228,7 @@ class TestMigrationIntegration:
         
         # Test agent management using multi-agent tools
         agent_result = mcp_tools._multi_agent_tools.register_agent(
-            project_id="migration_test_project",
+            project_id=project_id,
             agent_id="test_agent",
             name="Test Agent",
             call_agent="@test_agent"
@@ -233,6 +244,7 @@ class TestMigrationIntegration:
     def test_all_task_api_endpoints_functional(self, mcp_tools_instance):
         """Test all task management API endpoints work correctly after migration."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
         
         # Test CREATE endpoint
         create_response = mcp_tools._handle_core_task_operations(
@@ -247,7 +259,7 @@ class TestMigrationIntegration:
             assignees=["@test_agent"],
             labels=["api", "test"],
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert create_response["success"] is True
@@ -266,7 +278,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert read_response["success"] is True
@@ -285,7 +297,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert update_response["success"] is True
@@ -293,6 +305,7 @@ class TestMigrationIntegration:
         
         # Test LIST endpoint
         list_response = mcp_tools._handle_list_tasks(
+            project_id=project_id,
             status="in_progress",
             priority=None,
             assignees=None,
@@ -304,6 +317,7 @@ class TestMigrationIntegration:
         
         # Test SEARCH endpoint
         search_response = mcp_tools._handle_search_tasks(
+            project_id=project_id,
             query="API Test",
             limit=None
         )
@@ -323,7 +337,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert delete_response["success"] is True
@@ -337,6 +351,7 @@ class TestMigrationIntegration:
     def test_subtask_api_endpoints_functional(self, mcp_tools_instance):
         """Test all subtask management API endpoints work correctly after migration."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
     
         # First create a parent task
         task_response = mcp_tools._handle_core_task_operations(
@@ -348,7 +363,7 @@ class TestMigrationIntegration:
             priority="medium",
             labels=["subtask-test"],
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             estimated_effort=None,
             assignees=None,
             details=None,
@@ -358,7 +373,7 @@ class TestMigrationIntegration:
         task_id = task_response["task"]["id"]
         
         # Test ADD SUBTASK endpoint
-        add_subtask_response = mcp_tools._handle_subtask_operations(
+        add_subtask_response = mcp_tools._handle_subtask_operations(project_id=project_id, 
             action="add_subtask",
             task_id=task_id,
             subtask_data={"title": "Subtask to be added"}
@@ -367,7 +382,7 @@ class TestMigrationIntegration:
         subtask_id = add_subtask_response["result"]["subtask"]["id"]
         
         # Test GET SUBTASKS endpoint
-        get_subtasks_response = mcp_tools._handle_subtask_operations(action="list_subtasks", task_id=task_id)
+        get_subtasks_response = mcp_tools._handle_subtask_operations(project_id=project_id, action="list_subtasks", task_id=task_id)
         assert get_subtasks_response["success"] is True
         assert "result" in get_subtasks_response
         assert isinstance(get_subtasks_response["result"], list)
@@ -375,7 +390,7 @@ class TestMigrationIntegration:
         assert get_subtasks_response["result"][0]["id"] == subtask_id
         
         # Test UPDATE SUBTASK endpoint
-        update_subtask_response = mcp_tools._handle_subtask_operations(
+        update_subtask_response = mcp_tools._handle_subtask_operations(project_id=project_id, 
             action="update_subtask",
             task_id=task_id,
             subtask_data={"subtask_id": subtask_id, "title": "Updated subtask title"}
@@ -384,7 +399,7 @@ class TestMigrationIntegration:
         assert update_subtask_response["result"]["subtask"]["title"] == "Updated subtask title"
         
         # Test COMPLETE SUBTASK endpoint
-        complete_subtask_response = mcp_tools._handle_subtask_operations(
+        complete_subtask_response = mcp_tools._handle_subtask_operations(project_id=project_id, 
             action="complete_subtask",
             task_id=task_id,
             subtask_data={"subtask_id": subtask_id}
@@ -392,7 +407,7 @@ class TestMigrationIntegration:
         assert complete_subtask_response["success"] is True
         
         # Test REMOVE SUBTASK endpoint
-        remove_subtask_response = mcp_tools._handle_subtask_operations(
+        remove_subtask_response = mcp_tools._handle_subtask_operations(project_id=project_id, 
             action="remove_subtask",
             task_id=task_id,
             subtask_data={"subtask_id": subtask_id}
@@ -408,6 +423,7 @@ class TestMigrationIntegration:
     def test_domain_entities_integrity_after_migration(self, mcp_tools_instance):
         """Test that domain entities maintain their integrity after migration."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
         
         # Create a task and verify domain entity properties
         task_response = mcp_tools._handle_core_task_operations(
@@ -422,7 +438,7 @@ class TestMigrationIntegration:
             assignees=["@coding_agent", "@test_agent"],
             labels=["domain", "migration"],
             due_date="2025-12-31",
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert task_response["success"] is True
@@ -455,6 +471,7 @@ class TestMigrationIntegration:
     def test_business_rules_preserved_after_migration(self, mcp_tools_instance):
         """Test that business rules are preserved after migration."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
         
         # Test business rule: Task creation with valid data
         task_response = mcp_tools._handle_core_task_operations(
@@ -469,7 +486,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert task_response["success"] is True
@@ -488,13 +505,13 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert delete_invalid_response["success"] is False
         
         # Test business rule: Task completion updates status
-        complete_response = mcp_tools._handle_complete_task(task_id)
+        complete_response = mcp_tools._handle_complete_task(project_id=project_id, task_id=task_id)
         assert complete_response["success"] is True
         
         # Verify task is completed
@@ -510,7 +527,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert get_response["success"] is True
@@ -526,6 +543,7 @@ class TestMigrationIntegration:
     def test_task_creation_performance_no_regression(self, mcp_tools_instance, performance_baseline):
         """Test that task creation performance meets baseline after migration."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
         baseline = performance_baseline["task_creation_max_time"]
         
         # Measure task creation time
@@ -542,7 +560,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=["performance"],
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         execution_time = time.time() - start_time
@@ -556,6 +574,7 @@ class TestMigrationIntegration:
     def test_bulk_operations_performance_no_regression(self, mcp_tools_instance, performance_baseline):
         """Test that bulk operations performance meets baseline after migration."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
         baseline = performance_baseline["bulk_operations_max_time"]
         
         # Measure bulk task creation time
@@ -575,7 +594,7 @@ class TestMigrationIntegration:
                 assignees=None,
                 labels=["bulk", "performance"],
                 due_date=None,
-                project_id=None,
+                project_id=project_id,
                 force_full_generation=False
             )
             assert response["success"] is True
@@ -593,6 +612,7 @@ class TestMigrationIntegration:
     def test_error_handling_robustness_after_migration(self, mcp_tools_instance):
         """Test that error handling is robust after migration."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
         
         # Test invalid task ID
         invalid_get = mcp_tools._handle_core_task_operations(
@@ -607,7 +627,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert invalid_get["success"] is False
@@ -627,7 +647,7 @@ class TestMigrationIntegration:
                 assignees=None,
                 labels=None,
                 due_date=None,
-                project_id=None,
+                project_id=project_id,
                 force_full_generation=False
             )
             # Should either return error or raise exception
@@ -642,6 +662,7 @@ class TestMigrationIntegration:
     def test_data_validation_after_migration(self, mcp_tools_instance):
         """Test that data validation works correctly after migration."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
         
         # Test invalid priority
         invalid_priority = mcp_tools._handle_core_task_operations(
@@ -656,7 +677,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         # Should either succeed with normalized priority or fail with validation error
@@ -676,7 +697,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         # Should either succeed with normalized status or fail with validation error
@@ -696,7 +717,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=False
         )
         assert empty_title["success"] is False
@@ -758,9 +779,11 @@ class TestMigrationIntegration:
     def test_existing_data_compatibility(self, mcp_tools_instance):
         """Test that existing data remains compatible after migration."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
         
         # Test that pre-existing tasks can be read
         list_response = mcp_tools._handle_list_tasks(
+            project_id=project_id,
             status=None,
             priority=None,
             assignees=None,
@@ -786,7 +809,7 @@ class TestMigrationIntegration:
                 assignees=None,
                 labels=None,
                 due_date=None,
-                project_id=None,
+                project_id=project_id,
                 force_full_generation=False
             )
             assert get_response["success"] is True
@@ -797,6 +820,7 @@ class TestMigrationIntegration:
     def test_auto_rule_generation_compatibility(self, mcp_tools_instance):
         """Test that auto-rule generation still works after migration."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
         
         # Create a task and test auto-rule generation
         task_response = mcp_tools._handle_core_task_operations(
@@ -811,7 +835,7 @@ class TestMigrationIntegration:
             assignees=["@coding_agent"],
             labels=["auto-rule", "test"],
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=True  # Force auto-rule generation
         )
         assert task_response["success"] is True
@@ -830,7 +854,7 @@ class TestMigrationIntegration:
             assignees=None,
             labels=None,
             due_date=None,
-            project_id=None,
+            project_id=project_id,
             force_full_generation=True
         )
         assert get_response["success"] is True
@@ -858,6 +882,7 @@ class TestMigrationIntegration:
     def test_complete_migration_workflow(self, mcp_tools_instance):
         """Test a complete workflow to ensure all migration components work together."""
         mcp_tools = mcp_tools_instance
+        project_id = self._ensure_test_project(mcp_tools)
         
         # Step 1: Create a project
         project_result = mcp_tools._multi_agent_tools.create_project(
@@ -908,7 +933,7 @@ class TestMigrationIntegration:
         
         # Step 5: Add subtasks
         for task_id in task_ids:
-            subtask_response = mcp_tools._handle_subtask_operations(
+            subtask_response = mcp_tools._handle_subtask_operations(project_id="migration_workflow_test", 
                 action="add_subtask",
                 task_id=task_id,
                 subtask_data={
@@ -935,7 +960,7 @@ class TestMigrationIntegration:
                 assignees=None,
                 labels=None,
                 due_date=None,
-                project_id=None,
+                project_id="migration_workflow_test",
                 force_full_generation=False
             )
             if not update_response["success"]:
@@ -956,7 +981,7 @@ class TestMigrationIntegration:
                     assignees=None,
                     labels=None,
                     due_date=None,
-                    project_id=None,
+                    project_id="migration_workflow_test",
                     force_full_generation=False
                 )
                 if not review_response["success"]:
@@ -965,6 +990,7 @@ class TestMigrationIntegration:
         
         # Step 7: Search and list operations
         search_response = mcp_tools._handle_search_tasks(
+            project_id="migration_workflow_test",
             query="Workflow Task",
             limit=None
         )
@@ -972,6 +998,7 @@ class TestMigrationIntegration:
         assert len(search_response["tasks"]) >= 3
         
         list_response = mcp_tools._handle_list_tasks(
+            project_id="migration_workflow_test",
             status="in_progress",
             priority=None,
             assignees=None,
@@ -982,7 +1009,7 @@ class TestMigrationIntegration:
         assert len(list_response["tasks"]) >= 1
         
         # Step 8: Complete some tasks
-        complete_response = mcp_tools._handle_complete_task(task_ids[0])
+        complete_response = mcp_tools._handle_complete_task(project_id="migration_workflow_test", task_id=task_ids[0])
         assert complete_response["success"] is True
         
         # Step 9: Verify project orchestration
@@ -998,6 +1025,7 @@ class TestMigrationIntegration:
         assert project_status["success"] is True
         
         final_task_list = mcp_tools._handle_list_tasks(
+            project_id="migration_workflow_test",
             status=None,
             priority=None,
             assignees=None,

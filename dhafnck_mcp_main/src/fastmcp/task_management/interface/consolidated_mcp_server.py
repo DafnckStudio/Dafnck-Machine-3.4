@@ -24,7 +24,7 @@ def create_consolidated_mcp_server() -> "FastMCP":
     from fastmcp.server.server import FastMCP
     
     # Initialize FastMCP server
-    mcp = FastMCP("Task Management Consolidated with Multi-Agent Support")
+    mcp = FastMCP("Task Management DDD")
     
     # Initialize and register consolidated tools v2 with reorganized structure
     consolidated_tools = ConsolidatedMCPTools()

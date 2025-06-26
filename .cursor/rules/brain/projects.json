@@ -115,8 +115,8 @@
     "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z"
   },
-  "e2e_querying_project_1750902924": {
-    "id": "e2e_querying_project_1750902924",
+  "e2e_querying_project_1750925473": {
+    "id": "e2e_querying_project_1750925473",
     "name": "E2E Querying Test Project",
     "description": "",
     "task_trees": {
@@ -130,8 +130,8 @@
     "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z"
   },
-  "e2e_collaboration_project_1750902924": {
-    "id": "e2e_collaboration_project_1750902924",
+  "e2e_collaboration_project_1750925473": {
+    "id": "e2e_collaboration_project_1750925473",
     "name": "E2E Collaboration Test Project",
     "description": "",
     "task_trees": {
@@ -145,10 +145,25 @@
     "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z"
   },
-  "e2e_dependency_project_1750902924": {
-    "id": "e2e_dependency_project_1750902924",
+  "e2e_dependency_project_1750925473": {
+    "id": "e2e_dependency_project_1750925473",
     "name": "E2E Dependency Test Project",
     "description": "",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  },
+  "migration_test_project": {
+    "id": "migration_test_project",
+    "name": "Migration Test Project",
+    "description": "Project for testing migration",
     "task_trees": {
       "main": {
         "id": "main",
@@ -183,7 +198,12 @@
         "call_agent": "@coding_agent"
       }
     },
-    "agent_assignments": {},
+    "agent_assignments": {
+      "workflow_test_agent": [
+        "main",
+        "workflow_tree"
+      ]
+    },
     "created_at": "2025-01-01T00:00:00Z"
   }
 }

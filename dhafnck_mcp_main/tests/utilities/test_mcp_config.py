@@ -103,7 +103,7 @@ async def test_multi_client(tmp_path: Path):
     server_script = inspect.cleandoc("""
         from fastmcp import FastMCP
 
-        mcp = FastMCP()
+        mcp = FastMCP(enable_task_management=False)
 
         @mcp.tool
         def add(a: int, b: int) -> int:

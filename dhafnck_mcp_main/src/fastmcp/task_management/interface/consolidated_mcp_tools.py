@@ -1013,7 +1013,10 @@ class ToolRegistrationOrchestrator:
             def manage_subtask(
                 action: Annotated[str, Field(description="Subtask action to perform. Available: add, complete, list, update, remove")],
                 task_id: Annotated[str, Field(description="Parent task identifier (required for all subtask operations)")] = None,
-                subtask_data: Annotated[Dict[str, Any], Field(description="Subtask data containing title, description, and other subtask properties")] = None
+                subtask_data: Annotated[Dict[str, Any], Field(description="Subtask data containing title, description, and other subtask properties")] = None,
+                project_id: Annotated[str, Field(description="Project identifier (defaults to 'default_project')")] = "default_project",
+                task_tree_id: Annotated[str, Field(description="Task tree identifier (defaults to 'main')")] = "main",
+                user_id: Annotated[str, Field(description="User identifier (defaults to 'default_id')")] = "default_id"
             ) -> Dict[str, Any]:
                 """📋 SUBTASK MANAGER - Task breakdown and progress tracking
 
@@ -1038,7 +1041,7 @@ class ToolRegistrationOrchestrator:
                     return {"success": False, "error": "task_id is required"}
 
                 try:
-                    result = self._task_handler.handle_subtask_operations(action, task_id, subtask_data)
+                    result = self._task_handler.handle_subtask_operations(action, task_id, subtask_data, project_id, task_tree_id, user_id)
                     return result
                 except (ValueError, TypeError, TaskNotFoundError) as e:
                     logging.error(f"Error managing subtask: {e}")
@@ -1373,6 +1376,11 @@ class ConsolidatedMCPTools:
     def _multi_agent_tools(self):
         """Access to multi-agent tools for testing"""
         return self._project_manager
+    
+    @_multi_agent_tools.setter
+    def _multi_agent_tools(self, value):
+        """Set multi-agent tools for testing (allows mocking)"""
+        self._project_manager = value
     
     @property
     def task_handler(self):

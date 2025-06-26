@@ -28,20 +28,25 @@ def test_server_creation():
         tool_names = list(tools.keys())[:5]  # First 5 tools
         print(f"✅ Sample tools: {tool_names}")
         
-        return True
+        # Use assertions instead of return
+        assert server is not None, "Server should be created"
+        assert len(tools) > 0, "Server should have tools registered"
+        
     except Exception as e:
         print(f"❌ Error creating server: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        assert False, f"Server creation failed: {e}"
 
 def test_mcp_config():
     """Test MCP configuration file."""
     config_path = Path.cwd().parent / ".cursor" / "mcp.json"
     
     if not config_path.exists():
-        print(f"❌ MCP config not found at {config_path}")
-        return False
+        print(f"⚠️ MCP config not found at {config_path} - skipping test")
+        # Skip test if config doesn't exist rather than failing
+        import pytest
+        pytest.skip(f"MCP config not found at {config_path}")
     
     try:
         with open(config_path) as f:
@@ -50,17 +55,20 @@ def test_mcp_config():
         dhafnck_config = config.get("mcpServers", {}).get("dhafnck_mcp")
         if not dhafnck_config:
             print("❌ dhafnck_mcp server not found in config")
-            return False
+            assert False, "dhafnck_mcp server not found in config"
         
         print(f"✅ MCP config found")
         print(f"  Command: {dhafnck_config['command']}")
         print(f"  Args: {dhafnck_config['args']}")
         print(f"  CWD: {dhafnck_config['cwd']}")
         
-        return True
+        # Use assertions instead of return
+        assert dhafnck_config is not None, "dhafnck_mcp config should exist"
+        assert 'command' in dhafnck_config, "Config should have command"
+        
     except Exception as e:
         print(f"❌ Error reading MCP config: {e}")
-        return False
+        assert False, f"Error reading MCP config: {e}"
 
 def main():
     print("🧪 Testing DhafnckMCP Server Setup")
@@ -73,10 +81,16 @@ def main():
     success = True
     
     print("\n1. Testing server creation...")
-    success &= test_server_creation()
+    try:
+        test_server_creation()
+    except AssertionError:
+        success = False
     
     print("\n2. Testing MCP configuration...")
-    success &= test_mcp_config()
+    try:
+        test_mcp_config()
+    except AssertionError:
+        success = False
     
     print("\n" + "=" * 40)
     if success:

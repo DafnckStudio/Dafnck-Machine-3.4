@@ -23,19 +23,19 @@ class TestMCPServers:
     @pytest.mark.unit
     @pytest.mark.interface
     def test_ddd_mcp_server_main_function_error_handling(self):
-        """Test that ddd_mcp_server.main handles runtime errors gracefully."""
+        """Test that consolidated_mcp_server.main handles runtime errors gracefully."""
         mock_mcp_instance = Mock()
         mock_mcp_instance.run.side_effect = Exception("Test server crash")
 
-        with patch('fastmcp.task_management.interface.ddd_mcp_server.create_mcp_server', return_value=mock_mcp_instance), \
+        with patch('fastmcp.task_management.interface.consolidated_mcp_server.mcp_instance', mock_mcp_instance), \
              patch('logging.error') as mock_log_error:
             
             with pytest.raises(Exception, match="Test server crash"):
                 ddd_main()
             
             mock_log_error.assert_called_once()
-            # The logger formats the message as "Server error: {e}"
-            assert "Server error: Test server crash" in mock_log_error.call_args[0][0]
+            # The logger formats the message as "Consolidated server error: {e}"
+            assert "Consolidated server error: Test server crash" in mock_log_error.call_args[0][0]
 
     @pytest.mark.unit
     def test_create_main_server(self):
@@ -63,18 +63,18 @@ class TestMCPServers:
     @pytest.mark.unit
     @pytest.mark.interface
     def test_ddd_main_keyboard_interrupt(self):
-        """Test that ddd_mcp_server.main handles KeyboardInterrupt."""
+        """Test that consolidated_mcp_server.main handles KeyboardInterrupt."""
         mock_mcp_instance = Mock()
         mock_mcp_instance.run.side_effect = KeyboardInterrupt()
 
-        with patch('fastmcp.task_management.interface.ddd_mcp_server.create_mcp_server', return_value=mock_mcp_instance), \
+        with patch('fastmcp.task_management.interface.consolidated_mcp_server.mcp_instance', mock_mcp_instance), \
              patch('logging.info') as mock_log_info:
             
             # main should catch KeyboardInterrupt and exit gracefully
             ddd_main()
             
             # Check for the specific log message
-            mock_log_info.assert_any_call("Server stopped by user")
+            mock_log_info.assert_any_call("Consolidated server stopped by user")
 
     @pytest.mark.unit
     def test_main_server_keyboard_interrupt(self):

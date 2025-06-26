@@ -19,7 +19,7 @@ This documentation covers the architecture, logic, and best practices for the MC
 
 ## Key Features
 - Automatic context generation for each task (see `/ .cursor/rules/auto_rule.mdc`).
-- Role-based agent assignment and auto-switching (see `/ .cursor/rules/02_AI-DOCS/TaskManagement/agent_auto_switch_workflow.mdc`).
+- Role-based agent assignment and auto-switching (see `.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc`).
 - Hierarchical project/task structure with support for cross-tree dependencies.
 - Full lifecycle management: create, update, complete, delete, and recommend next tasks.
 - YAML-based agent configuration for easy extension and maintenance.

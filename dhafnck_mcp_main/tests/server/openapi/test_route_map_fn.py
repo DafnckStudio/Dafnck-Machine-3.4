@@ -128,6 +128,7 @@ def test_component_fn_customization(sample_openapi_spec, http_client):
         client=http_client,
         name="Test Server",
         mcp_component_fn=customize_components,
+        enable_task_management=False,  # Disable automatic loading of dhafnck_mcp tools
     )
 
     # Check that components were customized

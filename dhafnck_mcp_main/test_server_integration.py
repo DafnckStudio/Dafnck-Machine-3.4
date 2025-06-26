@@ -45,16 +45,18 @@ def test_server_creation():
                 status = "✅" if enabled else "❌"
                 logger.info(f"  {status} {tool_name}")
             
-            return True
+            # Use assertions instead of return
+            assert server.consolidated_tools is not None, "Consolidated MCP tools should be available"
+            assert len(enabled_tools) > 0, "Should have enabled tools"
         else:
             logger.error("❌ Consolidated MCP tools not available")
-            return False
+            assert False, "Consolidated MCP tools not available"
             
     except Exception as e:
         logger.error(f"❌ Failed to create server: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        assert False, f"Failed to create server: {e}"
 
 
 def test_server_without_task_management():
@@ -74,16 +76,17 @@ def test_server_without_task_management():
         # Check that consolidated tools are not available
         if server.consolidated_tools is None:
             logger.info("✅ Consolidated MCP tools correctly disabled")
-            return True
+            # Use assertion instead of return
+            assert server.consolidated_tools is None, "Consolidated MCP tools should be disabled"
         else:
             logger.error("❌ Consolidated MCP tools should be disabled")
-            return False
+            assert False, "Consolidated MCP tools should be disabled"
             
     except Exception as e:
         logger.error(f"❌ Failed to create server: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        assert False, f"Failed to create server: {e}"
 
 
 def test_manual_registration():
@@ -105,16 +108,18 @@ def test_manual_registration():
         
         if success and server.consolidated_tools:
             logger.info("✅ Manual registration successful")
-            return True
+            # Use assertion instead of return
+            assert success, "Manual registration should succeed"
+            assert server.consolidated_tools is not None, "Consolidated tools should be available after manual registration"
         else:
             logger.error("❌ Manual registration failed")
-            return False
+            assert False, "Manual registration failed"
             
     except Exception as e:
         logger.error(f"❌ Manual registration test failed: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        assert False, f"Manual registration test failed: {e}"
 
 
 async def test_async_operations():
@@ -136,13 +141,15 @@ async def test_async_operations():
         if task_tools:
             logger.info(f"📋 Task-related tools found: {task_tools[:5]}")  # Show first 5
         
-        return True
+        # Use assertions instead of return
+        assert len(tools) > 0, "Should have at least some tools"
+        assert any('task' in name.lower() or 'project' in name.lower() for name in tools.keys()), "Should have task-related tools"
         
     except Exception as e:
         logger.error(f"❌ Async operations test failed: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        assert False, f"Async operations test failed: {e}"
 
 
 def main():

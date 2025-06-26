@@ -316,7 +316,7 @@ class RulesTemplateSystem:
             'persona_icon': role.persona_icon or '',
             
             # YAML frontmatter
-            'description': f'Dynamic AI Agent Rules for {role.persona_icon or ""} {display_name}'.strip(),
+            'description': f'Dynamic AI Agent Rules for {role.persona_icon + " " if role.persona_icon else ""}{display_name}',
             'globs': job_desc.get('globs', ['**/*']),
             
             # Context summary

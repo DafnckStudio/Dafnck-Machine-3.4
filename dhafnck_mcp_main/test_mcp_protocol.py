@@ -112,46 +112,53 @@ def test_mcp_protocol():
         # Analyze results
         print("\n📊 Test Results:")
         
-        if len(responses) >= 2:  # Initialize + tools/list
-            init_response = responses[0]
-            tools_response = responses[1] if len(responses) > 1 else None
-            
-            # Check initialization
-            if "result" in init_response:
-                print("✅ Server initialization: SUCCESS")
-                capabilities = init_response["result"].get("capabilities", {})
-                print(f"   Server capabilities: {list(capabilities.keys())}")
-            else:
-                print("❌ Server initialization: FAILED")
-                print(f"   Error: {init_response.get('error', 'Unknown error')}")
-            
-            # Check tools listing
-            if tools_response and "result" in tools_response:
-                tools = tools_response["result"].get("tools", [])
-                print(f"✅ Tools listing: SUCCESS ({len(tools)} tools)")
-                
-                # List some key tools
-                tool_names = [tool.get("name", "unnamed") for tool in tools]
-                task_tools = [name for name in tool_names if any(keyword in name.lower() for keyword in ["task", "project", "agent"])]
-                print(f"   Task management tools: {task_tools[:5]}{'...' if len(task_tools) > 5 else ''}")
-            else:
-                print("❌ Tools listing: FAILED")
-                if tools_response:
-                    print(f"   Error: {tools_response.get('error', 'Unknown error')}")
-        else:
-            print("❌ Insufficient responses received")
+        # Use assertions instead of return
+        assert len(responses) >= 2, "Should receive at least 2 responses (initialize + tools/list)"
         
-        return len(responses) >= 2 and all("result" in resp for resp in responses)
+        init_response = responses[0]
+        tools_response = responses[1] if len(responses) > 1 else None
+        
+        # Check initialization
+        if "result" in init_response:
+            print("✅ Server initialization: SUCCESS")
+            capabilities = init_response["result"].get("capabilities", {})
+            print(f"   Server capabilities: {list(capabilities.keys())}")
+        else:
+            print("❌ Server initialization: FAILED")
+            print(f"   Error: {init_response.get('error', 'Unknown error')}")
+            assert False, f"Server initialization failed: {init_response.get('error', 'Unknown error')}"
+        
+        # Check tools listing
+        if tools_response and "result" in tools_response:
+            tools = tools_response["result"].get("tools", [])
+            print(f"✅ Tools listing: SUCCESS ({len(tools)} tools)")
+            
+            # List some key tools
+            tool_names = [tool.get("name", "unnamed") for tool in tools]
+            task_tools = [name for name in tool_names if any(keyword in name.lower() for keyword in ["task", "project", "agent"])]
+            print(f"   Task management tools: {task_tools[:5]}{'...' if len(task_tools) > 5 else ''}")
+            
+            assert len(tools) > 0, "Should have at least some tools available"
+        else:
+            print("❌ Tools listing: FAILED")
+            if tools_response:
+                print(f"   Error: {tools_response.get('error', 'Unknown error')}")
+                assert False, f"Tools listing failed: {tools_response.get('error', 'Unknown error')}"
+            else:
+                assert False, "No tools response received"
+        
+        # Final assertion - all responses should have results
+        assert all("result" in resp for resp in responses), "All responses should contain results"
         
     except subprocess.TimeoutExpired:
         print("❌ Process timed out")
         process.kill()
-        return False
+        assert False, "Process timed out"
     except Exception as e:
         print(f"❌ Test failed with exception: {e}")
         if process:
             process.terminate()
-        return False
+        assert False, f"Test failed with exception: {e}"
 
 
 def main():
