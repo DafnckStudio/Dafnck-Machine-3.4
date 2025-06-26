@@ -65,6 +65,9 @@ log_created_item() {
     local item="$1"
     local item_type="$2"  # "file" or "dir"
     
+    # Define tracking file path
+    local tracking_file="$PROJECT_PATH/dhafnck_mcp.txt"
+    
     # Convert absolute path to relative path
     local relative_path="${item#$PROJECT_PATH/}"
     
@@ -74,7 +77,7 @@ log_created_item() {
     fi
     
     # Add to tracking file
-    echo "$relative_path" >> "$TRACKING_FILE"
+    echo "$relative_path" >> "$tracking_file"
 }
 
 # Function to validate inputs
@@ -360,7 +363,7 @@ create_uninstall_script() {
 
 # Project-Specific Uninstall Script
 # This script was automatically generated during project setup
-# It will completely remove this project and all its files
+# It will remove only files created by setup.sh, preserving existing project content
 
 set -e
 
@@ -392,7 +395,7 @@ print_error() {
 
 print_header() {
     echo -e "${BLUE}========================================${NC}"
-    echo -e "${BLUE} Project Uninstall: $PROJECT_NAME${NC}"
+    echo -e "${BLUE} dhafnck_mcp Uninstall: $PROJECT_NAME${NC}"
     echo -e "${BLUE}========================================${NC}"
 }
 
@@ -409,24 +412,27 @@ confirm_uninstall() {
     local tracking_file="$PROJECT_PATH/dhafnck_mcp.txt"
     if [ -f "$tracking_file" ]; then
         print_status "Files/directories that will be removed:"
+        
+        # Create temporary file to avoid stdin conflicts
+        local preview_file="/tmp/uninstall_preview_$$"
+        grep -v '^#' "$tracking_file" | grep -v '^$' > "$preview_file"
+        
         local count=0
         while IFS= read -r line; do
-            # Skip comments and empty lines
-            [[ "$line" =~ ^#.*$ ]] && continue
-            [[ -z "$line" ]] && continue
-            
             echo -e "  - $line"
-            ((count++))
+            count=$((count + 1))
             
             # Limit display to first 15 items
             if [ $count -ge 15 ]; then
-                local total_lines=$(grep -v '^#' "$tracking_file" | grep -v '^$' | wc -l)
+                local total_lines=$(wc -l < "$preview_file")
                 if [ $total_lines -gt 15 ]; then
                     echo -e "  ... and $((total_lines - 15)) more items"
                 fi
                 break
             fi
-        done < <(grep -v '^#' "$tracking_file" | grep -v '^$')
+        done < "$preview_file"
+        
+        rm -f "$preview_file"
         echo ""
     else
         print_error "Tracking file not found: $tracking_file"
@@ -460,6 +466,11 @@ create_backup() {
     if [ -f "$PROJECT_PATH/.cursor/rules/tasks/default_id/$PROJECT_NAME/main/tasks.json" ]; then
         mkdir -p "$backup_dir/tasks"
         cp "$PROJECT_PATH/.cursor/rules/tasks/default_id/$PROJECT_NAME/main/tasks.json" "$backup_dir/tasks/"
+    fi
+    
+    # Backup the tracking file itself
+    if [ -f "$PROJECT_PATH/dhafnck_mcp.txt" ]; then
+        cp "$PROJECT_PATH/dhafnck_mcp.txt" "$backup_dir/"
     fi
     
     print_status "Backup created at: $backup_dir"
@@ -529,15 +540,17 @@ remove_tracked_files() {
     local dirs_removed=0
     local failed_removals=0
     
-    # Read tracking file in reverse order (files first, then directories)
-    # First pass: remove files
+    # Create a temporary file with items to remove (excluding tracking file itself for now)
+    local temp_file="/tmp/items_to_remove_$$"
+    grep -v '^#' "$tracking_file" | grep -v '^$' > "$temp_file"
+    
+    # First pass: remove files (except tracking file)
     while IFS= read -r line; do
-        # Skip comments and empty lines
-        [[ "$line" =~ ^#.*$ ]] && continue
-        [[ -z "$line" ]] && continue
-        
         # Skip directories in first pass
         [[ "$line" =~ .*/$  ]] && continue
+        
+        # Skip tracking file itself for now
+        [[ "$line" = "dhafnck_mcp.txt" ]] && continue
         
         local full_path="$PROJECT_PATH/$line"
         
@@ -550,14 +563,10 @@ remove_tracked_files() {
                 ((failed_removals++))
             fi
         fi
-    done < "$tracking_file"
+    done < "$temp_file"
     
     # Second pass: remove empty directories (in reverse order)
-    tac "$tracking_file" | while IFS= read -r line; do
-        # Skip comments and empty lines
-        [[ "$line" =~ ^#.*$ ]] && continue
-        [[ -z "$line" ]] && continue
-        
+    tac "$temp_file" | while IFS= read -r line; do
         # Only process directories
         [[ "$line" =~ .*/$  ]] || continue
         
@@ -573,6 +582,16 @@ remove_tracked_files() {
             fi
         fi
     done
+    
+    # Finally, remove the tracking file itself
+    if [ -f "$tracking_file" ]; then
+        rm -f "$tracking_file"
+        print_status "Removed tracking file: dhafnck_mcp.txt"
+        ((files_removed++))
+    fi
+    
+    # Clean up temp file
+    rm -f "$temp_file"
     
     print_status "✅ Removal summary:"
     print_status "  - Files removed: $files_removed"
@@ -866,11 +885,11 @@ main() {
     # Validate inputs
     validate_inputs "$@"
     
-    # Initialize file tracking
-    init_file_tracking
-    
     # Create project structure
     create_project_structure
+    
+    # Initialize file tracking
+    init_file_tracking
     
     # Copy rule files
     copy_rule_files

@@ -254,5 +254,21 @@
     "registered_agents": {},
     "agent_assignments": {},
     "created_at": "2025-06-26T11:32:38.182723Z"
+  },
+  "test_project_final": {
+    "id": "test_project_final",
+    "name": "test_project_final",
+    "description": "AI-powered project with MCP server integration",
+    "path": "/tmp/test_dhafnck_project",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree for test_project_final"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-06-26T11:38:26.599109Z"
   }
 }
