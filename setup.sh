@@ -365,7 +365,8 @@ create_uninstall_script() {
 # This script was automatically generated during project setup
 # It will remove only files created by setup.sh, preserving existing project content
 
-set -e
+# Don't exit on errors during file removal - we want to continue even if some files are missing
+set +e
 
 # Color codes for output
 RED='\033[0;31m'
@@ -540,58 +541,71 @@ remove_tracked_files() {
     local dirs_removed=0
     local failed_removals=0
     
-    # Create a temporary file with items to remove (excluding tracking file itself for now)
-    local temp_file="/tmp/items_to_remove_$$"
-    grep -v '^#' "$tracking_file" | grep -v '^$' > "$temp_file"
+    # Create arrays to store files and directories
+    declare -a files_to_remove
+    declare -a dirs_to_remove
     
-    # First pass: remove files (except tracking file)
+    # Read tracking file and separate files from directories
     while IFS= read -r line; do
-        # Skip directories in first pass
-        [[ "$line" =~ .*/$  ]] && continue
+        # Skip comments and empty lines
+        [[ "$line" =~ ^#.*$ ]] && continue
+        [[ -z "$line" ]] && continue
         
         # Skip tracking file itself for now
         [[ "$line" = "dhafnck_mcp.txt" ]] && continue
         
-        local full_path="$PROJECT_PATH/$line"
+        if [[ "$line" =~ .*/$  ]]; then
+            # It's a directory
+            dirs_to_remove+=("$line")
+        else
+            # It's a file
+            files_to_remove+=("$line")
+        fi
+    done < "$tracking_file"
+    
+    # First pass: remove files
+    print_status "Removing files..."
+    for file in "${files_to_remove[@]}"; do
+        local full_path="$PROJECT_PATH/$file"
         
         if [ -f "$full_path" ]; then
             if rm -f "$full_path" 2>/dev/null; then
-                print_status "Removed file: $line"
+                print_status "✓ Removed file: $file"
                 ((files_removed++))
             else
-                print_warning "Failed to remove file: $line"
+                print_warning "✗ Failed to remove file: $file"
                 ((failed_removals++))
             fi
+        else
+            print_status "- File already gone: $file"
         fi
-    done < "$temp_file"
+    done
     
     # Second pass: remove empty directories (in reverse order)
-    tac "$temp_file" | while IFS= read -r line; do
-        # Only process directories
-        [[ "$line" =~ .*/$  ]] || continue
-        
-        local full_path="$PROJECT_PATH/$line"
+    print_status "Removing empty directories..."
+    for ((i=${#dirs_to_remove[@]}-1; i>=0; i--)); do
+        local dir="${dirs_to_remove[i]}"
+        local full_path="$PROJECT_PATH/$dir"
         
         if [ -d "$full_path" ]; then
             # Only remove if directory is empty
             if rmdir "$full_path" 2>/dev/null; then
-                print_status "Removed empty directory: $line"
+                print_status "✓ Removed empty directory: $dir"
                 ((dirs_removed++))
             else
-                print_warning "Directory not empty, keeping: $line"
+                print_warning "- Directory not empty, keeping: $dir"
             fi
+        else
+            print_status "- Directory already gone: $dir"
         fi
     done
     
     # Finally, remove the tracking file itself
     if [ -f "$tracking_file" ]; then
         rm -f "$tracking_file"
-        print_status "Removed tracking file: dhafnck_mcp.txt"
+        print_status "✓ Removed tracking file: dhafnck_mcp.txt"
         ((files_removed++))
     fi
-    
-    # Clean up temp file
-    rm -f "$temp_file"
     
     print_status "✅ Removal summary:"
     print_status "  - Files removed: $files_removed"
@@ -804,13 +818,22 @@ EOF
 set_permissions() {
     print_status "Setting appropriate permissions..."
     
-    # Make sure the project directory is accessible
-    chmod -R 755 "$PROJECT_PATH"
+    # Only set permissions on directories and files created by setup.sh
+    # Do NOT modify existing project files
     
-    # Make rule files readable
-    find "$PROJECT_PATH/.cursor/rules" -type f -exec chmod 644 {} \;
+    # Set permissions on .cursor directory structure (created by setup.sh)
+    if [ -d "$PROJECT_PATH/.cursor" ]; then
+        find "$PROJECT_PATH/.cursor" -type d -exec chmod 755 {} \;
+        find "$PROJECT_PATH/.cursor" -type f -exec chmod 644 {} \;
+    fi
     
-    print_status "Permissions set successfully"
+    # Set permissions on specific files created by setup.sh
+    [ -f "$PROJECT_PATH/uninstall.sh" ] && chmod +x "$PROJECT_PATH/uninstall.sh"
+    [ -f "$PROJECT_PATH/CLAUDE.md" ] && chmod 644 "$PROJECT_PATH/CLAUDE.md"
+    [ -f "$PROJECT_PATH/MCP_SETUP_NOTES.md" ] && chmod 644 "$PROJECT_PATH/MCP_SETUP_NOTES.md"
+    [ -f "$PROJECT_PATH/dhafnck_mcp.txt" ] && chmod 644 "$PROJECT_PATH/dhafnck_mcp.txt"
+    
+    print_status "Permissions set successfully (only on files created by setup.sh)"
 }
 
 # Function to validate setup

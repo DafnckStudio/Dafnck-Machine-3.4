@@ -25,6 +25,4 @@ alwaysApply: false
 └── ... (more context files)
 ```
 
-5. **Troubleshooting:**  
-   - If a context file is missing or not created automatically, check `dhafnck_mcp_main/src/fastmcp/task_management/infrastructure/repositories` for update code or logic issues.
 

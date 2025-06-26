@@ -63,6 +63,3 @@ MUST follow [task_management_workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskMana
 
 ## Agent Auto-Switch to role when call_agent() or assigned task see [Agent_Auto_Switch_Workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc)
 
-## TEST MUST to activate virtual environment
-dhafnck_mcp_main/.venv
-

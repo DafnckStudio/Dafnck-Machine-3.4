@@ -1,0 +1,7 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+## TEST MUST to activate virtual environment
+dhafnck_mcp_main/.venv
