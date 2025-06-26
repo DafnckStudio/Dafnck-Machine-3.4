@@ -1,0 +1,142 @@
+{
+  "tasks": [
+    {
+      "id": "20250626001",
+      "title": "Background Job Tracking Infrastructure",
+      "description": "Implement background job tracking infrastructure to support export operations and other async tasks. This is the foundation for all export system enhancements.",
+      "project_id": "chaxiaiv2",
+      "status": "todo",
+      "priority": "high",
+      "details": "Foundation task for export system enhancements. Implement job queue system, progress tracking, and status monitoring for background operations.",
+      "estimatedEffort": "small",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "export-system",
+        "infrastructure",
+        "phase-1"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-08",
+      "created_at": "2025-06-26T13:54:23.016494+00:00",
+      "updated_at": "2025-06-26T13:54:23.016494+00:00"
+    },
+    {
+      "id": "20250626002",
+      "title": "Multiple Export Formats Implementation",
+      "description": "Implement support for multiple export formats (CSV, Excel, PDF, JSON) with proper formatting and data structure preservation.",
+      "project_id": "chaxiaiv2",
+      "status": "todo",
+      "priority": "medium",
+      "details": "Add support for CSV, Excel, PDF, and JSON export formats. Ensure proper data formatting and structure preservation across all formats.",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "export-system",
+        "formats",
+        "phase-1"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-10",
+      "created_at": "2025-06-26T13:54:30.089437+00:00",
+      "updated_at": "2025-06-26T13:54:30.089437+00:00"
+    },
+    {
+      "id": "20250626003",
+      "title": "Scheduled Exports Functionality",
+      "description": "Implement scheduled export functionality allowing users to set up recurring exports with customizable schedules and delivery methods.",
+      "project_id": "chaxiaiv2",
+      "status": "todo",
+      "priority": "medium",
+      "details": "Enable users to schedule recurring exports with customizable frequency (daily, weekly, monthly) and delivery options (email, download).",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "export-system",
+        "scheduling",
+        "phase-1"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-12",
+      "created_at": "2025-06-26T13:54:37.681882+00:00",
+      "updated_at": "2025-06-26T13:54:37.681882+00:00"
+    },
+    {
+      "id": "20250626004",
+      "title": "Export History Tracking",
+      "description": "Implement export history tracking to maintain records of all export operations, including status, timestamps, and download links.",
+      "project_id": "chaxiaiv2",
+      "status": "todo",
+      "priority": "low",
+      "details": "Track all export operations with timestamps, status, file sizes, and provide download links for historical exports.",
+      "estimatedEffort": "small",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "export-system",
+        "history",
+        "phase-1"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-14",
+      "created_at": "2025-06-26T13:54:41.511177+00:00",
+      "updated_at": "2025-06-26T13:54:41.511177+00:00"
+    },
+    {
+      "id": "20250626005",
+      "title": "Detailed Metrics Collection System",
+      "description": "Implement comprehensive metrics collection system for monitoring application performance, user behavior, and system health indicators.",
+      "project_id": "chaxiaiv2",
+      "status": "todo",
+      "priority": "high",
+      "details": "Foundation for monitoring enhancements. Collect detailed metrics on performance, usage, errors, and system resources.",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@devops_agent"
+      ],
+      "labels": [
+        "health-monitoring",
+        "metrics",
+        "phase-1"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-08",
+      "created_at": "2025-06-26T13:54:51.461386+00:00",
+      "updated_at": "2025-06-26T13:54:51.461386+00:00"
+    },
+    {
+      "id": "20250626006",
+      "title": "Performance Threshold Monitoring",
+      "description": "Implement performance threshold monitoring with configurable alerts for response times, error rates, and resource utilization.",
+      "project_id": "chaxiaiv2",
+      "status": "todo",
+      "priority": "medium",
+      "details": "Set up configurable performance thresholds and monitoring for response times, error rates, and system resources.",
+      "estimatedEffort": "small",
+      "assignees": [
+        "@devops_agent"
+      ],
+      "labels": [
+        "health-monitoring",
+        "thresholds",
+        "phase-1"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-10",
+      "created_at": "2025-06-26T13:54:57.046000+00:00",
+      "updated_at": "2025-06-26T13:54:57.046000+00:00"
+    }
+  ]
+}
