@@ -1,0 +1,335 @@
+{
+  "tasks": [
+    {
+      "id": "20250627001",
+      "title": "EPIC: Project Setup & Infrastructure",
+      "description": "Set up the foundational infrastructure, development environment, and core project structure for the AI Rules Framework Management system.",
+      "project_id": "ai_rules_framework_management",
+      "status": "in_progress",
+      "priority": "critical",
+      "details": null,
+      "estimatedEffort": "large",
+      "assignees": [
+        "@system_architect_agent",
+        "@devops_agent"
+      ],
+      "labels": [
+        "epic",
+        "infrastructure",
+        "setup"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:48:47.769203+00:00",
+      "updated_at": "2025-06-26T23:51:02.483785+00:00"
+    },
+    {
+      "id": "20250627002",
+      "title": "EPIC: MDX Editor & Parser",
+      "description": "Develop the core MDX editor with syntax highlighting, real-time preview, and robust parsing capabilities.",
+      "project_id": "ai_rules_framework_management",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": "xlarge",
+      "assignees": [
+        "@coding_agent",
+        "@ui_designer_agent"
+      ],
+      "labels": [
+        "epic",
+        "editor",
+        "mdx",
+        "frontend"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:48:51.906556+00:00",
+      "updated_at": "2025-06-26T23:48:51.906556+00:00"
+    },
+    {
+      "id": "20250627003",
+      "title": "EPIC: Link Detection & Dependency Mapping",
+      "description": "Implement intelligent link detection system that identifies file references and builds dependency relationships automatically.",
+      "project_id": "ai_rules_framework_management",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": "large",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "epic",
+        "link-detection",
+        "parsing",
+        "backend"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:48:56.278294+00:00",
+      "updated_at": "2025-06-26T23:48:56.278294+00:00"
+    },
+    {
+      "id": "20250627004",
+      "title": "EPIC: Interactive Graph Visualization",
+      "description": "Create Obsidian-style interactive graph visualization with zoom, pan, filtering, and navigation capabilities.",
+      "project_id": "ai_rules_framework_management",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": "xlarge",
+      "assignees": [
+        "@coding_agent",
+        "@ui_designer_agent"
+      ],
+      "labels": [
+        "epic",
+        "visualization",
+        "graph",
+        "frontend"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:48:59.319457+00:00",
+      "updated_at": "2025-06-26T23:48:59.319457+00:00"
+    },
+    {
+      "id": "20250627005",
+      "title": "EPIC: Export System",
+      "description": "Develop comprehensive export system supporting multiple formats (.md, .mdc, HTML) with batch processing capabilities.",
+      "project_id": "ai_rules_framework_management",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "epic",
+        "export",
+        "conversion",
+        "backend"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:49:02.856803+00:00",
+      "updated_at": "2025-06-26T23:49:02.856803+00:00"
+    },
+    {
+      "id": "20250627006",
+      "title": "EPIC: File Management System",
+      "description": "Build comprehensive file management with hierarchical organization, search, tags, and version control.",
+      "project_id": "ai_rules_framework_management",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": "large",
+      "assignees": [
+        "@coding_agent",
+        "@ui_designer_agent"
+      ],
+      "labels": [
+        "epic",
+        "file-management",
+        "organization",
+        "fullstack"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:49:03.059428+00:00",
+      "updated_at": "2025-06-26T23:49:03.059428+00:00"
+    },
+    {
+      "id": "20250627007",
+      "title": "Initialize Next.js Project Structure",
+      "description": "Create the foundational Next.js 14 application with TypeScript configuration, directory structure, and basic development tools setup. This is the first critical step in setting up the AI Rules Framework Management system.",
+      "project_id": "ai_rules_framework_management",
+      "status": "in_progress",
+      "priority": "critical",
+      "details": "**Acceptance Criteria:**\n- Next.js 14 project initialized with App Router\n- TypeScript configuration complete with strict mode\n- ESLint and Prettier configured with consistent rules\n- Basic directory structure created (src/, components/, lib/, utils/, types/)\n- Package.json with all core dependencies\n- Development server running successfully on localhost:3000\n- Basic layout and page structure in place\n- Tailwind CSS configured and working\n\n**Technical Requirements:**\n- Use Next.js 14 with App Router (not Pages Router)\n- TypeScript with strict configuration\n- Tailwind CSS for styling\n- ESLint + Prettier for code quality\n- Basic folder structure following Next.js best practices\n\n**Dependencies:**\nNone - this is the foundation task",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "infrastructure",
+        "nextjs",
+        "typescript",
+        "setup"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:51:21.623015+00:00",
+      "updated_at": "2025-06-26T23:53:25.350373+00:00"
+    },
+    {
+      "id": "20250627008",
+      "title": "Setup Database Infrastructure (PostgreSQL + Prisma)",
+      "description": "Configure PostgreSQL database with Prisma ORM, create initial schema for users, workspaces, files, and relationships as defined in the Technical Architecture document.",
+      "project_id": "ai_rules_framework_management",
+      "status": "todo",
+      "priority": "critical",
+      "details": "**Acceptance Criteria:**\n- PostgreSQL database running (local development + Docker)\n- Prisma ORM configured and connected\n- Complete database schema implemented from Technical Architecture\n- Database migrations working\n- Seed data for development environment\n- Database connection pooling configured\n- Basic CRUD operations tested\n\n**Technical Requirements:**\n- PostgreSQL 15+ with JSONB support\n- Prisma 5.x as ORM\n- Database schema includes: users, workspaces, workspace_members, mdx_files, file_links, file_versions, tags, file_tags, export_jobs\n- Proper indexes for performance\n- UUID primary keys\n- Timestamps and audit fields\n- JSONB fields for flexible metadata\n\n**Database Tables to Create:**\n1. users (authentication and profile)\n2. workspaces (multi-tenancy)\n3. workspace_members (access control)\n4. mdx_files (core content)\n5. file_links (dependency mapping)\n6. file_versions (version history)\n7. tags and file_tags (categorization)\n8. export_jobs (export tracking)\n\n**Dependencies:**\n- Next.js project structure must be initialized first",
+      "estimatedEffort": "large",
+      "assignees": [
+        "@devops_agent",
+        "@coding_agent"
+      ],
+      "labels": [
+        "infrastructure",
+        "database",
+        "postgresql",
+        "prisma"
+      ],
+      "dependencies": [
+        "20250627007"
+      ],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:51:34.657252+00:00",
+      "updated_at": "2025-06-26T23:52:50.526996+00:00"
+    },
+    {
+      "id": "20250627009",
+      "title": "Configure Redis Caching Layer",
+      "description": "Set up Redis for session management, file content caching, and graph caching to improve application performance.",
+      "project_id": "ai_rules_framework_management",
+      "status": "todo",
+      "priority": "high",
+      "details": "**Acceptance Criteria:**\n- Redis server running locally and in Docker\n- Redis client configured in Next.js application\n- Caching layers implemented for:\n  * Session cache (user sessions, auth tokens)\n  * File content cache (frequently accessed MDX files)\n  * Graph cache (pre-computed dependency graphs)\n  * Export cache (generated export files)\n- Cache key patterns established\n- TTL policies configured\n- Redis connection pooling\n- Basic cache operations tested\n\n**Technical Requirements:**\n- Redis 7.x server\n- Node.js Redis client (ioredis recommended)\n- Cache key patterns: session:{userId}, file:{workspaceId}:{fileId}, graph:{workspaceId}:{version}, export:{jobId}\n- TTL configuration: sessions (30 days), files (1 hour), graphs (30 minutes), exports (24 hours)\n- Connection pooling and error handling\n- Environment-specific configuration\n\n**Cache Strategy:**\n- Session Cache: User sessions and authentication tokens\n- File Content Cache: Frequently accessed MDX files (TTL: 1 hour)\n- Graph Cache: Pre-computed dependency graphs (TTL: 30 minutes)\n- Export Cache: Generated export files (TTL: 24 hours)\n\n**Dependencies:**\n- Next.js project structure initialized\n- Database infrastructure in place",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@devops_agent"
+      ],
+      "labels": [
+        "infrastructure",
+        "redis",
+        "caching",
+        "performance"
+      ],
+      "dependencies": [
+        "20250627007"
+      ],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:51:48.401187+00:00",
+      "updated_at": "2025-06-26T23:52:55.428032+00:00"
+    },
+    {
+      "id": "20250627010",
+      "title": "Implement Authentication System (NextAuth.js)",
+      "description": "Set up NextAuth.js with OAuth providers (Google, GitHub, Microsoft) for user authentication and session management.",
+      "project_id": "ai_rules_framework_management",
+      "status": "todo",
+      "priority": "high",
+      "details": "**Acceptance Criteria:**\n- NextAuth.js v5 configured and working\n- OAuth providers implemented: Google, GitHub, Microsoft\n- JWT tokens with proper expiration (15 min access, 30 days refresh)\n- Session management with Redis storage\n- User profile creation and management\n- Protected routes and middleware\n- Role-based access control foundation\n- Authentication pages (sign-in, sign-out, error)\n\n**Technical Requirements:**\n- NextAuth.js v5 (latest version)\n- OAuth providers: Google, GitHub, Microsoft\n- JWT strategy with short-lived access tokens\n- Redis session store integration\n- Database adapter for user persistence\n- Custom user model with profile fields\n- Middleware for route protection\n- Environment variables for OAuth credentials\n\n**Authentication Flow:**\n1. User clicks sign-in with provider\n2. OAuth flow redirects to provider\n3. Provider returns with authorization code\n4. NextAuth exchanges for access token\n5. User profile created/updated in database\n6. Session stored in Redis\n7. JWT tokens issued to client\n\n**Security Features:**\n- CSRF protection\n- Secure HTTP-only cookies\n- JWT token rotation\n- Session timeout handling\n- Rate limiting on auth endpoints\n\n**Dependencies:**\n- Next.js project structure\n- Database infrastructure (for user storage)\n- Redis caching layer (for sessions)",
+      "estimatedEffort": "large",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "infrastructure",
+        "authentication",
+        "nextauth",
+        "oauth"
+      ],
+      "dependencies": [
+        "20250627008",
+        "20250627009"
+      ],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:52:02.566033+00:00",
+      "updated_at": "2025-06-26T23:53:05.559315+00:00"
+    },
+    {
+      "id": "20250627011",
+      "title": "Setup File Storage System",
+      "description": "Configure file storage system with support for both local filesystem (development) and AWS S3 (production) for MDX files, exports, and media assets.",
+      "project_id": "ai_rules_framework_management",
+      "status": "todo",
+      "priority": "high",
+      "details": "**Acceptance Criteria:**\n- Local filesystem storage for development environment\n- AWS S3 configuration for production environment\n- File upload/download API endpoints\n- File organization by workspace and user\n- Support for different file types (MDX, images, exports)\n- File versioning and backup strategy\n- Secure file access with signed URLs\n- File size limits and validation\n\n**Technical Requirements:**\n- Local storage: organized directory structure under /uploads\n- AWS S3: buckets for development, staging, production\n- File organization: /{environment}/{workspace_id}/{file_type}/{file_id}\n- Supported file types: .mdx, .md, .mdc, .pdf, .html, images\n- File size limits: 10MB per file, 1GB per workspace\n- Server-side encryption for S3\n- Signed URLs for secure access\n- File metadata tracking in database\n\n**Storage Structure:**\n```\nLocal: /uploads/{workspace_id}/{file_type}/{file_id}\nS3: s3://bucket/{environment}/{workspace_id}/{file_type}/{file_id}\n```\n\n**File Types:**\n- MDX files: Core content files\n- Export files: Generated .md, .mdc, .html, .pdf\n- Media files: Images, diagrams, attachments\n- Backup files: Automated backups and versions\n\n**Security Features:**\n- Signed URLs for temporary access\n- File type validation\n- Virus scanning (future enhancement)\n- Access control based on workspace membership\n\n**Dependencies:**\n- Next.js project structure\n- Database infrastructure (for file metadata)\n- Authentication system (for access control)",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@devops_agent",
+        "@coding_agent"
+      ],
+      "labels": [
+        "infrastructure",
+        "storage",
+        "s3",
+        "filesystem"
+      ],
+      "dependencies": [
+        "20250627010"
+      ],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:52:16.676269+00:00",
+      "updated_at": "2025-06-26T23:53:09.996698+00:00"
+    },
+    {
+      "id": "20250627012",
+      "title": "Configure Development Environment & Docker",
+      "description": "Set up comprehensive development environment with Docker containers, development scripts, and local development workflow.",
+      "project_id": "ai_rules_framework_management",
+      "status": "todo",
+      "priority": "medium",
+      "details": "**Acceptance Criteria:**\n- Docker Compose setup for local development\n- Containers for: Next.js app, PostgreSQL, Redis\n- Development scripts (start, stop, reset, logs)\n- Environment variable management\n- Hot reload working in Docker\n- Database initialization scripts\n- Health checks for all services\n- Development documentation\n\n**Technical Requirements:**\n- Docker Compose v2 configuration\n- Multi-stage Dockerfile for Next.js app\n- PostgreSQL container with persistent volume\n- Redis container with proper configuration\n- Environment variable templates (.env.example)\n- Development scripts in package.json\n- Network configuration for service communication\n- Volume mounts for hot reload\n\n**Docker Services:**\n1. **app**: Next.js application (port 3000)\n2. **postgres**: PostgreSQL database (port 5432)\n3. **redis**: Redis cache (port 6379)\n4. **pgadmin**: Database admin interface (port 5050)\n\n**Development Scripts:**\n- `npm run dev:docker` - Start all services\n- `npm run dev:logs` - View service logs\n- `npm run dev:reset` - Reset database and cache\n- `npm run dev:stop` - Stop all services\n- `npm run dev:clean` - Clean volumes and containers\n\n**Environment Configuration:**\n- .env.local for local development\n- .env.example as template\n- Docker environment variables\n- Service discovery configuration\n\n**Dependencies:**\n- Next.js project structure\n- Basic application code structure",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@devops_agent"
+      ],
+      "labels": [
+        "infrastructure",
+        "docker",
+        "development",
+        "devops"
+      ],
+      "dependencies": [
+        "20250627007"
+      ],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:52:30.165055+00:00",
+      "updated_at": "2025-06-26T23:53:14.939426+00:00"
+    },
+    {
+      "id": "20250627013",
+      "title": "Setup CI/CD Pipeline & Testing Framework",
+      "description": "Configure GitHub Actions CI/CD pipeline with automated testing, linting, type checking, and deployment workflows.",
+      "project_id": "ai_rules_framework_management",
+      "status": "todo",
+      "priority": "medium",
+      "details": "**Acceptance Criteria:**\n- GitHub Actions workflows configured\n- Automated testing on pull requests\n- Code quality checks (ESLint, Prettier, TypeScript)\n- Test coverage reporting\n- Automated deployment to staging/production\n- Environment-specific configurations\n- Security scanning integration\n- Performance testing setup\n\n**Technical Requirements:**\n- GitHub Actions workflows for CI/CD\n- Jest + Testing Library for unit/integration tests\n- Playwright for end-to-end testing\n- Code coverage with threshold enforcement (90%+)\n- ESLint, Prettier, TypeScript checks\n- Docker image building and pushing\n- Vercel deployment integration\n- Environment variable management\n\n**CI/CD Workflows:**\n1. **Pull Request Workflow:**\n   - Install dependencies\n   - Run linting and type checking\n   - Run unit and integration tests\n   - Build application\n   - Run E2E tests\n   - Code coverage reporting\n\n2. **Deploy Staging Workflow:**\n   - Triggered on develop branch\n   - Build and test\n   - Deploy to staging environment\n   - Run smoke tests\n\n3. **Deploy Production Workflow:**\n   - Triggered on main branch\n   - Full test suite\n   - Security scanning\n   - Deploy to production\n   - Post-deployment verification\n\n**Testing Framework:**\n- Jest for unit tests\n- React Testing Library for component tests\n- Playwright for E2E tests\n- Test database setup and teardown\n- Mock services for external dependencies\n\n**Quality Gates:**\n- All tests must pass\n- Code coverage >90%\n- No ESLint errors\n- TypeScript compilation successful\n- Security scan passes\n\n**Dependencies:**\n- Next.js project structure\n- Database and authentication systems\n- Docker configuration",
+      "estimatedEffort": "large",
+      "assignees": [
+        "@devops_agent",
+        "@test_orchestrator_agent"
+      ],
+      "labels": [
+        "infrastructure",
+        "cicd",
+        "testing",
+        "github-actions"
+      ],
+      "dependencies": [
+        "20250627012"
+      ],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-26T23:52:45.062763+00:00",
+      "updated_at": "2025-06-26T23:53:19.149471+00:00"
+    }
+  ]
+}

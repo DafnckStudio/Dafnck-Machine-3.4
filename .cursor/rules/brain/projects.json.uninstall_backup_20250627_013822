@@ -74,59 +74,18 @@
   },
   "ai_rules_framework_management": {
     "id": "ai_rules_framework_management",
-    "name": "AI Rules Framework Management",
-    "description": "A comprehensive web-based framework for managing AI rules and configurations using MDX format, with intelligent dependency mapping, visual graph representations, and seamless export capabilities.",
+    "name": "ai_rules_framework_management",
+    "description": "AI-powered project with MCP server integration",
+    "path": "/home/daihungpham/__projects__/ai_rules_framework_management",
     "task_trees": {
       "main": {
         "id": "main",
         "name": "Main Tasks",
-        "description": "Main task tree"
+        "description": "Main task tree for ai_rules_framework_management"
       }
     },
-    "registered_agents": {
-      "coding_agent": {
-        "id": "coding_agent",
-        "name": "Coding Agent",
-        "call_agent": "@coding-agent"
-      },
-      "system_architect_agent": {
-        "id": "system_architect_agent",
-        "name": "System Architect Agent",
-        "call_agent": "@system-architect-agent"
-      },
-      "ui_designer_agent": {
-        "id": "ui_designer_agent",
-        "name": "UI Designer Agent",
-        "call_agent": "@ui-designer-agent"
-      },
-      "test_orchestrator_agent": {
-        "id": "test_orchestrator_agent",
-        "name": "Test Orchestrator Agent",
-        "call_agent": "@test-orchestrator-agent"
-      },
-      "devops_agent": {
-        "id": "devops_agent",
-        "name": "DevOps Agent",
-        "call_agent": "@devops-agent"
-      }
-    },
-    "agent_assignments": {
-      "coding_agent": [
-        "main"
-      ],
-      "system_architect_agent": [
-        "main"
-      ],
-      "ui_designer_agent": [
-        "main"
-      ],
-      "test_orchestrator_agent": [
-        "main"
-      ],
-      "devops_agent": [
-        "main"
-      ]
-    },
-    "created_at": "2025-01-01T00:00:00Z"
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-06-27T01:35:11.525660Z"
   }
 }
