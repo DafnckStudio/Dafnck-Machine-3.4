@@ -62,6 +62,63 @@ print_section() {
     echo ""
 }
 
+# Function to display current choices summary
+show_choices_summary() {
+    echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${CYAN}📋 Current Selections:${NC}"
+    
+    if [[ -n "$PROJECT_NAME" ]]; then
+        echo -e "  ${GREEN}✓${NC} Project Name: ${YELLOW}$PROJECT_NAME${NC}"
+    fi
+    
+    if [[ -n "$PROJECT_PATH" ]]; then
+        echo -e "  ${GREEN}✓${NC} Project Path: ${YELLOW}$PROJECT_PATH${NC}"
+    fi
+    
+    if [[ -n "$INSTALL_CLAUDE_CODE" ]]; then
+        if [[ "$INSTALL_CLAUDE_CODE" == "yes" ]]; then
+            echo -e "  ${GREEN}✓${NC} Claude Code: ${GREEN}Install${NC}"
+        else
+            echo -e "  ${GREEN}✓${NC} Claude Code: ${RED}Skip${NC}"
+        fi
+    fi
+    
+    if [[ -n "$PLATFORM_CHOICE" ]]; then
+        if [[ "$PLATFORM_CHOICE" == "wsl" ]]; then
+            echo -e "  ${GREEN}✓${NC} Platform: ${YELLOW}WSL (Windows Subsystem for Linux)${NC}"
+        else
+            echo -e "  ${GREEN}✓${NC} Platform: ${YELLOW}Linux/macOS (Native)${NC}"
+        fi
+    fi
+    
+    if [[ -n "$INSTALL_LOCATION" ]]; then
+        if [[ "$INSTALL_LOCATION" == "global" ]]; then
+            echo -e "  ${GREEN}✓${NC} Installation: ${YELLOW}Global (All projects)${NC}"
+        else
+            echo -e "  ${GREEN}✓${NC} Installation: ${YELLOW}Local (This project only)${NC}"
+        fi
+    fi
+    
+    if [[ -n "$INSTALL_SEQUENTIAL_THINKING" ]]; then
+        if [[ "$INSTALL_SEQUENTIAL_THINKING" == "yes" ]]; then
+            echo -e "  ${GREEN}✓${NC} Sequential-Thinking MCP: ${GREEN}Install${NC}"
+        else
+            echo -e "  ${GREEN}✓${NC} Sequential-Thinking MCP: ${RED}Skip${NC}"
+        fi
+    fi
+    
+    if [[ -n "$INSTALL_MEMORY" ]]; then
+        if [[ "$INSTALL_MEMORY" == "yes" ]]; then
+            echo -e "  ${GREEN}✓${NC} Memory MCP: ${GREEN}Install${NC}"
+        else
+            echo -e "  ${GREEN}✓${NC} Memory MCP: ${RED}Skip${NC}"
+        fi
+    fi
+    
+    echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+}
+
 # Function to display welcome message with project description
 show_welcome() {
     clear
@@ -100,10 +157,12 @@ show_welcome() {
     read -p "Press Enter to continue..."
 }
 
-# Function to get project name
+# Function to get project name and path
 get_project_name() {
+    clear
     print_section "Step 1: Project Configuration"
     
+    # Get project name
     while true; do
         print_question "What is your project name?"
         echo -e "${YELLOW}Note: Use only alphanumeric characters and underscores (a-z, A-Z, 0-9, _)${NC}"
@@ -123,10 +182,11 @@ get_project_name() {
         print_success "Project name set to: $PROJECT_NAME"
         break
     done
-}
-
-# Function to get project path
-get_project_path() {
+    
+    # Get project path
+    echo ""
+    echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
     print_question "Where would you like to create your project?"
     echo -e "${YELLOW}Examples:${NC}"
     echo "  • /home/$USERNAME/projects/$PROJECT_NAME"
@@ -167,8 +227,12 @@ get_project_path() {
     done
 }
 
+
+
 # Function to ask about Claude Code installation
 ask_claude_code_installation() {
+    clear
+    show_choices_summary
     print_section "Step 2: Claude Code Installation"
     echo -e "${YELLOW}Claude Code Integration${NC}"
     echo "Claude Code provides browser-based AI assistance with MCP server support."
@@ -223,6 +287,8 @@ ask_claude_code_installation() {
 
 # Function to choose platform version
 choose_platform_version() {
+    clear
+    show_choices_summary
     print_section "Step 3: Platform Configuration"
     echo -e "${YELLOW}Platform Selection${NC}"
     echo "Please select your development platform for MCP server configuration:"
@@ -257,8 +323,8 @@ choose_installation_scope() {
     print_question "Installation Scope"
     echo "Where would you like to install the MCP server configuration?"
     echo ""
-    echo "1) Local (This project only)"
-    echo "2) Global (All projects for this user)"
+    echo "1) Global (All projects for this user)"
+    echo "2) Local (This project only)"
     echo ""
     echo -e "${YELLOW}Recommendation: Choose Global for easier management across projects${NC}"
     echo ""
@@ -268,13 +334,13 @@ choose_installation_scope() {
         echo
         case $REPLY in
             1)
-                INSTALL_LOCATION="local"
-                print_success "Selected: Local installation"
+                INSTALL_LOCATION="global"
+                print_success "Selected: Global installation"
                 break
                 ;;
             2)
-                INSTALL_LOCATION="global"
-                print_success "Selected: Global installation"
+                INSTALL_LOCATION="local"
+                print_success "Selected: Local installation"
                 break
                 ;;
             *)
@@ -286,6 +352,8 @@ choose_installation_scope() {
 
 # Function to setup MCP configuration
 setup_mcp_configuration() {
+    clear
+    show_choices_summary
     print_section "Step 4: MCP Server Configuration"
     
     if [[ "$INSTALL_LOCATION" == "global" ]]; then
@@ -347,8 +415,41 @@ setup_global_mcp_config() {
         echo ""
         print_status "Creating new MCP configuration..."
         
-        # Create new configuration with username replacement
-        sed "s|<username>|$USERNAME|g" "$config_source" > "$mcp_config_file"
+        # Create new configuration with only dhafnck_mcp server
+        python3 << EOF
+import json
+import sys
+
+try:
+    # Read source configuration
+    with open("$config_source", 'r') as f:
+        source_data = json.load(f)
+    
+    # Create configuration with only dhafnck_mcp server
+    if 'mcpServers' in source_data and 'dhafnck_mcp' in source_data['mcpServers']:
+        dhafnck_only_config = {
+            "mcpServers": {
+                "dhafnck_mcp": source_data['mcpServers']['dhafnck_mcp']
+            }
+        }
+        
+        # Replace username placeholder
+        config_str = json.dumps(dhafnck_only_config, indent=2)
+        config_str = config_str.replace('<username>', '$USERNAME')
+        
+        # Write to target file
+        with open("$mcp_config_file", 'w') as f:
+            f.write(config_str)
+        
+        print("✓ Created MCP configuration with dhafnck_mcp server only")
+    else:
+        print("✗ dhafnck_mcp server not found in source configuration")
+        sys.exit(1)
+        
+except Exception as e:
+    print(f"✗ Error creating configuration: {e}")
+    sys.exit(1)
+EOF
         print_success "MCP configuration created: $mcp_config_file"
         
         echo ""
@@ -362,10 +463,32 @@ setup_global_mcp_config() {
         echo "5. Copy and paste this configuration:"
         echo ""
         echo -e "${CYAN}========== MCP Configuration ===========${NC}"
-        cat "$mcp_config_file"
+        # Extract and display only the dhafnck_mcp server configuration
+        python3 << EOF
+import json
+import sys
+
+try:
+    with open("$mcp_config_file", 'r') as f:
+        config_data = json.load(f)
+    
+    # Create configuration with only dhafnck_mcp server
+    dhafnck_only_config = {
+        "mcpServers": {
+            "dhafnck_mcp": config_data["mcpServers"]["dhafnck_mcp"]
+        }
+    }
+    
+    print(json.dumps(dhafnck_only_config, indent=2))
+    
+except Exception as e:
+    print(f"Error reading configuration: {e}")
+    sys.exit(1)
+EOF
         echo -e "${CYAN}=======================================${NC}"
         echo ""
-        echo -e "${YELLOW}Configuration has also been saved to: $mcp_config_file${NC}"
+        echo -e "${YELLOW}Full configuration has been saved to: $mcp_config_file${NC}"
+        echo -e "${YELLOW}(Additional MCP servers will be configured separately)${NC}"
         echo ""
         read -p "Press Enter to continue..."
     fi
@@ -388,8 +511,41 @@ setup_local_mcp_config() {
         config_source="$SOURCE_PROJECT/dhafnck_mcp_main/docs/config-mcp/mcp_linux_macos.json"
     fi
     
-    # Create local configuration with username replacement
-    sed "s|<username>|$USERNAME|g" "$config_source" > "$local_mcp_config"
+    # Create local configuration with only dhafnck_mcp server
+    python3 << EOF
+import json
+import sys
+
+try:
+    # Read source configuration
+    with open("$config_source", 'r') as f:
+        source_data = json.load(f)
+    
+    # Create configuration with only dhafnck_mcp server
+    if 'mcpServers' in source_data and 'dhafnck_mcp' in source_data['mcpServers']:
+        dhafnck_only_config = {
+            "mcpServers": {
+                "dhafnck_mcp": source_data['mcpServers']['dhafnck_mcp']
+            }
+        }
+        
+        # Replace username placeholder
+        config_str = json.dumps(dhafnck_only_config, indent=2)
+        config_str = config_str.replace('<username>', '$USERNAME')
+        
+        # Write to target file
+        with open("$local_mcp_config", 'w') as f:
+            f.write(config_str)
+        
+        print("✓ Created local MCP configuration with dhafnck_mcp server only")
+    else:
+        print("✗ dhafnck_mcp server not found in source configuration")
+        sys.exit(1)
+        
+except Exception as e:
+    print(f"✗ Error creating local configuration: {e}")
+    sys.exit(1)
+EOF
     print_success "Local MCP configuration created: $local_mcp_config"
     
     echo ""
@@ -405,7 +561,7 @@ merge_mcp_configurations() {
     
     print_status "Merging MCP server configurations..."
     
-    # Use Python to merge JSON configurations
+    # Use Python to merge JSON configurations (only dhafnck_mcp server)
     python3 << EOF
 import json
 import sys
@@ -424,7 +580,7 @@ def merge_mcp_configs(source_file, target_file):
         if 'mcpServers' not in target_data:
             target_data['mcpServers'] = {}
         
-        # Merge dhafnck_mcp server configuration
+        # Add ONLY dhafnck_mcp server configuration
         if 'mcpServers' in source_data and 'dhafnck_mcp' in source_data['mcpServers']:
             # Replace username placeholder
             dhafnck_config = json.dumps(source_data['mcpServers']['dhafnck_mcp'])
@@ -436,7 +592,7 @@ def merge_mcp_configs(source_file, target_file):
         with open(target_file, 'w') as f:
             json.dump(target_data, f, indent=2)
         
-        print("✓ MCP configuration merged successfully")
+        print("✓ dhafnck_mcp server added to MCP configuration")
         return True
         
     except Exception as e:
@@ -458,6 +614,8 @@ EOF
 
 # Function to ask about sequential-thinking MCP
 ask_sequential_thinking_mcp() {
+    clear
+    show_choices_summary
     print_section "Step 5: Sequential-Thinking MCP Server"
     echo -e "${YELLOW}Sequential-Thinking MCP Server${NC}"
     echo "This MCP server provides advanced step-by-step reasoning capabilities"
@@ -485,6 +643,8 @@ ask_sequential_thinking_mcp() {
 
 # Function to ask about memory MCP
 ask_memory_mcp() {
+    clear
+    show_choices_summary
     print_section "Step 6: Memory MCP Server"
     echo -e "${YELLOW}Memory MCP Server${NC}"
     echo "This MCP server provides persistent memory and knowledge graph"
@@ -576,6 +736,8 @@ EOF
 
 # Function to copy and process template files
 process_template_files() {
+    clear
+    show_choices_summary
     print_section "Step 8: Project Template Setup"
     print_status "Setting up project template files..."
     
@@ -609,6 +771,8 @@ process_template_files() {
 
 # Function to run the original setup script
 run_original_setup() {
+    clear
+    show_choices_summary
     print_section "Step 7: Project Structure Creation"
     print_status "Creating project structure with original setup script..."
     
@@ -659,11 +823,11 @@ display_setup_summary() {
     echo ""
     echo -e "${YELLOW}🚀 Next Steps:${NC}"
     echo ""
-    echo "1. 🔧 Open Cursor IDE and restart it to load MCP servers"
-    echo "2. 📂 Open your project: ${CYAN}cursor \"$PROJECT_PATH\"${NC}"
-    echo "3. 🤖 Start a new chat - AI will automatically load project configuration"
-    echo "4. 📋 Begin creating tasks using MCP tools (manage_task, manage_project)"
-    echo "5. 🎭 Use specialized agents with @ syntax (e.g., @coding-agent, @system-architect-agent)"
+    echo -e "1. 🔧 Open Cursor IDE and restart it to load MCP servers"
+    echo -e "2. 📂 Open your project: ${CYAN}cursor \"$PROJECT_PATH\"${NC}"
+    echo -e "3. 🤖 Start a new chat - AI will automatically load project configuration"
+    echo -e "4. 📋 Begin creating tasks using MCP tools (manage_task, manage_project)"
+    echo -e "5. 🎭 Use specialized agents with @ syntax (e.g., @coding-agent, @system-architect-agent)"
     echo ""
     if [[ "$INSTALL_LOCATION" == "global" ]]; then
         echo -e "${YELLOW}MCP Configuration Location:${NC} /home/$USERNAME/.cursor/mcp.json"
@@ -672,11 +836,11 @@ display_setup_summary() {
     fi
     echo ""
     echo -e "${GREEN}📚 Documentation:${NC}"
-    echo "  • Read: $PROJECT_PATH/MCP_SETUP_NOTES.md"
-    echo "  • Read: $PROJECT_PATH/CLAUDE.md"
+    echo -e "  • Read: $PROJECT_PATH/MCP_SETUP_NOTES.md"
+    echo -e "  • Read: $PROJECT_PATH/CLAUDE.md"
     echo ""
     echo -e "${GREEN}🗑️  Uninstall:${NC}"
-    echo "  • Run: ${CYAN}cd \"$PROJECT_PATH\" && ./uninstall.sh${NC}"
+    echo -e "  • Run: ${CYAN}cd \"$PROJECT_PATH\" && ./uninstall.sh${NC}"
     echo ""
     print_header "Happy Coding with DhafnckMCP! 🚀"
 }
@@ -686,13 +850,10 @@ main() {
     # Step A: Welcome with project description
     show_welcome
     
-    # Step B: Ask project name
+    # Step B: Ask project name and path
     get_project_name
     
-    # Step C: Ask project path
-    get_project_path
-    
-    # Step D: Ask about Claude Code installation
+    # Step C: Ask about Claude Code installation
     ask_claude_code_installation
     
     # Step E: Choose platform version and installation scope
