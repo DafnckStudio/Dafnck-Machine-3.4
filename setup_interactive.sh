@@ -157,6 +157,96 @@ show_welcome() {
     read -p "Press Enter to continue..."
 }
 
+# Function to check if project exists in brain/projects.json
+check_existing_project() {
+    local project_name="$1"
+    local brain_file="$SOURCE_PROJECT/.cursor/rules/brain/projects.json"
+    
+    if [[ -f "$brain_file" ]]; then
+        # Use Python to check if project exists
+        python3 << EOF
+import json
+import sys
+
+try:
+    with open("$brain_file", 'r') as f:
+        brain_data = json.load(f)
+    
+    if "$project_name" in brain_data:
+        print("exists")
+        if "path" in brain_data["$project_name"]:
+            print(brain_data["$project_name"]["path"])
+        else:
+            print("unknown_path")
+    else:
+        print("not_exists")
+        
+except Exception as e:
+    print("error")
+    sys.exit(1)
+EOF
+    else
+        echo "not_exists"
+    fi
+}
+
+# Function to delete existing project
+delete_existing_project() {
+    local project_name="$1"
+    local project_path="$2"
+    local brain_file="$SOURCE_PROJECT/.cursor/rules/brain/projects.json"
+    
+    print_warning "Deleting existing project: $project_name"
+    
+    # Remove from brain/projects.json
+    if [[ -f "$brain_file" ]]; then
+        # Backup brain file
+        cp "$brain_file" "${brain_file}.backup.$(date +%Y%m%d_%H%M%S)"
+        
+        # Remove project from brain file
+        python3 << EOF
+import json
+import sys
+
+try:
+    with open("$brain_file", 'r') as f:
+        brain_data = json.load(f)
+    
+    if "$project_name" in brain_data:
+        del brain_data["$project_name"]
+        
+        with open("$brain_file", 'w') as f:
+            json.dump(brain_data, f, indent=2)
+        
+        print("✓ Removed from brain/projects.json")
+    else:
+        print("- Project not found in brain file")
+        
+except Exception as e:
+    print(f"✗ Error updating brain file: {e}")
+    sys.exit(1)
+EOF
+    fi
+    
+    # Remove project directory if it exists and has uninstall script
+    if [[ -d "$project_path" && -f "$project_path/uninstall.sh" ]]; then
+        print_status "Running uninstall script for existing project..."
+        cd "$project_path" && ./uninstall.sh --force 2>/dev/null || true
+        cd "$SOURCE_PROJECT"
+        
+        # Remove remaining directory if still exists
+        if [[ -d "$project_path" ]]; then
+            print_status "Removing remaining project directory..."
+            rm -rf "$project_path" 2>/dev/null || true
+        fi
+    elif [[ -d "$project_path" ]]; then
+        print_status "Removing existing project directory..."
+        rm -rf "$project_path" 2>/dev/null || true
+    fi
+    
+    print_success "Existing project deleted successfully"
+}
+
 # Function to get project name and path
 get_project_name() {
     clear
@@ -182,6 +272,42 @@ get_project_name() {
         print_success "Project name set to: $PROJECT_NAME"
         break
     done
+    
+    # Check if project already exists in brain/projects.json
+    local check_result=$(check_existing_project "$PROJECT_NAME")
+    
+    if [[ "$check_result" == "exists" ]]; then
+        echo ""
+        print_warning "⚠️  Project '$PROJECT_NAME' already exists in the system!"
+        echo -e "${RED}WARNING: If you continue, the existing project will be completely deleted.${NC}"
+        echo -e "${RED}This action cannot be undone!${NC}"
+        echo ""
+        
+        # Get existing project path
+        local existing_path_info=$(check_existing_project "$PROJECT_NAME")
+        local existing_path=$(echo "$existing_path_info" | tail -n 1)
+        
+        if [[ "$existing_path" != "unknown_path" && "$existing_path" != "exists" ]]; then
+            echo -e "${YELLOW}Existing project location: $existing_path${NC}"
+        fi
+        
+        echo ""
+        read -p "Do you want to DELETE the existing project and continue? (y/N): " -n 1 -r
+        echo
+        
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            if [[ "$existing_path" != "unknown_path" && "$existing_path" != "exists" ]]; then
+                delete_existing_project "$PROJECT_NAME" "$existing_path"
+            else
+                delete_existing_project "$PROJECT_NAME" ""
+            fi
+            echo ""
+            print_success "Existing project deleted. Proceeding with new project setup."
+        else
+            print_error "Setup cancelled. Please run the script again with a different project name."
+            exit 0
+        fi
+    fi
     
     # Get project path
     echo ""
