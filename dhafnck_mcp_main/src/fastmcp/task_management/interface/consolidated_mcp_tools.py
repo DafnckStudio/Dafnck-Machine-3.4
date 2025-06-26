@@ -739,13 +739,19 @@ class TaskOperationHandler:
         except Exception as e:
             return {"success": False, "error": f"Failed to list tasks: {str(e)}"}
     
-    def _search_tasks(self, task_app_service, query, limit):
+    def _search_tasks(self, task_app_service, project_id, task_tree_id, user_id, query, limit):
         """Search tasks by query"""
         if not query:
             return {"success": False, "error": "query is required for searching tasks"}
         
         try:
-            request = SearchTasksRequest(query=query, limit=limit or 10)
+            request = SearchTasksRequest(
+                query=query,
+                project_id=project_id,
+                task_tree_id=task_tree_id,
+                user_id=user_id,
+                limit=limit or 10
+            )
             response = task_app_service.search_tasks(request)
             
             return {
