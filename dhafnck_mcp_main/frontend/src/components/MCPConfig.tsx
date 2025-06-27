@@ -362,7 +362,7 @@ export default function MCPConfig({
                 <span>• call_agent</span>
                 <span>• update_auto_rule</span>
                 <span>• validate_rules</span>
-                <span>• manage_cursor_rules</span>
+                <span>• manage_rule</span>
                 <span>• regenerate_auto_rule</span>
                 <span>• validate_tasks_json</span>
               </div>

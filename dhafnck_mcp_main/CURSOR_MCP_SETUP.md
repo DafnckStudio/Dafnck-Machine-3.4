@@ -188,7 +188,7 @@ Once configured, you'll have access to these powerful tools:
 
 ### System Management
 - `validate_rules` - Rule system health checks
-- `manage_cursor_rules` - Cursor rules administration
+- `manage_rule` - Cursor rules administration
 - `validate_tasks_json` - Task database integrity
 
 ### Enhanced Reasoning (with Sequential Thinking)

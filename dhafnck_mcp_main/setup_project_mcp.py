@@ -246,7 +246,7 @@ def create_tool_config(project_path: Path) -> bool:
                 "call_agent": True,
                 "update_auto_rule": True,
                 "validate_rules": True,
-                "manage_cursor_rules": True,
+                "manage_rule": True,
                 "regenerate_auto_rule": True,
                 "validate_tasks_json": True
             },

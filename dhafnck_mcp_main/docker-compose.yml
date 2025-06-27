@@ -30,6 +30,10 @@ services:
       - CURSOR_RULES_DIR=/data/rules
       - CURSOR_AGENT_DIR_PATH=/app/src/fastmcp
       
+      # Authentication Configuration
+      - DHAFNCK_AUTH_ENABLED=${DHAFNCK_AUTH_ENABLED:-true}
+      - DHAFNCK_MVP_MODE=${DHAFNCK_MVP_MODE:-false}
+      
       # Supabase Configuration (Optional - set in .env file)
       - SUPABASE_URL=${SUPABASE_URL:-}
       - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}

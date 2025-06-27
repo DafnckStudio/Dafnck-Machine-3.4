@@ -5,11 +5,11 @@
     "manage_subtask": true,
     "manage_agent": true,
     "call_agent": true,
-    "update_auto_rule": true,
-    "validate_rules": true,
-    "manage_cursor_rules": true,
-    "regenerate_auto_rule": true,
-    "validate_tasks_json": true
+    "update_auto_rule": false,
+    "validate_rules": false,
+    "manage_rule": true,
+    "regenerate_auto_rule": false,
+    "validate_tasks_json": false
   },
   "debug_mode": true,
   "tool_logging": true

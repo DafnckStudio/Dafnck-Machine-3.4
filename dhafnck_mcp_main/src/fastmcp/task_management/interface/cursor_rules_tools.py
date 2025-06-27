@@ -210,7 +210,7 @@ class CursorRulesTools:
                 }
         
         @mcp.tool()
-        def manage_cursor_rules(
+        def manage_rule(
             action: Annotated[str, Field(description="Rule management action to perform. Available: list, backup, restore, clean, info")],
             target: Annotated[Optional[str], Field(description="Target file or directory (optional, context-dependent)")] = None,
             content: Annotated[Optional[str], Field(description="Content for write operations (optional, context-dependent)")] = None

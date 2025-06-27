@@ -248,7 +248,7 @@ async def comprehensive_tool_test():
         try:
             expected_tools = [
                 'manage_project', 'manage_task', 'manage_subtask', 'manage_agent',
-                'update_auto_rule', 'validate_rules', 'manage_cursor_rules',
+                'update_auto_rule', 'validate_rules', 'manage_rule',
                 'regenerate_auto_rule', 'validate_tasks_json', 'call_agent'
             ]
             
@@ -645,7 +645,7 @@ async def generate_summary():
             'Project Management': ['manage_project'],
             'Task Management': ['manage_task', 'manage_subtask'],
             'Agent Management': ['manage_agent', 'call_agent'],
-            'Rule Management': ['update_auto_rule', 'validate_rules', 'manage_cursor_rules', 'regenerate_auto_rule'],
+            'Rule Management': ['update_auto_rule', 'validate_rules', 'manage_rule', 'regenerate_auto_rule'],
             'Validation': ['validate_tasks_json']
         }
         

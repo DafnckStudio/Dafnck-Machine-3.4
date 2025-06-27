@@ -185,9 +185,34 @@ class FastMCP(Generic[LifespanResultT]):
         if enable_task_management:
             try:
                 logger.info("Initializing task management tools...")
+                
+                # Check environment variables for tool configuration
+                import os
+                disable_cursor_tools = os.environ.get("DHAFNCK_DISABLE_CURSOR_TOOLS", "false").lower() == "true"
+                
+                # Create configuration that respects environment variables
+                config_overrides = {}
+                if disable_cursor_tools:
+                    logger.info("DHAFNCK_DISABLE_CURSOR_TOOLS=true - disabling cursor tools")
+                    config_overrides = {
+                        "enabled_tools": {
+                            "manage_project": True,
+                            "manage_task": True, 
+                            "manage_subtask": True,
+                            "manage_agent": True,
+                            "call_agent": True,
+                            "update_auto_rule": False,
+                            "validate_rules": False,
+                            "manage_rule": True,
+                            "regenerate_auto_rule": False,
+                            "validate_tasks_json": False
+                        }
+                    }
+                
                 self._consolidated_tools = ConsolidatedMCPTools(
                     task_repository=task_repository,
-                    projects_file_path=projects_file_path
+                    projects_file_path=projects_file_path,
+                    config_overrides=config_overrides
                 )
                 logger.info("Task management tools initialized successfully")
             except Exception as e:
@@ -329,9 +354,34 @@ class FastMCP(Generic[LifespanResultT]):
             
         try:
             logger.info("Manually initializing task management tools...")
+            
+            # Check environment variables for tool configuration
+            import os
+            disable_cursor_tools = os.environ.get("DHAFNCK_DISABLE_CURSOR_TOOLS", "false").lower() == "true"
+            
+            # Create configuration that respects environment variables
+            config_overrides = {}
+            if disable_cursor_tools:
+                logger.info("DHAFNCK_DISABLE_CURSOR_TOOLS=true - disabling cursor tools")
+                config_overrides = {
+                    "enabled_tools": {
+                        "manage_project": True,
+                        "manage_task": True, 
+                        "manage_subtask": True,
+                        "manage_agent": True,
+                        "call_agent": True,
+                        "update_auto_rule": False,
+                        "validate_rules": False,
+                        "manage_rule": True,
+                        "regenerate_auto_rule": False,
+                        "validate_tasks_json": False
+                    }
+                }
+            
             self._consolidated_tools = ConsolidatedMCPTools(
                 task_repository=task_repository,
-                projects_file_path=projects_file_path
+                projects_file_path=projects_file_path,
+                config_overrides=config_overrides
             )
             
             logger.info("Registering consolidated MCP tools...")

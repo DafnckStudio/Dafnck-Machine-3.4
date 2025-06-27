@@ -1,0 +1,74 @@
+# Docker Compose override for local development without authentication
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.local.yml up
+
+version: '3.8'
+
+services:
+  dhafnck-mcp:
+    # Override environment variables to disable authentication
+    environment:
+      # Disable authentication for local development
+      - DHAFNCK_AUTH_ENABLED=false
+      - DHAFNCK_MVP_MODE=false
+      
+      # Disable cursor rules tools for local development
+      - DHAFNCK_DISABLE_CURSOR_TOOLS=true
+      
+      # Development logging
+      - FASTMCP_LOG_LEVEL=INFO
+      - FASTMCP_ENABLE_RICH_TRACEBACKS=1
+      - FASTMCP_TEST_MODE=0
+      
+      # Development mode
+      - DEV_MODE=1
+      - DEV_PORT=8000
+      
+      # Core MCP Configuration (inherited from base)
+      - PYTHONPATH=/app/src
+      - FASTMCP_LOG_LEVEL=INFO
+      
+      # Task Management Paths (inherited from base)
+      - TASKS_JSON_PATH=/data/tasks
+      - PROJECTS_FILE_PATH=/data/projects/projects.json
+      - CURSOR_RULES_DIR=/data/rules
+      - CURSOR_AGENT_DIR_PATH=/app/src/fastmcp
+      
+      # HTTP Transport Configuration (inherited from base)
+      - FASTMCP_TRANSPORT=streamable-http
+      - FASTMCP_HOST=0.0.0.0
+      - FASTMCP_PORT=8000
+      
+      # Clear Supabase configuration (not needed without auth)
+      - SUPABASE_URL=
+      - SUPABASE_ANON_KEY=
+      - DHAFNCK_TOKEN=
+    
+    # Development ports
+    ports:
+      - "8000:8000"
+      - "8001:8001"  # Additional debug port if needed
+    
+    # Remove resource limits for development
+    deploy:
+      resources: {}
+    
+    # Development logging (more verbose)
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+    
+    # Mount source code for live development (optional)
+    volumes:
+      # Data persistence (inherited from base)
+      - dhafnck_data:/data
+      - dhafnck_logs:/app/logs
+      
+      # Configuration files (inherited from base)
+      - ./config:/app/config:ro
+      
+      # Development: mount source code for live reload (uncomment if needed)
+      # - ./src:/app/src:ro
+      # - ./pyproject.toml:/app/pyproject.toml:ro
+      # - ./uv.lock:/app/uv.lock:ro 

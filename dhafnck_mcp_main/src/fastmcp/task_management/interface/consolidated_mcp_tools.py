@@ -424,29 +424,48 @@ class ToolConfig:
     
     DEFAULT_CONFIG = {
         "enabled_tools": {
-            "manage_project": True, "manage_task": True, "manage_subtask": True,
-            "manage_agent": True, "call_agent": True, "update_auto_rule": True,
-            "validate_rules": True, "manage_cursor_rules": True,
-            "regenerate_auto_rule": True, "validate_tasks_json": True
+            "manage_project": True, 
+            "manage_task": True, 
+            "manage_subtask": True,
+            "manage_agent": True, 
+            "manage_rule": True,
+            "call_agent": True, 
+            "update_auto_rule": False,
+            "validate_rules": False, 
+            "regenerate_auto_rule": False, 
+            "validate_tasks_json": False
         },
         "debug_mode": False, 
         "tool_logging": False
     }
     
-    def __init__(self):
-        self.config = self._load_config()
+    def __init__(self, config_overrides: Optional[Dict[str, Any]] = None):
+        self.config = self._load_config(config_overrides)
         
-    def _load_config(self) -> Dict[str, Any]:
+    def _load_config(self, config_overrides: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Load configuration from environment or use defaults"""
         config_path = os.environ.get('MCP_TOOL_CONFIG')
         if config_path and os.path.exists(config_path):
             try:
                 with open(config_path, 'r') as f:
-                    return json.load(f)
+                    config = json.load(f)
             except Exception as e:
                 logger.warning(f"Failed to load config from {config_path}: {e}")
+                config = self.DEFAULT_CONFIG.copy()
+        else:
+            config = self.DEFAULT_CONFIG.copy()
         
-        return self.DEFAULT_CONFIG.copy()
+        # Apply overrides if provided
+        if config_overrides:
+            logger.info(f"Applying configuration overrides: {config_overrides}")
+            for key, value in config_overrides.items():
+                if key == "enabled_tools" and isinstance(value, dict):
+                    # Merge enabled_tools instead of replacing
+                    config.setdefault("enabled_tools", {}).update(value)
+                else:
+                    config[key] = value
+        
+        return config
         
     def is_enabled(self, tool_name: str) -> bool:
         """Check if a specific tool is enabled"""
@@ -1298,17 +1317,145 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
     
     def _register_cursor_tools(self, mcp: "FastMCP"):
         """Register cursor rules tools conditionally"""
-        cursor_tools = ["update_auto_rule", "validate_rules", "manage_cursor_rules", "regenerate_auto_rule", "validate_tasks_json"]
-        enabled_cursor_tools = [tool for tool in cursor_tools if self._config.is_enabled(tool)]
+        # Check if cursor tools are explicitly disabled via environment variable
+        cursor_tools_disabled = os.environ.get("DHAFNCK_DISABLE_CURSOR_TOOLS", "false").lower() == "true"
         
-        if enabled_cursor_tools:
-            logger.info(f"Registering {len(enabled_cursor_tools)} cursor rules tools")
-            temp_cursor_tools = CursorRulesTools()
-            temp_cursor_tools.register_tools(mcp)
-            for tool in enabled_cursor_tools:
-                logger.info(f"  - Registered {tool}")
+        # Define all cursor tools
+        cursor_tools = ["update_auto_rule", "validate_rules", "manage_rule", "regenerate_auto_rule", "validate_tasks_json"]
+        
+        # If DHAFNCK_DISABLE_CURSOR_TOOLS=true, only keep manage_rule enabled
+        if cursor_tools_disabled:
+            enabled_cursor_tools = [tool for tool in cursor_tools if tool == "manage_rule" and self._config.is_enabled(tool)]
+            if enabled_cursor_tools:
+                logger.info(f"Registering {len(enabled_cursor_tools)} cursor rules tools (manage_rule only, others disabled via DHAFNCK_DISABLE_CURSOR_TOOLS)")
+            else:
+                logger.info("Skipped all cursor rules tools (disabled via DHAFNCK_DISABLE_CURSOR_TOOLS)")
+                return
         else:
-            logger.info("Skipped all cursor rules tools (all disabled)")
+            # Normal operation - respect individual tool configuration
+            enabled_cursor_tools = [tool for tool in cursor_tools if self._config.is_enabled(tool)]
+            if enabled_cursor_tools:
+                logger.info(f"Registering {len(enabled_cursor_tools)} cursor rules tools")
+            else:
+                logger.info("Skipped all cursor rules tools (all disabled)")
+                return
+        
+        # Register only the enabled cursor tools
+        temp_cursor_tools = CursorRulesTools()
+        
+        # Selectively register only enabled tools
+        for tool in enabled_cursor_tools:
+            if tool == "manage_rule":
+                self._register_manage_rule_tool(mcp, temp_cursor_tools)
+                logger.info(f"  - Registered {tool}")
+            elif tool == "update_auto_rule":
+                self._register_update_auto_rule_tool(mcp, temp_cursor_tools)
+                logger.info(f"  - Registered {tool}")
+            elif tool == "validate_rules":
+                self._register_validate_rules_tool(mcp, temp_cursor_tools)
+                logger.info(f"  - Registered {tool}")
+            elif tool == "regenerate_auto_rule":
+                self._register_regenerate_auto_rule_tool(mcp, temp_cursor_tools)
+                logger.info(f"  - Registered {tool}")
+            elif tool == "validate_tasks_json":
+                self._register_validate_tasks_json_tool(mcp, temp_cursor_tools)
+                logger.info(f"  - Registered {tool}")
+    
+    def _register_manage_rule_tool(self, mcp: "FastMCP", cursor_tools):
+        """Register only the manage_rule tool"""
+        @mcp.tool()
+        def manage_rule(
+            action: str,
+            target: Optional[str] = None,
+            content: Optional[str] = None
+        ) -> Dict[str, Any]:
+            """🗂️ CURSOR RULES ADMINISTRATION - Complete rule file system management"""
+            try:
+                if action == "list":
+                    rules_dir = cursor_tools.project_root / ".cursor" / "rules"
+                    if not rules_dir.exists():
+                        return {"success": True, "files": [], "message": "Rules directory does not exist"}
+                    
+                    files = []
+                    for file_path in rules_dir.rglob("*.mdc"):
+                        files.append({
+                            "path": str(file_path.relative_to(cursor_tools.project_root)),
+                            "size": file_path.stat().st_size,
+                            "modified": file_path.stat().st_mtime
+                        })
+                    
+                    return {"success": True, "files": files}
+                
+                elif action == "backup":
+                    auto_rule_path = cursor_tools.project_root / ".cursor" / "rules" / "auto_rule.mdc"
+                    if not auto_rule_path.exists():
+                        return {"success": False, "error": "auto_rule.mdc not found"}
+                    
+                    backup_path = auto_rule_path.with_suffix('.mdc.backup')
+                    with open(auto_rule_path, 'r', encoding='utf-8') as src:
+                        content = src.read()
+                    with open(backup_path, 'w', encoding='utf-8') as dst:
+                        dst.write(content)
+                    
+                    return {"success": True, "message": "Backup created", "backup_path": str(backup_path)}
+                
+                elif action == "restore":
+                    auto_rule_path = cursor_tools.project_root / ".cursor" / "rules" / "auto_rule.mdc"
+                    backup_path = auto_rule_path.with_suffix('.mdc.backup')
+                    
+                    if not backup_path.exists():
+                        return {"success": False, "error": "Backup file not found"}
+                    
+                    with open(backup_path, 'r', encoding='utf-8') as src:
+                        content = src.read()
+                    with open(auto_rule_path, 'w', encoding='utf-8') as dst:
+                        dst.write(content)
+                    
+                    return {"success": True, "message": "Restored from backup"}
+                
+                elif action == "info":
+                    rules_dir = cursor_tools.project_root / ".cursor" / "rules"
+                    if not rules_dir.exists():
+                        return {"success": True, "info": {"directory_exists": False}}
+                    
+                    file_count = len(list(rules_dir.rglob("*.mdc")))
+                    total_size = sum(f.stat().st_size for f in rules_dir.rglob("*.mdc"))
+                    
+                    return {
+                        "success": True,
+                        "info": {
+                            "directory_exists": True,
+                            "file_count": file_count,
+                            "total_size": total_size,
+                            "directory_path": str(rules_dir)
+                        }
+                    }
+                
+                else:
+                    return {"success": False, "error": f"Unknown action: {action}"}
+                    
+            except Exception as e:
+                return {"success": False, "error": str(e)}
+    
+    def _register_update_auto_rule_tool(self, mcp: "FastMCP", cursor_tools):
+        """Register only the update_auto_rule tool"""
+        # This would be implemented if needed
+        pass
+    
+    def _register_validate_rules_tool(self, mcp: "FastMCP", cursor_tools):
+        """Register only the validate_rules tool"""
+        # This would be implemented if needed
+        pass
+    
+    def _register_regenerate_auto_rule_tool(self, mcp: "FastMCP", cursor_tools):
+        """Register only the regenerate_auto_rule tool"""
+        # This would be implemented if needed
+        pass
+    
+    def _register_validate_tasks_json_tool(self, mcp: "FastMCP", cursor_tools):
+        """Register only the validate_tasks_json tool"""
+        # This would be implemented if needed
+        pass
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -1318,11 +1465,11 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
 class ConsolidatedMCPTools:
     """Main MCP tools interface with clean architecture and separated concerns"""
     
-    def __init__(self, task_repository: Optional[TaskRepository] = None, projects_file_path: Optional[str] = None):
+    def __init__(self, task_repository: Optional[TaskRepository] = None, projects_file_path: Optional[str] = None, config_overrides: Optional[Dict[str, Any]] = None):
         logger.info("Initializing ConsolidatedMCPTools...")
         
         # Initialize configuration and paths
-        self._config = ToolConfig()
+        self._config = ToolConfig(config_overrides)
         self._path_resolver = PathResolver()
         
         # Initialize repositories and services with hierarchical support

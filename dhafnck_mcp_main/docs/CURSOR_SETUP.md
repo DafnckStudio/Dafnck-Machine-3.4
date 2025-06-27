@@ -93,7 +93,7 @@ Once configured, you'll have access to these powerful tools:
 ### Rule Management
 - **`update_auto_rule`** - Update AI assistant context rules
 - **`validate_rules`** - Validate rule file quality
-- **`manage_cursor_rules`** - Complete rule file system management
+- **`manage_rule`** - Complete rule file system management
 - **`regenerate_auto_rule`** - Smart context generation
 - **`validate_tasks_json`** - Task database integrity validation
 
