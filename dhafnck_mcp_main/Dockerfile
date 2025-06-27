@@ -17,21 +17,17 @@ RUN apt-get update && apt-get install -y \
 # Create app directory
 WORKDIR /app
 
-# Copy dependency files
-COPY pyproject.toml uv.lock* ./
+# Copy dependency files and README (needed for package build)
+COPY pyproject.toml uv.lock* README.md ./
 
 # Install uv for faster dependency resolution
 RUN pip install uv
 
-# Install dependencies
-RUN uv sync --no-dev --frozen
-
 # Copy source code
 COPY src/ src/
-COPY README.md ./
 
-# Install the package
-RUN uv pip install -e .
+# Install dependencies and the package in a virtual environment
+RUN uv sync --no-dev --frozen
 
 # Stage 2: Runtime stage
 FROM python:3.11-slim as runtime
@@ -39,7 +35,7 @@ FROM python:3.11-slim as runtime
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONPATH=/app/src
+ENV PYTHONPATH=/app/src:/app
 ENV FASTMCP_LOG_LEVEL=INFO
 ENV FASTMCP_ENABLE_RICH_TRACEBACKS=0
 
@@ -52,12 +48,12 @@ RUN mkdir -p /data /app/logs && \
     chown -R dhafnck:dhafnck /app /data
 
 # Copy Python environment from builder
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
+COPY --from=builder /app/.venv /app/.venv
 
 # Copy application code
 COPY --from=builder /app/src /app/src
 COPY --from=builder /app/README.md /app/
+COPY --from=builder /app/pyproject.toml /app/
 
 # Copy startup script
 COPY docker-entrypoint.sh /usr/local/bin/
@@ -72,12 +68,15 @@ USER dhafnck
 # Expose port
 EXPOSE 8000
 
+# Activate virtual environment by updating PATH
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Install the package in editable mode in the virtual environment
+RUN /app/.venv/bin/pip install -e .
+
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "from src.fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server; \
-                   server = create_dhafnck_mcp_server(); \
-                   tools = server.get_tools(); \
-                   print('Health check passed' if len(tools) > 0 else exit(1))"
+    CMD python -c "import sys; sys.path.insert(0, '/app/src'); from fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server; server = create_dhafnck_mcp_server(); tools = server.get_tools(); print('Health check passed' if len(tools) > 0 else exit(1))"
 
 # Default command
 ENTRYPOINT ["docker-entrypoint.sh"]
