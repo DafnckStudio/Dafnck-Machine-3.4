@@ -1,0 +1,532 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Phase 00: MVP Docker + Supabase Authentication
+
+**Document ID**: phase_00.mdc  
+**Created**: 2025-01-27  
+**Status**: 📋 Planned  
+**Agents**: @system-architect-agent, @coding-agent, @ui-designer-agent  
+**Objective**: Build fastest possible MVP with Docker containerization and cloud authentication
+
+---
+
+## Executive Summary
+
+This phase defines the **Minimum Viable Product (MVP)** approach for DhafnckMCP server that prioritizes speed-to-market over scalability. The MVP uses a simple Docker container with SQLite database and Supabase cloud authentication to provide immediate value to users while validating the core concept.
+
+**Key MVP Principles:**
+- **Speed First**: 1-2 weeks development vs 6+ months for full architecture
+- **Zero Infrastructure**: Users run single Docker container locally
+- **Cloud Authentication**: Supabase handles all auth complexity
+- **Core Features Only**: Essential MCP functionality without advanced orchestration
+- **Immediate Value**: Working solution for current DhafnckMCP users
+
+---
+
+## 🏛️ System Architecture Analysis
+*By @system-architect-agent*
+
+### MVP Architecture Overview
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Web Frontend  │    │  Supabase Cloud  │    │ Docker Container│
+│   (Next.js)     │────│  Authentication  │────│   MCP Server    │
+│   - Registration│    │  - User Accounts │    │   - Python API  │
+│   - Token Mgmt  │    │  - Token Gen     │    │   - SQLite DB   │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+        │                                               │
+        └───────────────────────────────────────────────┘
+                    User connects Cursor via token
+```
+
+### Component Architecture
+
+**1. Frontend Web Application**
+- **Technology**: Next.js 14 with App Router
+- **Hosting**: Vercel (free tier, instant deployment)
+- **Authentication**: Supabase Auth (email/password)
+- **UI**: Tailwind CSS for rapid development
+- **Features**: Account creation, token management, getting started guide
+
+**2. Supabase Cloud Backend**
+- **Authentication**: Built-in email/password auth
+- **Database**: PostgreSQL for user accounts and tokens
+- **API**: Auto-generated REST API
+- **Security**: Row Level Security (RLS) policies
+- **Cost**: Free tier supports 50,000+ monthly users
+
+**3. Docker MCP Server**
+- **Base**: Python 3.11 slim image
+- **Database**: SQLite (embedded, no external dependencies)
+- **API**: FastAPI with existing DhafnckMCP tools
+- **Authentication**: JWT token validation via Supabase
+- **Storage**: Volume mount for data persistence
+
+### Data Architecture
+
+**Supabase Tables:**
+```sql
+-- Users (managed by Supabase Auth)
+users (
+  id uuid primary key,
+  email text unique,
+  created_at timestamp
+)
+
+-- API Tokens
+api_tokens (
+  id uuid primary key,
+  user_id uuid references users(id),
+  token text unique,
+  name text,
+  created_at timestamp,
+  last_used timestamp,
+  is_active boolean
+)
+```
+
+**SQLite Schema (in Docker):**
+```sql
+-- Core MCP entities
+projects (id, name, description, created_at)
+tasks (id, project_id, title, status, assignee, created_at)
+agents (id, name, type, capabilities)
+contexts (id, project_id, content, updated_at)
+```
+
+### Security Model
+
+**Authentication Flow:**
+1. User creates account on web app (Supabase Auth)
+2. User generates API token via web interface
+3. Token stored in Supabase with user association
+4. Docker container validates tokens against Supabase API
+5. Cursor connects to localhost with token header
+
+**Security Features:**
+- JWT tokens with expiration
+- Token revocation capability
+- Rate limiting per token
+- Secure token generation (32-byte random)
+- HTTPS-only token transmission
+
+---
+
+## 💻 MVP Implementation Plan
+*By @coding-agent*
+
+### Development Timeline: 1-2 Weeks
+
+**Week 1: Core Infrastructure**
+
+**Day 1: Supabase Setup (2 hours)**
+```bash
+# Supabase project creation
+npx supabase init
+npx supabase start
+npx supabase db reset
+
+# Enable authentication
+# Configure email providers
+# Set up RLS policies
+```
+
+**Day 2-3: Frontend Development (2 days)**
+```typescript
+// Key components to build:
+// - AuthLayout with login/signup
+// - Dashboard with token management
+// - TokenGenerator component
+// - GettingStarted documentation
+// - DockerInstructions component
+
+// Example token generation:
+const generateToken = async () => {
+  const { data, error } = await supabase
+    .from('api_tokens')
+    .insert({
+      user_id: user.id,
+      token: generateSecureToken(),
+      name: tokenName
+    })
+}
+```
+
+**Day 4-5: Simplified MCP Server (2 days)**
+```python
+# Simplified FastAPI server
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.security import HTTPBearer
+import sqlite3
+import jwt
+import httpx
+
+app = FastAPI()
+security = HTTPBearer()
+
+# Token validation
+async def validate_token(token: str = Depends(security)):
+    try:
+        # Validate against Supabase
+        response = await httpx.get(
+            f"{SUPABASE_URL}/rest/v1/api_tokens",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        if response.status_code != 200:
+            raise HTTPException(401, "Invalid token")
+        return response.json()
+    except:
+        raise HTTPException(401, "Token validation failed")
+
+# Core MCP endpoints
+@app.post("/mcp/tasks")
+async def create_task(task_data: dict, user=Depends(validate_token)):
+    # SQLite operations
+    pass
+
+@app.get("/mcp/tools")
+async def list_tools():
+    return {"tools": ["manage_task", "manage_project", "manage_agent"]}
+```
+
+**Day 6-7: Docker Configuration (1 day)**
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+RUN mkdir -p /data
+
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+**Week 2: Integration & Launch**
+
+**Day 1-2: Token Integration (2 days)**
+- Frontend token generation UI
+- Backend token validation
+- Error handling and user feedback
+- Token refresh mechanism
+
+**Day 3-4: Documentation (2 days)**
+- Getting started guide
+- Docker installation instructions
+- Cursor configuration examples
+- Troubleshooting guide
+
+**Day 5-6: Testing (2 days)**
+- End-to-end user flow testing
+- Cursor connection testing
+- Performance validation
+- Security testing
+
+**Day 7: Deployment (1 day)**
+- Frontend deployment to Vercel
+- Docker image build and push
+- Documentation website
+- Launch announcement
+
+### Core Features Implementation
+
+**Essential MCP Tools (Simplified):**
+```python
+# Only implement core functionality
+MCP_TOOLS = [
+    "manage_task",      # Basic CRUD operations
+    "manage_project",   # Project management
+    "manage_agent",     # Agent assignment
+    "health_check",     # Server health
+]
+
+# Remove complex features for MVP:
+# - Multi-user orchestration
+# - Advanced agent workflows  
+# - Complex task dependencies
+# - Real-time collaboration
+```
+
+**SQLite Operations:**
+```python
+class SQLiteManager:
+    def __init__(self, db_path="/data/dhafnck.db"):
+        self.db_path = db_path
+        self.init_db()
+    
+    def init_db(self):
+        conn = sqlite3.connect(self.db_path)
+        conn.executescript("""
+            CREATE TABLE IF NOT EXISTS projects (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            
+            CREATE TABLE IF NOT EXISTS tasks (
+                id TEXT PRIMARY KEY,
+                project_id TEXT,
+                title TEXT NOT NULL,
+                status TEXT DEFAULT 'todo',
+                assignee TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (project_id) REFERENCES projects(id)
+            );
+        """)
+        conn.close()
+```
+
+---
+
+## 🎨 Frontend Design & User Experience  
+*By @ui-designer-agent*
+
+### User Journey Design
+
+**1. Discovery & Registration (2 minutes)**
+```
+User visits dhafnck-mcp.com
+├── Landing page explains value proposition
+├── "Get Started Free" CTA button
+├── Email/password registration (Supabase)
+└── Email verification (optional for MVP)
+```
+
+**2. Token Management (1 minute)**
+```
+Dashboard after login
+├── "Generate New Token" button
+├── Token list with names and creation dates
+├── Copy token to clipboard
+├── Revoke token functionality
+└── Usage statistics (basic)
+```
+
+**3. Docker Setup (2 minutes)**
+```
+Getting Started page
+├── Docker installation instructions
+├── Copy-paste Docker command with user's token
+├── Cursor configuration example
+└── Test connection button
+```
+
+### UI Components
+
+**Landing Page:**
+```jsx
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <Hero 
+        title="DhafnckMCP Server - Local AI Assistant"
+        subtitle="Run powerful MCP tools locally with Docker. Zero setup, maximum productivity."
+        cta="Get Started Free"
+      />
+      <Features 
+        items={[
+          "🐳 One-command Docker deployment",
+          "🔒 Secure token-based authentication", 
+          "⚡ SQLite database - no external dependencies",
+          "🎯 Core MCP tools for task management"
+        ]}
+      />
+      <Pricing plan="Free forever for personal use" />
+    </div>
+  )
+}
+```
+
+**Dashboard:**
+```jsx
+export default function Dashboard() {
+  const [tokens, setTokens] = useState([])
+  
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">API Tokens</h1>
+      
+      <TokenGenerator onGenerate={handleTokenGenerate} />
+      
+      <TokenList 
+        tokens={tokens}
+        onRevoke={handleTokenRevoke}
+        onCopy={handleTokenCopy}
+      />
+      
+      <GettingStarted userToken={tokens[0]?.token} />
+    </div>
+  )
+}
+```
+
+**Docker Instructions:**
+```jsx
+export default function DockerInstructions({ token }) {
+  const dockerCommand = `docker run -d \\
+  --name dhafnck-mcp \\
+  -p 8000:8000 \\
+  -e DHAFNCK_TOKEN="${token}" \\
+  -v dhafnck-data:/data \\
+  dhafnck/mcp-server:latest`
+  
+  return (
+    <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
+      <CopyButton text={dockerCommand} />
+      <pre>{dockerCommand}</pre>
+    </div>
+  )
+}
+```
+
+### Visual Design System
+
+**Color Palette:**
+- Primary: Blue (#2563eb) - Trust, technology
+- Secondary: Green (#059669) - Success, growth  
+- Accent: Purple (#7c3aed) - Innovation, AI
+- Neutral: Gray scale for text and backgrounds
+
+**Typography:**
+- Headers: Inter font, bold weights
+- Body: Inter font, regular weight
+- Code: JetBrains Mono, monospace
+
+**Components:**
+- Buttons: Rounded corners, hover states, loading spinners
+- Cards: Subtle shadows, clean borders
+- Forms: Clear labels, validation states
+- Code blocks: Syntax highlighting, copy buttons
+
+### Responsive Design
+
+**Desktop (1024px+):**
+- Two-column layout for dashboard
+- Side navigation for documentation
+- Large code blocks with syntax highlighting
+
+**Tablet (768px-1024px):**
+- Single column layout
+- Collapsible navigation
+- Readable code blocks
+
+**Mobile (320px-768px):**
+- Stack all elements vertically
+- Touch-friendly buttons (44px minimum)
+- Horizontal scroll for code blocks
+
+---
+
+## Implementation Priorities
+
+### MVP Success Criteria
+
+**Technical Requirements:**
+- [ ] User can create account in <2 minutes
+- [ ] Docker container starts in <30 seconds  
+- [ ] Cursor connects successfully with token
+- [ ] Basic task management operations work
+- [ ] SQLite database persists data across restarts
+
+**User Experience Requirements:**
+- [ ] Clear getting started documentation
+- [ ] One-click token generation and copying
+- [ ] Working Docker command with user's token
+- [ ] Error messages are helpful and actionable
+- [ ] Mobile-responsive design
+
+**Performance Requirements:**
+- [ ] Frontend loads in <3 seconds
+- [ ] API responses in <500ms
+- [ ] Docker image size <200MB
+- [ ] Supports 10+ concurrent MCP connections
+
+### Development Dependencies
+
+**Frontend Stack:**
+```json
+{
+  "dependencies": {
+    "next": "14.0.0",
+    "@supabase/supabase-js": "^2.38.0",
+    "tailwindcss": "^3.3.0",
+    "lucide-react": "^0.263.1",
+    "react-hot-toast": "^2.4.1"
+  }
+}
+```
+
+**Backend Stack:**
+```txt
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic==2.5.0
+python-jose==3.3.0
+httpx==0.25.0
+sqlite3 (built-in)
+```
+
+**Docker Dependencies:**
+- Python 3.11 slim base image
+- Multi-stage build for smaller image size
+- Health check endpoint
+- Volume mounts for data persistence
+
+---
+
+## Next Steps
+
+### Phase 00 → Phase 01 Migration Path
+
+**Data Migration:**
+- Export SQLite data to PostgreSQL format
+- User account migration (Supabase → dedicated auth)
+- Token migration with enhanced security
+
+**Feature Evolution:**
+- Single-user → Multi-user support
+- SQLite → PostgreSQL cluster
+- Docker → Kubernetes deployment
+- Basic UI → Advanced dashboard
+
+**Architecture Evolution:**
+- Monolith → Microservices (when needed)
+- Local → Cloud deployment options
+- Simple auth → Enterprise SSO
+- Basic monitoring → Full observability
+
+### Success Metrics
+
+**Week 1 Targets:**
+- Working Docker container
+- Functional web app
+- End-to-end user flow
+
+**Week 2 Targets:**
+- 10 beta users testing
+- Documentation complete
+- Docker Hub image published
+
+**Month 1 Targets:**
+- 100+ users registered
+- 50+ active Docker deployments
+- User feedback collected
+- Phase 01 planning complete
+
+---
+
+**Document Status**: 📋 Ready for Implementation  
+**Estimated Effort**: 1-2 weeks (1 developer)  
+**Risk Level**: Low (proven technologies, simple architecture)  
+**User Value**: High (immediate productivity gain)
+
+---
+
+*This MVP phase prioritizes speed-to-market and user validation over scalability. Once the core concept is validated with real users, the full cloud architecture phases (01-10) can be implemented with confidence in market demand and user requirements.*

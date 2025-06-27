@@ -1,0 +1,450 @@
+{
+  "tasks": [
+    {
+      "id": "20250627001",
+      "title": "Cloud Scaling Architecture Analysis & Implementation Plan",
+      "description": "Comprehensive technical architecture analysis for scaling dhafnck_mcp server to handle 1000-1,000,000 requests per second on cloud infrastructure. Includes multi-phase analysis documents with specialized agent contributions.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "done",
+      "priority": "critical",
+      "details": null,
+      "estimatedEffort": "epic",
+      "assignees": [
+        "@system_architect_agent"
+      ],
+      "labels": [
+        "architecture",
+        "scaling",
+        "cloud",
+        "performance",
+        "technical-analysis"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Phase 01: Current Architecture Analysis",
+          "description": "Comprehensive analysis of current DhafnckMCP architecture with @system-architect-agent, @coding-agent, and @performance-load-tester-agent",
+          "completed": true,
+          "assignee": "@system-architect-agent",
+          "id": "20250627001.001",
+          "assignees": []
+        },
+        {
+          "title": "Phase 02: Scaling Requirements & Performance Analysis",
+          "description": "Detailed performance analysis and scaling requirements with @performance-load-tester-agent, @system-architect-agent, and @devops-agent",
+          "completed": true,
+          "assignee": "@performance-load-tester-agent",
+          "id": "20250627001.002",
+          "assignees": []
+        },
+        {
+          "title": "Phase 03: Technology Stack Evaluation",
+          "description": "Comprehensive technology stack analysis and recommendations with @technology-advisor-agent, @system-architect-agent, and @security-auditor-agent",
+          "completed": true,
+          "assignee": "@technology-advisor-agent",
+          "id": "20250627001.003",
+          "assignees": []
+        },
+        {
+          "title": "Phase 04: Database Architecture Design",
+          "description": "Comprehensive database transformation strategy with @system-architect-agent, @devops-agent, and @security-auditor-agent",
+          "completed": true,
+          "assignee": "@system-architect-agent",
+          "id": "20250627001.004",
+          "assignees": []
+        },
+        {
+          "title": "Phase 05: Cloud Infrastructure Design",
+          "description": "Cloud-native transformation with @devops-agent, @system-architect-agent, and @security-auditor-agent",
+          "completed": true,
+          "assignee": "@devops-agent",
+          "id": "20250627001.005",
+          "assignees": []
+        },
+        {
+          "title": "Phase 06: Frontend Architecture & API Gateway",
+          "description": "Comprehensive frontend architecture and API gateway design with @ui-designer-agent, @system-architect-agent, and @security-auditor-agent",
+          "completed": true,
+          "assignee": "@ui-designer-agent",
+          "id": "20250627001.006",
+          "assignees": []
+        },
+        {
+          "title": "Phase 07: Backend Microservices Architecture",
+          "description": "Microservices decomposition and implementation with @system-architect-agent, @coding-agent, and @devops-agent",
+          "completed": true,
+          "assignee": "@system-architect-agent",
+          "id": "20250627001.007",
+          "assignees": []
+        },
+        {
+          "title": "Phase 08: Security & Compliance Framework",
+          "description": "Comprehensive security and compliance framework design with @security-auditor-agent and @system-architect-agent",
+          "completed": true,
+          "assignee": "@security_auditor_agent",
+          "id": "20250627001.008",
+          "assignees": []
+        },
+        {
+          "title": "Phase 09: Implementation Roadmap & Migration Strategy",
+          "description": "Comprehensive implementation roadmap with detailed task breakdown, migration strategy, and resource planning with @task-planning-agent and @devops-agent",
+          "completed": true,
+          "assignee": "@task_planning_agent",
+          "id": "20250627001.009",
+          "assignees": []
+        },
+        {
+          "title": "Phase 10: Monitoring, Observability & SRE",
+          "description": "Comprehensive monitoring, observability, and SRE framework with @health-monitor-agent and @devops-agent",
+          "completed": true,
+          "assignee": "@health_monitor_agent",
+          "id": "20250627001.010",
+          "assignees": []
+        }
+      ],
+      "dueDate": null,
+      "created_at": "2025-06-27T08:28:54.119200+00:00",
+      "updated_at": "2025-06-27T09:36:45.672040+00:00"
+    },
+    {
+      "id": "20250627002",
+      "title": "EPIC: Phase 00 MVP - Docker + Supabase Implementation",
+      "description": "Complete implementation of Phase 00 MVP with Docker containerization and Supabase authentication for fastest time-to-market (1-2 weeks development). This EPIC covers all tasks needed to deliver a working MVP that users can deploy locally with Docker while using cloud authentication.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "critical",
+      "details": null,
+      "estimatedEffort": "large",
+      "assignees": [
+        "@task_planning_agent"
+      ],
+      "labels": [
+        "mvp",
+        "phase-00",
+        "docker",
+        "supabase",
+        "epic"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-02-10",
+      "created_at": "2025-06-27T09:19:19.370919+00:00",
+      "updated_at": "2025-06-27T09:19:19.370919+00:00"
+    },
+    {
+      "id": "20250627003",
+      "title": "Week 1: Core Infrastructure Setup",
+      "description": "Complete all core infrastructure components for MVP including Supabase setup, frontend development, backend implementation, and Docker configuration. This represents the foundation of the MVP.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": "large",
+      "assignees": [
+        "@system_architect_agent"
+      ],
+      "labels": [
+        "week-1",
+        "infrastructure",
+        "core"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Day 1: Supabase Project Setup (2 hours)",
+          "description": "Create and configure Supabase project with authentication and database schema",
+          "completed": false,
+          "assignee": "@system-architect-agent",
+          "id": "20250627003.001",
+          "assignees": []
+        },
+        {
+          "title": "Day 2-3: Next.js Frontend Development (2 days)",
+          "description": "Build authentication UI, dashboard, and token management components",
+          "completed": false,
+          "assignee": "@ui-designer-agent",
+          "id": "20250627003.002",
+          "assignees": []
+        },
+        {
+          "title": "Day 4-5: Simplified MCP Server Development (2 days)",
+          "description": "Build FastAPI server with SQLite database and core MCP tools",
+          "completed": false,
+          "assignee": "@coding-agent",
+          "id": "20250627003.003",
+          "assignees": []
+        },
+        {
+          "title": "Day 6-7: Docker Configuration (1 day)",
+          "description": "Create Dockerfile, docker-compose, and container optimization",
+          "completed": false,
+          "assignee": "@coding-agent",
+          "id": "20250627003.004",
+          "assignees": []
+        }
+      ],
+      "dueDate": "2025-02-03",
+      "created_at": "2025-06-27T09:19:28.769762+00:00",
+      "updated_at": "2025-06-27T09:20:04.166002+00:00"
+    },
+    {
+      "id": "20250627004",
+      "title": "Week 2: Integration & Launch",
+      "description": "Complete integration testing, documentation, and launch preparation for MVP. This includes token validation, end-to-end testing, documentation creation, and deployment.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "week-2",
+        "integration",
+        "launch"
+      ],
+      "dependencies": [],
+      "subtasks": [
+        {
+          "title": "Day 1-2: Token Integration & Validation (2 days)",
+          "description": "Implement token validation between frontend and backend with error handling",
+          "completed": false,
+          "assignee": "@coding-agent",
+          "id": "20250627004.001",
+          "assignees": []
+        },
+        {
+          "title": "Day 3-4: Documentation & Getting Started Guide (2 days)",
+          "description": "Create comprehensive user documentation, Docker instructions, and Cursor setup guide",
+          "completed": false,
+          "assignee": "@documentation-agent",
+          "id": "20250627004.002",
+          "assignees": []
+        },
+        {
+          "title": "Day 5-6: End-to-End Testing (2 days)",
+          "description": "Test complete user flow from registration to Cursor connection and MCP operations",
+          "completed": false,
+          "assignee": "@test-orchestrator-agent",
+          "id": "20250627004.003",
+          "assignees": []
+        },
+        {
+          "title": "Day 7: Deployment & Launch (1 day)",
+          "description": "Deploy frontend to Vercel, publish Docker image, and announce MVP launch",
+          "completed": false,
+          "assignee": "@devops-agent",
+          "id": "20250627004.004",
+          "assignees": []
+        }
+      ],
+      "dueDate": "2025-02-10",
+      "created_at": "2025-06-27T09:19:35.981362+00:00",
+      "updated_at": "2025-06-27T09:20:37.292776+00:00"
+    },
+    {
+      "id": "20250627005",
+      "title": "Task: Supabase Project Configuration",
+      "description": "Create new Supabase project, configure authentication settings, create database schema for API tokens, and set up Row Level Security policies.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": "**Acceptance Criteria:**\n- [ ] Supabase project created with proper naming\n- [ ] Email/password authentication enabled\n- [ ] API tokens table created with proper schema\n- [ ] RLS policies configured for user data security\n- [ ] Environment variables documented for integration\n\n**Technical Requirements:**\n- Project name: dhafnck-mcp-mvp\n- Authentication: Email/password only (no OAuth for MVP)\n- Database schema as defined in phase_00.mdc\n- API keys and URLs ready for frontend integration",
+      "estimatedEffort": "quick",
+      "assignees": [
+        "@system_architect_agent"
+      ],
+      "labels": [
+        "supabase",
+        "authentication",
+        "database"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-01-28",
+      "created_at": "2025-06-27T09:20:50.610612+00:00",
+      "updated_at": "2025-06-27T09:20:50.610612+00:00"
+    },
+    {
+      "id": "20250627006",
+      "title": "Task: Next.js Frontend Application",
+      "description": "Build complete Next.js frontend with authentication, token management dashboard, and Docker instructions. Focus on functionality over aesthetics for MVP speed.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": "**Acceptance Criteria:**\n- [ ] Landing page with clear value proposition\n- [ ] User registration/login with Supabase Auth\n- [ ] Token management dashboard (generate, list, revoke)\n- [ ] Docker instructions with user's token pre-filled\n- [ ] Getting started guide integration\n- [ ] Mobile-responsive design\n- [ ] Error handling and user feedback\n\n**Components to Build:**\n- AuthLayout (login/signup forms)\n- Dashboard (token management)\n- TokenGenerator component\n- DockerInstructions component\n- GettingStarted component\n- Navigation component\n\n**Tech Stack:**\n- Next.js 14 with App Router\n- Supabase client for auth\n- Tailwind CSS for styling\n- Lucide React for icons",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@ui_designer_agent",
+        "@coding_agent"
+      ],
+      "labels": [
+        "frontend",
+        "nextjs",
+        "ui",
+        "authentication"
+      ],
+      "dependencies": [
+        "20250627005"
+      ],
+      "subtasks": [],
+      "dueDate": "2025-01-30",
+      "created_at": "2025-06-27T09:21:05.331001+00:00",
+      "updated_at": "2025-06-27T09:22:37.900177+00:00"
+    },
+    {
+      "id": "20250627007",
+      "title": "Task: Simplified MCP Server Backend",
+      "description": "Build lightweight FastAPI server with SQLite database, core MCP tools, and Supabase token validation. Simplify existing DhafnckMCP codebase for MVP requirements.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "critical",
+      "details": "**Acceptance Criteria:**\n- [ ] FastAPI server with health check endpoint\n- [ ] SQLite database with schema initialization\n- [ ] Token validation middleware using Supabase API\n- [ ] Core MCP tools: manage_task, manage_project, manage_agent\n- [ ] Error handling and logging\n- [ ] Environment variable configuration\n- [ ] API documentation with OpenAPI\n\n**Core MCP Tools to Implement:**\n- manage_task (CRUD operations)\n- manage_project (basic project management)\n- manage_agent (agent assignment)\n- health_check (server status)\n\n**Technical Requirements:**\n- Python 3.11 compatibility\n- SQLite database in /data directory\n- Async/await patterns for performance\n- Pydantic models for validation\n- CORS configuration for frontend\n- Rate limiting per token",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "backend",
+        "fastapi",
+        "sqlite",
+        "mcp"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-02-01",
+      "created_at": "2025-06-27T09:21:18.391707+00:00",
+      "updated_at": "2025-06-27T09:21:18.391707+00:00"
+    },
+    {
+      "id": "20250627008",
+      "title": "Task: Docker Containerization",
+      "description": "Create optimized Docker configuration for the MCP server with proper volume mounts, environment variables, and health checks. Target image size under 200MB.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": "**Acceptance Criteria:**\n- [ ] Multi-stage Dockerfile for optimized image size\n- [ ] Docker Compose configuration for local development\n- [ ] Volume mounts for data persistence\n- [ ] Environment variable configuration\n- [ ] Health check endpoint integration\n- [ ] Container starts in under 30 seconds\n- [ ] Image size under 200MB\n- [ ] Documentation for Docker commands\n\n**Docker Configuration:**\n- Base image: python:3.11-slim\n- Working directory: /app\n- Data directory: /data (volume mounted)\n- Exposed port: 8000\n- Health check: GET /health\n- Environment variables: DHAFNCK_TOKEN, SUPABASE_URL, SUPABASE_ANON_KEY\n\n**Build Optimization:**\n- Multi-stage build\n- Minimal dependencies\n- Layer caching optimization\n- Security scanning ready",
+      "estimatedEffort": "small",
+      "assignees": [
+        "@devops_agent"
+      ],
+      "labels": [
+        "docker",
+        "containerization",
+        "deployment"
+      ],
+      "dependencies": [
+        "20250627007"
+      ],
+      "subtasks": [],
+      "dueDate": "2025-02-02",
+      "created_at": "2025-06-27T09:21:32.008412+00:00",
+      "updated_at": "2025-06-27T09:23:02.668515+00:00"
+    },
+    {
+      "id": "20250627009",
+      "title": "Task: Token Validation System",
+      "description": "Implement secure token validation between frontend token generation and backend authentication, including token refresh and revocation mechanisms.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "critical",
+      "details": "**Acceptance Criteria:**\n- [ ] Secure token generation (32-byte random)\n- [ ] Token validation middleware in FastAPI\n- [ ] Token revocation functionality\n- [ ] Rate limiting per token\n- [ ] Token expiration handling\n- [ ] Error responses for invalid tokens\n- [ ] Logging for security events\n\n**Security Requirements:**\n- Tokens stored securely in Supabase\n- HTTPS-only token transmission\n- Token validation against Supabase API\n- Rate limiting: 100 requests per minute per token\n- Token expiration: 30 days default\n- Audit logging for token usage\n\n**Integration Points:**\n- Frontend: Token generation UI\n- Backend: Validation middleware\n- Supabase: Token storage and validation\n- Docker: Environment variable configuration",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent",
+        "@security_auditor_agent"
+      ],
+      "labels": [
+        "security",
+        "authentication",
+        "tokens"
+      ],
+      "dependencies": [
+        "20250627005",
+        "20250627006"
+      ],
+      "subtasks": [],
+      "dueDate": "2025-02-05",
+      "created_at": "2025-06-27T09:21:45.933132+00:00",
+      "updated_at": "2025-06-27T09:22:54.130999+00:00"
+    },
+    {
+      "id": "20250627010",
+      "title": "Task: End-to-End Testing & Validation",
+      "description": "Create comprehensive test suite covering the complete user journey from account creation to successful Cursor MCP connection and operations.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": "**Acceptance Criteria:**\n- [ ] User registration/login flow testing\n- [ ] Token generation and management testing\n- [ ] Docker container deployment testing\n- [ ] Cursor MCP connection testing\n- [ ] Core MCP operations testing\n- [ ] Error handling and edge case testing\n- [ ] Performance validation (response times)\n- [ ] Security testing (token validation)\n\n**Test Scenarios:**\n1. User creates account → generates token → copies Docker command\n2. Docker container starts → validates token → exposes MCP endpoints\n3. Cursor connects → lists tools → executes MCP operations\n4. Token revocation → connection fails appropriately\n5. Invalid token → proper error responses\n6. Container restart → data persistence verification\n\n**Testing Tools:**\n- Playwright for frontend E2E testing\n- pytest for backend API testing\n- Docker integration testing\n- Cursor MCP connection validation\n- Performance benchmarking",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@test_orchestrator_agent"
+      ],
+      "labels": [
+        "testing",
+        "e2e",
+        "validation",
+        "cursor"
+      ],
+      "dependencies": [
+        "20250627008",
+        "20250627009"
+      ],
+      "subtasks": [],
+      "dueDate": "2025-02-08",
+      "created_at": "2025-06-27T09:21:59.678070+00:00",
+      "updated_at": "2025-06-27T09:23:19.846996+00:00"
+    },
+    {
+      "id": "20250627011",
+      "title": "Task: Documentation & User Guides",
+      "description": "Create comprehensive documentation including getting started guide, Docker setup instructions, Cursor configuration, and troubleshooting guide for MVP users.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "medium",
+      "details": "**Acceptance Criteria:**\n- [ ] Getting Started guide with step-by-step instructions\n- [ ] Docker installation and setup documentation\n- [ ] Cursor MCP configuration examples\n- [ ] Troubleshooting guide for common issues\n- [ ] API documentation for developers\n- [ ] Video tutorial (optional for MVP)\n- [ ] FAQ section with common questions\n\n**Documentation Structure:**\n1. **Quick Start Guide** (5-minute setup)\n   - Account creation\n   - Token generation\n   - Docker command execution\n   - Cursor connection\n\n2. **Detailed Setup Guide**\n   - Prerequisites and requirements\n   - Step-by-step installation\n   - Configuration options\n   - Environment variables\n\n3. **Troubleshooting Guide**\n   - Common connection issues\n   - Docker problems\n   - Token validation errors\n   - Performance issues\n\n4. **API Reference**\n   - Available MCP tools\n   - Request/response formats\n   - Error codes and messages",
+      "estimatedEffort": "small",
+      "assignees": [
+        "@documentation_agent"
+      ],
+      "labels": [
+        "documentation",
+        "user-guide",
+        "getting-started"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-02-07",
+      "created_at": "2025-06-27T09:22:14.221894+00:00",
+      "updated_at": "2025-06-27T09:22:14.221894+00:00"
+    },
+    {
+      "id": "20250627012",
+      "title": "Task: Deployment & Launch Preparation",
+      "description": "Deploy frontend to Vercel, publish Docker image to Docker Hub, set up monitoring, and prepare for MVP launch announcement.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": "**Acceptance Criteria:**\n- [ ] Frontend deployed to Vercel with custom domain\n- [ ] Docker image published to Docker Hub\n- [ ] CI/CD pipeline configured for future updates\n- [ ] Basic monitoring and analytics setup\n- [ ] Launch announcement prepared\n- [ ] Beta user onboarding process ready\n- [ ] Feedback collection system in place\n\n**Deployment Configuration:**\n- **Frontend**: Vercel deployment with environment variables\n- **Docker**: Multi-platform build (amd64, arm64)\n- **Domain**: Custom domain configuration (dhafnck-mcp.com)\n- **Monitoring**: Basic uptime and usage tracking\n- **Analytics**: User registration and usage metrics\n\n**Launch Checklist:**\n- [ ] All tests passing\n- [ ] Documentation complete\n- [ ] Performance benchmarks met\n- [ ] Security review completed\n- [ ] Beta user list prepared\n- [ ] Launch announcement ready\n- [ ] Support channels configured",
+      "estimatedEffort": "small",
+      "assignees": [
+        "@devops_agent"
+      ],
+      "labels": [
+        "deployment",
+        "launch",
+        "vercel",
+        "docker-hub"
+      ],
+      "dependencies": [
+        "20250627010",
+        "20250627011"
+      ],
+      "subtasks": [],
+      "dueDate": "2025-02-10",
+      "created_at": "2025-06-27T09:22:28.405998+00:00",
+      "updated_at": "2025-06-27T09:23:35.635075+00:00"
+    }
+  ]
+}

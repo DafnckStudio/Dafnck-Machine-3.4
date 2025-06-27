@@ -1,0 +1,1060 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Phase 05: Cloud Infrastructure Design
+
+**Document ID**: TECH-ARCH-05  
+**Created**: 2025-06-27  
+**Status**: Complete  
+**Agents**: @devops-agent, @system-architect-agent, @security-auditor-agent  
+
+---
+
+## Executive Summary
+
+### Cloud-Native Transformation
+This phase designs a comprehensive cloud infrastructure capable of scaling from 1,000 to 1,000,000 RPS using modern cloud-native technologies, container orchestration, and global distribution strategies.
+
+### Infrastructure Evolution Strategy
+
+| Scale Tier | Infrastructure Pattern | Orchestration | Global Distribution | Auto-Scaling |
+|------------|------------------------|---------------|-------------------|-------------|
+| **Tier 1** | Container Deployment | Docker Compose | Single Region | Manual |
+| **Tier 2** | Kubernetes Cluster | K8s + Helm | Multi-AZ | HPA + VPA |
+| **Tier 3** | Multi-Region K8s | Service Mesh | Multi-Region | Cluster Autoscaler |
+| **Tier 4** | Global Edge Network | Edge Computing | Worldwide | AI-Powered |
+
+---
+
+## Cloud Infrastructure Analysis
+
+### ⚙️ Cloud Platform Evaluation
+*Agent: @devops-agent*
+
+#### Cloud Provider Comparison
+
+| Feature | AWS | Google Cloud | Azure | Recommendation |
+|---------|-----|-------------|--------|----------------|
+| **Global Reach** | 31 regions | 27 regions | 60+ regions | ✅ **AWS** (mature) |
+| **Kubernetes** | EKS | GKE | AKS | ✅ **GKE** (native) |
+| **Database** | RDS, Aurora | Cloud SQL, Spanner | SQL Database | ✅ **AWS** (ecosystem) |
+| **Edge Computing** | Lambda@Edge | Cloud Functions | Azure Functions | ✅ **AWS** (coverage) |
+| **Cost** | Premium | Competitive | Competitive | 🔄 **GCP** (value) |
+| **Enterprise** | Excellent | Good | Excellent | ✅ **AWS** (maturity) |
+
+**Recommended Multi-Cloud Strategy:**
+- **Primary**: AWS (75% of workload)
+- **Secondary**: Google Cloud (20% - AI/ML workloads)
+- **Tertiary**: Azure (5% - enterprise integrations)
+
+#### AWS Infrastructure Design
+
+**Tier 1: Single Region Deployment (1,000 RPS)**
+```yaml
+Region: us-east-1 (N. Virginia)
+Availability Zones: 3 (us-east-1a, us-east-1b, us-east-1c)
+
+VPC Configuration:
+  CIDR: 10.0.0.0/16
+  Public Subnets: 
+    - 10.0.1.0/24 (us-east-1a) - Load Balancers
+    - 10.0.2.0/24 (us-east-1b) - Load Balancers
+    - 10.0.3.0/24 (us-east-1c) - Load Balancers
+  Private Subnets:
+    - 10.0.11.0/24 (us-east-1a) - Application Servers
+    - 10.0.12.0/24 (us-east-1b) - Application Servers
+    - 10.0.13.0/24 (us-east-1c) - Application Servers
+  Database Subnets:
+    - 10.0.21.0/24 (us-east-1a) - RDS
+    - 10.0.22.0/24 (us-east-1b) - RDS
+    - 10.0.23.0/24 (us-east-1c) - RDS
+
+Compute Resources:
+  Application Servers: 4x t3.large (2 vCPU, 8GB RAM)
+  Database: db.r5.xlarge (4 vCPU, 32GB RAM)
+  Cache: cache.r6g.large (2 vCPU, 13GB RAM)
+  Load Balancer: Application Load Balancer
+  
+Storage:
+  Application: EBS GP3 (1,000 IOPS)
+  Database: EBS GP3 (3,000 IOPS)
+  Backups: S3 Standard
+  Logs: S3 Intelligent Tiering
+```
+
+**Tier 2: Multi-AZ Kubernetes (10,000 RPS)**
+```yaml
+EKS Cluster Configuration:
+  Version: 1.28
+  Node Groups:
+    - General Purpose: 6x m5.large (2 vCPU, 8GB RAM)
+    - Memory Optimized: 4x r5.large (2 vCPU, 16GB RAM)
+    - Compute Optimized: 2x c5.large (2 vCPU, 4GB RAM)
+  
+  Auto Scaling:
+    Min Nodes: 8
+    Max Nodes: 50
+    Target CPU: 70%
+    Target Memory: 80%
+
+Managed Services:
+  RDS Aurora: Multi-AZ with read replicas
+  ElastiCache: Redis cluster mode
+  Application Load Balancer: Multi-AZ
+  CloudFront: Global CDN
+  Route 53: DNS with health checks
+
+Monitoring Stack:
+  CloudWatch: Metrics and logs
+  Prometheus: Application metrics
+  Grafana: Visualization
+  Jaeger: Distributed tracing
+```
+
+**Tier 3: Multi-Region Architecture (100,000 RPS)**
+```yaml
+Primary Region: us-east-1
+Secondary Regions: eu-west-1, ap-southeast-1
+
+Global Infrastructure:
+  Route 53: Latency-based routing
+  CloudFront: Global edge locations (200+)
+  Global Load Balancer: AWS Global Accelerator
+  
+Regional Deployment:
+  Each Region:
+    - EKS cluster with 20-100 nodes
+    - Aurora Global Database
+    - ElastiCache Global Datastore
+    - Regional S3 buckets with cross-region replication
+    
+Cross-Region Services:
+  Database: Aurora Global with <1s replication
+  Cache: ElastiCache Global Datastore
+  Storage: S3 Cross-Region Replication
+  Networking: VPC Peering + Transit Gateway
+```
+
+**Tier 4: Global Edge Network (1,000,000 RPS)**
+```yaml
+Edge Computing:
+  Lambda@Edge: 200+ locations
+  CloudFront Functions: Ultra-low latency
+  AWS Outposts: On-premises extensions
+  Wavelength: 5G edge computing
+
+Global Distribution:
+  - 5+ regions with full deployment
+  - 20+ edge locations with compute
+  - 200+ CDN edge locations
+  - Satellite connectivity (AWS Ground Station)
+
+Advanced Services:
+  - AWS Fargate: Serverless containers
+  - AWS App Runner: Fully managed containers
+  - Amazon ECS Anywhere: Hybrid deployment
+  - AWS Batch: High-performance computing
+```
+
+### 🏛️ Container Orchestration Design
+*Agent: @system-architect-agent*
+
+#### Kubernetes Architecture
+
+**Cluster Design Principles:**
+1. **High Availability**: Multi-master setup across AZs
+2. **Security**: Network policies, RBAC, Pod Security Standards
+3. **Scalability**: Horizontal and vertical pod autoscaling
+4. **Observability**: Comprehensive monitoring and logging
+5. **Cost Optimization**: Spot instances and right-sizing
+
+**Namespace Strategy:**
+```yaml
+Namespaces:
+  - system: Core system components
+  - monitoring: Prometheus, Grafana, Jaeger
+  - ingress: Ingress controllers and load balancers
+  - dhafnck-prod: Production application
+  - dhafnck-staging: Staging environment
+  - dhafnck-dev: Development environment
+```
+
+**Application Deployment Architecture:**
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dhafnck-mcp-api
+  namespace: dhafnck-prod
+spec:
+  replicas: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      app: dhafnck-mcp-api
+  template:
+    metadata:
+      labels:
+        app: dhafnck-mcp-api
+        version: v1.0.5
+    spec:
+      containers:
+      - name: api
+        image: dhafnck/mcp-api:v1.0.5
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: cache-credentials
+              key: url
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+```
+
+**Service Mesh Integration (Istio):**
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: dhafnck-mcp-api
+spec:
+  hosts:
+  - api.dhafnck-mcp.com
+  gateways:
+  - dhafnck-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/v1/
+    route:
+    - destination:
+        host: dhafnck-mcp-api
+        port:
+          number: 8000
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
+    timeout: 10s
+  - fault:
+      delay:
+        percentage:
+          value: 0.1
+        fixedDelay: 5s
+```
+
+**Auto-Scaling Configuration:**
+```yaml
+# Horizontal Pod Autoscaler
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dhafnck-mcp-api-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dhafnck-mcp-api
+  minReplicas: 10
+  maxReplicas: 1000
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Pods
+    pods:
+      metric:
+        name: http_requests_per_second
+      target:
+        type: AverageValue
+        averageValue: "100"
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 60
+      - type: Pods
+        value: 10
+        periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+
+---
+# Vertical Pod Autoscaler
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: dhafnck-mcp-api-vpa
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dhafnck-mcp-api
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: api
+      maxAllowed:
+        cpu: 2
+        memory: 4Gi
+      minAllowed:
+        cpu: 100m
+        memory: 256Mi
+```
+
+#### Service Mesh Architecture
+
+**Istio Configuration:**
+```yaml
+# Gateway Configuration
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: dhafnck-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: dhafnck-tls-cert
+    hosts:
+    - api.dhafnck-mcp.com
+    - admin.dhafnck-mcp.com
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - api.dhafnck-mcp.com
+    redirect:
+      httpsRedirect: true
+
+---
+# Destination Rule for Load Balancing
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: dhafnck-mcp-api
+spec:
+  host: dhafnck-mcp-api
+  trafficPolicy:
+    loadBalancer:
+      simple: LEAST_CONN
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        http1MaxPendingRequests: 50
+        maxRequestsPerConnection: 10
+    circuitBreaker:
+      consecutiveGatewayErrors: 5
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+  subsets:
+  - name: v1
+    labels:
+      version: v1.0.5
+    trafficPolicy:
+      portLevelSettings:
+      - port:
+          number: 8000
+        connectionPool:
+          tcp:
+            maxConnections: 50
+```
+
+### 🛡️ Security and Compliance Infrastructure
+*Agent: @security-auditor-agent*
+
+#### Security Architecture
+
+**Network Security:**
+```yaml
+VPC Security:
+  - Private subnets for all application workloads
+  - NAT Gateways for outbound internet access
+  - VPC Flow Logs for network monitoring
+  - AWS PrivateLink for service connections
+
+Security Groups:
+  ALB-SG:
+    Inbound: 80/443 from 0.0.0.0/0
+    Outbound: 8000 to APP-SG
+  
+  APP-SG:
+    Inbound: 8000 from ALB-SG
+    Outbound: 5432 to DB-SG, 6379 to CACHE-SG
+  
+  DB-SG:
+    Inbound: 5432 from APP-SG
+    Outbound: None
+  
+  CACHE-SG:
+    Inbound: 6379 from APP-SG
+    Outbound: None
+
+Network Policies (Kubernetes):
+  - Default deny all ingress/egress
+  - Explicit allow rules for required communication
+  - Namespace isolation
+  - Pod-to-pod encryption with Istio mTLS
+```
+
+**Identity and Access Management:**
+```yaml
+AWS IAM:
+  Service Accounts:
+    - dhafnck-mcp-api: EKS service account with IRSA
+    - dhafnck-mcp-worker: Background job processing
+    - dhafnck-mcp-admin: Administrative operations
+  
+  Policies:
+    - DhafnckMCPAPIPolicy: RDS, ElastiCache, S3 access
+    - DhafnckMCPWorkerPolicy: SQS, SNS, CloudWatch access
+    - DhafnckMCPAdminPolicy: Full administrative access
+
+Kubernetes RBAC:
+  ClusterRoles:
+    - dhafnck-mcp-admin: Full cluster access
+    - dhafnck-mcp-developer: Namespace-scoped access
+    - dhafnck-mcp-readonly: Read-only access
+  
+  ServiceAccounts:
+    - Each application pod has dedicated service account
+    - Principle of least privilege
+    - Token rotation enabled
+```
+
+**Data Protection:**
+```yaml
+Encryption:
+  At Rest:
+    - EBS volumes: AES-256 with AWS KMS
+    - RDS: Encryption with customer-managed keys
+    - S3: SSE-S3 with bucket keys
+    - ElastiCache: Encryption at rest enabled
+  
+  In Transit:
+    - TLS 1.3 for all external communications
+    - mTLS for service-to-service communication
+    - VPC endpoints for AWS service communication
+    - Certificate management with AWS Certificate Manager
+
+Key Management:
+  - AWS KMS with customer-managed keys
+  - Separate keys per environment and service
+  - Automatic key rotation enabled
+  - Hardware Security Module (HSM) for production
+```
+
+**Compliance Framework:**
+```yaml
+SOC 2 Type II:
+  - Continuous monitoring and logging
+  - Access controls and authentication
+  - Change management processes
+  - Incident response procedures
+
+GDPR Compliance:
+  - Data encryption and pseudonymization
+  - Right to be forgotten implementation
+  - Data processing audit trails
+  - Privacy by design principles
+
+Security Standards:
+  - CIS Kubernetes Benchmark compliance
+  - NIST Cybersecurity Framework alignment
+  - ISO 27001 security controls
+  - Regular penetration testing
+```
+
+---
+
+## Infrastructure as Code
+
+### Terraform Configuration
+
+**Main Infrastructure Setup:**
+```hcl
+# terraform/main.tf
+terraform {
+  required_version = ">= 1.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.20"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.10"
+    }
+  }
+  
+  backend "s3" {
+    bucket         = "dhafnck-mcp-terraform-state"
+    key            = "infrastructure/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "dhafnck-mcp-terraform-locks"
+  }
+}
+
+# VPC Module
+module "vpc" {
+  source = "./modules/vpc"
+  
+  name               = "dhafnck-mcp"
+  cidr               = "10.0.0.0/16"
+  azs                = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  private_subnets    = ["10.0.11.0/24", "10.0.12.0/24", "10.0.13.0/24"]
+  public_subnets     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  database_subnets   = ["10.0.21.0/24", "10.0.22.0/24", "10.0.23.0/24"]
+  
+  enable_nat_gateway = true
+  enable_vpn_gateway = false
+  enable_flow_log    = true
+  
+  tags = local.common_tags
+}
+
+# EKS Cluster Module
+module "eks" {
+  source = "./modules/eks"
+  
+  cluster_name                    = "dhafnck-mcp"
+  cluster_version                = "1.28"
+  vpc_id                         = module.vpc.vpc_id
+  subnet_ids                     = module.vpc.private_subnets
+  cluster_endpoint_private_access = true
+  cluster_endpoint_public_access  = true
+  cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
+  
+  node_groups = {
+    general = {
+      desired_capacity = 6
+      max_capacity     = 50
+      min_capacity     = 3
+      instance_types   = ["m5.large"]
+      
+      k8s_labels = {
+        Environment = "production"
+        NodeGroup   = "general"
+      }
+    }
+    
+    memory_optimized = {
+      desired_capacity = 2
+      max_capacity     = 20
+      min_capacity     = 1
+      instance_types   = ["r5.large"]
+      
+      k8s_labels = {
+        Environment = "production"
+        NodeGroup   = "memory-optimized"
+      }
+    }
+  }
+  
+  tags = local.common_tags
+}
+
+# RDS Aurora Module
+module "aurora" {
+  source = "./modules/aurora"
+  
+  name           = "dhafnck-mcp"
+  engine         = "aurora-postgresql"
+  engine_version = "15.3"
+  
+  vpc_id                = module.vpc.vpc_id
+  subnet_ids            = module.vpc.database_subnets
+  allowed_security_groups = [module.eks.worker_security_group_id]
+  
+  replica_count         = 2
+  instance_type         = "db.r5.large"
+  storage_encrypted     = true
+  deletion_protection   = true
+  backup_retention_period = 7
+  
+  tags = local.common_tags
+}
+
+# ElastiCache Redis Module
+module "redis" {
+  source = "./modules/redis"
+  
+  name           = "dhafnck-mcp"
+  node_type      = "cache.r6g.large"
+  num_cache_nodes = 3
+  
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+  allowed_security_groups = [module.eks.worker_security_group_id]
+  
+  at_rest_encryption_enabled = true
+  transit_encryption_enabled = true
+  
+  tags = local.common_tags
+}
+```
+
+**Helm Charts for Application Deployment:**
+```yaml
+# helm/dhafnck-mcp/values.yaml
+global:
+  imageRegistry: "your-registry.com"
+  imageTag: "v1.0.5"
+  environment: "production"
+
+api:
+  replicaCount: 10
+  image:
+    repository: dhafnck/mcp-api
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: ClusterIP
+    port: 8000
+  
+  ingress:
+    enabled: true
+    className: "istio"
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    hosts:
+      - host: api.dhafnck-mcp.com
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: dhafnck-mcp-tls
+        hosts:
+          - api.dhafnck-mcp.com
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 10
+    maxReplicas: 1000
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+worker:
+  replicaCount: 5
+  image:
+    repository: dhafnck/mcp-worker
+    pullPolicy: IfNotPresent
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+postgresql:
+  enabled: false  # Using external Aurora
+  
+redis:
+  enabled: false  # Using external ElastiCache
+
+monitoring:
+  prometheus:
+    enabled: true
+  grafana:
+    enabled: true
+  jaeger:
+    enabled: true
+```
+
+---
+
+## CI/CD Pipeline Design
+
+### GitOps Workflow
+
+**Pipeline Architecture:**
+```yaml
+Source Control: GitHub
+CI/CD Platform: GitHub Actions + ArgoCD
+Container Registry: Amazon ECR
+Artifact Storage: S3
+Security Scanning: Snyk + Trivy
+Testing: pytest + k6 + Cypress
+
+Environments:
+  - Development: Feature branches
+  - Staging: Main branch
+  - Production: Release tags
+```
+
+**GitHub Actions Workflow:**
+```yaml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  release:
+    types: [published]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: dhafnck-mcp
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+    
+    - name: Run tests
+      run: |
+        pytest tests/ --cov=src/ --cov-report=xml
+        
+    - name: Security scan
+      run: |
+        bandit -r src/
+        safety check
+    
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+    
+    - name: Build and push Docker image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+    
+    - name: Container security scan
+      run: |
+        trivy image --exit-code 1 --severity HIGH,CRITICAL \
+          $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: staging
+    
+    steps:
+    - name: Deploy to staging
+      run: |
+        # Update ArgoCD application
+        argocd app sync dhafnck-mcp-staging
+        argocd app wait dhafnck-mcp-staging --health
+
+  deploy-production:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    environment: production
+    
+    steps:
+    - name: Deploy to production
+      run: |
+        # Blue-green deployment via ArgoCD
+        argocd app sync dhafnck-mcp-prod
+        argocd app wait dhafnck-mcp-prod --health
+```
+
+---
+
+## Monitoring and Observability
+
+### Comprehensive Monitoring Stack
+
+**Metrics Collection:**
+```yaml
+Prometheus Configuration:
+  Retention: 15 days
+  Storage: 500GB SSD
+  Scrape Interval: 15s
+  
+  Targets:
+    - Kubernetes API Server
+    - Node Exporter (system metrics)
+    - cAdvisor (container metrics)
+    - Application metrics (/metrics endpoint)
+    - Database metrics (PostgreSQL Exporter)
+    - Cache metrics (Redis Exporter)
+
+Grafana Dashboards:
+  - Kubernetes Cluster Overview
+  - Application Performance
+  - Database Performance
+  - Cache Performance
+  - Business Metrics
+  - SLA/SLO Tracking
+```
+
+**Logging Architecture:**
+```yaml
+Log Collection: Fluent Bit
+Log Aggregation: Amazon CloudWatch Logs
+Log Analysis: Amazon OpenSearch
+Log Retention: 90 days (hot), 2 years (cold)
+
+Log Sources:
+  - Application logs (structured JSON)
+  - Kubernetes events
+  - Ingress access logs
+  - Database slow query logs
+  - Security audit logs
+  - Infrastructure logs
+```
+
+**Distributed Tracing:**
+```yaml
+Tracing System: Jaeger
+Sampling Rate: 1% (production), 100% (staging)
+Retention: 7 days
+Storage Backend: Elasticsearch
+
+Instrumentation:
+  - HTTP requests/responses
+  - Database queries
+  - Cache operations
+  - Message queue operations
+  - External API calls
+```
+
+---
+
+## Disaster Recovery and Business Continuity
+
+### Multi-Region Disaster Recovery
+
+**Recovery Objectives:**
+```yaml
+RTO (Recovery Time Objective): 15 minutes
+RPO (Recovery Point Objective): 1 minute
+Availability Target: 99.95% (4.38 hours downtime/year)
+
+Disaster Scenarios:
+  - Single AZ failure
+  - Regional failure
+  - Database corruption
+  - Application failure
+  - Security breach
+```
+
+**Backup Strategy:**
+```yaml
+Database Backups:
+  - Automated daily backups
+  - Point-in-time recovery (35 days)
+  - Cross-region backup replication
+  - Monthly backup testing
+
+Application Backups:
+  - Container images in multiple registries
+  - Configuration stored in Git
+  - Secrets backed up to AWS Secrets Manager
+  - Infrastructure as Code in version control
+
+Data Backups:
+  - S3 cross-region replication
+  - Versioning enabled
+  - Lifecycle policies for cost optimization
+  - Regular restore testing
+```
+
+---
+
+## Cost Optimization
+
+### Infrastructure Cost Management
+
+**Cost Optimization Strategies:**
+```yaml
+Compute Optimization:
+  - Spot instances for non-critical workloads (60-70% savings)
+  - Reserved instances for baseline capacity (30-60% savings)
+  - Right-sizing based on actual usage
+  - Auto-scaling to match demand
+
+Storage Optimization:
+  - S3 Intelligent Tiering
+  - EBS GP3 instead of GP2
+  - Lifecycle policies for old data
+  - Compression for logs and backups
+
+Network Optimization:
+  - VPC endpoints to avoid NAT Gateway costs
+  - CloudFront for static content delivery
+  - Regional data transfer optimization
+  - Bandwidth monitoring and alerting
+```
+
+**Cost Monitoring:**
+```yaml
+Tools:
+  - AWS Cost Explorer
+  - AWS Budgets with alerts
+  - Custom cost dashboards
+  - Resource tagging for cost allocation
+
+Budgets:
+  - Monthly budget alerts at 80% and 100%
+  - Department/team cost allocation
+  - Environment-specific budgets
+  - Service-specific cost tracking
+```
+
+---
+
+## Implementation Timeline
+
+### Phased Rollout Strategy
+
+**Phase 1 (Weeks 1-4): Foundation**
+- Week 1: AWS account setup and VPC configuration
+- Week 2: EKS cluster deployment and basic monitoring
+- Week 3: Database and cache setup
+- Week 4: CI/CD pipeline implementation
+
+**Phase 2 (Weeks 5-8): Application Deployment**
+- Week 5: Application containerization and deployment
+- Week 6: Load balancer and ingress configuration
+- Week 7: Auto-scaling and performance testing
+- Week 8: Security hardening and compliance
+
+**Phase 3 (Weeks 9-12): Scaling and Optimization**
+- Week 9: Multi-AZ deployment and testing
+- Week 10: Performance optimization and tuning
+- Week 11: Disaster recovery testing
+- Week 12: Production readiness review
+
+---
+
+## Next Steps
+
+### Final Implementation Phase
+1. **Security Audit**: Comprehensive security review and penetration testing
+2. **Performance Testing**: Load testing at target scale
+3. **Disaster Recovery Testing**: Full DR scenario validation
+4. **Documentation**: Operations runbooks and troubleshooting guides
+5. **Team Training**: Platform and operations training
+
+### Go-Live Checklist
+1. All monitoring and alerting configured
+2. Backup and recovery procedures tested
+3. Security controls validated
+4. Performance benchmarks met
+5. Team trained on operations procedures
+
+---
+
+## Agent Contributions
+
+- **@devops-agent**: Cloud infrastructure design, Kubernetes orchestration, CI/CD pipeline, monitoring setup, cost optimization
+- **@system-architect-agent**: Container architecture, service mesh design, auto-scaling strategy, disaster recovery planning
+- **@security-auditor-agent**: Security architecture, compliance framework, network security, encryption strategy
+
+**Document Version**: 1.0  
+**Last Updated**: 2025-06-27  
+**Next Review**: Implementation completion

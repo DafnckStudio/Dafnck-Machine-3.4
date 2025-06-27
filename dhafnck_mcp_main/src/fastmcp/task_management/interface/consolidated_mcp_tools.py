@@ -206,6 +206,37 @@ class ProjectManager:
         """List all projects"""
         return {"success": True, "projects": list(self._projects.values()), "count": len(self._projects)}
     
+    def update_project(self, project_id: str, name: str = None, description: str = None) -> Dict[str, Any]:
+        """Update an existing project"""
+        if project_id not in self._projects:
+            return {"success": False, "error": f"Project {project_id} not found"}
+        
+        project = self._projects[project_id]
+        updated_fields = []
+        
+        if name is not None:
+            project["name"] = name
+            updated_fields.append("name")
+        
+        if description is not None:
+            project["description"] = description
+            updated_fields.append("description")
+        
+        if not updated_fields:
+            return {"success": False, "error": "No fields to update. Provide name and/or description."}
+        
+        # Add updated timestamp
+        from datetime import datetime
+        project["updated_at"] = datetime.now().isoformat()
+        
+        self._save_projects()
+        return {
+            "success": True, 
+            "project": project,
+            "updated_fields": updated_fields,
+            "message": f"Project {project_id} updated successfully"
+        }
+    
     def create_task_tree(self, project_id: str, tree_id: str, tree_name: str, tree_description: str = "") -> Dict[str, Any]:
         """Create a new task tree in project"""
         if project_id not in self._projects:
@@ -848,10 +879,10 @@ class ToolRegistrationOrchestrator:
         if self._config.is_enabled("manage_project"):
             @mcp.tool()
             def manage_project(
-                action: Annotated[str, Field(description="Project action to perform. Available: create, get, list, create_tree, get_tree_status, orchestrate, dashboard")],
+                action: Annotated[str, Field(description="Project action to perform. Available: create, get, list, update, create_tree, get_tree_status, orchestrate, dashboard")],
                 project_id: Annotated[str, Field(description="Unique project identifier")] = None,
-                name: Annotated[str, Field(description="Project name (required for create action)")] = None,
-                description: Annotated[str, Field(description="Project description (optional for create action)")] = None,
+                name: Annotated[str, Field(description="Project name (required for create action, optional for update action)")] = None,
+                description: Annotated[str, Field(description="Project description (optional for create and update actions)")] = None,
                 tree_id: Annotated[str, Field(description="Task tree identifier (required for tree operations)")] = None,
                 tree_name: Annotated[str, Field(description="Task tree name (required for create_tree action)")] = None,
                 tree_description: Annotated[str, Field(description="Task tree description (optional for create_tree action)")] = None
@@ -865,6 +896,7 @@ class ToolRegistrationOrchestrator:
 • create: Initialize new project with basic structure
 • get: Retrieve project details and current status
 • list: Show all available projects
+• update: Modify project name and/or description
 • create_tree: Add task tree structure to project
 • get_tree_status: Check task tree completion status
 • orchestrate: Execute multi-agent project workflow
@@ -891,6 +923,11 @@ class ToolRegistrationOrchestrator:
                 elif action == "list":
                     return self._project_manager.list_projects()
                     
+                elif action == "update":
+                    if not project_id:
+                        return {"success": False, "error": "project_id is required for updating a project"}
+                    return self._project_manager.update_project(project_id, name, description)
+                    
                 elif action == "create_tree":
                     if not all([project_id, tree_id, tree_name]):
                         return {"success": False, "error": "project_id, tree_id, and tree_name are required"}
@@ -912,7 +949,7 @@ class ToolRegistrationOrchestrator:
                     return self._project_manager.get_orchestration_dashboard(project_id)
                     
                 else:
-                    return {"success": False, "error": f"Unknown action: {action}. Available: create, get, list, create_tree, get_tree_status, orchestrate, dashboard"}
+                    return {"success": False, "error": f"Unknown action: {action}. Available: create, get, list, update, create_tree, get_tree_status, orchestrate, dashboard"}
 
             logger.info("Registered manage_project tool")
         else:

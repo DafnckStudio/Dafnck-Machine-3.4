@@ -1,8 +1,8 @@
 {
   "dhafnck_mcp_main": {
     "id": "dhafnck_mcp_main",
-    "name": "DhafnckMCP - Advanced MCP Server Framework",
-    "description": "A comprehensive MCP server framework with integrated task management, multi-agent orchestration, and cursor rules integration capabilities. Built with FastMCP and Domain-Driven Design architecture.",
+    "name": "DhafnckMCP - Cloud-Scale MCP Server Framework",
+    "description": "Advanced MCP server framework with integrated task management, multi-agent orchestration, and cloud scaling architecture. Successfully completed comprehensive cloud scaling analysis (11/11 phases) ready for implementation from MVP to 1M+ RPS with enterprise-grade security, compliance, and monitoring. Built with FastMCP and Domain-Driven Design architecture for production-ready deployment.",
     "task_trees": {
       "main": {
         "id": "main",
@@ -13,6 +13,11 @@
         "id": "v1.0.0beta",
         "name": "Version 1.0.0 Beta Development",
         "description": "Current development branch focusing on beta testing, test suite stabilization, and performance optimization."
+      },
+      "v1.0.5dev": {
+        "id": "v1.0.5dev",
+        "name": "Version 1.0.5 Development - Cloud Scaling Architecture",
+        "description": "Development branch for creating scalable cloud MCP server architecture capable of handling 1000 to 1,000,000 requests per second with comprehensive technical analysis and implementation phases."
       }
     },
     "registered_agents": {
@@ -25,6 +30,36 @@
         "id": "test_orchestrator_agent",
         "name": "Test Orchestrator Agent",
         "call_agent": "@test-orchestrator-agent"
+      },
+      "system_architect_agent": {
+        "id": "system_architect_agent",
+        "name": "System Architect Agent",
+        "call_agent": "@system-architect-agent"
+      },
+      "performance_load_tester_agent": {
+        "id": "performance_load_tester_agent",
+        "name": "Performance Load Tester Agent",
+        "call_agent": "@performance-load-tester-agent"
+      },
+      "devops_agent": {
+        "id": "devops_agent",
+        "name": "DevOps Agent",
+        "call_agent": "@devops-agent"
+      },
+      "security_auditor_agent": {
+        "id": "security_auditor_agent",
+        "name": "Security Auditor Agent",
+        "call_agent": "@security-auditor-agent"
+      },
+      "task_planning_agent": {
+        "id": "task_planning_agent",
+        "name": "Task Planning Agent",
+        "call_agent": "@task-planning-agent"
+      },
+      "health_monitor_agent": {
+        "id": "health_monitor_agent",
+        "name": "Health Monitor Agent",
+        "call_agent": "@health-monitor-agent"
       }
     },
     "agent_assignments": {
@@ -33,9 +68,19 @@
       ],
       "test_orchestrator_agent": [
         "v1.0.0beta"
+      ],
+      "system_architect_agent": [
+        "v1.0.5dev"
+      ],
+      "task_planning_agent": [
+        "v1.0.5dev"
+      ],
+      "health_monitor_agent": [
+        "v1.0.5dev"
       ]
     },
-    "created_at": "2025-01-01T00:00:00Z"
+    "created_at": "2025-01-01T00:00:00Z",
+    "updated_at": "2025-06-27T11:53:05.032210"
   },
   "chaxiaiv2_dashboard_enhancements": {
     "id": "chaxiaiv2_dashboard_enhancements",
@@ -128,5 +173,21 @@
       ]
     },
     "created_at": "2025-01-01T00:00:00Z"
+  },
+  "test_update_project": {
+    "id": "test_update_project",
+    "name": "Final Project Name",
+    "description": "Updated description with new information",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z",
+    "updated_at": "2025-06-27T11:49:35.713540"
   }
 }

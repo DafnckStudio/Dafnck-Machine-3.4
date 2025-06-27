@@ -1,0 +1,698 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Phase 07: Backend Microservices Architecture
+
+**Document ID**: TECH-ARCH-07  
+**Created**: 2025-06-27  
+**Status**: Complete  
+**Agents**: @system-architect-agent, @coding-agent, @devops-agent  
+
+---
+
+## Executive Summary
+
+### Microservices Transformation Strategy
+This phase designs the decomposition of the monolithic DhafnckMCP server into a scalable microservices architecture capable of handling 1,000-1,000,000 RPS with event-driven communication, service mesh, and container orchestration.
+
+### Service Evolution Roadmap
+
+| Scale Tier | Architecture Pattern | Service Count | Communication | Orchestration |
+|------------|---------------------|---------------|---------------|---------------|
+| **Tier 1** | Modular Monolith | 1 service | HTTP/REST | Docker Compose |
+| **Tier 2** | Basic Microservices | 5-8 services | REST + Events | Kubernetes |
+| **Tier 3** | Service Mesh | 15-20 services | gRPC + Kafka | Istio + K8s |
+| **Tier 4** | Distributed Mesh | 50+ services | Event Streaming | Multi-Cluster |
+
+---
+
+## Service Architecture Design
+
+### 🏛️ Service Decomposition Strategy
+*Agent: @system-architect-agent*
+
+#### Domain-Driven Service Boundaries
+
+**Core Domain Services:**
+```yaml
+# User Management Service
+user-service:
+  responsibilities:
+    - User authentication and authorization
+    - User profile management
+    - Permission and role management
+  database: PostgreSQL (users, roles, permissions)
+  api: REST + GraphQL
+  events: [UserCreated, UserUpdated, UserDeleted]
+
+# Project Management Service  
+project-service:
+  responsibilities:
+    - Project lifecycle management
+    - Project metadata and configuration
+    - Project-level permissions
+  database: PostgreSQL (projects, configurations)
+  api: REST + GraphQL
+  events: [ProjectCreated, ProjectUpdated, ProjectArchived]
+
+# Task Management Service
+task-service:
+  responsibilities:
+    - Task CRUD operations
+    - Task state management
+    - Task dependencies and relationships
+  database: PostgreSQL (tasks, subtasks, dependencies)
+  api: REST + GraphQL + gRPC
+  events: [TaskCreated, TaskUpdated, TaskCompleted, TaskAssigned]
+
+# Agent Orchestration Service
+agent-service:
+  responsibilities:
+    - Agent registration and lifecycle
+    - Agent assignment and scheduling
+    - Agent capability management
+  database: PostgreSQL (agents, capabilities, assignments)
+  api: REST + gRPC
+  events: [AgentRegistered, AgentAssigned, AgentStatusChanged]
+
+# Context Management Service
+context-service:
+  responsibilities:
+    - Context generation and management
+    - Rule management and validation
+    - Template and configuration storage
+  database: PostgreSQL + S3 (contexts, rules, templates)
+  api: REST + gRPC
+  events: [ContextGenerated, RuleUpdated, TemplateCreated]
+```
+
+**Supporting Services:**
+```yaml
+# Notification Service
+notification-service:
+  responsibilities:
+    - Multi-channel notifications (email, websocket, webhook)
+    - Notification templates and preferences
+    - Delivery tracking and retry logic
+  database: PostgreSQL + Redis (notifications, preferences, queues)
+  api: REST + gRPC
+  events: [NotificationSent, NotificationFailed]
+
+# Analytics Service
+analytics-service:
+  responsibilities:
+    - Event tracking and metrics collection
+    - Performance monitoring and reporting
+    - Usage analytics and insights
+  database: ClickHouse + Redis (events, metrics, aggregations)
+  api: REST + GraphQL
+  events: [EventTracked, MetricCalculated]
+
+# File Storage Service
+storage-service:
+  responsibilities:
+    - File upload and management
+    - Content delivery and caching
+    - Backup and archival
+  database: S3 + PostgreSQL (metadata)
+  api: REST + gRPC
+  events: [FileUploaded, FileDeleted, BackupCompleted]
+```
+
+#### Service Communication Patterns
+
+**Synchronous Communication (REST/gRPC):**
+```python
+# Service-to-Service Communication
+class TaskServiceClient:
+    def __init__(self, base_url: str):
+        self.base_url = base_url
+        self.session = httpx.AsyncClient(
+            timeout=httpx.Timeout(5.0),
+            retries=3
+        )
+    
+    async def get_task(self, task_id: str) -> Task:
+        response = await self.session.get(
+            f"{self.base_url}/tasks/{task_id}",
+            headers={"Authorization": f"Bearer {self.get_service_token()}"}
+        )
+        response.raise_for_status()
+        return Task.parse_obj(response.json())
+    
+    async def create_task(self, task_data: TaskCreate) -> Task:
+        response = await self.session.post(
+            f"{self.base_url}/tasks",
+            json=task_data.dict(),
+            headers={"Authorization": f"Bearer {self.get_service_token()}"}
+        )
+        response.raise_for_status()
+        return Task.parse_obj(response.json())
+```
+
+**Asynchronous Communication (Events):**
+```python
+# Event-Driven Architecture
+from dataclasses import dataclass
+from datetime import datetime
+import asyncio
+import json
+
+@dataclass
+class DomainEvent:
+    event_id: str
+    event_type: str
+    aggregate_id: str
+    aggregate_type: str
+    event_data: dict
+    timestamp: datetime
+    version: int
+
+class EventBus:
+    def __init__(self, kafka_client):
+        self.kafka = kafka_client
+        self.handlers = {}
+    
+    async def publish(self, event: DomainEvent):
+        topic = f"{event.aggregate_type}.{event.event_type}"
+        await self.kafka.send(
+            topic,
+            key=event.aggregate_id,
+            value=json.dumps(event.__dict__, default=str)
+        )
+    
+    def subscribe(self, event_type: str, handler):
+        if event_type not in self.handlers:
+            self.handlers[event_type] = []
+        self.handlers[event_type].append(handler)
+    
+    async def handle_event(self, event: DomainEvent):
+        handlers = self.handlers.get(event.event_type, [])
+        await asyncio.gather(*[handler(event) for handler in handlers])
+
+# Usage Example
+async def handle_task_created(event: DomainEvent):
+    # Update analytics
+    await analytics_service.track_event("task_created", event.event_data)
+    # Send notification
+    await notification_service.notify_assignees(event.event_data["assignees"])
+    # Update context
+    await context_service.update_task_context(event.aggregate_id)
+
+event_bus.subscribe("TaskCreated", handle_task_created)
+```
+
+### 💻 Service Implementation Architecture
+*Agent: @coding-agent*
+
+#### FastAPI Service Template
+
+**Base Service Structure:**
+```python
+# Base Service Template
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+import structlog
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    logger.info("Starting service", service=SERVICE_NAME)
+    await database.connect()
+    await event_bus.connect()
+    await health_monitor.start()
+    
+    yield
+    
+    # Shutdown
+    logger.info("Shutting down service", service=SERVICE_NAME)
+    await health_monitor.stop()
+    await event_bus.disconnect()
+    await database.disconnect()
+
+app = FastAPI(
+    title=f"{SERVICE_NAME} API",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+# Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Health Check
+@app.get("/health")
+async def health_check():
+    checks = {
+        "database": await database.health_check(),
+        "event_bus": await event_bus.health_check(),
+        "external_deps": await check_dependencies()
+    }
+    
+    healthy = all(checks.values())
+    status_code = 200 if healthy else 503
+    
+    return {"status": "healthy" if healthy else "unhealthy", "checks": checks}
+
+# Service-specific routes
+from .routes import task_routes, project_routes
+app.include_router(task_routes.router, prefix="/api/v1")
+app.include_router(project_routes.router, prefix="/api/v1")
+```
+
+**Repository Pattern Implementation:**
+```python
+# Repository Pattern for Data Access
+from abc import ABC, abstractmethod
+from typing import List, Optional
+import asyncpg
+
+class TaskRepository(ABC):
+    @abstractmethod
+    async def create(self, task: TaskCreate) -> Task:
+        pass
+    
+    @abstractmethod
+    async def get_by_id(self, task_id: str) -> Optional[Task]:
+        pass
+    
+    @abstractmethod
+    async def update(self, task_id: str, updates: TaskUpdate) -> Task:
+        pass
+    
+    @abstractmethod
+    async def delete(self, task_id: str) -> bool:
+        pass
+
+class PostgreSQLTaskRepository(TaskRepository):
+    def __init__(self, db_pool: asyncpg.Pool):
+        self.db = db_pool
+    
+    async def create(self, task: TaskCreate) -> Task:
+        query = """
+            INSERT INTO tasks (id, title, description, status, priority, project_id)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING *
+        """
+        async with self.db.acquire() as conn:
+            row = await conn.fetchrow(
+                query, task.id, task.title, task.description,
+                task.status, task.priority, task.project_id
+            )
+            return Task.from_db_row(row)
+    
+    async def get_by_id(self, task_id: str) -> Optional[Task]:
+        query = "SELECT * FROM tasks WHERE id = $1"
+        async with self.db.acquire() as conn:
+            row = await conn.fetchrow(query, task_id)
+            return Task.from_db_row(row) if row else None
+```
+
+**Service Layer with Business Logic:**
+```python
+# Service Layer
+class TaskService:
+    def __init__(self, 
+                 task_repo: TaskRepository,
+                 event_bus: EventBus,
+                 agent_service: AgentServiceClient):
+        self.task_repo = task_repo
+        self.event_bus = event_bus
+        self.agent_service = agent_service
+    
+    async def create_task(self, task_data: TaskCreate, user_id: str) -> Task:
+        # Validate permissions
+        if not await self.can_create_task(user_id, task_data.project_id):
+            raise HTTPException(403, "Insufficient permissions")
+        
+        # Create task
+        task = await self.task_repo.create(task_data)
+        
+        # Publish event
+        event = DomainEvent(
+            event_id=str(uuid4()),
+            event_type="TaskCreated",
+            aggregate_id=task.id,
+            aggregate_type="Task",
+            event_data=task.dict(),
+            timestamp=datetime.utcnow(),
+            version=1
+        )
+        await self.event_bus.publish(event)
+        
+        # Auto-assign agents if specified
+        if task_data.assignees:
+            await self.assign_agents(task.id, task_data.assignees)
+        
+        return task
+    
+    async def assign_agents(self, task_id: str, agent_ids: List[str]):
+        for agent_id in agent_ids:
+            await self.agent_service.assign_task(agent_id, task_id)
+```
+
+### ⚙️ Container Orchestration & Deployment
+*Agent: @devops-agent*
+
+#### Kubernetes Deployment Configuration
+
+**Service Deployment Template:**
+```yaml
+# Kubernetes Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-service
+  namespace: dhafnck-prod
+  labels:
+    app: task-service
+    version: v1.0.0
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: task-service
+  template:
+    metadata:
+      labels:
+        app: task-service
+        version: v1.0.0
+    spec:
+      containers:
+      - name: task-service
+        image: dhafnck/task-service:v1.0.0
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: url
+        - name: KAFKA_BROKERS
+          value: "kafka-cluster:9092"
+        - name: SERVICE_NAME
+          value: "task-service"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: task-service
+  namespace: dhafnck-prod
+spec:
+  selector:
+    app: task-service
+  ports:
+  - port: 80
+    targetPort: 8000
+  type: ClusterIP
+```
+
+**Istio Service Mesh Configuration:**
+```yaml
+# Service Mesh Configuration
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: task-service
+spec:
+  hosts:
+  - task-service
+  http:
+  - match:
+    - headers:
+        version:
+          exact: v2
+    route:
+    - destination:
+        host: task-service
+        subset: v2
+  - route:
+    - destination:
+        host: task-service
+        subset: v1
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: task-service
+spec:
+  host: task-service
+  trafficPolicy:
+    circuitBreaker:
+      consecutiveErrors: 3
+      interval: 30s
+      baseEjectionTime: 30s
+    retryPolicy:
+      attempts: 3
+      perTryTimeout: 2s
+  subsets:
+  - name: v1
+    labels:
+      version: v1.0.0
+  - name: v2
+    labels:
+      version: v2.0.0
+```
+
+**Auto-scaling Configuration:**
+```yaml
+# Horizontal Pod Autoscaler
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: task-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: task-service
+  minReplicas: 3
+  maxReplicas: 50
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+```
+
+---
+
+## Event-Driven Architecture
+
+### Message Streaming with Kafka
+
+**Event Schema Registry:**
+```json
+{
+  "TaskCreated": {
+    "type": "record",
+    "name": "TaskCreated",
+    "fields": [
+      {"name": "taskId", "type": "string"},
+      {"name": "title", "type": "string"},
+      {"name": "projectId", "type": "string"},
+      {"name": "assignees", "type": {"type": "array", "items": "string"}},
+      {"name": "timestamp", "type": "long"}
+    ]
+  },
+  "TaskUpdated": {
+    "type": "record",
+    "name": "TaskUpdated",
+    "fields": [
+      {"name": "taskId", "type": "string"},
+      {"name": "changes", "type": "map", "values": "string"},
+      {"name": "timestamp", "type": "long"}
+    ]
+  }
+}
+```
+
+**Kafka Configuration:**
+```yaml
+# Kafka Cluster
+kafka:
+  cluster:
+    replicas: 3
+    storage: 1TB
+  topics:
+    - name: task.events
+      partitions: 12
+      replication: 3
+      retention: 7d
+    - name: project.events
+      partitions: 6
+      replication: 3
+      retention: 30d
+    - name: user.events
+      partitions: 6
+      replication: 3
+      retention: 90d
+  
+  consumer_groups:
+    - name: analytics-processor
+      topics: ["task.events", "project.events"]
+    - name: notification-service
+      topics: ["task.events", "user.events"]
+    - name: context-updater
+      topics: ["task.events", "project.events"]
+```
+
+---
+
+## Performance & Monitoring
+
+### Service Performance Optimization
+
+**Caching Strategy:**
+```python
+# Multi-level Caching
+import redis.asyncio as redis
+from functools import wraps
+
+class CacheManager:
+    def __init__(self):
+        self.redis = redis.from_url("redis://redis-cluster:6379")
+        self.local_cache = {}
+    
+    def cached(self, ttl: int = 300, key_prefix: str = ""):
+        def decorator(func):
+            @wraps(func)
+            async def wrapper(*args, **kwargs):
+                # Generate cache key
+                cache_key = f"{key_prefix}:{func.__name__}:{hash(str(args) + str(kwargs))}"
+                
+                # L1: Local cache
+                if cache_key in self.local_cache:
+                    return self.local_cache[cache_key]
+                
+                # L2: Redis cache
+                cached_result = await self.redis.get(cache_key)
+                if cached_result:
+                    result = json.loads(cached_result)
+                    self.local_cache[cache_key] = result
+                    return result
+                
+                # L3: Database
+                result = await func(*args, **kwargs)
+                
+                # Cache result
+                await self.redis.setex(cache_key, ttl, json.dumps(result, default=str))
+                self.local_cache[cache_key] = result
+                
+                return result
+            return wrapper
+        return decorator
+
+# Usage
+cache = CacheManager()
+
+@cache.cached(ttl=600, key_prefix="tasks")
+async def get_task_by_id(task_id: str) -> Task:
+    return await task_repo.get_by_id(task_id)
+```
+
+**Database Connection Pooling:**
+```python
+# Connection Pool Configuration
+import asyncpg
+
+class DatabaseManager:
+    def __init__(self):
+        self.pool = None
+    
+    async def initialize(self):
+        self.pool = await asyncpg.create_pool(
+            DATABASE_URL,
+            min_size=10,
+            max_size=50,
+            command_timeout=60,
+            server_settings={
+                'application_name': SERVICE_NAME,
+                'jit': 'off'
+            }
+        )
+    
+    async def health_check(self) -> bool:
+        try:
+            async with self.pool.acquire() as conn:
+                await conn.fetchval("SELECT 1")
+            return True
+        except Exception:
+            return False
+```
+
+---
+
+## Next Steps
+
+### Phase 08 Prerequisites
+1. **Security & Compliance Framework**: Zero-trust architecture, encryption, audit logging
+2. **Service Mesh Implementation**: Istio configuration, traffic management, security policies
+3. **Monitoring & Observability**: Distributed tracing, metrics collection, alerting
+4. **Data Consistency**: Event sourcing, CQRS, saga patterns
+
+### Critical Decisions Required
+1. **Service Mesh Selection**: Istio vs Linkerd vs Consul Connect
+2. **Event Streaming Platform**: Kafka vs Pulsar vs AWS EventBridge
+3. **Service Discovery**: Kubernetes DNS vs Consul vs etcd
+4. **Configuration Management**: ConfigMaps vs Vault vs AWS Parameter Store
+
+---
+
+## Agent Contributions
+
+- **@system-architect-agent**: Service decomposition strategy, domain boundaries, communication patterns, event-driven architecture design
+- **@coding-agent**: Service implementation templates, repository patterns, business logic architecture, API design
+- **@devops-agent**: Container orchestration, Kubernetes deployment, service mesh configuration, auto-scaling strategies
+
+**Document Version**: 1.0  
+**Last Updated**: 2025-06-27  
+**Next Review**: Phase 08 completion

@@ -14,7 +14,18 @@ Each agent has specific expertise and can be invoked using @agent-name syntax.
 - Agents can collaborate with each other as specified in their connectivity
 - Each agent has specialized knowledge and capabilities
 - Agent detail can found on `cursor_agent/yaml-lib/<agent-name>/**/*.yaml`
-
+- All documents created by agents need save on format `.mdc`, inside folder `.cursor/rules/02_AI-DOCS`, after create document, AI need be update document information to .cursor/rules/02_AI-DOCS/index.json
+{
+    document-id(str): {
+        name: str
+        category: str
+        description: str
+        usecase: str
+        useby: [str] (list agent AI)
+        created_at: ISOdate(format str),
+        created_by: ISOdate(format str),
+    }
+}
 ---
 
 ## 🔍 How to Get Agent Details
