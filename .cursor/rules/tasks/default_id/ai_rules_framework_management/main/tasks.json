@@ -5,7 +5,7 @@
       "title": "EPIC: Project Setup & Infrastructure",
       "description": "Set up the foundational infrastructure, development environment, and core project structure for the AI Rules Framework Management system.",
       "project_id": "ai_rules_framework_management",
-      "status": "in_progress",
+      "status": "done",
       "priority": "critical",
       "details": null,
       "estimatedEffort": "large",
@@ -19,10 +19,59 @@
         "setup"
       ],
       "dependencies": [],
-      "subtasks": [],
+      "subtasks": [
+        {
+          "title": "Environment Configuration Setup",
+          "description": "Create comprehensive environment configuration files and templates",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627001.001",
+          "assignees": []
+        },
+        {
+          "title": "CI/CD Pipeline Setup",
+          "description": "Implement comprehensive GitHub Actions CI/CD pipeline",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627001.002",
+          "assignees": []
+        },
+        {
+          "title": "Docker Configuration",
+          "description": "Create production-ready multi-stage Dockerfile and enhanced Docker Compose",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627001.003",
+          "assignees": []
+        },
+        {
+          "title": "Development Scripts",
+          "description": "Create automated development environment setup scripts",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627001.004",
+          "assignees": []
+        },
+        {
+          "title": "Monitoring & Logging",
+          "description": "Implement comprehensive monitoring, logging, and metrics collection",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627001.005",
+          "assignees": []
+        },
+        {
+          "title": "Infrastructure Documentation",
+          "description": "Create comprehensive infrastructure setup and deployment documentation",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627001.006",
+          "assignees": []
+        }
+      ],
       "dueDate": null,
       "created_at": "2025-06-26T23:48:47.769203+00:00",
-      "updated_at": "2025-06-26T23:51:02.483785+00:00"
+      "updated_at": "2025-06-27T00:20:59.777021+00:00"
     },
     {
       "id": "20250627002",
@@ -44,10 +93,91 @@
         "frontend"
       ],
       "dependencies": [],
-      "subtasks": [],
+      "subtasks": [
+        {
+          "title": "Install Monaco Editor Dependencies",
+          "description": "Add @monaco-editor/react and related packages for code editing functionality",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627002.001",
+          "assignees": []
+        },
+        {
+          "title": "Create MDX Parser Service",
+          "description": "Implement MDX parsing service with validation and metadata extraction capabilities",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627002.002",
+          "assignees": []
+        },
+        {
+          "title": "Build Core Editor Component",
+          "description": "Create Monaco-based editor component with MDX syntax highlighting and theming",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627002.003",
+          "assignees": []
+        },
+        {
+          "title": "Implement Real-time Preview",
+          "description": "Create MDX preview component that renders content in real-time as user types",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627002.004",
+          "assignees": []
+        },
+        {
+          "title": "Add Editor Layout",
+          "description": "Create split-pane layout with resizable editor and preview sections",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627002.005",
+          "assignees": []
+        },
+        {
+          "title": "Create Editor Page Route",
+          "description": "Add new /editor route with proper navigation and layout integration",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627002.006",
+          "assignees": []
+        },
+        {
+          "title": "Add Auto-save Functionality",
+          "description": "Implement debounced auto-save with visual indicators and error handling",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627002.007",
+          "assignees": []
+        },
+        {
+          "title": "Build Validation System",
+          "description": "Create MDX syntax validation with error reporting and inline error indicators",
+          "completed": true,
+          "assignee": "",
+          "id": "20250627002.008",
+          "assignees": []
+        },
+        {
+          "title": "Create Template System",
+          "description": "Build library of common AI rule templates with categorization and search",
+          "completed": false,
+          "assignee": "",
+          "id": "20250627002.009",
+          "assignees": []
+        },
+        {
+          "title": "Integrate File Operations",
+          "description": "Add save, load, create new file functionality with proper file management integration",
+          "completed": false,
+          "assignee": "",
+          "id": "20250627002.010",
+          "assignees": []
+        }
+      ],
       "dueDate": null,
       "created_at": "2025-06-26T23:48:51.906556+00:00",
-      "updated_at": "2025-06-26T23:48:51.906556+00:00"
+      "updated_at": "2025-06-27T01:12:37.990494+00:00"
     },
     {
       "id": "20250627003",
@@ -152,7 +282,7 @@
       "title": "Initialize Next.js Project Structure",
       "description": "Create the foundational Next.js 14 application with TypeScript configuration, directory structure, and basic development tools setup. This is the first critical step in setting up the AI Rules Framework Management system.",
       "project_id": "ai_rules_framework_management",
-      "status": "in_progress",
+      "status": "done",
       "priority": "critical",
       "details": "**Acceptance Criteria:**\n- Next.js 14 project initialized with App Router\n- TypeScript configuration complete with strict mode\n- ESLint and Prettier configured with consistent rules\n- Basic directory structure created (src/, components/, lib/, utils/, types/)\n- Package.json with all core dependencies\n- Development server running successfully on localhost:3000\n- Basic layout and page structure in place\n- Tailwind CSS configured and working\n\n**Technical Requirements:**\n- Use Next.js 14 with App Router (not Pages Router)\n- TypeScript with strict configuration\n- Tailwind CSS for styling\n- ESLint + Prettier for code quality\n- Basic folder structure following Next.js best practices\n\n**Dependencies:**\nNone - this is the foundation task",
       "estimatedEffort": "medium",
@@ -169,14 +299,14 @@
       "subtasks": [],
       "dueDate": null,
       "created_at": "2025-06-26T23:51:21.623015+00:00",
-      "updated_at": "2025-06-26T23:53:25.350373+00:00"
+      "updated_at": "2025-06-27T00:01:23.601209+00:00"
     },
     {
       "id": "20250627008",
       "title": "Setup Database Infrastructure (PostgreSQL + Prisma)",
       "description": "Configure PostgreSQL database with Prisma ORM, create initial schema for users, workspaces, files, and relationships as defined in the Technical Architecture document.",
       "project_id": "ai_rules_framework_management",
-      "status": "todo",
+      "status": "done",
       "priority": "critical",
       "details": "**Acceptance Criteria:**\n- PostgreSQL database running (local development + Docker)\n- Prisma ORM configured and connected\n- Complete database schema implemented from Technical Architecture\n- Database migrations working\n- Seed data for development environment\n- Database connection pooling configured\n- Basic CRUD operations tested\n\n**Technical Requirements:**\n- PostgreSQL 15+ with JSONB support\n- Prisma 5.x as ORM\n- Database schema includes: users, workspaces, workspace_members, mdx_files, file_links, file_versions, tags, file_tags, export_jobs\n- Proper indexes for performance\n- UUID primary keys\n- Timestamps and audit fields\n- JSONB fields for flexible metadata\n\n**Database Tables to Create:**\n1. users (authentication and profile)\n2. workspaces (multi-tenancy)\n3. workspace_members (access control)\n4. mdx_files (core content)\n5. file_links (dependency mapping)\n6. file_versions (version history)\n7. tags and file_tags (categorization)\n8. export_jobs (export tracking)\n\n**Dependencies:**\n- Next.js project structure must be initialized first",
       "estimatedEffort": "large",
@@ -196,7 +326,7 @@
       "subtasks": [],
       "dueDate": null,
       "created_at": "2025-06-26T23:51:34.657252+00:00",
-      "updated_at": "2025-06-26T23:52:50.526996+00:00"
+      "updated_at": "2025-06-27T00:09:11.668589+00:00"
     },
     {
       "id": "20250627009",
