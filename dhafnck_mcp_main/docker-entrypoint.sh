@@ -7,6 +7,14 @@ set -e
 echo "🚀 Starting DhafnckMCP Server..."
 echo "================================"
 
+# Activate virtual environment
+if [ -f "/app/.venv/bin/activate" ]; then
+    source /app/.venv/bin/activate
+    echo "✅ Virtual environment activated"
+else
+    echo "⚠️  Virtual environment not found, using system Python"
+fi
+
 # Function to log with timestamp
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
@@ -77,6 +85,10 @@ validate_supabase() {
 # Function to perform health check
 health_check() {
     log "🏥 Performing startup health check..."
+    
+    # Show which Python is being used
+    log "🐍 Python path: $(which python)"
+    log "🐍 Python version: $(python --version)"
     
     # Test Python import
     if ! python -c "from src.fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server" 2>/dev/null; then

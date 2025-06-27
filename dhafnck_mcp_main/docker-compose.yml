@@ -10,9 +10,12 @@ services:
     container_name: dhafnck-mcp-server
     restart: unless-stopped
     
-    # Port mapping (optional - MCP typically uses stdio)
+    # Port mapping for HTTP MCP server
     ports:
       - "8000:8000"
+    
+    # Default command (stdio mode for MCP)
+    # command: ["python", "-m", "fastmcp.server.mcp_entry_point"]
     
     # Environment variables
     environment:
@@ -31,6 +34,11 @@ services:
       - SUPABASE_URL=${SUPABASE_URL:-}
       - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
       - DHAFNCK_TOKEN=${DHAFNCK_TOKEN:-}
+      
+      # HTTP Transport Configuration
+      - FASTMCP_TRANSPORT=streamable-http
+      - FASTMCP_HOST=0.0.0.0
+      - FASTMCP_PORT=8000
     
     # Volume mounts for data persistence
     volumes:
@@ -44,9 +52,9 @@ services:
       # Development mode: mount source code (comment out for production)
       # - ./src:/app/src:ro
     
-    # Health check
+    # Health check for HTTP mode
     healthcheck:
-      test: ["CMD", "python", "-c", "from src.fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server; server = create_dhafnck_mcp_server(); tools = server.get_tools(); print('OK' if len(tools) > 0 else exit(1))"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health", "||", "wget", "-q", "--spider", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -74,7 +82,7 @@ services:
       - no-new-privileges:true
     
     # User specification (matches Dockerfile)
-    user: "1000:1000"  # Adjust if needed
+    # user: "1000:1000"  # Disabled for permission fix
     
     # Network mode for MCP (typically stdio, but HTTP available)
     # network_mode: "bridge"
@@ -93,33 +101,4 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./logs
-
-# Optional: Development override
-# Use: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
----
-# docker-compose.dev.yml (development overrides)
-version: '3.8'
-
-services:
-  dhafnck-mcp:
-    build:
-      target: builder  # Use builder stage for development
-    
-    # Development environment variables
-    environment:
-      - FASTMCP_LOG_LEVEL=DEBUG
-      - FASTMCP_ENABLE_RICH_TRACEBACKS=1
-    
-    # Mount source code for live reload
-    volumes:
-      - ./src:/app/src:ro
-      - ./pyproject.toml:/app/pyproject.toml:ro
-      - ./uv.lock:/app/uv.lock:ro
-    
-    # Development command (with auto-reload if supported)
-    command: ["python", "-m", "fastmcp.server.mcp_entry_point"]
-    
-    # Remove resource limits for development
-    deploy:
-      resources: {} 
+      device: ./logs 

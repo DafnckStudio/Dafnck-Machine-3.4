@@ -6,23 +6,18 @@ version: '3.8'
 services:
   dhafnck-mcp:
     build:
-      target: builder  # Use builder stage for development tools
+      target: builder  # Use builder stage for development
     
     # Development environment variables
     environment:
       - FASTMCP_LOG_LEVEL=DEBUG
       - FASTMCP_ENABLE_RICH_TRACEBACKS=1
-      - FASTMCP_TEST_MODE=1
     
-    # Mount source code for live development
+    # Mount source code for live reload
     volumes:
       - ./src:/app/src:ro
       - ./pyproject.toml:/app/pyproject.toml:ro
       - ./uv.lock:/app/uv.lock:ro
-      - ./tests:/app/tests:ro
-    
-    # Development command with verbose logging
-    command: ["python", "-m", "fastmcp.server.mcp_entry_point"]
     
     # Remove resource limits for development
     deploy:

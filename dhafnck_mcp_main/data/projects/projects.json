@@ -1,0 +1,22 @@
+{
+  "dhafnck_mcp_main": {
+    "id": "dhafnck_mcp_main",
+    "name": "DhafnckMCP Main Project",
+    "description": "Main project for building MCP server dhafnck_mcp with multiple projects support",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      },
+      "v2.1---multiple-projects-support": {
+        "id": "v2.1---multiple-projects-support",
+        "name": "Multiple Projects Support",
+        "description": "Task tree for implementing multiple projects support feature"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
+  }
+}

@@ -2,7 +2,7 @@
 # Target: Image size under 200MB with full functionality
 
 # Stage 1: Build stage
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 # Set build arguments
 ARG PYTHONUNBUFFERED=1
@@ -17,20 +17,22 @@ RUN apt-get update && apt-get install -y \
 # Create app directory
 WORKDIR /app
 
-# Copy dependency files and README (needed for package build)
-COPY pyproject.toml uv.lock* README.md ./
-
 # Install uv for faster dependency resolution
 RUN pip install uv
+
+# Copy dependency files and README (needed for package build)
+COPY pyproject.toml uv.lock* README.md ./
 
 # Copy source code
 COPY src/ src/
 
-# Install dependencies and the package using uv
-RUN uv sync --no-dev --frozen && uv pip install -e .
+# Create virtual environment and install dependencies
+RUN uv venv .venv
+RUN uv sync --frozen
+RUN uv pip install -e .
 
 # Stage 2: Runtime stage
-FROM python:3.11-slim as runtime
+FROM python:3.11-slim AS runtime
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -68,8 +70,9 @@ USER dhafnck
 # Expose port
 EXPOSE 8000
 
-# Activate virtual environment by updating PATH
+# Activate virtual environment by updating PATH (must be after USER directive)
 ENV PATH="/app/.venv/bin:$PATH"
+ENV VIRTUAL_ENV="/app/.venv"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \

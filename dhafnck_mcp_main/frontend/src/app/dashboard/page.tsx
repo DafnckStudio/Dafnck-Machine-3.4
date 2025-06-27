@@ -129,6 +129,21 @@ export default function Dashboard() {
   -v dhafnck-data:/data \\
   dhafnck/mcp-server:latest`
 
+  const dockerBuildCommand = `# Build the Docker image from source
+docker build -t dhafnck/mcp-server:latest .`
+
+  const dockerDebugCommand = (token: string) => `# Debug mode with development features
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build \\
+  -e DHAFNCK_TOKEN="${token}" \\
+  -e FASTMCP_LOG_LEVEL=DEBUG \\
+  -e FASTMCP_ENABLE_RICH_TRACEBACKS=1`
+
+  const dockerStopCommand = `# Stop and remove container
+docker stop dhafnck-mcp && docker rm dhafnck-mcp`
+
+  const dockerLogsCommand = `# View container logs
+docker logs -f dhafnck-mcp`
+
   const tabs = [
     {
       id: 'tokens' as TabType,
@@ -352,50 +367,171 @@ export default function Dashboard() {
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold text-gray-900">Docker Setup</h3>
                   <p className="mt-1 text-sm text-gray-600">
-                    Run your MCP server locally using Docker
+                    Run your MCP server locally using Docker with various deployment options
                   </p>
                 </div>
                 
-                <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Docker Command:
-                    </label>
-                    <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-gray-400">Terminal</span>
-                        <div className="flex items-center space-x-2">
+                <div className="space-y-6">
+                  {/* Quick Start */}
+                  <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
+                    <h4 className="font-medium text-gray-900 mb-3">🚀 Quick Start (Recommended)</h4>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Run Pre-built Image:
+                      </label>
+                      <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-gray-400">Terminal</span>
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => toggleTokenVisibility('docker-config')}
+                              className="text-gray-400 hover:text-white transition-colors"
+                              title={visibleTokens.has('docker-config') ? 'Hide token' : 'Show token'}
+                            >
+                              {visibleTokens.has('docker-config') ? (
+                                <EyeOff className="h-4 w-4" />
+                              ) : (
+                                <Eye className="h-4 w-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleCopyToken(dockerCommand(tokens[0].token))}
+                              className="text-gray-400 hover:text-white transition-colors"
+                              title="Copy Docker command"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                        <pre className="whitespace-pre-wrap break-all text-xs sm:text-sm">
+                          {dockerCommand(visibleTokens.has('docker-config') ? tokens[0].token : '•'.repeat(32))}
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Build from Source */}
+                  <div className="bg-blue-50 rounded-lg p-4 sm:p-6">
+                    <h4 className="font-medium text-blue-900 mb-3">🔨 Build from Source</h4>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Build Docker Image:
+                      </label>
+                      <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-gray-400">Terminal</span>
                           <button
-                            onClick={() => toggleTokenVisibility('docker-config')}
+                            onClick={() => handleCopyToken(dockerBuildCommand)}
                             className="text-gray-400 hover:text-white transition-colors"
-                            title={visibleTokens.has('docker-config') ? 'Hide token' : 'Show token'}
-                          >
-                            {visibleTokens.has('docker-config') ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </button>
-                          <button
-                            onClick={() => handleCopyToken(dockerCommand(tokens[0].token))}
-                            className="text-gray-400 hover:text-white transition-colors"
-                            title="Copy Docker command"
+                            title="Copy build command"
                           >
                             <Copy className="h-4 w-4" />
                           </button>
                         </div>
+                        <pre className="whitespace-pre-wrap break-all text-xs sm:text-sm">
+                          {dockerBuildCommand}
+                        </pre>
                       </div>
-                      <pre className="whitespace-pre-wrap break-all text-xs sm:text-sm">
-                        {dockerCommand(visibleTokens.has('docker-config') ? tokens[0].token : '•'.repeat(32))}
-                      </pre>
+                    </div>
+                    <p className="text-sm text-blue-800">
+                      Run this command in the project root directory to build the Docker image from source code.
+                    </p>
+                  </div>
+
+                  {/* Debug Mode */}
+                  <div className="bg-yellow-50 rounded-lg p-4 sm:p-6">
+                    <h4 className="font-medium text-yellow-900 mb-3">🐛 Debug Mode</h4>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Development with Live Reload:
+                      </label>
+                      <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-gray-400">Terminal</span>
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => toggleTokenVisibility('docker-debug')}
+                              className="text-gray-400 hover:text-white transition-colors"
+                              title={visibleTokens.has('docker-debug') ? 'Hide token' : 'Show token'}
+                            >
+                              {visibleTokens.has('docker-debug') ? (
+                                <EyeOff className="h-4 w-4" />
+                              ) : (
+                                <Eye className="h-4 w-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleCopyToken(dockerDebugCommand(tokens[0].token))}
+                              className="text-gray-400 hover:text-white transition-colors"
+                              title="Copy debug command"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                        <pre className="whitespace-pre-wrap break-all text-xs sm:text-sm">
+                          {dockerDebugCommand(visibleTokens.has('docker-debug') ? tokens[0].token : '•'.repeat(32))}
+                        </pre>
+                      </div>
+                    </div>
+                    <p className="text-sm text-yellow-800">
+                      Includes verbose logging, rich tracebacks, and live code reload for development.
+                    </p>
+                  </div>
+
+                  {/* Management Commands */}
+                  <div className="bg-red-50 rounded-lg p-4 sm:p-6">
+                    <h4 className="font-medium text-red-900 mb-3">⚙️ Management Commands</h4>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Stop Container:
+                        </label>
+                        <div className="bg-gray-900 text-green-400 p-3 rounded-lg font-mono text-sm overflow-x-auto">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-gray-400 text-xs">Terminal</span>
+                            <button
+                              onClick={() => handleCopyToken(dockerStopCommand)}
+                              className="text-gray-400 hover:text-white transition-colors"
+                              title="Copy stop command"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </button>
+                          </div>
+                          <pre className="whitespace-pre-wrap break-all text-xs">
+                            {dockerStopCommand}
+                          </pre>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          View Logs:
+                        </label>
+                        <div className="bg-gray-900 text-green-400 p-3 rounded-lg font-mono text-sm overflow-x-auto">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-gray-400 text-xs">Terminal</span>
+                            <button
+                              onClick={() => handleCopyToken(dockerLogsCommand)}
+                              className="text-gray-400 hover:text-white transition-colors"
+                              title="Copy logs command"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </button>
+                          </div>
+                          <pre className="whitespace-pre-wrap break-all text-xs">
+                            {dockerLogsCommand}
+                          </pre>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h4 className="font-medium text-blue-900 mb-2">Next Steps:</h4>
-                    <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
-                      <li>Copy and run the Docker command above</li>
-                      <li>Server will be available at <code className="bg-blue-100 px-1 rounded">localhost:8000</code></li>
+
+                  {/* Next Steps */}
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <h4 className="font-medium text-green-900 mb-2">📋 Next Steps:</h4>
+                    <ol className="list-decimal list-inside space-y-2 text-sm text-green-800">
+                      <li>Choose your deployment method above (Quick Start recommended for first-time users)</li>
+                      <li>Server will be available at <code className="bg-green-100 px-1 rounded">localhost:8000</code></li>
                       <li>Go to the Configuration tab to set up Cursor</li>
                       <li>Start using AI-powered task management!</li>
                     </ol>
