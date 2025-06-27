@@ -80,33 +80,26 @@ export default function MCPConfig({
           debug: true
         }
       },
-      docker: {
-        dhafnck_mcp: {
-          command: "docker",
-          args: [
-            "run",
-            "-i",
-            "--rm",
-            "-e", `DHAFNCK_TOKEN=${displayToken}`,
-            "-v", "dhafnck-data:/data",
-            "dhafnck/mcp-server:latest"
-          ],
-          env: {
-            DHAFNCK_TOKEN: displayToken
+      docker: {        
+        dhafnck_mcp_http: {
+          url: "http://localhost:8000/mcp/",
+          headers: {
+            Authorization: `Bearer ${displayToken}`
           },
-          transport: "stdio",
-          debug: true
+          transport: "http"
         }
       }
     }
 
     const sequentialThinkingConfig = {
       "sequential-thinking": {
-        command: "npx",
-        args: ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-        env: {},
-        transport: "stdio"
-      }
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "env": {}
+    },
     }
 
     const selectedConfig = baseConfig[env]
