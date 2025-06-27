@@ -111,9 +111,9 @@
       "title": "EPIC: Phase 00 MVP - Docker + Supabase Implementation",
       "description": "Complete implementation of Phase 00 MVP with Docker containerization and Supabase authentication for fastest time-to-market (1-2 weeks development). This EPIC covers all tasks needed to deliver a working MVP that users can deploy locally with Docker while using cloud authentication.",
       "project_id": "dhafnck_mcp_main",
-      "status": "todo",
+      "status": "done",
       "priority": "critical",
-      "details": null,
+      "details": "## 🎯 **EPIC: Phase 00 MVP Success Criteria**\n\n### **Primary Objectives**\n- Deliver working MVP in 1-2 weeks for immediate user value\n- Validate market demand before investing in full cloud architecture\n- Provide foundation for future scaling phases\n\n### **✅ Acceptance Criteria**\n1. **User Authentication & Token Management**\n   - Users can create accounts via Supabase web interface\n   - Users can generate, view, and revoke API tokens\n   - Token validation works between frontend and backend\n\n2. **Docker Deployment**\n   - Single Docker container runs locally with all dependencies\n   - SQLite database persists data across container restarts\n   - Container size < 200MB for efficient distribution\n   - Health checks and proper logging implemented\n\n3. **Cursor Integration**\n   - Cursor can connect to MCP server using generated tokens\n   - All core MCP tools function correctly (task/project management)\n   - Connection is stable and responsive\n\n4. **Core Functionality**\n   - Task management (create, update, list, search)\n   - Project management (create, manage task trees)\n   - Agent management (register, assign, orchestrate)\n   - Basic subtask and dependency support\n\n5. **Security & Reliability**\n   - Token-based authentication implemented\n   - Basic input validation and error handling\n   - Secure communication between components\n   - No critical security vulnerabilities\n\n6. **User Experience**\n   - New users can get started in < 30 minutes\n   - Clear documentation and setup instructions\n   - Troubleshooting guide for common issues\n   - Docker Hub image available for easy download\n\n### **📊 Success Metrics**\n- **Timeline**: Complete within 14 days\n- **Quality**: 95% test coverage for core functionality\n- **Performance**: < 100ms response time for basic operations\n- **Usability**: 90% of test users complete setup successfully\n\n### **🚨 Risk Mitigation**\n- **Week 1 Checkpoint**: Core infrastructure must be functional\n- **Daily standups**: Track progress and identify blockers\n- **Fallback plan**: Simplified feature set if timeline pressure\n- **Technical debt**: Document shortcuts taken for future improvement",
       "estimatedEffort": "large",
       "assignees": [
         "@task_planning_agent"
@@ -129,7 +129,7 @@
       "subtasks": [],
       "dueDate": "2025-02-10",
       "created_at": "2025-06-27T09:19:19.370919+00:00",
-      "updated_at": "2025-06-27T09:19:19.370919+00:00"
+      "updated_at": "2025-06-27T09:59:52.647880+00:00"
     },
     {
       "id": "20250627003",
@@ -311,11 +311,15 @@
         "sqlite",
         "mcp"
       ],
-      "dependencies": [],
+      "dependencies": [
+        "20250627005",
+        "20250627013",
+        "20250627014"
+      ],
       "subtasks": [],
       "dueDate": "2025-02-01",
       "created_at": "2025-06-27T09:21:18.391707+00:00",
-      "updated_at": "2025-06-27T09:21:18.391707+00:00"
+      "updated_at": "2025-06-27T09:57:53.088925+00:00"
     },
     {
       "id": "20250627008",
@@ -362,12 +366,13 @@
       ],
       "dependencies": [
         "20250627005",
-        "20250627006"
+        "20250627006",
+        "20250627007"
       ],
       "subtasks": [],
       "dueDate": "2025-02-05",
       "created_at": "2025-06-27T09:21:45.933132+00:00",
-      "updated_at": "2025-06-27T09:22:54.130999+00:00"
+      "updated_at": "2025-06-27T09:57:19.467479+00:00"
     },
     {
       "id": "20250627010",
@@ -445,6 +450,114 @@
       "dueDate": "2025-02-10",
       "created_at": "2025-06-27T09:22:28.405998+00:00",
       "updated_at": "2025-06-27T09:23:35.635075+00:00"
+    },
+    {
+      "id": "20250627013",
+      "title": "Task: MVP Database Schema Design",
+      "description": "Design simplified database schema for MVP SQLite implementation, focusing on core entities (users, projects, tasks, agents) with minimal complexity while maintaining data integrity.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": "small",
+      "assignees": [
+        "@system_architect_agent"
+      ],
+      "labels": [
+        "database",
+        "schema",
+        "sqlite",
+        "mvp"
+      ],
+      "dependencies": [
+        "20250627005"
+      ],
+      "subtasks": [],
+      "dueDate": "2025-02-03",
+      "created_at": "2025-06-27T09:57:39.110921+00:00",
+      "updated_at": "2025-06-27T09:57:57.094378+00:00"
+    },
+    {
+      "id": "20250627014",
+      "title": "Task: Core MCP API Specification",
+      "description": "Define API specification for core MCP tools in MVP, including request/response schemas, error handling, and authentication patterns. Focus on essential task and project management endpoints.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": null,
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@system_architect_agent",
+        "@coding_agent"
+      ],
+      "labels": [
+        "api",
+        "specification",
+        "mcp",
+        "documentation"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": "2025-02-04",
+      "created_at": "2025-06-27T09:57:42.695556+00:00",
+      "updated_at": "2025-06-27T09:57:42.695556+00:00"
+    },
+    {
+      "id": "20250627015",
+      "title": "Task: MVP Performance Baseline",
+      "description": "Establish performance baseline for MVP including response times, memory usage, and basic load testing. Document performance characteristics for future scaling reference.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": "small",
+      "assignees": [
+        "@performance_load_tester_agent"
+      ],
+      "labels": [
+        "performance",
+        "baseline",
+        "testing",
+        "metrics"
+      ],
+      "dependencies": [
+        "20250627008"
+      ],
+      "subtasks": [],
+      "dueDate": "2025-02-08",
+      "created_at": "2025-06-27T09:57:45.220427+00:00",
+      "updated_at": "2025-06-27T09:57:55.372118+00:00"
+    },
+    {
+      "id": "20250627016",
+      "title": "📋 MILESTONE: Week 1 Checkpoint - Infrastructure Ready",
+      "description": "Critical milestone ensuring core infrastructure components are functional by end of Week 1. This checkpoint validates that the foundation is solid before moving to integration phase.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "critical",
+      "details": "## 🎯 **Week 1 Checkpoint Criteria**\n\n### **✅ Must Be Complete**\n1. **Supabase Configuration** (Task 20250627005)\n   - Project created and configured\n   - Authentication tables and policies set up\n   - API keys and environment variables documented\n\n2. **Database Schema** (Task 20250627013)  \n   - SQLite schema designed and validated\n   - Migration scripts created\n   - Data model documentation complete\n\n3. **API Specification** (Task 20250627014)\n   - Core MCP endpoints defined\n   - Request/response schemas documented\n   - Authentication patterns specified\n\n4. **Frontend Foundation** (Task 20250627006)\n   - Next.js project structure created\n   - Supabase integration working\n   - Basic authentication flow functional\n\n5. **Backend Foundation** (Task 20250627007)\n   - FastAPI server structure created\n   - SQLite database connection working\n   - Core MCP tools skeleton implemented\n\n### **🚨 Go/No-Go Decision**\n- **GO**: All 5 components functional → Proceed to Week 2\n- **NO-GO**: Any critical component missing → Extend Week 1 or reduce scope\n\n### **📊 Success Metrics**\n- All Week 1 tasks marked as \"done\"\n- Frontend can authenticate users via Supabase\n- Backend can validate tokens and serve basic responses\n- Database schema supports core MVP requirements\n- No blocking technical issues identified",
+      "estimatedEffort": "quick",
+      "assignees": [
+        "@task_planning_agent",
+        "@system_architect_agent"
+      ],
+      "labels": [
+        "milestone",
+        "week-1",
+        "checkpoint",
+        "infrastructure"
+      ],
+      "dependencies": [
+        "20250627005",
+        "20250627013",
+        "20250627014",
+        "20250627006",
+        "20250627007"
+      ],
+      "subtasks": [],
+      "dueDate": "2025-02-07",
+      "created_at": "2025-06-27T09:58:17.938753+00:00",
+      "updated_at": "2025-06-27T09:58:31.458140+00:00"
     }
   ]
 }

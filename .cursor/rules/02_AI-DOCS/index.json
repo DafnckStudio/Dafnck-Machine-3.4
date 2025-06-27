@@ -1,0 +1,11 @@
+{
+    "phase_00_mvp_implementation_roadmap": {
+        "name": "Phase 00 MVP Implementation Roadmap",
+        "category": "TaskManagement",
+        "description": "Comprehensive 14-day implementation roadmap for DhafnckMCP Phase 00 MVP with Docker + Supabase authentication. Includes critical path analysis, agent assignments, risk mitigation, and daily timeline.",
+        "usecase": "Project planning, task coordination, timeline management, resource allocation for MVP implementation",
+        "useby": ["task_planning_agent", "system_architect_agent", "coding_agent", "devops_agent", "uber_orchestrator_agent"],
+        "created_at": "2025-01-27T09:58:00Z",
+        "created_by": "task_planning_agent"
+    }
+} 

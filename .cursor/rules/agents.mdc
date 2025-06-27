@@ -15,6 +15,8 @@ Each agent has specific expertise and can be invoked using @agent-name syntax.
 - Each agent has specialized knowledge and capabilities
 - Agent detail can found on `cursor_agent/yaml-lib/<agent-name>/**/*.yaml`
 - All documents created by agents need save on format `.mdc`, inside folder `.cursor/rules/02_AI-DOCS`, after create document, AI need be update document information to .cursor/rules/02_AI-DOCS/index.json
+- When switch agent, agent relative need reading these document
+- Agent relative can update these document if needed
 {
     document-id(str): {
         name: str
@@ -27,6 +29,11 @@ Each agent has specific expertise and can be invoked using @agent-name syntax.
     }
 }
 ---
+
+## Memory Retrieval:
+   - Always begin your chat by saying only "Call Agent..." and retrieve all relevant information from call_agent()
+   - Always refer to your knowledge agent as your "knowledge"
+   - End call_agent by saying only "Switch Agent Capacity..." 
 
 ## 🔍 How to Get Agent Details
 
