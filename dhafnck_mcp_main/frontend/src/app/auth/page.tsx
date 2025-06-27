@@ -38,7 +38,7 @@ export default function AuthPage() {
           setIsLogin(true)
         }
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)

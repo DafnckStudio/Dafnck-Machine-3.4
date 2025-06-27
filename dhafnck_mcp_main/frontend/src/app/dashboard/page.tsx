@@ -1,9 +1,11 @@
 'use client'
 
+import MCPConfig from '@/components/MCPConfig'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTokens } from '@/hooks/useTokens'
 import { copyToClipboard, formatDate } from '@/lib/utils'
 import {
+  BookOpen,
   Container,
   Copy,
   ExternalLink,
@@ -12,12 +14,16 @@ import {
   Key,
   LogOut,
   Plus,
+  Server,
+  Settings,
   Trash2,
   User
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
+
+type TabType = 'tokens' | 'configuration' | 'docker' | 'resources'
 
 export default function Dashboard() {
   const { user, signOut, loading: authLoading } = useAuth()
@@ -29,12 +35,20 @@ export default function Dashboard() {
   const [generatedToken, setGeneratedToken] = useState<string | null>(null)
   const [visibleTokens, setVisibleTokens] = useState<Set<string>>(new Set())
   const [generatingToken, setGeneratingToken] = useState(false)
+  const [activeTab, setActiveTab] = useState<TabType>('tokens')
 
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/auth')
     }
   }, [user, authLoading, router])
+
+  // Set default tab based on user state
+  useEffect(() => {
+    if (tokens.length === 0 && activeTab !== 'tokens' && activeTab !== 'resources') {
+      setActiveTab('tokens')
+    }
+  }, [tokens.length, activeTab])
 
   if (authLoading || !user) {
     return (
@@ -60,7 +74,7 @@ export default function Dashboard() {
         setTokenName('')
         toast.success('Token generated successfully!')
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to generate token')
     } finally {
       setGeneratingToken(false)
@@ -79,7 +93,7 @@ export default function Dashboard() {
       } else {
         toast.success('Token revoked successfully')
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to revoke token')
     }
   }
@@ -88,7 +102,7 @@ export default function Dashboard() {
     try {
       await copyToClipboard(token)
       toast.success('Token copied to clipboard!')
-    } catch (error) {
+    } catch {
       toast.error('Failed to copy token')
     }
   }
@@ -115,24 +129,31 @@ export default function Dashboard() {
   -v dhafnck-data:/data \\
   dhafnck/mcp-server:latest`
 
-  const mcpConfig = (token: string) => `{
-  "mcpServers": {
-    "dhafnck_mcp": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e", "DHAFNCK_TOKEN=${token}",
-        "-v", "dhafnck-data:/data",
-        "dhafnck/mcp-server:latest"
-      ],
-      "env": {
-        "DHAFNCK_TOKEN": "${token}"
-      }
+  const tabs = [
+    {
+      id: 'tokens' as TabType,
+      label: 'API Tokens',
+      icon: Key,
+      count: tokens.length
+    },
+    {
+      id: 'configuration' as TabType,
+      label: 'Configuration',
+      icon: Settings,
+      disabled: tokens.length === 0
+    },
+    {
+      id: 'docker' as TabType,
+      label: 'Docker Setup',
+      icon: Container,
+      disabled: tokens.length === 0
+    },
+    {
+      id: 'resources' as TabType,
+      label: 'Resources',
+      icon: BookOpen
     }
-  }
-}`
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -144,75 +165,124 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold text-gray-900">DhafnckMCP</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="flex items-center text-sm text-gray-600">
+              <div className="hidden sm:flex items-center text-sm text-gray-600">
                 <User className="h-4 w-4 mr-2" />
-                {user.email}
+                <span className="truncate max-w-48">{user.email}</span>
               </div>
               <button
                 onClick={handleSignOut}
                 className="flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <LogOut className="h-4 w-4 mr-1" />
-                Sign out
+                <span className="hidden sm:inline">Sign out</span>
               </button>
             </div>
           </div>
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Token Management */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border">
-              <div className="p-6 border-b">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Key className="h-5 w-5 text-gray-400 mr-2" />
-                    <h2 className="text-lg font-semibold text-gray-900">API Tokens</h2>
+      <div className="max-w-7xl mx-auto py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
+        {/* Welcome Message */}
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            Welcome back!
+          </h2>
+          <p className="text-gray-600">
+            Manage your MCP server configuration and API tokens
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-white rounded-lg shadow-sm border">
+          {/* Tab Navigation */}
+          <div className="border-b border-gray-200">
+            <nav className="flex space-x-8 px-4 sm:px-6 overflow-x-auto" aria-label="Tabs">
+              {tabs.map((tab) => {
+                const IconComponent = tab.icon
+                const isActive = activeTab === tab.id
+                const isDisabled = tab.disabled
+                
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => !isDisabled && setActiveTab(tab.id)}
+                    disabled={isDisabled}
+                    className={`
+                      whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors
+                      ${isActive
+                        ? 'border-blue-500 text-blue-600'
+                        : isDisabled
+                        ? 'border-transparent text-gray-300 cursor-not-allowed'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }
+                    `}
+                  >
+                    <IconComponent className="h-4 w-4" />
+                    <span>{tab.label}</span>
+                    {tab.count !== undefined && (
+                      <span className={`
+                        ml-2 py-0.5 px-2 rounded-full text-xs
+                        ${isActive ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}
+                      `}>
+                        {tab.count}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </nav>
+          </div>
+
+          {/* Tab Content */}
+          <div className="p-4 sm:p-6">
+            {/* Tokens Tab */}
+            {activeTab === 'tokens' && (
+              <div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">API Tokens</h3>
+                    <p className="mt-1 text-sm text-gray-600">
+                      Create and manage API tokens for your MCP server
+                    </p>
                   </div>
                   <button
                     onClick={() => setShowTokenModal(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center transition-colors"
+                    className="mt-4 sm:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center transition-colors"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Generate Token
                   </button>
                 </div>
-                <p className="mt-1 text-sm text-gray-600">
-                  Create and manage API tokens for your MCP server
-                </p>
-              </div>
 
-              <div className="p-6">
                 {tokensLoading ? (
-                  <div className="flex items-center justify-center py-8">
+                  <div className="flex items-center justify-center py-12">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                   </div>
                 ) : tokens.length === 0 ? (
-                  <div className="text-center py-8">
+                  <div className="text-center py-12">
                     <Key className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No API tokens</h3>
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-gray-600 mb-6">
                       Generate your first token to start using the MCP server
                     </p>
                     <button
                       onClick={() => setShowTokenModal(true)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
                     >
-                      Generate Token
+                      Generate Your First Token
                     </button>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {tokens.map((token) => (
-                      <div key={token.id} className="border rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-medium text-gray-900">{token.name}</h3>
+                      <div key={token.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+                          <h4 className="font-medium text-gray-900 mb-2 sm:mb-0">{token.name}</h4>
                           <div className="flex items-center space-x-2">
                             <button
                               onClick={() => toggleTokenVisibility(token.id)}
-                              className="text-gray-400 hover:text-gray-600 transition-colors"
+                              className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                              title={visibleTokens.has(token.id) ? 'Hide token' : 'Show token'}
                             >
                               {visibleTokens.has(token.id) ? (
                                 <EyeOff className="h-4 w-4" />
@@ -222,21 +292,23 @@ export default function Dashboard() {
                             </button>
                             <button
                               onClick={() => handleCopyToken(token.token)}
-                              className="text-gray-400 hover:text-gray-600 transition-colors"
+                              className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                              title="Copy token"
                             >
                               <Copy className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => handleRevokeToken(token.id, token.name)}
-                              className="text-red-400 hover:text-red-600 transition-colors"
+                              className="text-red-400 hover:text-red-600 transition-colors p-1"
+                              title="Revoke token"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
                         
-                        <div className="bg-gray-50 rounded p-3 mb-2">
-                          <code className="text-sm font-mono text-gray-800">
+                        <div className="bg-gray-100 rounded p-3 mb-3 overflow-hidden">
+                          <code className="text-sm font-mono text-gray-800 break-all">
                             {visibleTokens.has(token.id) 
                               ? token.token 
                               : '•'.repeat(32)
@@ -244,7 +316,7 @@ export default function Dashboard() {
                           </code>
                         </div>
                         
-                        <div className="flex items-center justify-between text-xs text-gray-500">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500 space-y-1 sm:space-y-0">
                           <span>Created: {formatDate(token.created_at)}</span>
                           {token.last_used && (
                             <span>Last used: {formatDate(token.last_used)}</span>
@@ -255,167 +327,164 @@ export default function Dashboard() {
                   </div>
                 )}
               </div>
-            </div>
-          </div>
+            )}
 
-          {/* Getting Started */}
-          <div className="space-y-6">
-            {/* Docker Instructions */}
-            {tokens.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border">
-                <div className="p-6 border-b">
-                  <div className="flex items-center">
-                    <Container className="h-5 w-5 text-gray-400 mr-2" />
-                    <h2 className="text-lg font-semibold text-gray-900">Docker Setup</h2>
-                  </div>
+            {/* Configuration Tab */}
+            {activeTab === 'configuration' && tokens.length > 0 && (
+              <div>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900">MCP Configuration</h3>
                   <p className="mt-1 text-sm text-gray-600">
-                    Run your MCP server locally
+                    Choose your environment and configure Cursor to connect to your MCP server
                   </p>
                 </div>
-                <div className="p-6">
-                  <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-gray-400">Terminal</span>
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => toggleTokenVisibility('docker-config')}
-                          className="text-gray-400 hover:text-white transition-colors"
-                          title={visibleTokens.has('docker-config') ? 'Hide token' : 'Show token'}
-                        >
-                          {visibleTokens.has('docker-config') ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                        </button>
-                        <button
-                          onClick={() => handleCopyToken(dockerCommand(tokens[0].token))}
-                          className="text-gray-400 hover:text-white transition-colors"
-                          title="Copy Docker command"
-                        >
-                          <Copy className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                    <pre className="whitespace-pre-wrap break-all">
-                      {dockerCommand(visibleTokens.has('docker-config') ? tokens[0].token : '•'.repeat(32))}
-                    </pre>
-                  </div>
-                  <div className="mt-4 text-sm text-gray-600">
-                    <p className="mb-2">After running the command:</p>
-                    <ol className="list-decimal list-inside space-y-1">
-                      <li>Server will be available at <code className="bg-gray-100 px-1 rounded">localhost:8000</code></li>
-                      <li>Configure Cursor to connect to your MCP server</li>
-                      <li>Start using AI-powered task management</li>
-                    </ol>
-                  </div>
-                </div>
+                <MCPConfig
+                  token={tokens[0].token}
+                  showInstructions={true}
+                  className="border-0 shadow-none"
+                />
               </div>
             )}
 
-            {/* MCP Configuration */}
-            {tokens.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border">
-                <div className="p-6 border-b">
-                  <div className="flex items-center">
-                    <Key className="h-5 w-5 text-gray-400 mr-2" />
-                    <h2 className="text-lg font-semibold text-gray-900">MCP Configuration</h2>
-                  </div>
+            {/* Docker Setup Tab */}
+            {activeTab === 'docker' && tokens.length > 0 && (
+              <div>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900">Docker Setup</h3>
                   <p className="mt-1 text-sm text-gray-600">
-                    Add this to your Cursor settings
+                    Run your MCP server locally using Docker
                   </p>
                 </div>
-                <div className="p-6">
+                
+                <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Add to your <code className="bg-gray-100 px-1 rounded">mcp.json</code> file:
+                      Docker Command:
                     </label>
                     <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                                             <div className="flex items-center justify-between mb-2">
-                         <span className="text-gray-400">mcp.json</span>
-                         <div className="flex items-center space-x-2">
-                           <button
-                             onClick={() => toggleTokenVisibility('mcp-config')}
-                             className="text-gray-400 hover:text-white transition-colors"
-                             title={visibleTokens.has('mcp-config') ? 'Hide token' : 'Show token'}
-                           >
-                             {visibleTokens.has('mcp-config') ? (
-                               <EyeOff className="h-4 w-4" />
-                             ) : (
-                               <Eye className="h-4 w-4" />
-                             )}
-                           </button>
-                           <button
-                             onClick={() => handleCopyToken(mcpConfig(tokens[0].token))}
-                             className="text-gray-400 hover:text-white transition-colors"
-                             title="Copy MCP configuration"
-                           >
-                             <Copy className="h-4 w-4" />
-                           </button>
-                         </div>
-                       </div>
-                       <pre className="whitespace-pre-wrap break-all text-xs">
-                         {mcpConfig(visibleTokens.has('mcp-config') ? tokens[0].token : '•'.repeat(32))}
-                       </pre>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-gray-400">Terminal</span>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => toggleTokenVisibility('docker-config')}
+                            className="text-gray-400 hover:text-white transition-colors"
+                            title={visibleTokens.has('docker-config') ? 'Hide token' : 'Show token'}
+                          >
+                            {visibleTokens.has('docker-config') ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
+                          <button
+                            onClick={() => handleCopyToken(dockerCommand(tokens[0].token))}
+                            className="text-gray-400 hover:text-white transition-colors"
+                            title="Copy Docker command"
+                          >
+                            <Copy className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                      <pre className="whitespace-pre-wrap break-all text-xs sm:text-sm">
+                        {dockerCommand(visibleTokens.has('docker-config') ? tokens[0].token : '•'.repeat(32))}
+                      </pre>
                     </div>
                   </div>
+                  
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h4 className="font-medium text-blue-900 mb-2">Setup Instructions:</h4>
-                    <ol className="list-decimal list-inside space-y-1 text-sm text-blue-800">
-                      <li>Copy the configuration above</li>
-                      <li>Open Cursor settings (Cmd/Ctrl + ,)</li>
-                      <li>Search for "MCP" or navigate to Extensions → MCP</li>
-                      <li>Add the configuration to your <code className="bg-blue-100 px-1 rounded">mcp.json</code> file</li>
-                      <li>Restart Cursor to load the MCP server</li>
-                      <li>Your DhafnckMCP tools will be available in the chat</li>
+                    <h4 className="font-medium text-blue-900 mb-2">Next Steps:</h4>
+                    <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
+                      <li>Copy and run the Docker command above</li>
+                      <li>Server will be available at <code className="bg-blue-100 px-1 rounded">localhost:8000</code></li>
+                      <li>Go to the Configuration tab to set up Cursor</li>
+                      <li>Start using AI-powered task management!</li>
                     </ol>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Documentation */}
-            <div className="bg-white rounded-lg shadow-sm border">
-              <div className="p-6 border-b">
-                <h2 className="text-lg font-semibold text-gray-900">Resources</h2>
-              </div>
-              <div className="p-6 space-y-4">
-                <a
-                  href="#"
-                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div>
-                    <h3 className="font-medium text-gray-900">Documentation</h3>
-                    <p className="text-sm text-gray-600">Complete setup and usage guide</p>
-                  </div>
-                  <ExternalLink className="h-4 w-4 text-gray-400" />
-                </a>
+            {/* Resources Tab */}
+            {activeTab === 'resources' && (
+              <div>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900">Resources & Documentation</h3>
+                  <p className="mt-1 text-sm text-gray-600">
+                    Helpful links and documentation for using DhafnckMCP
+                  </p>
+                </div>
                 
-                <a
-                  href="https://github.com/dhafnck/dhafnck_mcp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div>
-                    <h3 className="font-medium text-gray-900">GitHub Repository</h3>
-                    <p className="text-sm text-gray-600">Source code and issues</p>
-                  </div>
-                  <ExternalLink className="h-4 w-4 text-gray-400" />
-                </a>
-                
-                <a
-                  href="#"
-                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div>
-                    <h3 className="font-medium text-gray-900">Support</h3>
-                    <p className="text-sm text-gray-600">Get help and support</p>
-                  </div>
-                  <ExternalLink className="h-4 w-4 text-gray-400" />
-                </a>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <a
+                    href="https://github.com/dhafnck/dhafnck_mcp/blob/main/CURSOR_MCP_SETUP.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors group"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-blue-100 p-2 rounded-lg">
+                        <BookOpen className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">Setup Guide</h4>
+                        <p className="text-sm text-gray-600">Complete Cursor MCP setup</p>
+                      </div>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-gray-600" />
+                  </a>
+                  
+                  <a
+                    href="https://github.com/dhafnck/dhafnck_mcp"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors group"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-gray-100 p-2 rounded-lg">
+                        <Server className="h-5 w-5 text-gray-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">GitHub Repository</h4>
+                        <p className="text-sm text-gray-600">Source code & issues</p>
+                      </div>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-gray-600" />
+                  </a>
+                  
+                  <a
+                    href="#"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors group"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-green-100 p-2 rounded-lg">
+                        <User className="h-5 w-5 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">Support</h4>
+                        <p className="text-sm text-gray-600">Get help & support</p>
+                      </div>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-gray-600" />
+                  </a>
+                  
+                  <a
+                    href="#"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors group"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-purple-100 p-2 rounded-lg">
+                        <Settings className="h-5 w-5 text-purple-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">API Reference</h4>
+                        <p className="text-sm text-gray-600">MCP tools reference</p>
+                      </div>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-gray-600" />
+                  </a>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -423,7 +492,7 @@ export default function Dashboard() {
       {/* Token Generation Modal */}
       {showTokenModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full">
+          <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b">
               <h3 className="text-lg font-semibold text-gray-900">Generate New Token</h3>
               <p className="mt-1 text-sm text-gray-600">
@@ -435,11 +504,11 @@ export default function Dashboard() {
               {generatedToken ? (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Your new token (copy it now - you won't see it again)
+                    Your new token (copy it now - you won&apos;t see it again)
                   </label>
                   <div className="bg-gray-50 border rounded-lg p-3 mb-4">
                     <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono text-gray-800 break-all">
+                      <code className="text-sm font-mono text-gray-800 break-all pr-2">
                         {generatedToken}
                       </code>
                       <button
@@ -453,40 +522,12 @@ export default function Dashboard() {
                   
                   {/* MCP Configuration in Modal */}
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      MCP Configuration for Cursor:
-                    </label>
-                    <div className="bg-gray-900 text-green-400 p-3 rounded-lg font-mono text-xs overflow-x-auto max-h-40 overflow-y-auto">
-                                             <div className="flex items-center justify-between mb-2">
-                         <span className="text-gray-400">mcp.json</span>
-                         <div className="flex items-center space-x-2">
-                           <button
-                             onClick={() => toggleTokenVisibility('modal-mcp-config')}
-                             className="text-gray-400 hover:text-white transition-colors"
-                             title={visibleTokens.has('modal-mcp-config') ? 'Hide token' : 'Show token'}
-                           >
-                             {visibleTokens.has('modal-mcp-config') ? (
-                               <EyeOff className="h-4 w-4" />
-                             ) : (
-                               <Eye className="h-4 w-4" />
-                             )}
-                           </button>
-                           <button
-                             onClick={() => handleCopyToken(mcpConfig(generatedToken))}
-                             className="text-gray-400 hover:text-white transition-colors"
-                             title="Copy MCP configuration"
-                           >
-                             <Copy className="h-4 w-4" />
-                           </button>
-                         </div>
-                       </div>
-                       <pre className="whitespace-pre-wrap break-all">
-                         {mcpConfig(visibleTokens.has('modal-mcp-config') ? generatedToken : '•'.repeat(32))}
-                       </pre>
-                    </div>
-                    <p className="mt-2 text-xs text-gray-500">
-                      Add this configuration to your Cursor MCP settings
-                    </p>
+                    <MCPConfig
+                      token={generatedToken}
+                      showInstructions={false}
+                      title="MCP Configuration for Cursor"
+                      className="border-0 shadow-none bg-transparent"
+                    />
                   </div>
                   
                   <div className="flex justify-end space-x-3">
@@ -494,6 +535,7 @@ export default function Dashboard() {
                       onClick={() => {
                         setShowTokenModal(false)
                         setGeneratedToken(null)
+                        setActiveTab('configuration')
                       }}
                       className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                     >

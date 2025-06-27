@@ -101,7 +101,7 @@ export function useTokens() {
 
   useEffect(() => {
     fetchTokens()
-  }, [user])
+  }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     tokens,
