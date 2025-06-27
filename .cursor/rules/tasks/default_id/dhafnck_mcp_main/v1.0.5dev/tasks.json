@@ -161,7 +161,7 @@
         {
           "title": "Day 2-3: Next.js Frontend Development (2 days)",
           "description": "Build authentication UI, dashboard, and token management components",
-          "completed": false,
+          "completed": true,
           "assignee": "@ui-designer-agent",
           "id": "20250627003.002",
           "assignees": []
@@ -185,7 +185,7 @@
       ],
       "dueDate": "2025-02-03",
       "created_at": "2025-06-27T09:19:28.769762+00:00",
-      "updated_at": "2025-06-27T10:04:32.804525+00:00"
+      "updated_at": "2025-06-27T10:17:15.770516+00:00"
     },
     {
       "id": "20250627004",

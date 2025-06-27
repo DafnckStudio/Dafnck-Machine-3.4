@@ -184,10 +184,8 @@ def pytest_sessionfinish(session, exitstatus):
 
 
 # Safety check to prevent accidental production data access
-def pytest_configure_node(node):
-    """Configure test node with safety checks"""
-    # This could be extended to add additional safety checks
-    pass
+# Note: pytest_configure_node is not a valid pytest hook
+# Using pytest_runtest_setup instead for safety checks
 
 
 # Custom pytest plugin for test data isolation

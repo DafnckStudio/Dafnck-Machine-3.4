@@ -22,13 +22,13 @@ class TestMCPConnectionIsolated:
         """Test MCP server starts correctly with isolated environment"""
         with isolated_test_environment(test_id="mcp_init_test") as config:
             # Mock the server initialization
-            with patch('src.fastmcp.server.mcp_entry_point.FastMCP') as mock_fastmcp:
+            with patch('fastmcp.server.mcp_entry_point.FastMCP') as mock_fastmcp:
                 mock_server = Mock()
                 mock_fastmcp.return_value = mock_server
                 
                 # Import and test server initialization
                 try:
-                    from src.fastmcp.server.mcp_entry_point import create_server
+                    from fastmcp.server.mcp_entry_point import create_server
                     server = create_server()
                     
                     # Verify server was created
@@ -46,7 +46,7 @@ class TestMCPConnectionIsolated:
         """Test MCP tools are registered correctly"""
         with isolated_test_environment(test_id="tool_reg_test") as config:
             # Test tool registration process
-            with patch('src.fastmcp.server.mcp_entry_point.FastMCP') as mock_fastmcp:
+            with patch('fastmcp.server.mcp_entry_point.FastMCP') as mock_fastmcp:
                 mock_server = Mock()
                 mock_server.tools = {}
                 mock_fastmcp.return_value = mock_server
