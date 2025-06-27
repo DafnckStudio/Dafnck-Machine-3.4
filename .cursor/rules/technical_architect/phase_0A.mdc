@@ -1,0 +1,1082 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Phase 0A: Token-Based Subscription System Implementation
+
+**Date**: 2025-01-27  
+**Agent**: @system-architect-agent + @coding-agent  
+**Status**: 📋 Planned  
+**Dependencies**: Current codebase, Supabase setup  
+**Duration**: 3-4 weeks  
+**Priority**: High (Revenue Foundation)
+
+---
+
+## Executive Summary
+
+Phase 0A implements a comprehensive token-based subscription management system that enables the freemium business model: free local Docker deployment vs paid cloud hosting. This phase establishes the technical foundation for monetization while maintaining the current free local experience.
+
+### Key Deliverables
+- **Enhanced Token System**: Tokens with subscription metadata and quota management
+- **Subscription Management**: Complete billing integration with Stripe
+- **Quota Enforcement**: Smart usage limits based on deployment type
+- **User Dashboard**: Subscription management interface
+- **Business Analytics**: Conversion and usage tracking
+
+---
+
+## 🎯 Business Model Implementation
+
+### Freemium Strategy
+```yaml
+Local Deployment (Free):
+  - Unlimited usage for Docker local
+  - No cloud hosting
+  - Community support only
+  - All core MCP features
+
+Cloud Deployment (Paid):
+  Starter ($29/month):
+    - 10,000 requests/month
+    - 5 projects maximum
+    - Basic cloud hosting
+    - Email support
+    
+  Pro ($99/month):
+    - 100,000 requests/month
+    - Unlimited projects
+    - Multi-region hosting
+    - Priority support
+    
+  Enterprise ($499/month):
+    - Unlimited requests
+    - Custom deployment
+    - Dedicated support
+    - SLA guarantees
+```
+
+---
+
+## 🏗️ Technical Architecture
+
+### Enhanced Token Data Model
+
+#### Database Schema Extensions
+```sql
+-- Extend api_tokens table
+ALTER TABLE api_tokens ADD COLUMN subscription_tier VARCHAR(20) DEFAULT 'free';
+ALTER TABLE api_tokens ADD COLUMN monthly_quota INTEGER DEFAULT 0;
+ALTER TABLE api_tokens ADD COLUMN current_usage INTEGER DEFAULT 0;
+ALTER TABLE api_tokens ADD COLUMN quota_reset_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE api_tokens ADD COLUMN deployment_type VARCHAR(10) DEFAULT 'local';
+ALTER TABLE api_tokens ADD COLUMN features_enabled TEXT[] DEFAULT '{}';
+ALTER TABLE api_tokens ADD COLUMN billing_cycle_start TIMESTAMP;
+ALTER TABLE api_tokens ADD COLUMN stripe_subscription_id VARCHAR(100);
+
+-- Create subscriptions table
+CREATE TABLE subscriptions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    stripe_customer_id VARCHAR(100),
+    stripe_subscription_id VARCHAR(100),
+    plan_name VARCHAR(50) NOT NULL,
+    status VARCHAR(20) DEFAULT 'active',
+    current_period_start TIMESTAMP,
+    current_period_end TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create usage_tracking table
+CREATE TABLE usage_tracking (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    token_hash VARCHAR(64) NOT NULL,
+    user_id UUID NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deployment_type VARCHAR(10),
+    endpoint VARCHAR(100),
+    request_count INTEGER DEFAULT 1,
+    response_time_ms INTEGER
+);
+
+-- Create billing_events table
+CREATE TABLE billing_events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    event_type VARCHAR(50) NOT NULL,
+    stripe_event_id VARCHAR(100),
+    amount_cents INTEGER,
+    currency VARCHAR(3) DEFAULT 'USD',
+    metadata JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### Enhanced TokenInfo Model
+```python
+# src/fastmcp/auth/models.py
+from pydantic import BaseModel
+from typing import List, Optional
+from datetime import datetime
+from enum import Enum
+
+class SubscriptionTier(str, Enum):
+    FREE = "free"
+    STARTER = "starter"
+    PRO = "pro"
+    ENTERPRISE = "enterprise"
+
+class DeploymentType(str, Enum):
+    LOCAL = "local"
+    CLOUD = "cloud"
+    MULTI_REGION = "multi_region"
+
+class EnhancedTokenInfo(BaseModel):
+    """Enhanced token information with subscription data."""
+    token_hash: str
+    user_id: str
+    created_at: datetime
+    expires_at: Optional[datetime] = None
+    is_active: bool = True
+    usage_count: int = 0
+    last_used: Optional[datetime] = None
+    
+    # Subscription fields
+    subscription_tier: SubscriptionTier = SubscriptionTier.FREE
+    monthly_quota: int = 0  # 0 = unlimited for local
+    current_usage: int = 0
+    quota_reset_date: datetime
+    deployment_type: DeploymentType = DeploymentType.LOCAL
+    features_enabled: List[str] = []
+    billing_cycle_start: Optional[datetime] = None
+    stripe_subscription_id: Optional[str] = None
+
+class SubscriptionPlan(BaseModel):
+    """Subscription plan definition."""
+    name: str
+    price_cents: int
+    monthly_quota: int  # -1 for unlimited
+    max_projects: int  # -1 for unlimited
+    deployment_allowed: List[DeploymentType]
+    features: List[str]
+    stripe_price_id: str
+```
+
+### Subscription Management System
+
+#### Core Subscription Manager
+```python
+# src/fastmcp/billing/subscription_manager.py
+import logging
+from typing import Dict, List, Optional
+from datetime import datetime, timedelta
+from .models import SubscriptionPlan, SubscriptionTier, DeploymentType
+from .exceptions import SubscriptionError, QuotaExceededError
+from ..auth.supabase_client import SupabaseTokenClient
+
+logger = logging.getLogger(__name__)
+
+class SubscriptionManager:
+    """Manages subscriptions, quotas, and billing."""
+    
+    PLANS: Dict[SubscriptionTier, SubscriptionPlan] = {
+        SubscriptionTier.FREE: SubscriptionPlan(
+            name="Free",
+            price_cents=0,
+            monthly_quota=0,  # Unlimited for local
+            max_projects=-1,
+            deployment_allowed=[DeploymentType.LOCAL],
+            features=["basic_mcp", "task_management", "local_deployment"],
+            stripe_price_id=""
+        ),
+        SubscriptionTier.STARTER: SubscriptionPlan(
+            name="Starter",
+            price_cents=2900,  # $29.00
+            monthly_quota=10000,
+            max_projects=5,
+            deployment_allowed=[DeploymentType.LOCAL, DeploymentType.CLOUD],
+            features=["basic_mcp", "task_management", "cloud_hosting", "email_support"],
+            stripe_price_id="price_starter_monthly"
+        ),
+        SubscriptionTier.PRO: SubscriptionPlan(
+            name="Pro", 
+            price_cents=9900,  # $99.00
+            monthly_quota=100000,
+            max_projects=-1,
+            deployment_allowed=[DeploymentType.LOCAL, DeploymentType.CLOUD],
+            features=["basic_mcp", "task_management", "cloud_hosting", "analytics", "priority_support"],
+            stripe_price_id="price_pro_monthly"
+        ),
+        SubscriptionTier.ENTERPRISE: SubscriptionPlan(
+            name="Enterprise",
+            price_cents=49900,  # $499.00
+            monthly_quota=-1,  # Unlimited
+            max_projects=-1,
+            deployment_allowed=[DeploymentType.LOCAL, DeploymentType.CLOUD, DeploymentType.MULTI_REGION],
+            features=["all"],
+            stripe_price_id="price_enterprise_monthly"
+        )
+    }
+    
+    def __init__(self, supabase_client: SupabaseTokenClient):
+        self.supabase = supabase_client
+    
+    async def check_usage_quota(self, token_info: EnhancedTokenInfo, deployment_type: DeploymentType) -> bool:
+        """Check if user can make this request based on quota."""
+        
+        # Local deployment is always allowed
+        if deployment_type == DeploymentType.LOCAL:
+            logger.debug("Local deployment - quota check passed")
+            return True
+        
+        # Cloud deployment requires subscription check
+        plan = self.PLANS[token_info.subscription_tier]
+        
+        # Check if deployment type is allowed
+        if deployment_type not in plan.deployment_allowed:
+            raise SubscriptionError(
+                f"Deployment type '{deployment_type}' not allowed for plan '{plan.name}'. "
+                f"Upgrade to access cloud features."
+            )
+        
+        # Check monthly quota (if not unlimited)
+        if plan.monthly_quota > 0:
+            if token_info.current_usage >= plan.monthly_quota:
+                raise QuotaExceededError(
+                    f"Monthly quota of {plan.monthly_quota:,} requests exceeded. "
+                    f"Current usage: {token_info.current_usage:,}. "
+                    f"Upgrade plan or wait for quota reset on {token_info.quota_reset_date.strftime('%Y-%m-%d')}"
+                )
+        
+        logger.debug(f"Quota check passed - Usage: {token_info.current_usage}/{plan.monthly_quota}")
+        return True
+    
+    async def increment_usage(self, token_hash: str, deployment_type: DeploymentType, endpoint: str = "") -> None:
+        """Increment usage counter for cloud deployments."""
+        
+        if deployment_type == DeploymentType.LOCAL:
+            return  # Don't count local usage
+        
+        try:
+            # Update current usage in database
+            await self.supabase.increment_token_usage(token_hash)
+            
+            # Log usage for analytics
+            await self.supabase.log_usage_event(token_hash, deployment_type, endpoint)
+            
+        except Exception as e:
+            logger.error(f"Failed to increment usage for token {token_hash[:8]}...: {e}")
+    
+    async def reset_monthly_quota(self, token_hash: str) -> None:
+        """Reset monthly quota for a token."""
+        
+        next_reset = datetime.utcnow().replace(day=1) + timedelta(days=32)
+        next_reset = next_reset.replace(day=1)  # First day of next month
+        
+        await self.supabase.reset_token_quota(token_hash, next_reset)
+        logger.info(f"Monthly quota reset for token {token_hash[:8]}...")
+    
+    def get_plan_features(self, tier: SubscriptionTier) -> List[str]:
+        """Get features available for a subscription tier."""
+        return self.PLANS[tier].features
+    
+    def calculate_overage_cost(self, usage: int, quota: int, tier: SubscriptionTier) -> int:
+        """Calculate overage cost in cents."""
+        if quota <= 0 or usage <= quota:
+            return 0
+        
+        overage = usage - quota
+        
+        # Overage pricing per 1000 requests
+        overage_rates = {
+            SubscriptionTier.STARTER: 5,  # $0.05 per 1000 requests
+            SubscriptionTier.PRO: 3,      # $0.03 per 1000 requests
+            SubscriptionTier.ENTERPRISE: 0  # No overage for enterprise
+        }
+        
+        rate = overage_rates.get(tier, 10)  # Default $0.10
+        return (overage // 1000 + 1) * rate
+```
+
+#### Enhanced Authentication Middleware
+```python
+# src/fastmcp/auth/enhanced_middleware.py
+import os
+import logging
+from typing import Optional
+from .middleware import AuthMiddleware
+from .models import EnhancedTokenInfo, DeploymentType
+from ..billing.subscription_manager import SubscriptionManager
+from ..billing.exceptions import SubscriptionError, QuotaExceededError
+
+logger = logging.getLogger(__name__)
+
+class EnhancedAuthMiddleware(AuthMiddleware):
+    """Enhanced authentication with subscription management."""
+    
+    def __init__(self, enabled: bool = None):
+        super().__init__(enabled)
+        self.subscription_manager = SubscriptionManager(self.token_validator.supabase_client)
+        self.deployment_type = self._detect_deployment_type()
+        
+        logger.info(f"Enhanced auth middleware initialized - Deployment: {self.deployment_type}")
+    
+    def _detect_deployment_type(self) -> DeploymentType:
+        """Auto-detect deployment type."""
+        
+        # Check environment variable override
+        cloud_mode = os.environ.get("DHAFNCK_CLOUD_MODE", "false").lower()
+        if cloud_mode == "true":
+            return DeploymentType.CLOUD
+        
+        # Check for cloud hosting indicators
+        cloud_indicators = [
+            os.environ.get("KUBERNETES_SERVICE_HOST"),  # Running in Kubernetes
+            os.environ.get("AWS_EXECUTION_ENV"),        # AWS Lambda/ECS
+            os.environ.get("GOOGLE_CLOUD_PROJECT"),     # Google Cloud
+            os.environ.get("AZURE_FUNCTIONS_ENVIRONMENT") # Azure Functions
+        ]
+        
+        if any(cloud_indicators):
+            return DeploymentType.CLOUD
+        
+        # Default to local for Docker/development
+        return DeploymentType.LOCAL
+    
+    async def authenticate_request(self, token: Optional[str], client_info: Optional[dict] = None) -> Optional[EnhancedTokenInfo]:
+        """Enhanced authentication with subscription validation."""
+        
+        if not self.enabled:
+            logger.debug("Authentication disabled, allowing request")
+            return None
+        
+        if self.mvp_mode and not token:
+            logger.debug("MVP mode: allowing request without token")
+            return None
+        
+        if not token:
+            raise SubscriptionError("Authentication token required for cloud deployment")
+        
+        # Get enhanced token info
+        token_info = await self.token_validator.validate_enhanced_token(token, client_info)
+        
+        # Check subscription and quota
+        try:
+            await self.subscription_manager.check_usage_quota(token_info, self.deployment_type)
+            
+            # Increment usage for cloud deployments
+            if self.deployment_type != DeploymentType.LOCAL:
+                await self.subscription_manager.increment_usage(
+                    token_info.token_hash, 
+                    self.deployment_type,
+                    client_info.get("endpoint", "") if client_info else ""
+                )
+            
+        except (SubscriptionError, QuotaExceededError) as e:
+            logger.warning(f"Subscription check failed: {e}")
+            raise
+        
+        logger.debug(f"Request authenticated - User: {token_info.user_id}, Plan: {token_info.subscription_tier}")
+        return token_info
+```
+
+---
+
+## 💳 Stripe Integration
+
+### Stripe Service Implementation
+```python
+# src/fastmcp/billing/stripe_service.py
+import stripe
+import os
+import logging
+from typing import Dict, Optional, List
+from datetime import datetime
+from .models import SubscriptionTier, SubscriptionPlan
+from .subscription_manager import SubscriptionManager
+
+logger = logging.getLogger(__name__)
+
+class StripeService:
+    """Stripe integration for subscription billing."""
+    
+    def __init__(self):
+        stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+        self.webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET")
+        self.subscription_manager = None  # Injected
+        
+        if not stripe.api_key:
+            logger.warning("Stripe not configured - billing features disabled")
+            self.enabled = False
+        else:
+            self.enabled = True
+            logger.info("Stripe service initialized")
+    
+    async def create_customer(self, user_id: str, email: str, name: str = "") -> Optional[str]:
+        """Create or retrieve Stripe customer."""
+        
+        if not self.enabled:
+            return None
+        
+        try:
+            # Check if customer already exists
+            customers = stripe.Customer.list(
+                email=email,
+                limit=1
+            )
+            
+            if customers.data:
+                customer = customers.data[0]
+                logger.debug(f"Found existing Stripe customer: {customer.id}")
+            else:
+                # Create new customer
+                customer = stripe.Customer.create(
+                    email=email,
+                    name=name,
+                    metadata={"user_id": user_id}
+                )
+                logger.info(f"Created new Stripe customer: {customer.id}")
+            
+            return customer.id
+            
+        except Exception as e:
+            logger.error(f"Failed to create Stripe customer: {e}")
+            return None
+    
+    async def create_subscription(self, user_id: str, email: str, plan: SubscriptionTier) -> Dict:
+        """Create a new subscription."""
+        
+        if not self.enabled:
+            return {"success": False, "error": "Billing not configured"}
+        
+        try:
+            # Get or create customer
+            customer_id = await self.create_customer(user_id, email)
+            if not customer_id:
+                return {"success": False, "error": "Failed to create customer"}
+            
+            # Get plan details
+            plan_info = SubscriptionManager.PLANS[plan]
+            
+            # Create subscription
+            subscription = stripe.Subscription.create(
+                customer=customer_id,
+                items=[{
+                    'price': plan_info.stripe_price_id,
+                }],
+                payment_behavior='default_incomplete',
+                payment_settings={'save_default_payment_method': 'on_subscription'},
+                expand=['latest_invoice.payment_intent'],
+                metadata={
+                    'user_id': user_id,
+                    'plan': plan.value
+                }
+            )
+            
+            return {
+                "success": True,
+                "subscription_id": subscription.id,
+                "client_secret": subscription.latest_invoice.payment_intent.client_secret,
+                "status": subscription.status
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to create subscription: {e}")
+            return {"success": False, "error": str(e)}
+    
+    async def cancel_subscription(self, subscription_id: str) -> bool:
+        """Cancel a subscription."""
+        
+        if not self.enabled:
+            return False
+        
+        try:
+            stripe.Subscription.delete(subscription_id)
+            logger.info(f"Cancelled subscription: {subscription_id}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to cancel subscription: {e}")
+            return False
+    
+    async def handle_webhook(self, payload: bytes, sig_header: str) -> Dict:
+        """Handle Stripe webhook events."""
+        
+        if not self.enabled:
+            return {"status": "disabled"}
+        
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, self.webhook_secret
+            )
+        except ValueError:
+            logger.error("Invalid webhook payload")
+            return {"status": "error", "message": "Invalid payload"}
+        except stripe.error.SignatureVerificationError:
+            logger.error("Invalid webhook signature")
+            return {"status": "error", "message": "Invalid signature"}
+        
+        # Handle different event types
+        if event['type'] == 'invoice.payment_succeeded':
+            await self._handle_payment_success(event['data']['object'])
+            
+        elif event['type'] == 'invoice.payment_failed':
+            await self._handle_payment_failure(event['data']['object'])
+            
+        elif event['type'] == 'customer.subscription.updated':
+            await self._handle_subscription_updated(event['data']['object'])
+            
+        elif event['type'] == 'customer.subscription.deleted':
+            await self._handle_subscription_cancelled(event['data']['object'])
+        
+        return {"status": "success"}
+    
+    async def _handle_payment_success(self, invoice) -> None:
+        """Handle successful payment."""
+        
+        subscription_id = invoice['subscription']
+        user_id = invoice['metadata'].get('user_id')
+        
+        if user_id:
+            # Reset quota and activate subscription
+            await self.subscription_manager.activate_subscription(user_id, subscription_id)
+            logger.info(f"Payment succeeded for user {user_id}")
+    
+    async def _handle_payment_failure(self, invoice) -> None:
+        """Handle failed payment."""
+        
+        user_id = invoice['metadata'].get('user_id')
+        
+        if user_id:
+            # Mark subscription as past due
+            await self.subscription_manager.suspend_subscription(user_id)
+            logger.warning(f"Payment failed for user {user_id}")
+    
+    async def _handle_subscription_cancelled(self, subscription) -> None:
+        """Handle subscription cancellation."""
+        
+        user_id = subscription['metadata'].get('user_id')
+        
+        if user_id:
+            # Downgrade to free plan
+            await self.subscription_manager.downgrade_to_free(user_id)
+            logger.info(f"Subscription cancelled for user {user_id}")
+```
+
+---
+
+## 🖥️ Frontend Dashboard Implementation
+
+### Subscription Management Component
+```tsx
+// frontend/src/components/SubscriptionManager.tsx
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { AlertCircle, CreditCard, TrendingUp, Users } from 'lucide-react';
+
+interface SubscriptionData {
+  currentPlan: {
+    name: string;
+    price: number;
+    quota: number;
+    usage: number;
+    features: string[];
+  };
+  billing: {
+    nextBillingDate: string;
+    paymentMethod?: {
+      brand: string;
+      last4: string;
+    };
+  };
+  usage: {
+    currentMonth: number;
+    previousMonth: number;
+    dailyUsage: Array<{ date: string; requests: number }>;
+  };
+}
+
+export function SubscriptionManager() {
+  const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [upgrading, setUpgrading] = useState(false);
+
+  useEffect(() => {
+    fetchSubscriptionData();
+  }, []);
+
+  const fetchSubscriptionData = async () => {
+    try {
+      const response = await fetch('/api/subscription');
+      const data = await response.json();
+      setSubscription(data);
+    } catch (error) {
+      console.error('Failed to fetch subscription data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpgrade = async (planName: string) => {
+    setUpgrading(true);
+    try {
+      const response = await fetch('/api/subscription/upgrade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: planName })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // Redirect to Stripe Checkout
+        window.location.href = result.checkout_url;
+      } else {
+        alert('Failed to upgrade subscription');
+      }
+    } catch (error) {
+      console.error('Upgrade failed:', error);
+    } finally {
+      setUpgrading(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="animate-pulse">Loading subscription data...</div>;
+  }
+
+  if (!subscription) {
+    return <div>Failed to load subscription data</div>;
+  }
+
+  const usagePercentage = subscription.currentPlan.quota > 0 
+    ? (subscription.currentPlan.usage / subscription.currentPlan.quota) * 100 
+    : 0;
+
+  return (
+    <div className="space-y-6">
+      {/* Current Plan */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            Current Plan: {subscription.currentPlan.name}
+            <Badge variant={subscription.currentPlan.name === 'Free' ? 'secondary' : 'default'}>
+              {subscription.currentPlan.price === 0 ? 'Free' : `$${subscription.currentPlan.price}/month`}
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {/* Usage Progress */}
+            {subscription.currentPlan.quota > 0 && (
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span>Monthly Usage</span>
+                  <span>{subscription.currentPlan.usage:toLocaleString()} / {subscription.currentPlan.quota.toLocaleString()} requests</span>
+                </div>
+                <Progress value={usagePercentage} className="h-2" />
+                {usagePercentage > 80 && (
+                  <div className="flex items-center mt-2 text-amber-600">
+                    <AlertCircle className="h-4 w-4 mr-1" />
+                    <span className="text-sm">Approaching quota limit</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Features */}
+            <div>
+              <h4 className="font-medium mb-2">Plan Features</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {subscription.currentPlan.features.map((feature, index) => (
+                  <div key={index} className="flex items-center text-sm">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                    {feature}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Upgrade Options */}
+      {subscription.currentPlan.name !== 'Enterprise' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Upgrade Your Plan</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Starter Plan */}
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold">Starter</h3>
+                <p className="text-2xl font-bold">$29<span className="text-sm font-normal">/month</span></p>
+                <ul className="text-sm space-y-1 mt-2">
+                  <li>10,000 requests/month</li>
+                  <li>5 projects</li>
+                  <li>Cloud hosting</li>
+                  <li>Email support</li>
+                </ul>
+                <Button 
+                  className="w-full mt-4" 
+                  onClick={() => handleUpgrade('starter')}
+                  disabled={upgrading || subscription.currentPlan.name === 'Starter'}
+                >
+                  {subscription.currentPlan.name === 'Starter' ? 'Current Plan' : 'Upgrade'}
+                </Button>
+              </div>
+
+              {/* Pro Plan */}
+              <div className="border rounded-lg p-4 border-blue-500 relative">
+                <Badge className="absolute -top-2 left-4">Popular</Badge>
+                <h3 className="font-semibold">Pro</h3>
+                <p className="text-2xl font-bold">$99<span className="text-sm font-normal">/month</span></p>
+                <ul className="text-sm space-y-1 mt-2">
+                  <li>100,000 requests/month</li>
+                  <li>Unlimited projects</li>
+                  <li>Multi-region hosting</li>
+                  <li>Priority support</li>
+                </ul>
+                <Button 
+                  className="w-full mt-4" 
+                  onClick={() => handleUpgrade('pro')}
+                  disabled={upgrading || subscription.currentPlan.name === 'Pro'}
+                >
+                  {subscription.currentPlan.name === 'Pro' ? 'Current Plan' : 'Upgrade'}
+                </Button>
+              </div>
+
+              {/* Enterprise Plan */}
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold">Enterprise</h3>
+                <p className="text-2xl font-bold">$499<span className="text-sm font-normal">/month</span></p>
+                <ul className="text-sm space-y-1 mt-2">
+                  <li>Unlimited requests</li>
+                  <li>Custom deployment</li>
+                  <li>Dedicated support</li>
+                  <li>SLA guarantees</li>
+                </ul>
+                <Button 
+                  className="w-full mt-4" 
+                  onClick={() => handleUpgrade('enterprise')}
+                  disabled={upgrading}
+                >
+                  Contact Sales
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Billing Information */}
+      {subscription.currentPlan.name !== 'Free' && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <CreditCard className="h-5 w-5 mr-2" />
+              Billing Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Next billing date:</span>
+                <span>{new Date(subscription.billing.nextBillingDate).toLocaleDateString()}</span>
+              </div>
+              {subscription.billing.paymentMethod && (
+                <div className="flex justify-between">
+                  <span>Payment method:</span>
+                  <span>**** **** **** {subscription.billing.paymentMethod.last4} ({subscription.billing.paymentMethod.brand})</span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+```
+
+---
+
+## 📊 Analytics and Monitoring
+
+### Business Metrics Dashboard
+```python
+# src/fastmcp/analytics/business_metrics.py
+import logging
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+from ..auth.supabase_client import SupabaseTokenClient
+
+logger = logging.getLogger(__name__)
+
+class BusinessMetrics:
+    """Business analytics for subscription management."""
+    
+    def __init__(self, supabase_client: SupabaseTokenClient):
+        self.supabase = supabase_client
+    
+    async def get_conversion_funnel(self, days: int = 30) -> Dict:
+        """Get conversion funnel metrics."""
+        
+        end_date = datetime.utcnow()
+        start_date = end_date - timedelta(days=days)
+        
+        metrics = {
+            "period": {"start": start_date.isoformat(), "end": end_date.isoformat()},
+            "funnel": {}
+        }
+        
+        try:
+            # Total signups
+            total_users = await self._count_users_in_period(start_date, end_date)
+            metrics["funnel"]["signups"] = total_users
+            
+            # Free users who generated tokens
+            active_free = await self._count_active_free_users(start_date, end_date)
+            metrics["funnel"]["activated_free"] = active_free
+            
+            # Free users who tried cloud features
+            cloud_trials = await self._count_cloud_trial_attempts(start_date, end_date)
+            metrics["funnel"]["cloud_trials"] = cloud_trials
+            
+            # Conversions to paid
+            conversions = await self._count_conversions(start_date, end_date)
+            metrics["funnel"]["conversions"] = conversions
+            
+            # Calculate conversion rates
+            if total_users > 0:
+                metrics["rates"] = {
+                    "activation_rate": (active_free / total_users) * 100,
+                    "trial_rate": (cloud_trials / active_free) * 100 if active_free > 0 else 0,
+                    "conversion_rate": (conversions / cloud_trials) * 100 if cloud_trials > 0 else 0,
+                    "overall_conversion": (conversions / total_users) * 100
+                }
+            
+        except Exception as e:
+            logger.error(f"Failed to calculate conversion funnel: {e}")
+            metrics["error"] = str(e)
+        
+        return metrics
+    
+    async def get_revenue_metrics(self, days: int = 30) -> Dict:
+        """Get revenue and financial metrics."""
+        
+        end_date = datetime.utcnow()
+        start_date = end_date - timedelta(days=days)
+        
+        try:
+            # Monthly Recurring Revenue (MRR)
+            mrr = await self._calculate_mrr()
+            
+            # Revenue by plan
+            revenue_by_plan = await self._get_revenue_by_plan(start_date, end_date)
+            
+            # Customer Lifetime Value (LTV)
+            ltv = await self._calculate_ltv()
+            
+            # Churn rate
+            churn_rate = await self._calculate_churn_rate(days)
+            
+            return {
+                "mrr": mrr,
+                "arr": mrr * 12,  # Annual Recurring Revenue
+                "revenue_by_plan": revenue_by_plan,
+                "ltv": ltv,
+                "churn_rate": churn_rate,
+                "period": {"start": start_date.isoformat(), "end": end_date.isoformat()}
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to calculate revenue metrics: {e}")
+            return {"error": str(e)}
+    
+    async def get_usage_analytics(self, days: int = 30) -> Dict:
+        """Get usage pattern analytics."""
+        
+        end_date = datetime.utcnow()
+        start_date = end_date - timedelta(days=days)
+        
+        try:
+            # Usage by deployment type
+            usage_by_deployment = await self._get_usage_by_deployment(start_date, end_date)
+            
+            # Top endpoints
+            top_endpoints = await self._get_top_endpoints(start_date, end_date)
+            
+            # Usage trends
+            daily_usage = await self._get_daily_usage_trend(start_date, end_date)
+            
+            # Quota utilization
+            quota_utilization = await self._get_quota_utilization()
+            
+            return {
+                "usage_by_deployment": usage_by_deployment,
+                "top_endpoints": top_endpoints,
+                "daily_usage": daily_usage,
+                "quota_utilization": quota_utilization,
+                "period": {"start": start_date.isoformat(), "end": end_date.isoformat()}
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to calculate usage analytics: {e}")
+            return {"error": str(e)}
+    
+    # Private helper methods
+    async def _count_users_in_period(self, start_date: datetime, end_date: datetime) -> int:
+        """Count users created in period."""
+        # Implementation depends on your user table structure
+        pass
+    
+    async def _calculate_mrr(self) -> float:
+        """Calculate Monthly Recurring Revenue."""
+        # Sum of all active subscription values
+        pass
+    
+    async def _calculate_ltv(self) -> float:
+        """Calculate Customer Lifetime Value."""
+        # Average revenue per user / churn rate
+        pass
+```
+
+---
+
+## 🚀 Implementation Timeline
+
+### Week 1: Core Infrastructure
+```yaml
+Tasks:
+  - Database schema updates
+  - Enhanced TokenInfo model
+  - Basic SubscriptionManager
+  - Deployment type detection
+
+Deliverables:
+  - Updated database tables
+  - Enhanced auth models
+  - Basic quota checking
+  - Local vs cloud detection
+
+Testing:
+  - Unit tests for models
+  - Integration tests for quota logic
+  - Local deployment verification
+```
+
+### Week 2: Stripe Integration
+```yaml
+Tasks:
+  - Stripe service implementation
+  - Webhook handling
+  - Subscription lifecycle management
+  - Payment flow integration
+
+Deliverables:
+  - Complete Stripe integration
+  - Webhook endpoint
+  - Subscription management API
+  - Payment processing
+
+Testing:
+  - Stripe webhook testing
+  - Payment flow testing
+  - Subscription lifecycle tests
+```
+
+### Week 3: Frontend Dashboard
+```yaml
+Tasks:
+  - Subscription management UI
+  - Usage analytics dashboard
+  - Plan upgrade flows
+  - Billing information display
+
+Deliverables:
+  - React subscription components
+  - Usage visualization
+  - Upgrade/downgrade flows
+  - Billing management UI
+
+Testing:
+  - UI component testing
+  - User flow testing
+  - Mobile responsiveness
+```
+
+### Week 4: Analytics & Launch
+```yaml
+Tasks:
+  - Business metrics implementation
+  - Admin analytics dashboard
+  - Performance optimization
+  - Production deployment
+
+Deliverables:
+  - Business analytics system
+  - Admin dashboard
+  - Performance optimizations
+  - Production-ready deployment
+
+Testing:
+  - End-to-end testing
+  - Load testing
+  - Security testing
+  - User acceptance testing
+```
+
+---
+
+## 🎯 Success Metrics
+
+### Technical KPIs
+- **System Performance**: <100ms response time for quota checks
+- **Reliability**: 99.9% uptime for billing systems
+- **Security**: Zero billing-related security incidents
+- **Scalability**: Support 10,000+ concurrent users
+
+### Business KPIs
+- **Conversion Rate**: 5% free-to-paid conversion within 30 days
+- **Revenue Growth**: $10K MRR within 3 months
+- **User Satisfaction**: >4.5/5 rating for billing experience
+- **Churn Rate**: <5% monthly churn for paid plans
+
+---
+
+## 🔄 Next Steps
+
+### Phase 0B: MVP Enhancement (Following Phase)
+- Enhanced MCP tools with subscription awareness
+- Advanced analytics and reporting
+- Multi-region cloud deployment
+- Enterprise features implementation
+
+### Integration Points
+- Phase 00 (MVP): Enhanced with subscription system
+- Phase 01-10: All phases will use subscription-aware architecture
+- Frontend: Complete billing and subscription management
+- Backend: Quota-aware MCP server implementation
+
+---
+
+## Agent Contributions
+
+- **@system-architect-agent**: Overall architecture design, database schema, integration strategy
+- **@coding-agent**: Implementation details, code structure, API design
+- **@security-auditor-agent**: Security considerations for billing and payment processing
+- **@ui-designer-agent**: Frontend dashboard design and user experience
+
+---
+
+**Implementation Status**: Ready for development  
+**Estimated Effort**: 3-4 weeks (2 developers)  
+**Risk Level**: Medium (Stripe integration complexity)  
+**Business Impact**: High (Revenue foundation)

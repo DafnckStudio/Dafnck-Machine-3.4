@@ -328,8 +328,27 @@ def main():
         
         logger.info(f"Authentication: {auth_status}, MVP Mode: {mvp_mode}, Supabase: {supabase_configured}")
         
-        # Run the server on stdio transport (default for MCP)
-        server.run(transport="stdio")
+        # Determine transport from environment or command line arguments
+        transport = os.environ.get("FASTMCP_TRANSPORT", "stdio")
+        host = os.environ.get("FASTMCP_HOST", "localhost")
+        port = int(os.environ.get("FASTMCP_PORT", "8000"))
+        
+        # Parse command line arguments for transport override
+        if len(sys.argv) > 1:
+            for i, arg in enumerate(sys.argv[1:], 1):
+                if arg == "--transport" and i + 1 < len(sys.argv):
+                    transport = sys.argv[i + 1]
+                elif arg.startswith("--transport="):
+                    transport = arg.split("=", 1)[1]
+        
+        logger.info(f"Starting server with transport: {transport}")
+        
+        if transport == "streamable-http":
+            logger.info(f"HTTP server will bind to {host}:{port}")
+            server.run(transport="streamable-http", host=host, port=port)
+        else:
+            # Run the server on stdio transport (default for MCP)
+            server.run(transport="stdio")
         
     except KeyboardInterrupt:
         logger.info("Server stopped by user")

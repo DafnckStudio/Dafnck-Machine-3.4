@@ -19,7 +19,7 @@ services:
       - dhafnck-data:/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/mcp"]
+      test: ["CMD", "sh", "-c", "curl -s http://localhost:8000/mcp/ | grep -q 'jsonrpc' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
