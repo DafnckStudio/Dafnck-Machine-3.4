@@ -153,7 +153,7 @@
         {
           "title": "Day 1: Supabase Project Setup (2 hours)",
           "description": "Create and configure Supabase project with authentication and database schema",
-          "completed": false,
+          "completed": true,
           "assignee": "@system-architect-agent",
           "id": "20250627003.001",
           "assignees": []
@@ -185,7 +185,7 @@
       ],
       "dueDate": "2025-02-03",
       "created_at": "2025-06-27T09:19:28.769762+00:00",
-      "updated_at": "2025-06-27T09:20:04.166002+00:00"
+      "updated_at": "2025-06-27T10:04:32.804525+00:00"
     },
     {
       "id": "20250627004",
@@ -248,7 +248,7 @@
       "title": "Task: Supabase Project Configuration",
       "description": "Create new Supabase project, configure authentication settings, create database schema for API tokens, and set up Row Level Security policies.",
       "project_id": "dhafnck_mcp_main",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "details": "**Acceptance Criteria:**\n- [ ] Supabase project created with proper naming\n- [ ] Email/password authentication enabled\n- [ ] API tokens table created with proper schema\n- [ ] RLS policies configured for user data security\n- [ ] Environment variables documented for integration\n\n**Technical Requirements:**\n- Project name: dhafnck-mcp-mvp\n- Authentication: Email/password only (no OAuth for MVP)\n- Database schema as defined in phase_00.mdc\n- API keys and URLs ready for frontend integration",
       "estimatedEffort": "quick",
@@ -264,7 +264,7 @@
       "subtasks": [],
       "dueDate": "2025-01-28",
       "created_at": "2025-06-27T09:20:50.610612+00:00",
-      "updated_at": "2025-06-27T09:20:50.610612+00:00"
+      "updated_at": "2025-06-27T10:04:33.468561+00:00"
     },
     {
       "id": "20250627006",

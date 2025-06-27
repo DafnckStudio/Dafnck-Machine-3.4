@@ -163,3 +163,4 @@ scratch/# Protect yaml-lib directory
 !dhafnck_mcp_main/yaml-lib/**
 
 .cursor/rules/auto_rule.mdc
+*.env
