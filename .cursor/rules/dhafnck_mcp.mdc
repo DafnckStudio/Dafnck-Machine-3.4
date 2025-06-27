@@ -16,13 +16,20 @@ If USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT is set to ON, you must use the absolute p
 ai must update task_tree_id = <name-git-branch-actual>, if i change branch projet (see @need-update-if-change-project-tree.mdc)
 
 ## On chat: 
+**Begin chat session**
 - **Open chat session/ new chat**: AI begin create/set variable tools_count = 0 on background (number tools used on this session) 
-- **Begin chat session**: AI read [contextmaster.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/contextmaster.mdc)
-- **Begin chat session**: AI read [README.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc) (.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc)
-- **Begin chat session**: AI read [README.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc) (.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc)
-- **Tool call on chat/edit files**: increment tools_count variable
-- **Each time tools_count = 20**: reset tools_count = 0, update context file relative on .cursor/rules/contexts
-- **When use terminal commande** : try exit commande if no result (when commande is longer than 20 sec force quit this commande)
+- AI read [contextmaster.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/contextmaster.mdc)
+- AI read [README.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc) (.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc)
+- AI read [README.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc) (.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc)
+
+**During chat session**
+- **Tool call on chat/edit files**: increment tools_count variable each tool use
+- **Each time tools_count = 20**: reset tools_count = 0, AI use Edit & Reapply available tools in Cursor’s Chat modes for update .cursor/rules/contexts/context_[TASK_ID].md
+- **Each time use terminal commande** : try exit commande if no result (when commande is longer than 20 sec force quit this commande)
+- **Each time use mcp tool call_agent()**
+    ├── Always begin your chat by saying only "Call Agent...", call_agent()
+    ├── Continuer your chat by saying only "Retrieve Knowledge..." retrieve all relevant information 
+    └── End call_agent by saying only "Switch Agent Capacity..."
 
 run terminal commande →
     ├── force quit if run more than 20s (no result)

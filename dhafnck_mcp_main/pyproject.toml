@@ -17,6 +17,9 @@ dependencies = [
     "jsonschema>=4.17.0",
     "psutil>=5.9.0",
     "pydantic>=2.11.7",
+    # Authentication and security dependencies
+    "httpx>=0.28.1",  # Already included above for HTTP requests to Supabase
+    "cryptography>=42.0.0",  # For secure token generation and hashing
 ]
 requires-python = ">=3.10"
 readme = "README.md"

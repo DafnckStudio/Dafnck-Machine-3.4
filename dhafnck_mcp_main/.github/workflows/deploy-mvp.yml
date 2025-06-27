@@ -1,0 +1,254 @@
+name: Deploy MVP
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+        - preview
+        - production
+      skip_tests:
+        description: 'Skip test execution'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: dhafnck/mcp-server
+
+jobs:
+  validate:
+    name: Pre-deployment Validation
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep '^version = ' pyproject.toml | cut -d '"' -f 2)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Run tests
+        if: ${{ !inputs.skip_tests }}
+        run: |
+          uv run pytest tests/ -v --tb=short
+
+      - name: Run linting
+        run: |
+          uv run ruff check src/
+
+      - name: Validate Docker build
+        run: |
+          docker build -t ${{ env.IMAGE_NAME }}:test --target runtime .
+          docker run --rm ${{ env.IMAGE_NAME }}:test python -c "
+          from src.fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server
+          server = create_dhafnck_mcp_server()
+          tools = server.get_tools()
+          print(f'✅ Docker validation passed: {len(tools)} tools available')
+          "
+
+  deploy-frontend:
+    name: Deploy Frontend to Vercel
+    runs-on: ubuntu-latest
+    needs: validate
+    environment: ${{ inputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: frontend
+          production: ${{ inputs.environment == 'production' }}
+
+  build-and-push-docker:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: validate
+    if: ${{ inputs.environment == 'production' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ needs.validate.outputs.version }}
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: runtime
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test Docker image
+        run: |
+          docker run --rm ${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }} python -c "
+          from src.fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server
+          server = create_dhafnck_mcp_server()
+          tools = server.get_tools()
+          print(f'✅ Production image test passed: {len(tools)} tools available')
+          "
+
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [validate, deploy-frontend, build-and-push-docker]
+    if: ${{ inputs.environment == 'production' && always() && !failure() }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create deployment summary
+        run: |
+          cat > DEPLOYMENT_SUMMARY.md << EOF
+          # DhafnckMCP MVP Deployment v${{ needs.validate.outputs.version }}
+          
+          **Deployment Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Version**: ${{ needs.validate.outputs.version }}
+          **Environment**: ${{ inputs.environment }}
+          
+          ## ✅ Deployment Status: SUCCESS
+          
+          ### Components Deployed:
+          - ✅ Frontend deployed to Vercel
+          - ✅ Docker image published to Docker Hub
+          - ✅ GitHub release created
+          
+          ### Access Information:
+          - **Docker Image**: \`${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}\`
+          - **Frontend**: Available on Vercel
+          - **Documentation**: Available in repository
+          
+          ### Quick Start:
+          \`\`\`bash
+          docker run -p 8000:8000 ${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}
+          \`\`\`
+          
+          ### Post-Deployment Tasks:
+          - [ ] Verify all services are running correctly
+          - [ ] Test end-to-end user flow
+          - [ ] Monitor application logs and performance
+          - [ ] Gather initial user feedback
+          - [ ] Update project documentation
+          
+          ---
+          Automated deployment via GitHub Actions
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.validate.outputs.version }}
+          name: DhafnckMCP MVP v${{ needs.validate.outputs.version }}
+          body_path: DEPLOYMENT_SUMMARY.md
+          draft: false
+          prerelease: false
+          files: |
+            DEPLOYMENT_SUMMARY.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify-completion:
+    name: Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [validate, deploy-frontend, build-and-push-docker]
+    if: always()
+    
+    steps:
+      - name: Deployment Success
+        if: ${{ !failure() }}
+        run: |
+          echo "🚀 DhafnckMCP MVP Deployment Completed Successfully!"
+          echo "Version: ${{ needs.validate.outputs.version }}"
+          echo "Environment: ${{ inputs.environment }}"
+          echo ""
+          echo "📋 Deployment Summary:"
+          echo "✅ Pre-deployment validation passed"
+          echo "✅ Frontend deployed to Vercel"
+          echo "${{ inputs.environment == 'production' && '✅ Docker image published' || '🧪 Docker image ready for publishing' }}"
+          echo ""
+          echo "🔗 Next Steps:"
+          echo "1. Test the deployed application"
+          echo "2. Monitor for any issues"
+          echo "3. Gather user feedback"
+          echo "4. Plan next development iteration"
+
+      - name: Deployment Failure
+        if: failure()
+        run: |
+          echo "❌ DhafnckMCP MVP Deployment Failed"
+          echo "Please check the workflow logs for details"
+          echo ""
+          echo "🔍 Troubleshooting Steps:"
+          echo "1. Review failed job logs"
+          echo "2. Check environment variables and secrets"
+          echo "3. Verify all prerequisites are met"
+          echo "4. Re-run the workflow after fixing issues" 

@@ -30,11 +30,6 @@ Each agent has specific expertise and can be invoked using @agent-name syntax.
 }
 ---
 
-## Memory Retrieval:
-   - Always begin your chat by saying only "Call Agent..." and retrieve all relevant information from call_agent()
-   - Always refer to your knowledge agent as your "knowledge"
-   - End call_agent by saying only "Switch Agent Capacity..." 
-
 ## 🔍 How to Get Agent Details
 
 To get detailed information about what any agent does (including its capabilities, input/output formats, and integration details), use the **MCP tool** `call_agent` (preferred method):

@@ -1,0 +1,151 @@
+# DhafnckMCP Docker Build Context Exclusions
+# Optimize build context and reduce image size
+
+# Git and version control
+.git
+.gitignore
+.gitattributes
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Documentation
+docs/_build/
+.readthedocs.yml
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# Data directories (will be mounted as volumes)
+data/
+
+# Node.js (if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker files (avoid recursion)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Development and testing files
+tests/
+scripts/
+examples/
+.github/
+.ruff_cache/
+.claude/
+
+# Documentation and markdown files (keep only README.md)
+*.md
+!README.md
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Package files
+*.tar.gz
+*.zip
+*.rar
+
+# Lock files (keep uv.lock for dependency resolution)
+package-lock.json
+yarn.lock
+Pipfile.lock
+poetry.lock
+
+# Cache directories
+.cache/
+.npm/
+.yarn/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Large binary files
+*.bin
+*.exe
+*.dmg
+*.pkg
+*.deb
+*.rpm
+
+# Database files (will be in volumes)
+*.db
+*.sqlite
+*.sqlite3 
