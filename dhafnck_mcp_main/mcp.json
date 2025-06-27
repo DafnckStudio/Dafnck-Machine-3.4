@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "dhafnck_mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e", "DHAFNCK_TOKEN=vzsRAvDwKbjIOmTvCaJMS5G7FBr4mH59",
+        "-v", "dhafnck-data:/data",
+        "dhafnck/mcp-server:latest"
+      ],
+      "env": {
+        "DHAFNCK_TOKEN": "vzsRAvDwKbjIOmTvCaJMS5G7FBr4mH59"
+      }
+    }
+  }
+} 

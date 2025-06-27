@@ -4,16 +4,16 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useTokens } from '@/hooks/useTokens'
 import { copyToClipboard, formatDate } from '@/lib/utils'
 import {
-    Container,
-    Copy,
-    ExternalLink,
-    Eye,
-    EyeOff,
-    Key,
-    LogOut,
-    Plus,
-    Trash2,
-    User
+  Container,
+  Copy,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  Key,
+  LogOut,
+  Plus,
+  Trash2,
+  User
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -114,6 +114,25 @@ export default function Dashboard() {
   -e DHAFNCK_TOKEN="${token}" \\
   -v dhafnck-data:/data \\
   dhafnck/mcp-server:latest`
+
+  const mcpConfig = (token: string) => `{
+  "mcpServers": {
+    "dhafnck_mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e", "DHAFNCK_TOKEN=${token}",
+        "-v", "dhafnck-data:/data",
+        "dhafnck/mcp-server:latest"
+      ],
+      "env": {
+        "DHAFNCK_TOKEN": "${token}"
+      }
+    }
+  }
+}`
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -257,15 +276,29 @@ export default function Dashboard() {
                   <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-gray-400">Terminal</span>
-                      <button
-                        onClick={() => handleCopyToken(dockerCommand(tokens[0].token))}
-                        className="text-gray-400 hover:text-white transition-colors"
-                      >
-                        <Copy className="h-4 w-4" />
-                      </button>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => toggleTokenVisibility('docker-config')}
+                          className="text-gray-400 hover:text-white transition-colors"
+                          title={visibleTokens.has('docker-config') ? 'Hide token' : 'Show token'}
+                        >
+                          {visibleTokens.has('docker-config') ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => handleCopyToken(dockerCommand(tokens[0].token))}
+                          className="text-gray-400 hover:text-white transition-colors"
+                          title="Copy Docker command"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                     <pre className="whitespace-pre-wrap break-all">
-                      {dockerCommand(tokens[0].token)}
+                      {dockerCommand(visibleTokens.has('docker-config') ? tokens[0].token : '•'.repeat(32))}
                     </pre>
                   </div>
                   <div className="mt-4 text-sm text-gray-600">
@@ -274,6 +307,67 @@ export default function Dashboard() {
                       <li>Server will be available at <code className="bg-gray-100 px-1 rounded">localhost:8000</code></li>
                       <li>Configure Cursor to connect to your MCP server</li>
                       <li>Start using AI-powered task management</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* MCP Configuration */}
+            {tokens.length > 0 && (
+              <div className="bg-white rounded-lg shadow-sm border">
+                <div className="p-6 border-b">
+                  <div className="flex items-center">
+                    <Key className="h-5 w-5 text-gray-400 mr-2" />
+                    <h2 className="text-lg font-semibold text-gray-900">MCP Configuration</h2>
+                  </div>
+                  <p className="mt-1 text-sm text-gray-600">
+                    Add this to your Cursor settings
+                  </p>
+                </div>
+                <div className="p-6">
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Add to your <code className="bg-gray-100 px-1 rounded">mcp.json</code> file:
+                    </label>
+                    <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                                             <div className="flex items-center justify-between mb-2">
+                         <span className="text-gray-400">mcp.json</span>
+                         <div className="flex items-center space-x-2">
+                           <button
+                             onClick={() => toggleTokenVisibility('mcp-config')}
+                             className="text-gray-400 hover:text-white transition-colors"
+                             title={visibleTokens.has('mcp-config') ? 'Hide token' : 'Show token'}
+                           >
+                             {visibleTokens.has('mcp-config') ? (
+                               <EyeOff className="h-4 w-4" />
+                             ) : (
+                               <Eye className="h-4 w-4" />
+                             )}
+                           </button>
+                           <button
+                             onClick={() => handleCopyToken(mcpConfig(tokens[0].token))}
+                             className="text-gray-400 hover:text-white transition-colors"
+                             title="Copy MCP configuration"
+                           >
+                             <Copy className="h-4 w-4" />
+                           </button>
+                         </div>
+                       </div>
+                       <pre className="whitespace-pre-wrap break-all text-xs">
+                         {mcpConfig(visibleTokens.has('mcp-config') ? tokens[0].token : '•'.repeat(32))}
+                       </pre>
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="font-medium text-blue-900 mb-2">Setup Instructions:</h4>
+                    <ol className="list-decimal list-inside space-y-1 text-sm text-blue-800">
+                      <li>Copy the configuration above</li>
+                      <li>Open Cursor settings (Cmd/Ctrl + ,)</li>
+                      <li>Search for "MCP" or navigate to Extensions → MCP</li>
+                      <li>Add the configuration to your <code className="bg-blue-100 px-1 rounded">mcp.json</code> file</li>
+                      <li>Restart Cursor to load the MCP server</li>
+                      <li>Your DhafnckMCP tools will be available in the chat</li>
                     </ol>
                   </div>
                 </div>
@@ -356,6 +450,45 @@ export default function Dashboard() {
                       </button>
                     </div>
                   </div>
+                  
+                  {/* MCP Configuration in Modal */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      MCP Configuration for Cursor:
+                    </label>
+                    <div className="bg-gray-900 text-green-400 p-3 rounded-lg font-mono text-xs overflow-x-auto max-h-40 overflow-y-auto">
+                                             <div className="flex items-center justify-between mb-2">
+                         <span className="text-gray-400">mcp.json</span>
+                         <div className="flex items-center space-x-2">
+                           <button
+                             onClick={() => toggleTokenVisibility('modal-mcp-config')}
+                             className="text-gray-400 hover:text-white transition-colors"
+                             title={visibleTokens.has('modal-mcp-config') ? 'Hide token' : 'Show token'}
+                           >
+                             {visibleTokens.has('modal-mcp-config') ? (
+                               <EyeOff className="h-4 w-4" />
+                             ) : (
+                               <Eye className="h-4 w-4" />
+                             )}
+                           </button>
+                           <button
+                             onClick={() => handleCopyToken(mcpConfig(generatedToken))}
+                             className="text-gray-400 hover:text-white transition-colors"
+                             title="Copy MCP configuration"
+                           >
+                             <Copy className="h-4 w-4" />
+                           </button>
+                         </div>
+                       </div>
+                       <pre className="whitespace-pre-wrap break-all">
+                         {mcpConfig(visibleTokens.has('modal-mcp-config') ? generatedToken : '•'.repeat(32))}
+                       </pre>
+                    </div>
+                    <p className="mt-2 text-xs text-gray-500">
+                      Add this configuration to your Cursor MCP settings
+                    </p>
+                  </div>
+                  
                   <div className="flex justify-end space-x-3">
                     <button
                       onClick={() => {

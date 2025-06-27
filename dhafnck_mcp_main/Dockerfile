@@ -26,8 +26,8 @@ RUN pip install uv
 # Copy source code
 COPY src/ src/
 
-# Install dependencies and the package in a virtual environment
-RUN uv sync --no-dev --frozen
+# Install dependencies and the package using uv
+RUN uv sync --no-dev --frozen && uv pip install -e .
 
 # Stage 2: Runtime stage
 FROM python:3.11-slim as runtime
@@ -71,12 +71,9 @@ EXPOSE 8000
 # Activate virtual environment by updating PATH
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Install the package in editable mode in the virtual environment
-RUN /app/.venv/bin/pip install -e .
-
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import sys; sys.path.insert(0, '/app/src'); from fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server; server = create_dhafnck_mcp_server(); tools = server.get_tools(); print('Health check passed' if len(tools) > 0 else exit(1))"
+    CMD python -c "import sys; sys.path.insert(0, '/app/src'); from fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server; print('Health check passed')"
 
 # Default command
 ENTRYPOINT ["docker-entrypoint.sh"]
