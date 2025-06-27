@@ -189,5 +189,20 @@
     "agent_assignments": {},
     "created_at": "2025-01-01T00:00:00Z",
     "updated_at": "2025-06-27T11:49:35.713540"
+  },
+  "simple_test_project": {
+    "id": "simple_test_project",
+    "name": "Simple Test Project",
+    "description": "Direct test project creation",
+    "task_trees": {
+      "main": {
+        "id": "main",
+        "name": "Main Tasks",
+        "description": "Main task tree"
+      }
+    },
+    "registered_agents": {},
+    "agent_assignments": {},
+    "created_at": "2025-01-01T00:00:00Z"
   }
 }
