@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Tuple
 from datetime import datetime
 
 from ...domain.entities.task import Task
@@ -21,6 +21,25 @@ class ContextGenerator:
             # Use find_project_root to get the correct workspace root
             project_root = find_project_root()
             self.context_root_path = project_root / ".cursor" / "rules" / "contexts"
+    
+    def generate_context_content_for_mcp(self, task: Task, user_id: str = "default_id") -> Tuple[str, str]:
+        """
+        Generate context content and file path for MCP tools to create locally
+        
+        Args:
+            task: Task entity to generate context for
+            user_id: User identifier for hierarchical storage
+            
+        Returns:
+            Tuple[str, str]: (context_content, relative_file_path)
+        """
+        # Generate the content
+        context_content = self._generate_context_content(task)
+        
+        # Generate the relative file path (without the full project root)
+        relative_path = f".cursor/rules/contexts/{user_id}/{task.project_id}/context_{task.id.value}.md"
+        
+        return context_content, relative_path
     
     def generate_context_file_if_not_exists(self, task: Task, user_id: str = "default_id") -> bool:
         """
@@ -312,3 +331,18 @@ def update_task_context(task: Task, user_id: str = "default_id") -> bool:
     """
     generator = ContextGenerator()
     return generator.update_context_file(task, user_id)
+
+
+def generate_context_content_for_mcp(task: Task, user_id: str = "default_id") -> Tuple[str, str]:
+    """
+    Convenience function to generate context content for MCP tools
+    
+    Args:
+        task: Task entity to generate context for
+        user_id: User identifier for hierarchical storage
+        
+    Returns:
+        Tuple[str, str]: (context_content, relative_file_path)
+    """
+    generator = ContextGenerator()
+    return generator.generate_context_content_for_mcp(task, user_id)

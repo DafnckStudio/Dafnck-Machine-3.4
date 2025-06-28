@@ -114,13 +114,14 @@ class TaskResponse:
     due_date: Optional[str]
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
+    context_info: Optional[Dict[str, Any]] = None
     
     def __init__(self, id: str, title: str, description: str, status: str, priority: str, 
                  details: str, estimated_effort: str, assignees: List[str], labels: List[str],
                  dependencies: List[str], subtasks: List[Dict[str, Any]], due_date: Optional[str],
                  created_at: Optional[datetime], updated_at: Optional[datetime], 
-                 project_id: Optional[str] = None):
-        """Initialize TaskResponse with optional project_id"""
+                 project_id: Optional[str] = None, context_info: Optional[Dict[str, Any]] = None):
+        """Initialize TaskResponse with optional project_id and context_info"""
         self.id = id
         self.title = title
         self.description = description
@@ -136,6 +137,7 @@ class TaskResponse:
         self.due_date = due_date
         self.created_at = created_at
         self.updated_at = updated_at
+        self.context_info = context_info
     
     @classmethod
     def from_domain(cls, task) -> 'TaskResponse':

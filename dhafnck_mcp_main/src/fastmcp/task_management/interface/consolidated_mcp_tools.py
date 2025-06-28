@@ -1445,7 +1445,9 @@ class ToolConfig:
             "update_auto_rule": False,
             "validate_rules": False, 
             "regenerate_auto_rule": False, 
-            "validate_tasks_json": False
+            "validate_tasks_json": False,
+            "create_context_file": True,
+            "manage_context": True
         },
         "debug_mode": False, 
         "tool_logging": False
@@ -1855,12 +1857,18 @@ class TaskOperationHandler:
             response = do_next_use_case.execute()
             
             if response.has_next and response.next_item:
-                return {
+                result = {
                     "success": True,
                     "action": "next",
                     "next_item": response.next_item,
                     "message": response.message
                 }
+                
+                # Add context_info if available (only for tasks with specific conditions)
+                if response.context_info:
+                    result["context_info"] = response.context_info
+                
+                return result
             else:
                 return {
                     "success": True,
@@ -2310,6 +2318,158 @@ class ToolRegistrationOrchestrator:
         else:
             logger.info("Skipped manage_agent tool (disabled)")
 
+        if self._config.is_enabled("manage_context"):
+            @mcp.tool()
+            def manage_context(
+                action: Annotated[str, Field(description="Context action to perform. Available: create, get, update, delete, list, get_property, update_property, merge, add_insight, add_progress, update_next_steps")],
+                task_id: Annotated[str, Field(description="Task identifier (required for most operations)")] = None,
+                user_id: Annotated[str, Field(description="User identifier (defaults to 'default_id')")] = "default_id",
+                project_id: Annotated[str, Field(description="Project identifier")] = "",
+                task_tree_id: Annotated[str, Field(description="Task tree identifier (defaults to 'main')")] = "main",
+                property_path: Annotated[str, Field(description="Property path using dot notation (e.g., 'metadata.status', 'progress.next_steps.0')")] = None,
+                value: Annotated[Any, Field(description="Value to set for property updates")] = None,
+                data: Annotated[Dict[str, Any], Field(description="Data to merge or context data for creation")] = None,
+                agent: Annotated[str, Field(description="Agent name for insights and progress actions")] = None,
+                category: Annotated[str, Field(description="Category for insights: insight, challenge, solution, decision")] = None,
+                content: Annotated[str, Field(description="Content for insights or progress actions")] = None,
+                importance: Annotated[str, Field(description="Importance level: low, medium, high, critical")] = "medium",
+                next_steps: Annotated[List[str], Field(description="List of next steps to update")] = None
+            ) -> Dict[str, Any]:
+                """🗂️ CONTEXT MANAGER - Complete JSON-based context management with CRUD operations
+
+⭐ WHAT IT DOES: Manages task contexts in JSON format with full CRUD operations and nested property support
+📋 WHEN TO USE: Create, read, update, or delete task contexts; manage context properties and insights
+
+🎯 ACTIONS AVAILABLE:
+• create: Create new context for a task
+• get: Retrieve context or specific property
+• update: Update context properties (supports dot notation)
+• delete: Remove context entirely
+• list: List all contexts in project/tree
+• get_property: Get specific property using dot notation
+• update_property: Update specific property using dot notation
+• merge: Merge data into existing context
+• add_insight: Add agent insight/note to context
+• add_progress: Add progress action to context
+• update_next_steps: Update next steps list
+
+🔧 PROPERTY ACCESS:
+• Use dot notation for nested properties: 'metadata.status', 'progress.next_steps', 'notes.agent_insights.0'
+• Array access with indices: 'subtasks.items.0.title'
+• Deep nested updates: 'technical.technologies' to add/update technology lists
+
+💡 USAGE EXAMPLES:
+• manage_context("get", task_id="123") - Get full context
+• manage_context("get_property", task_id="123", property_path="metadata.status") - Get status
+• manage_context("update_property", task_id="123", property_path="metadata.status", value="in_progress")
+• manage_context("add_insight", task_id="123", agent="coding_agent", category="solution", content="Used React hooks")
+• manage_context("merge", task_id="123", data={"technical": {"technologies": ["React", "TypeScript"]}})
+
+🗂️ STORAGE: Contexts stored as JSON files in .cursor/rules/contexts/{user_id}/{project_id}/{task_tree_id}/
+                """
+                try:
+                    from ...infrastructure.services.context_manager import ContextManager
+                    
+                    context_manager = ContextManager()
+                    
+                    if action == "create":
+                        if not task_id:
+                            return {"success": False, "error": "task_id is required for create action"}
+                        
+                        # Get task data to create context
+                        task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                        task = task_service._task_repository.find_by_id(task_id)
+                        
+                        if not task:
+                            return {"success": False, "error": f"Task {task_id} not found"}
+                        
+                        success = context_manager.create_context_from_task(task, user_id)
+                        return {"success": success, "message": f"Context created for task {task_id}" if success else "Failed to create context"}
+                    
+                    elif action == "get":
+                        if not task_id:
+                            return {"success": False, "error": "task_id is required for get action"}
+                        
+                        context = context_manager.get_context(task_id, user_id, project_id, task_tree_id)
+                        if context:
+                            return {"success": True, "context": context.to_dict()}
+                        else:
+                            return {"success": False, "error": f"Context not found for task {task_id}"}
+                    
+                    elif action == "update":
+                        if not task_id or not data:
+                            return {"success": False, "error": "task_id and data are required for update action"}
+                        
+                        success = context_manager.merge_data(task_id, data, user_id, project_id, task_tree_id)
+                        return {"success": success, "message": f"Context updated for task {task_id}" if success else "Failed to update context"}
+                    
+                    elif action == "delete":
+                        if not task_id:
+                            return {"success": False, "error": "task_id is required for delete action"}
+                        
+                        success = context_manager.delete_context(task_id, user_id, project_id, task_tree_id)
+                        return {"success": success, "message": f"Context deleted for task {task_id}" if success else "Failed to delete context"}
+                    
+                    elif action == "list":
+                        contexts = context_manager.list_contexts(user_id, project_id, task_tree_id)
+                        return {"success": True, "contexts": contexts}
+                    
+                    elif action == "get_property":
+                        if not task_id or not property_path:
+                            return {"success": False, "error": "task_id and property_path are required for get_property action"}
+                        
+                        prop_value = context_manager.get_property(task_id, property_path, user_id, project_id, task_tree_id)
+                        if prop_value is not None:
+                            return {"success": True, "property": property_path, "value": prop_value}
+                        else:
+                            return {"success": False, "error": f"Property {property_path} not found in context for task {task_id}"}
+                    
+                    elif action == "update_property":
+                        if not task_id or not property_path or value is None:
+                            return {"success": False, "error": "task_id, property_path, and value are required for update_property action"}
+                        
+                        success = context_manager.update_property(task_id, property_path, value, user_id, project_id, task_tree_id)
+                        return {"success": success, "message": f"Property {property_path} updated for task {task_id}" if success else "Failed to update property"}
+                    
+                    elif action == "merge":
+                        if not task_id or not data:
+                            return {"success": False, "error": "task_id and data are required for merge action"}
+                        
+                        success = context_manager.merge_data(task_id, data, user_id, project_id, task_tree_id)
+                        return {"success": success, "message": f"Data merged into context for task {task_id}" if success else "Failed to merge data"}
+                    
+                    elif action == "add_insight":
+                        if not task_id or not agent or not category or not content:
+                            return {"success": False, "error": "task_id, agent, category, and content are required for add_insight action"}
+                        
+                        success = context_manager.add_insight(task_id, agent, category, content, importance, user_id, project_id, task_tree_id)
+                        return {"success": success, "message": f"Insight added to context for task {task_id}" if success else "Failed to add insight"}
+                    
+                    elif action == "add_progress":
+                        if not task_id or not agent or not content:
+                            return {"success": False, "error": "task_id, agent, and content are required for add_progress action"}
+                        
+                        success = context_manager.add_progress_action(task_id, content, agent, "", "completed", user_id, project_id, task_tree_id)
+                        return {"success": success, "message": f"Progress action added to context for task {task_id}" if success else "Failed to add progress action"}
+                    
+                    elif action == "update_next_steps":
+                        if not task_id or not next_steps:
+                            return {"success": False, "error": "task_id and next_steps are required for update_next_steps action"}
+                        
+                        success = context_manager.update_next_steps(task_id, next_steps, user_id, project_id, task_tree_id)
+                        return {"success": success, "message": f"Next steps updated for task {task_id}" if success else "Failed to update next steps"}
+                    
+                    else:
+                        return {"success": False, "error": f"Unknown action: {action}. Available actions: create, get, update, delete, list, get_property, update_property, merge, add_insight, add_progress, update_next_steps"}
+                
+                except Exception as e:
+                    logger.error(f"Error in manage_context: {e}")
+                    return {"success": False, "error": f"Context management failed: {e}"}
+        
+            logger.info("Registered manage_context tool")
+        else:
+            logger.info("Skipped manage_context tool (disabled)")
+
         if self._config.is_enabled("call_agent"):
             @mcp.tool()
             def call_agent(
@@ -2368,7 +2528,7 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
         cursor_tools_disabled = os.environ.get("DHAFNCK_DISABLE_CURSOR_TOOLS", "false").lower() == "true"
         
         # Define all cursor tools
-        cursor_tools = ["update_auto_rule", "validate_rules", "manage_rule", "regenerate_auto_rule", "validate_tasks_json"]
+        cursor_tools = ["update_auto_rule", "validate_rules", "manage_rule", "regenerate_auto_rule", "validate_tasks_json", "create_context_file"]
         
         # If DHAFNCK_DISABLE_CURSOR_TOOLS=true, only keep manage_rule enabled
         if cursor_tools_disabled:
@@ -2406,6 +2566,9 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
                 logger.info(f"  - Registered {tool}")
             elif tool == "validate_tasks_json":
                 self._register_validate_tasks_json_tool(mcp, temp_cursor_tools)
+                logger.info(f"  - Registered {tool}")
+            elif tool == "create_context_file":
+                self._register_create_context_file_tool(mcp, temp_cursor_tools)
                 logger.info(f"  - Registered {tool}")
     
     def _register_manage_rule_tool(self, mcp: "FastMCP", cursor_tools):
@@ -2503,6 +2666,44 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
         """Register only the validate_tasks_json tool"""
         # This would be implemented if needed
         pass
+    
+    def _register_create_context_file_tool(self, mcp: "FastMCP", cursor_tools):
+        """Register the create_context_file tool for local context file creation"""
+        @mcp.tool()
+        def create_context_file(
+            file_path: Annotated[str, Field(description="Path where the context file should be created (relative to project root)")],
+            content: Annotated[str, Field(description="Content to write to the context file")]
+        ) -> Dict[str, Any]:
+            """📝 CREATE CONTEXT FILE - Create task context file locally from MCP server content
+            
+            This tool creates context files locally when the MCP server is running in Docker
+            and cannot directly create files on the local machine.
+            """
+            try:
+                from pathlib import Path
+                
+                # Resolve the full path from project root
+                full_path = cursor_tools.project_root / file_path
+                
+                # Ensure the directory exists
+                full_path.parent.mkdir(parents=True, exist_ok=True)
+                
+                # Write the content to the file
+                with open(full_path, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                
+                return {
+                    "success": True,
+                    "message": f"Context file created successfully at {file_path}",
+                    "full_path": str(full_path),
+                    "size": len(content)
+                }
+                
+            except Exception as e:
+                return {
+                    "success": False,
+                    "error": f"Failed to create context file: {str(e)}"
+                }
 
 
 # ═══════════════════════════════════════════════════════════════════

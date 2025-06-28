@@ -34,7 +34,7 @@ class GetTaskUseCase:
             # Mark task as retrieved (triggers domain event)
             task.mark_as_retrieved()
             
-            # Generate context file if it doesn't exist
+            # Generate context file if it doesn't exist (for Docker compatibility)
             try:
                 generate_task_context_if_needed(task)
             except Exception as e:

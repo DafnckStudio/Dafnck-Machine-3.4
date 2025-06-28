@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from ...domain import TaskRepository, TaskStatus, Priority, AutoRuleGenerator
 from ...infrastructure.services.agent_doc_generator import generate_agent_docs, generate_docs_for_assignees
 from ...infrastructure.services.context_generate import generate_task_context_if_needed
+from ...infrastructure.services.context_manager import ContextManager
 
 
 @dataclass
@@ -14,6 +15,7 @@ class DoNextResponse:
     has_next: bool
     next_item: Optional[Dict[str, Any]] = None
     context: Optional[Dict[str, Any]] = None
+    context_info: Optional[Dict[str, Any]] = None
     message: str = ""
     
     def __getitem__(self, key):
@@ -26,6 +28,8 @@ class DoNextResponse:
             return self.next_item
         elif key == "context":
             return self.context
+        elif key == "context_info":
+            return self.context_info
         elif key == "message":
             return self.message
         else:
@@ -150,6 +154,49 @@ class DoNextUseCase:
                 
                 # Generate agent documentation for all unique assignees
                 generate_docs_for_assignees(task.assignees, clear_all=False)
+                
+                # Generate context_info only if conditions are met (JSON-based context)
+                context_info = None
+                if self._should_generate_context_info(task):
+                    try:
+                        context_manager = ContextManager()
+                        
+                        # Check if context should be created and create it
+                        if context_manager.should_create_context_for_task(task):
+                            success = context_manager.create_context_from_task(task)
+                            if success:
+                                # Get the created context for return
+                                context = context_manager.get_context(
+                                    task.id.value, 
+                                    "default_id", 
+                                    task.project_id, 
+                                    getattr(task, 'task_tree_id', 'main')
+                                )
+                                if context:
+                                    context_info = {
+                                        "context": context.to_dict(),
+                                        "created": True,
+                                        "message": f"New context created for task {task.id.value}"
+                                    }
+                        else:
+                            # Get existing context
+                            context = context_manager.get_context(
+                                task.id.value, 
+                                "default_id", 
+                                task.project_id, 
+                                getattr(task, 'task_tree_id', 'main')
+                            )
+                            if context:
+                                context_info = {
+                                    "context": context.to_dict(),
+                                    "created": False,
+                                    "message": f"Existing context retrieved for task {task.id.value}"
+                                }
+                    except Exception as e:
+                        # Log warning but don't fail the operation
+                        import logging
+                        logging.warning(f"Context management failed for task {task.id}: {e}")
+                
                 return DoNextResponse(
                     has_next=True,
                     next_item={
@@ -157,6 +204,7 @@ class DoNextUseCase:
                         "task": self._task_to_dict(task),
                         "context": self._get_task_context(task, all_tasks)
                     },
+                    context_info=context_info,
                     message=f"Next action: Work on task '{task.title}'"
                 )
         
@@ -234,6 +282,25 @@ class DoNextUseCase:
                 return subtask
         
         return None
+    
+    def _should_generate_context_info(self, task) -> bool:
+        """
+        Check if context_info should be generated for a task.
+        Conditions:
+        1. Task status is 'todo'
+        2. No subtasks are completed (either no subtasks or all subtasks are incomplete)
+        """
+        # Check if task status is 'todo'
+        if task.status.value != "todo":
+            return False
+        
+        # Check subtasks: if there are subtasks, none should be completed
+        if task.subtasks:
+            for subtask in task.subtasks:
+                if subtask.get('completed', False):
+                    return False
+        
+        return True
     
     def _task_to_dict(self, task) -> Dict[str, Any]:
         """Convert task entity to dictionary"""

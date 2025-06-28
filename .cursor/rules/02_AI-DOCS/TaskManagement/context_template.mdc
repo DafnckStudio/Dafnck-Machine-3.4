@@ -3,60 +3,203 @@ description:
 globs: 
 alwaysApply: false
 ---
-## 📝 Templates
+# Context Template Documentation
 
-### Template 1: Individual Task Context File
-```markdown
-# TASK CONTEXT: [Task Title]
+## **JSON Schema Structure**
+The new context management system uses structured JSON with the following schema:
 
-**Task ID**: `[TASK_ID]`
-**Project ID**: `[project_id]`
-**Task tree ID**: `[task_tree_id]`
-**Status**: `[STATUS]`
-**Priority**: `[PRIORITY]`
-**Assignee**: `@[AGENT_NAME]`
-**Created**: `[DATE]`
-**Last Updated**: `[DATE]`
+## **Complete Context Schema Template**
+```json
+{
+  "metadata": {
+    "task_id": "string",
+    "project_id": "string", 
+    "task_tree_id": "string",
+    "status": "todo|in_progress|review|done|cancelled|blocked|deferred",
+    "priority": "low|medium|high|urgent|critical",
+    "assignees": ["@agent_name"],
+    "labels": ["tag1", "tag2"],
+    "created_at": "2025-01-27T10:00:00Z",
+    "updated_at": "2025-01-27T10:00:00Z"
+  },
+  "objective": {
+    "title": "Task Title",
+    "description": "Detailed task description",
+    "estimated_effort": "quick|short|small|medium|large|xlarge|epic|massive",
+    "due_date": "2025-01-30"
+  },
+  "requirements": {
+    "checklist": [
+      {"item": "Requirement 1", "completed": false},
+      {"item": "Requirement 2", "completed": true}
+    ],
+    "custom_requirements": ["Custom requirement 1"],
+    "completion_criteria": ["Criteria 1", "Criteria 2"]
+  },
+  "technical": {
+    "technologies": ["React", "TypeScript", "Node.js"],
+    "frameworks": ["Next.js", "FastAPI"],
+    "key_files": [
+      "src/components/Component.tsx",
+      "src/api/routes.py"
+    ],
+    "architecture_notes": "Key architectural decisions and patterns"
+  },
+  "dependencies": {
+    "task_dependencies": ["task_id_1", "task_id_2"],
+    "external_dependencies": ["API endpoint", "Database schema"],
+    "blocked_by": ["blocker_task_id"]
+  },
+  "progress": {
+    "completed_actions": [
+      {
+        "action": "Created component structure",
+        "timestamp": "2025-01-27T10:30:00Z",
+        "agent": "coding_agent"
+      }
+    ],
+    "session_summary": "Current session progress and key achievements",
+    "next_steps": [
+      "Implement error handling",
+      "Add unit tests",
+      "Update documentation"
+    ],
+    "completion_percentage": 25
+  },
+  "subtasks": {
+    "items": [
+      {
+        "id": "1.1",
+        "title": "Subtask title",
+        "status": "todo",
+        "progress": 0
+      }
+    ],
+    "completed_count": 0,
+    "total_count": 1
+  },
+  "notes": {
+    "agent_insights": [
+      {
+        "agent": "coding_agent",
+        "category": "insight|challenge|solution|decision",
+        "content": "Key insight or decision made",
+        "timestamp": "2025-01-27T10:45:00Z",
+        "importance": "low|medium|high|critical"
+      }
+    ],
+    "challenges": ["Challenge 1", "Challenge 2"],
+    "solutions": ["Solution 1", "Solution 2"],
+    "decisions": ["Decision 1", "Decision 2"]
+  },
+  "custom_sections": {
+    "section_name": {
+      "data": "Custom data for specific needs"
+    }
+  }
+}
+```
 
-## 🎯 Objective
-[Clear, concise description of what this task aims to achieve]
+## **Minimal Context Template**
+For basic task contexts, you can start with this minimal structure:
+```json
+{
+  "metadata": {
+    "task_id": "123",
+    "project_id": "dhafnck_mcp_main",
+    "task_tree_id": "main",
+    "status": "todo",
+    "priority": "medium",
+    "assignees": ["@coding_agent"],
+    "created_at": "2025-01-27T10:00:00Z",
+    "updated_at": "2025-01-27T10:00:00Z"
+  },
+  "objective": {
+    "title": "Implement user authentication",
+    "description": "Add JWT-based authentication system"
+  },
+  "progress": {
+    "completed_actions": [],
+    "next_steps": ["Design auth flow", "Implement JWT tokens"]
+  }
+}
+```
 
-## 📋 Requirements
-- [ ] Requirement 1
-- [ ] Requirement 2
-- [ ] Requirement 3
+## **Property Access Examples**
+Use dot notation to access nested properties:
 
-## 🔧 Technical Details
-### Technologies/Frameworks
-- Technology 1
-- Technology 2
+### Common Property Paths:
+- `metadata.status` - Task status
+- `metadata.assignees` - Assigned agents list
+- `objective.title` - Task title
+- `progress.next_steps` - Next steps array
+- `progress.next_steps.0` - First next step
+- `technical.technologies` - Technology list
+- `notes.agent_insights` - Agent insights array
+- `notes.agent_insights.0.content` - First insight content
+- `subtasks.items.0.status` - First subtask status
 
-### Key Files/Directories
-- `path/to/file1.py`
-- `path/to/directory/`
+### Update Examples:
+```python
+# Update task status
+manage_context("update_property", task_id="123", property_path="metadata.status", value="in_progress")
 
-### Dependencies
-- Dependency on Task ID: [TASK_ID]
-- Blocks Task ID: [TASK_ID]
+# Add technology
+current_tech = manage_context("get_property", task_id="123", property_path="technical.technologies")
+current_tech.append("Redis")
+manage_context("update_property", task_id="123", property_path="technical.technologies", value=current_tech)
 
-## 🚀 Progress Tracking
-### Completed Actions
-- [x] Action 1 - [Date] - [Agent]
-- [x] Action 2 - [Date] - [Agent]
+# Update completion percentage
+manage_context("update_property", task_id="123", property_path="progress.completion_percentage", value=75)
+```
 
-### Current Session Summary
-[What the AI agent do in this session, update continue]
+## **Agent Insight Categories**
+When adding insights, use these categories:
 
-### Next Steps
-- [ ] Next action 1
-- [ ] Next action 2
+- **`insight`**: General observations or learnings
+- **`challenge`**: Problems or obstacles encountered
+- **`solution`**: How challenges were resolved
+- **`decision`**: Important decisions made during implementation
 
-## 🔍 Context Notes
-### Agent Insights
-[Key insights or decisions made by the AI agent]
+## **Status Values**
+Valid status values for tasks:
+- `todo`: Not started
+- `in_progress`: Currently being worked on
+- `review`: Ready for review
+- `done`: Completed
+- `cancelled`: No longer needed
+- `blocked`: Cannot proceed due to dependencies
+- `deferred`: Postponed to later
 
-### Challenges Encountered
-[Any issues or blockers encountered]
+## **Priority Levels**
+Valid priority values:
+- `low`: Nice to have
+- `medium`: Standard priority (default)
+- `high`: Important
+- `urgent`: Needs immediate attention
+- `critical`: Blocking other work
 
-### Solutions Applied
-[How challenges were resolved]
+## **Effort Estimation**
+Valid effort values:
+- `quick`: < 1 hour
+- `short`: 1-4 hours
+- `small`: 1 day
+- `medium`: 2-3 days
+- `large`: 1 week
+- `xlarge`: 2-4 weeks
+- `epic`: 1-3 months
+- `massive`: 3+ months
+
+## **Usage in AI Workflows**
+1. **Before starting work**: Always check context with `manage_context("get", task_id="...")`
+2. **During implementation**: Log progress with `add_progress` and `add_insight`
+3. **When completing steps**: Update `next_steps` for session continuity
+4. **When encountering issues**: Add challenges and solutions to notes
+5. **When making decisions**: Document decisions for future reference
+
+## **Auto-Creation Conditions**
+Contexts are automatically created when:
+- Task status is "todo" AND
+- All subtasks are "todo" or no subtasks exist
+
+This ensures contexts are available when AI agents begin working on tasks.
