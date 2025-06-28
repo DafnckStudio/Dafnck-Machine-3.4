@@ -1,0 +1,36 @@
+{
+  "wcagVersion": "2.1",
+  "level": "AA",
+  "criteria": [
+    {
+      "id": "1.1.1",
+      "name": "Non-text Content",
+      "description": "All non-text content has a text alternative.",
+      "status": "pending"
+    },
+    {
+      "id": "1.3.1",
+      "name": "Info and Relationships",
+      "description": "Information, structure, and relationships conveyed through presentation can be programmatically determined.",
+      "status": "pending"
+    },
+    {
+      "id": "2.1.1",
+      "name": "Keyboard",
+      "description": "All functionality is available from a keyboard.",
+      "status": "pending"
+    },
+    {
+      "id": "2.4.4",
+      "name": "Link Purpose (In Context)",
+      "description": "The purpose of each link can be determined from the link text alone or from the link text together with its context.",
+      "status": "pending"
+    },
+    {
+      "id": "3.3.1",
+      "name": "Error Identification",
+      "description": "If an input error is detected, it is identified and described to the user in text.",
+      "status": "pending"
+    }
+  ]
+} 

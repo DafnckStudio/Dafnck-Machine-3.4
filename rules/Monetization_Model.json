@@ -1,0 +1,27 @@
+{
+  "revenue_streams": [
+    "Monthly subscription",
+    "Enterprise licensing",
+    "Professional services"
+  ],
+  "pricing_models": [
+    {
+      "model": "Tiered pricing",
+      "tiers": [
+        { "name": "Basic", "price": 49, "features": ["Core features", "Community support"] },
+        { "name": "Pro", "price": 199, "features": ["Advanced features", "Email support"] },
+        { "name": "Enterprise", "price": null, "features": ["All features", "Dedicated support", "SLAs"] }
+      ]
+    },
+    {
+      "model": "Usage-based",
+      "description": "Additional charges for high-volume API usage."
+    }
+  ],
+  "subscription_options": [
+    "Monthly",
+    "Annual (discounted)",
+    "Custom enterprise agreements"
+  ],
+  "validation_notes": "Pricing models benchmarked against top 5 competitors. Adjusted based on customer feedback from pilot programs."
+} 

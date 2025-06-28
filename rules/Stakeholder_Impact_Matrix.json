@@ -1,0 +1,90 @@
+[
+  {
+    "stakeholder_id": "SH001",
+    "name": "End Users - Mobile App",
+    "category": "primary",
+    "description": "Primary users of the company's flagship mobile application.",
+    "impacts": [
+      {
+        "impact_area": "User Experience",
+        "description_of_impact": "Frequent app crashes and slow performance leading to frustration and task incompletion.",
+        "severity_level": "High"
+      },
+      {
+        "impact_area": "Emotional",
+        "description_of_impact": "Loss of trust in the application and brand due to unreliability.",
+        "severity_level": "Medium"
+      }
+    ],
+    "overall_impact_level": "High",
+    "validation_priority": "High",
+    "research_targets": "Active users who have reported issues in the last 30 days; Users with session times below average.",
+    "key_concerns_or_needs": "Reliable app performance, quick resolution of bugs, intuitive interface."
+  },
+  {
+    "stakeholder_id": "SH002",
+    "name": "Customer Support Team",
+    "category": "primary",
+    "description": "Team responsible for handling user complaints and issues.",
+    "impacts": [
+      {
+        "impact_area": "Operational",
+        "description_of_impact": "Increased volume of support tickets related to the problem, leading to higher workload and burnout.",
+        "severity_level": "High"
+      },
+      {
+        "impact_area": "Financial",
+        "description_of_impact": "Increased operational costs due to overtime and need for more support agents.",
+        "severity_level": "Medium"
+      }
+    ],
+    "overall_impact_level": "High",
+    "validation_priority": "High",
+    "research_targets": "Support team leads, agents with high ticket resolution rates, agents handling escalated issues.",
+    "key_concerns_or_needs": "Reduced ticket volume, better tools for diagnosing the problem, clear communication on fixes."
+  },
+  {
+    "stakeholder_id": "SH003",
+    "name": "Marketing Department",
+    "category": "secondary",
+    "description": "Team responsible for product promotion and brand image.",
+    "impacts": [
+      {
+        "impact_area": "Reputational",
+        "description_of_impact": "Negative reviews and social media mentions harming brand perception and marketing campaign effectiveness.",
+        "severity_level": "Medium"
+      },
+      {
+        "impact_area": "Strategic",
+        "description_of_impact": "Difficulty in acquiring new users and retaining existing ones due to the problem.",
+        "severity_level": "Medium"
+      }
+    ],
+    "overall_impact_level": "Medium",
+    "validation_priority": "Medium",
+    "research_targets": "Marketing managers, social media managers, campaign analysts.",
+    "key_concerns_or_needs": "Positive brand image, effective campaigns, user growth and retention."
+  },
+  {
+    "stakeholder_id": "SH004",
+    "name": "Development Team",
+    "category": "secondary",
+    "description": "Team responsible for building and maintaining the application.",
+    "impacts": [
+      {
+        "impact_area": "Operational",
+        "description_of_impact": "Diverted from new feature development to firefighting and bug fixing related to the problem.",
+        "severity_level": "High"
+      },
+      {
+        "impact_area": "Emotional",
+        "description_of_impact": "Decreased morale due to persistent issues and pressure to fix them quickly.",
+        "severity_level": "Medium"
+      }
+    ],
+    "overall_impact_level": "High",
+    "validation_priority": "Medium",
+    "research_targets": "Tech leads, senior developers involved in the affected modules.",
+    "key_concerns_or_needs": "Clear problem definition, stable codebase, ability to focus on planned work."
+  }
+] 

@@ -1,0 +1,32 @@
+{
+  "grid": {
+    "columns": 12,
+    "gutter": "24px",
+    "margin": "32px",
+    "example": "Standard 12-column grid for desktop layouts."
+  },
+  "spacing": {
+    "baseUnit": "8px",
+    "scale": [4, 8, 16, 24, 32, 40, 64],
+    "example": "Use multiples of 8px for all spacing."
+  },
+  "colorPalette": {
+    "primary": "#0057FF",
+    "secondary": "#FFB800",
+    "background": "#FFFFFF",
+    "surface": "#F5F7FA",
+    "textPrimary": "#222222",
+    "textSecondary": "#666666",
+    "example": "Primary blue for actions, yellow for highlights."
+  },
+  "elevation": {
+    "levels": [0, 1, 2, 4, 8, 16],
+    "example": "Use elevation 4 for modals, 1 for cards."
+  },
+  "validationChecklist": [
+    "Grid system is defined and documented",
+    "Spacing scale is consistent",
+    "Color palette covers all use cases",
+    "Elevation levels are specified"
+  ]
+} 

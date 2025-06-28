@@ -1,0 +1,27 @@
+{
+  "fontFamilies": {
+    "primary": "Inter, Arial, sans-serif",
+    "secondary": "Roboto Mono, monospace",
+    "example": "Use Inter for UI, Roboto Mono for code snippets."
+  },
+  "fontWeights": {
+    "regular": 400,
+    "medium": 500,
+    "bold": 700,
+    "example": "Headings use bold, body uses regular."
+  },
+  "fontSizes": {
+    "xs": "12px",
+    "s": "14px",
+    "m": "16px",
+    "l": "20px",
+    "xl": "24px",
+    "xxl": "32px",
+    "example": "Use 16px for body, 24px for headings."
+  },
+  "validationChecklist": [
+    "Font families are specified",
+    "Font weights are defined",
+    "Font sizes cover all use cases"
+  ]
+} 

@@ -1,0 +1,25 @@
+{
+  "colorPalette": {
+    "primary": "#2A7AE4",
+    "secondary": "#F5A623",
+    "background": "#FFFFFF",
+    "surface": "#F4F6F8",
+    "error": "#D32F2F",
+    "success": "#388E3C"
+  },
+  "typography": {
+    "headingFont": "Inter Bold",
+    "bodyFont": "Inter Regular",
+    "captionFont": "Inter Light"
+  },
+  "logo": {
+    "src": "/assets/logo.svg",
+    "alt": "DafnckMachine Logo",
+    "usage": "Top left navigation, login screen"
+  },
+  "iconography": {
+    "style": "outlined",
+    "primarySet": "Material Icons",
+    "usage": "Navigation, actions, status indicators"
+  }
+} 

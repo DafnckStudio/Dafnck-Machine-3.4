@@ -1,0 +1,26 @@
+{
+  "color": {
+    "primary": "#2A7AE4",
+    "secondary": "#F5A623",
+    "background": "#FFFFFF",
+    "surface": "#F4F6F8",
+    "error": "#D32F2F"
+  },
+  "typography": {
+    "fontFamily": "Inter, Arial, sans-serif",
+    "fontSizeBase": "16px",
+    "fontWeightBold": 700,
+    "fontWeightRegular": 400
+  },
+  "spacing": {
+    "xs": "4px",
+    "sm": "8px",
+    "md": "16px",
+    "lg": "32px"
+  },
+  "borderRadius": {
+    "sm": "4px",
+    "md": "8px",
+    "lg": "16px"
+  }
+} 

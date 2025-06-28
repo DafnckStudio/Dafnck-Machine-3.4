@@ -1,0 +1,114 @@
+{
+  "title": "Competitor Matrix",
+  "description": "A comprehensive matrix for analyzing and comparing direct and indirect competitors. This document supports the Competitive Landscape Analysis task (P02-S02-T04).",
+  "version": "1.0.0",
+  "last_updated": "YYYY-MM-DD",
+  "matrix_owner": "@market-research-agent",
+  "competitors": [
+    {
+      "id": "comp_001",
+      "name": "Competitor A Name",
+      "type": "Direct",
+      "website": "https://competitorA.com",
+      "company_overview": {
+        "founded_year": 2015,
+        "hq_location": "City, Country",
+        "employee_count": "100-250",
+        "funding_status": "Series B",
+        "key_investors": ["Investor X", "Investor Y"],
+        "mission_statement": "Competitor A's mission statement."
+      },
+      "product_service_details": {
+        "primary_offering": "Product/Service Name",
+        "offering_description": "Detailed description of their main product/service.",
+        "key_features": [
+          {"name": "Feature 1", "description": "Description of Feature 1", "perceived_value": "High/Medium/Low"},
+          {"name": "Feature 2", "description": "Description of Feature 2", "perceived_value": "High/Medium/Low"},
+          {"name": "Feature 3", "description": "Description of Feature 3", "perceived_value": "High/Medium/Low"}
+        ],
+        "unique_selling_proposition_usp": "What makes their offering unique?",
+        "technology_stack_observed": ["Tech 1", "Tech 2 (if known/relevant)"]
+      },
+      "market_positioning": {
+        "target_audience": "Specific customer segments they target.",
+        "market_share_estimate": "Estimated % or range (e.g., 10-15%)",
+        "geographic_focus": ["Region 1", "Country A"],
+        "brand_perception": "How is their brand perceived in the market?",
+        "marketing_channels_used": ["Channel 1 (e.g., SEO)", "Channel 2 (e.g., Social Media)", "Channel 3 (e.g., PPC)"]
+      },
+      "pricing_model": {
+        "strategy": "e.g., Subscription, Freemium, One-time Purchase, Tiered",
+        "tiers": [
+          {"name": "Basic", "price": "$X/month", "features_included": ["Feature A", "Feature B"]},
+          {"name": "Pro", "price": "$Y/month", "features_included": ["Feature A", "Feature B", "Feature C"]}
+        ],
+        "free_trial_available": "Yes/No (details if any)"
+      },
+      "strengths": [
+        {"point": "Key Strength 1", "evidence": "Evidence or observation supporting this strength."},
+        {"point": "Key Strength 2", "evidence": "Evidence or observation supporting this strength."}
+      ],
+      "weaknesses": [
+        {"point": "Key Weakness 1", "evidence": "Evidence or observation supporting this weakness."},
+        {"point": "Key Weakness 2", "evidence": "Evidence or observation supporting this weakness."}
+      ],
+      "competitive_strategy_observed": "e.g., Cost leadership, Differentiation, Niche focus",
+      "recent_news_developments": [
+        {"date": "YYYY-MM-DD", "event": "e.g., New product launch, Funding round, Partnership"}
+      ],
+      "customer_reviews_sentiment": {
+        "positive_themes": ["Theme 1", "Theme 2"],
+        "negative_themes": ["Theme A", "Theme B"],
+        "overall_sentiment_rating": "e.g., 4.2/5 (source: G2, Capterra)"
+      },
+      "differentiation_opportunities_for_us": [
+        "Opportunity 1 based on their weaknesses or market gaps.",
+        "Opportunity 2 based on unmet customer needs."
+      ],
+      "threat_level_to_us": "High/Medium/Low",
+      "notes_and_insights": "Any other relevant observations, strategic insights, or actionable intelligence."
+    },
+    {
+      "id": "comp_002",
+      "name": "Alternative Solution B / Indirect Competitor",
+      "type": "Indirect/Alternative",
+      "website": "https://alternativeB.com (if applicable)",
+      "company_overview": {
+        "description": "Description of the alternative solution or how users currently solve the problem this way."
+      },
+      "product_service_details": {
+        "primary_offering": "Nature of the alternative (e.g., Manual Process, Different Tool Category)",
+        "how_it_solves_problem": "Explanation of how this alternative addresses the user's need.",
+        "key_aspects_or_steps": [
+           "Aspect 1", "Aspect 2"
+        ]
+      },
+      "market_positioning": {
+        "user_segments_relying_on_this": "Who typically uses this alternative?",
+        "prevalence_estimate": "How common is this alternative?"
+      },
+      "pricing_model": {
+        "cost_implications": "e.g., Time cost, Low monetary cost, Hidden costs"
+      },
+      "strengths": [
+        {"point": "Advantage 1 of this alternative (e.g., Low cost, Simplicity)"}
+      ],
+      "weaknesses": [
+        {"point": "Disadvantage 1 of this alternative (e.g., Time-consuming, Error-prone, Lacks advanced features)"}
+      ],
+      "switching_costs_from_this_alternative": "What makes it hard for users to switch from this to our solution?",
+      "barriers_to_adoption_for_our_solution": "What might prevent users of this alternative from adopting our solution?",
+      "positioning_opportunities_for_us": [
+        "How can we position our solution as superior to this alternative?"
+      ],
+      "threat_level_to_us": "High/Medium/Low (as a barrier to adoption)",
+      "notes_and_insights": "Observations about why users choose this alternative and how we can compete."
+    }
+  ],
+  "analysis_summary": {
+    "key_competitive_advantages_identified_for_us": [],
+    "major_market_gaps_identified": [],
+    "overall_competitive_landscape_assessment": "Brief summary of the competitive environment.",
+    "strategic_recommendations": []
+  }
+} 

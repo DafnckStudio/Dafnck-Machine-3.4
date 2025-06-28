@@ -1,0 +1,45 @@
+{
+  "reportTitle": "Market Structure Map",
+  "generatedDate": "YYYY-MM-DD",
+  "industry": "[Industry Name]",
+  "marketSegments": [
+    {
+      "segmentId": "SEG001",
+      "name": "Segment 1",
+      "description": "Description of Segment 1",
+      "size": "[e.g., $X Billion, Y% of market]",
+      "keyPlayers": ["Company A", "Company B"]
+    },
+    {
+      "segmentId": "SEG002",
+      "name": "Segment 2",
+      "description": "Description of Segment 2",
+      "size": "[e.g., $X Billion, Y% of market]",
+      "keyPlayers": ["Company C", "Company D"]
+    }
+  ],
+  "valueChain": [
+    {
+      "stage": "R&D",
+      "participants": ["Company A", "Company E"]
+    },
+    {
+      "stage": "Manufacturing",
+      "participants": ["Company B", "Company F"]
+    },
+    {
+      "stage": "Distribution",
+      "participants": ["Company C", "Company G"]
+    }
+  ],
+  "ecosystem": {
+    "suppliers": ["Supplier X", "Supplier Y"],
+    "partners": ["Partner A", "Partner B"],
+    "regulators": ["Regulator 1", "Regulator 2"]
+  },
+  "relationships": [
+    {"from": "Company A", "to": "Company B", "type": "Supplier"},
+    {"from": "Company C", "to": "Company D", "type": "Partner"}
+  ],
+  "notes": "This map provides a high-level overview of the market structure, key segments, value chain stages, and ecosystem relationships."
+} 

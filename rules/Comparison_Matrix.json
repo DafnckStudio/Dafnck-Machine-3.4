@@ -1,0 +1,44 @@
+{
+  "candidates": [
+    {
+      "name": "React",
+      "license": "MIT",
+      "community": "Very active",
+      "performance": 9,
+      "security": 8,
+      "integration": 9,
+      "maintenance": "Excellent"
+    },
+    {
+      "name": "Vue.js",
+      "license": "MIT",
+      "community": "Active",
+      "performance": 8,
+      "security": 8,
+      "integration": 8,
+      "maintenance": "Good"
+    },
+    {
+      "name": "Angular",
+      "license": "MIT",
+      "community": "Active",
+      "performance": 7,
+      "security": 9,
+      "integration": 8,
+      "maintenance": "Good"
+    }
+  ],
+  "criteria": [
+    "License",
+    "Community support",
+    "Performance",
+    "Security",
+    "Integration",
+    "Maintenance"
+  ],
+  "validationChecklist": [
+    "All candidates are listed",
+    "Criteria are defined",
+    "Scores or qualitative ratings are included"
+  ]
+} 

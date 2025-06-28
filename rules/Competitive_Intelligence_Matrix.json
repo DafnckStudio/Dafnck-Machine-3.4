@@ -1,0 +1,51 @@
+{
+  "title": "Competitive Intelligence Matrix",
+  "description": "Comprehensive matrix for analyzing direct and indirect competitors for DafnckMachine v3.1.",
+  "version": "1.0.0",
+  "last_updated": "YYYY-MM-DD",
+  "matrix_owner": "@market-research-agent",
+  "competitors": [
+    {
+      "id": "comp_001",
+      "name": "Competitor A",
+      "type": "Direct",
+      "profile": {
+        "overview": "Overview of Competitor A.",
+        "key_features": ["Feature 1", "Feature 2"],
+        "unique_selling_points": ["USP 1", "USP 2"]
+      },
+      "strengths": ["Strength 1", "Strength 2"],
+      "weaknesses": ["Weakness 1", "Weakness 2"],
+      "strategy": "e.g., Cost leadership, Differentiation",
+      "positioning": "Market positioning summary.",
+      "pricing": "Pricing model summary.",
+      "recent_news": ["YYYY-MM-DD: News headline or event"],
+      "differentiation_opportunities": ["Opportunity 1", "Opportunity 2"],
+      "threat_level": "High/Medium/Low"
+    },
+    {
+      "id": "comp_002",
+      "name": "Competitor B",
+      "type": "Indirect",
+      "profile": {
+        "overview": "Overview of Competitor B.",
+        "key_features": ["Feature 1", "Feature 2"],
+        "unique_selling_points": ["USP 1", "USP 2"]
+      },
+      "strengths": ["Strength 1"],
+      "weaknesses": ["Weakness 1"],
+      "strategy": "Niche focus",
+      "positioning": "Positioning summary.",
+      "pricing": "Pricing summary.",
+      "recent_news": ["YYYY-MM-DD: News/event"],
+      "differentiation_opportunities": ["Opportunity 1"],
+      "threat_level": "Medium"
+    }
+  ],
+  "analysis_summary": {
+    "key_competitive_advantages": [],
+    "major_market_gaps": [],
+    "overall_landscape_assessment": "Summary of the competitive environment.",
+    "strategic_recommendations": []
+  }
+} 

@@ -1,0 +1,103 @@
+{
+  "analysisTitle": "Business Viability Analysis for [Project Name]",
+  "dateGenerated": "YYYY-MM-DD",
+  "version": "1.0.0",
+  "executiveSummary": "A brief overview of the business model's viability, key findings, and recommendations.",
+  "businessModelValidation": {
+    "description": "Detailed validation of the business model.",
+    "revenuePotential": {
+      "title": "Revenue Potential Analysis",
+      "revenueStreams": [
+        {
+          "streamName": "Example Stream 1 (e.g., Product Sales, Subscription Fees)",
+          "description": "Description of the revenue stream.",
+          "potentialValue": "Estimated monetary value or projection metrics.",
+          "assumptions": "Key assumptions underlying this potential."
+        }
+      ],
+      "pricingModels": [
+        {
+          "modelName": "Example Pricing Model (e.g., Freemium, Tiered, Value-Based)",
+          "description": "Details of the pricing strategy.",
+          "justification": "Rationale for choosing this model."
+        }
+      ],
+      "monetizationStrategies": [
+        {
+          "strategyName": "Example Monetization Strategy (e.g., Direct Sales, Partnerships, Advertising)",
+          "description": "How the project will generate income.",
+          "targetAudience": "Specific audience for this strategy."
+        }
+      ]
+    },
+    "costStructureAssessment": {
+      "title": "Cost Structure Assessment",
+      "operationalExpenses": [
+        {
+          "category": "Example Category (e.g., Development, Marketing, Salaries)",
+          "description": "Details of the operational expense.",
+          "estimatedCost": "Monetary value.",
+          "frequency": "e.g., Monthly, Annually, One-time"
+        }
+      ],
+      "maintenanceCosts": [
+        {
+          "category": "Example Category (e.g., Software Updates, Server Costs, Support)",
+          "description": "Details of the maintenance cost.",
+          "estimatedCost": "Monetary value.",
+          "frequency": "e.g., Monthly, Annually"
+        }
+      ],
+      "capitalExpenditures": [
+         {
+          "item": "Example Item (e.g., Equipment, Initial Setup)",
+          "description": "Details of the capital expenditure.",
+          "estimatedCost": "Monetary value."
+        }
+      ]
+    },
+    "financialProjections": {
+      "title": "Financial Projections",
+      "timeHorizon": "e.g., 3-Year, 5-Year",
+      "projections": [
+        {
+          "year": 1,
+          "projectedRevenue": "Value",
+          "projectedCosts": "Value",
+          "projectedProfitLoss": "Value",
+          "keyAssumptions": "Assumptions for this year's projections."
+        }
+      ],
+      "breakEvenAnalysis": {
+        "description": "Analysis of the point at which revenues equal costs.",
+        "breakEvenPoint": "Units or revenue needed to break even.",
+        "methodology": "How the break-even point was calculated."
+      },
+      "roiCalculations": {
+        "description": "Return on Investment calculations.",
+        "projectedROI": "Percentage or value.",
+        "timeframeForROI": "Expected timeframe to achieve this ROI.",
+        "methodology": "Formula and assumptions used."
+      }
+    }
+  },
+  "marketAnalysisSummary": {
+    "targetMarket": "Brief description of the target market.",
+    "marketSizeAndGrowth": "Key metrics on market size and growth potential.",
+    "competitiveLandscape": "Summary of key competitors and differentiation."
+  },
+  "viabilityAssessment": {
+    "overallViability": "e.g., High, Medium, Low, Conditional",
+    "keyStrengths": ["Strength 1", "Strength 2"],
+    "keyWeaknesses": ["Weakness 1", "Weakness 2"],
+    "opportunities": ["Opportunity 1", "Opportunity 2"],
+    "threats": ["Threat 1", "Threat 2"],
+    "recommendations": "Specific recommendations based on the analysis."
+  },
+  "appendices": [
+    {
+      "title": "Appendix A: Detailed Financial Data",
+      "contentReference": "Link to or description of detailed financial spreadsheets or data sources."
+    }
+  ]
+} 

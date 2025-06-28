@@ -9,6 +9,8 @@ The MCP (Multi-Agent Coordination Platform) Task Management System is engineered
 
 **IMPORTANT**: The `.cursor/rules/` directory structure described in this guide exists **ONLY in the dhafnck_mcp development project** (this repository). Other projects using the MCP server will **NOT have these directories**.
 
+### @task_planning_agent need review all task then split task to subtask if no subtask is exist, last subtask is "call manage_context() for complete context data before complete task"
+
 ### **Deployment Architecture**
 - **dhafnck_mcp**: The **ROOT/SOURCE** project containing the MCP server implementation
   - Contains `.cursor/rules/` with full directory structure

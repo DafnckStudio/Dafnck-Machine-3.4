@@ -1,0 +1,58 @@
+{
+    "sections": [
+      {
+        "id": "dashboard",
+        "name": "Dashboard",
+        "path": "/dashboard",
+        "icon": "dashboard",
+        "subsections": [
+          {"id": "overview", "name": "Overview", "path": "/dashboard/overview"},
+          {"id": "notifications", "name": "Notifications", "path": "/dashboard/notifications"},
+          {"id": "quick-links", "name": "Quick Links", "path": "/dashboard/quick-links"}
+        ],
+        "navigation": "sidebar"
+      },
+      {
+        "id": "projects",
+        "name": "Projects",
+        "path": "/projects",
+        "icon": "projects",
+        "subsections": [
+          {"id": "active", "name": "Active", "path": "/projects/active"},
+          {"id": "archived", "name": "Archived", "path": "/projects/archived"},
+          {"id": "templates", "name": "Templates", "path": "/projects/templates"}
+        ],
+        "navigation": "sidebar"
+      },
+      {
+        "id": "analytics",
+        "name": "Analytics",
+        "path": "/analytics",
+        "icon": "analytics",
+        "subsections": [
+          {"id": "usage", "name": "Usage", "path": "/analytics/usage"},
+          {"id": "performance", "name": "Performance", "path": "/analytics/performance"},
+          {"id": "reports", "name": "Reports", "path": "/analytics/reports"}
+        ],
+        "navigation": "sidebar"
+      },
+      {
+        "id": "settings",
+        "name": "Settings",
+        "path": "/settings",
+        "icon": "settings",
+        "subsections": [
+          {"id": "profile", "name": "Profile", "path": "/settings/profile"},
+          {"id": "preferences", "name": "Preferences", "path": "/settings/preferences"},
+          {"id": "security", "name": "Security", "path": "/settings/security"}
+        ],
+        "navigation": "user-menu"
+      }
+    ],
+    "relationships": [
+      {"from": "dashboard", "to": "projects", "type": "quick-access"},
+      {"from": "projects", "to": "analytics", "type": "drilldown"},
+      {"from": "settings", "to": "profile", "type": "submenu"}
+    ]
+  }
+  

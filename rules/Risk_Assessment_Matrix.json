@@ -1,0 +1,95 @@
+{
+  "matrixTitle": "Risk Assessment Matrix for [Project Name]",
+  "dateGenerated": "YYYY-MM-DD",
+  "version": "1.0.0",
+  "description": "A comprehensive matrix identifying, analyzing, and prioritizing potential risks associated with the project. Each risk includes its category, probability, impact, overall priority, and references to mitigation strategies.",
+  "riskCategories": [
+    { "id": "market", "name": "Market Risks", "description": "Risks related to market acceptance, competition, and changes in market dynamics." },
+    { "id": "technical", "name": "Technical Risks", "description": "Risks related to technology, development, infrastructure, and security vulnerabilities." },
+    { "id": "business", "name": "Business Operations Risks", "description": "Risks related to operations, financial stability, legal/regulatory compliance, and resource management." },
+    { "id": "competitive", "name": "Competitive Risks", "description": "Risks arising from actions of existing or new competitors." },
+    { "id": "strategic", "name": "Strategic Risks", "description": "Risks related to long-term goals, strategic decisions, and external strategic shifts." }
+  ],
+  "probabilityLevels": [
+    { "level": 1, "label": "Very Low", "description": "Highly unlikely to occur (e.g., <10% chance)." },
+    { "level": 2, "label": "Low", "description": "Unlikely to occur (e.g., 10-30% chance)." },
+    { "level": 3, "label": "Medium", "description": "Possible to occur (e.g., 31-60% chance)." },
+    { "level": 4, "label": "High", "description": "Likely to occur (e.g., 61-90% chance)." },
+    { "level": 5, "label": "Very High", "description": "Almost certain to occur (e.g., >90% chance)." }
+  ],
+  "impactLevels": [
+    { "level": 1, "label": "Insignificant", "description": "Minimal or no impact on project objectives, cost, or schedule." },
+    { "level": 2, "label": "Minor", "description": "Slight impact, requiring minor adjustments or causing minor delays/cost increases." },
+    { "level": 3, "label": "Moderate", "description": "Noticeable impact, requiring significant adjustments or causing moderate delays/cost increases." },
+    { "level": 4, "label": "Major", "description": "Substantial impact, potentially threatening project success, major delays/cost increases." },
+    { "level": 5, "label": "Catastrophic", "description": "Severe impact, leading to project failure or extreme consequences." }
+  ],
+  "risks": [
+    {
+      "riskId": "R001",
+      "riskName": "Example Market Risk: Low User Adoption",
+      "description": "The target users may not adopt the product as quickly or widely as anticipated.",
+      "category": "market",
+      "dateIdentified": "YYYY-MM-DD",
+      "identifiedBy": "Team/Individual Name",
+      "potentialCauses": [
+        "Poor marketing or product-market fit.",
+        "Strong competition offering better alternatives.",
+        "User resistance to change."
+      ],
+      "potentialImpacts": [
+        "Lower than expected revenue.",
+        "Failure to achieve business goals.",
+        "Wasted development effort."
+      ],
+      "probability": 3,
+      "impact": 4,
+      "riskScore": 12,
+      "priority": "High",
+      "status": "Open",
+      "mitigationStrategyIds": ["MS001", "MS002"],
+      "contingencyPlanIds": ["CP001"],
+      "riskOwner": "Individual/Team Responsible",
+      "lastReviewed": "YYYY-MM-DD",
+      "reviewNotes": "Initial assessment."
+    },
+    {
+      "riskId": "R002",
+      "riskName": "Example Technical Risk: Security Breach",
+      "description": "Unauthorized access to sensitive data or system disruption due to security vulnerabilities.",
+      "category": "technical",
+      "dateIdentified": "YYYY-MM-DD",
+      "identifiedBy": "Team/Individual Name",
+      "potentialCauses": [
+        "Software vulnerabilities (e.g., OWASP Top 10).",
+        "Weak authentication mechanisms.",
+        "Insider threats or social engineering."
+      ],
+      "potentialImpacts": [
+        "Data loss or corruption.",
+        "Reputational damage and loss of customer trust.",
+        "Legal and financial penalties."
+      ],
+      "probability": 2,
+      "impact": 5,
+      "riskScore": 10,
+      "priority": "High",
+      "status": "Open",
+      "mitigationStrategyIds": ["MS003"],
+      "contingencyPlanIds": ["CP002"],
+      "riskOwner": "Individual/Team Responsible",
+      "lastReviewed": "YYYY-MM-DD",
+      "reviewNotes": "Initial assessment."
+    }
+  ],
+  "riskMonitoringPlan": {
+    "frequency": "e.g., Monthly, Quarterly, Ad-hoc based on triggers",
+    "responsibleParty": "Team/Individual responsible for ongoing risk monitoring.",
+    "reportingProcess": "How risks will be reported and escalated.",
+    "triggersForReassessment": [
+      "Major project milestone changes.",
+      "Significant market shifts.",
+      "Emergence of new competitive threats."
+    ]
+  }
+} 

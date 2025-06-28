@@ -1,0 +1,37 @@
+{
+  "title": "Customer Journey Maps",
+  "generatedDate": "YYYY-MM-DD",
+  "personas": [
+    {
+      "personaId": "PERS_A",
+      "name": "Persona A",
+      "journey": [
+        {
+          "stage": "Awareness",
+          "touchpoints": ["Ad", "Blog"],
+          "painPoints": ["Unclear value proposition"],
+          "opportunities": ["Improve messaging"]
+        },
+        {
+          "stage": "Consideration",
+          "touchpoints": ["Website", "Demo"],
+          "painPoints": ["Complex onboarding"],
+          "opportunities": ["Simplify process"]
+        }
+      ]
+    },
+    {
+      "personaId": "PERS_B",
+      "name": "Persona B",
+      "journey": [
+        {
+          "stage": "Awareness",
+          "touchpoints": ["Referral", "Social Media"],
+          "painPoints": ["Low brand trust"],
+          "opportunities": ["Build credibility"]
+        }
+      ]
+    }
+  ],
+  "summary": "These maps outline the key stages, touchpoints, pain points, and opportunities for each persona's journey."
+} 

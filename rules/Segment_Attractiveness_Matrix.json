@@ -1,0 +1,29 @@
+{
+  "title": "Segment Attractiveness Matrix",
+  "generatedDate": "YYYY-MM-DD",
+  "segments": [
+    {
+      "segmentId": "SEG_A",
+      "name": "Segment A",
+      "criteria": {
+        "size": 8,
+        "growth": 7,
+        "profitability": 6,
+        "strategicFit": 9
+      },
+      "overallScore": 7.5
+    },
+    {
+      "segmentId": "SEG_B",
+      "name": "Segment B",
+      "criteria": {
+        "size": 6,
+        "growth": 8,
+        "profitability": 7,
+        "strategicFit": 8
+      },
+      "overallScore": 7.25
+    }
+  ],
+  "summary": "This matrix evaluates the attractiveness of each segment based on key criteria to inform targeting decisions."
+} 

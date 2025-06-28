@@ -1,0 +1,15 @@
+{
+  "title": "Competitive Positioning Map",
+  "generatedDate": "YYYY-MM-DD",
+  "axes": [
+    {"name": "Price", "description": "Low to High"},
+    {"name": "Innovation", "description": "Low to High"}
+  ],
+  "competitors": [
+    {"name": "Competitor A", "position": {"Price": 3, "Innovation": 5}},
+    {"name": "Competitor B", "position": {"Price": 2, "Innovation": 2}},
+    {"name": "DafnckMachine", "position": {"Price": 4, "Innovation": 4}}
+  ],
+  "keyFeatures": ["Feature 1", "Feature 2", "Feature 3"],
+  "summary": "This map visualizes the relative positioning of key competitors and DafnckMachine along price and innovation dimensions."
+} 

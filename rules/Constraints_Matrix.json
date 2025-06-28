@@ -1,0 +1,37 @@
+[
+  {
+    "ID": "TC001",
+    "type": "Platform Compatibility",
+    "description": "The primary deployment target is AWS. All services and components must be compatible with or deployable on AWS infrastructure.",
+    "severity": "High",
+    "feasibility_assessment": "Feasible. AWS offers a wide range of services. Specific service selection will depend on detailed requirements. Cost implications for certain services need to be monitored."
+  },
+  {
+    "ID": "TC002",
+    "type": "Technology Stack Preference",
+    "description": "The backend must be developed using Node.js with Express.js framework. The frontend should utilize React with TypeScript.",
+    "severity": "Medium",
+    "feasibility_assessment": "Feasible. These are common and well-supported technologies. Hiring might be easier. Ensures consistency with potential existing projects or team skills."
+  },
+  {
+    "ID": "TC003",
+    "type": "Security Compliance",
+    "description": "The application must comply with GDPR regulations for user data handling and storage, including data encryption at rest and in transit.",
+    "severity": "High",
+    "feasibility_assessment": "Feasible but requires careful design and implementation of data handling processes. May involve legal consultation and specific cryptographic libraries. Regular audits will be necessary."
+  },
+  {
+    "ID": "TC004",
+    "type": "Scalability Requirement",
+    "description": "The system must be designed to handle an initial load of 10,000 concurrent users and scale up to 100,000 concurrent users within the first year with minimal performance degradation (response time < 200ms for 95th percentile).",
+    "severity": "High",
+    "feasibility_assessment": "Challenging but feasible with appropriate architecture (e.g., microservices, load balancing, auto-scaling) and database optimization. Requires robust performance testing throughout development."
+  },
+  {
+    "ID": "TC005",
+    "type": "Integration Limitation",
+    "description": "The system must integrate with a legacy third-party CRM via a SOAP API that has a rate limit of 100 requests per minute. Data synchronization needs to be near real-time.",
+    "severity": "Medium",
+    "feasibility_assessment": "Feasible but requires careful management of API calls to stay within rate limits. A queuing mechanism or batch processing might be necessary for data synchronization. Potential bottleneck if not handled correctly."
+  }
+] 

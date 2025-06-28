@@ -1,0 +1,22 @@
+{
+  "codeStyle": {
+    "framework": "React (TypeScript)",
+    "linting": "ESLint, Prettier",
+    "example": "All components use PascalCase and are function components."
+  },
+  "componentStructure": {
+    "folderStructure": "src/components/{ComponentName}/",
+    "namingConvention": "PascalCase for components, camelCase for props",
+    "example": "Button component in src/components/Button/Button.tsx"
+  },
+  "accessibility": {
+    "standards": "WCAG 2.1 AA",
+    "testing": "axe-core, manual keyboard testing",
+    "example": "All interactive elements have ARIA labels."
+  },
+  "validationChecklist": [
+    "Code style and linting rules are defined",
+    "Component structure is documented",
+    "Accessibility standards are specified"
+  ]
+} 

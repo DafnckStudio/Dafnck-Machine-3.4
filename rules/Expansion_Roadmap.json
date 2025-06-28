@@ -1,0 +1,27 @@
+{
+  "phases": [
+    {
+      "phase": "Initial Launch",
+      "description": "Launch in primary market with early adopters.",
+      "key_markets": ["North America"],
+      "milestones": ["First 100 customers", "Establish local partnerships"]
+    },
+    {
+      "phase": "Regional Expansion",
+      "description": "Expand to additional regions and verticals.",
+      "key_markets": ["Europe", "Asia-Pacific"],
+      "milestones": ["Open EU office", "Onboard regional partners"]
+    },
+    {
+      "phase": "Global Scale-Up",
+      "description": "Broaden reach to global markets and new industries.",
+      "key_markets": ["South America", "Middle East"],
+      "milestones": ["Translate platform", "Achieve 10,000 users"]
+    }
+  ],
+  "validation_notes": "Expansion roadmap validated through market research and pilot programs.",
+  "market_research_links": [
+    "link_to_market_analysis.pdf",
+    "link_to_competitor_map.xlsx"
+  ]
+} 

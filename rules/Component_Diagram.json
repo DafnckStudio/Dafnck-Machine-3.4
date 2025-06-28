@@ -1,0 +1,17 @@
+{
+  "components": [
+    {"name": "API Gateway", "type": "service", "description": "Routes requests to backend services"},
+    {"name": "Auth Service", "type": "service", "description": "Handles authentication and authorization"},
+    {"name": "Frontend", "type": "client", "description": "User interface (web/mobile)"},
+    {"name": "Database", "type": "data store", "description": "Stores persistent data"}
+  ],
+  "relationships": [
+    {"from": "Frontend", "to": "API Gateway", "type": "REST"},
+    {"from": "API Gateway", "to": "Auth Service", "type": "REST"},
+    {"from": "API Gateway", "to": "Database", "type": "SQL"}
+  ],
+  "validationChecklist": [
+    "All major components are listed",
+    "Relationships between components are defined"
+  ]
+} 

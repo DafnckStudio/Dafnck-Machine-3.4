@@ -1,0 +1,82 @@
+{
+  "profile_schema_version": "1.0.0",
+  "last_updated": "YYYY-MM-DDTHH:MM:SSZ",
+  "user_identifier": "unique_user_id_or_username",
+  "general_info": {
+    "full_name": "",
+    "contact_email": "",
+    "role_in_project": ""
+  },
+  "background": {
+    "summary": "Brief overview of the user's professional background.",
+    "years_of_experience": 0,
+    "primary_industry": "",
+    "secondary_industries": []
+  },
+  "technical_expertise": {
+    "programming_languages": [
+      { "language": "Python", "proficiency": "Advanced", "years_experience": 5 }
+    ],
+    "frameworks_libraries": [
+      { "name": "React", "proficiency": "Intermediate", "years_experience": 3 }
+    ],
+    "tools_platforms": [
+      { "name": "Docker", "proficiency": "Advanced", "years_experience": 4 }
+    ],
+    "database_systems": [
+      { "name": "PostgreSQL", "proficiency": "Intermediate", "years_experience": 3 }
+    ],
+    "cloud_platforms": [
+      { "name": "AWS", "proficiency": "Intermediate", "services": ["EC2", "S3", "Lambda"] }
+    ],
+    "ai_ml_expertise": {
+      "areas": ["NLP", "Computer Vision"],
+      "tools": ["TensorFlow", "PyTorch"],
+      "project_experience_summary": ""
+    },
+    "other_technical_skills": []
+  },
+  "industry_experience": [
+    {
+      "industry": "Finance",
+      "roles": ["Software Engineer", "Team Lead"],
+      "years_in_industry": 7,
+      "project_examples_summary": "Developed trading algorithms and risk management systems."
+    }
+  ],
+  "previous_project_involvement": [
+    {
+      "project_name_or_type": "E-commerce Platform Development",
+      "role": "Lead Developer",
+      "technologies_used": ["Java", "Spring Boot", "React", "AWS"],
+      "duration_months": 12,
+      "key_responsibilities_achievements": "Led a team of 5 developers, designed and implemented core features, improved performance by 20%."
+    }
+  ],
+  "working_styles_and_preferences": {
+    "preferred_communication_channels": ["Slack", "Email", "Scheduled Calls"],
+    "meeting_preferences": {
+      "frequency": "As needed",
+      "preferred_duration_minutes": 30,
+      "style": "Structured with agenda"
+    },
+    "feedback_style": {
+      "preferred_to_give": "Constructive, specific, and timely",
+      "preferred_to_receive": "Direct and actionable"
+    },
+    "project_methodology_preference": ["Agile (Scrum)", "Kanban"],
+    "documentation_preference": "Detailed and well-maintained",
+    "working_hours_timezone": "09:00-17:00 PST",
+    "collaboration_tools_familiarity": ["Jira", "Confluence", "GitHub", "Figma"],
+    "learning_preferences": "Hands-on, self-paced tutorials, documentation",
+    "decision_making_style": "Data-driven, collaborative when possible",
+    "areas_of_interest_for_this_project": ["AI integration", "Scalable architecture"]
+  },
+  "goals_and_expectations_for_dafnckmachine": {
+    "primary_objectives": ["Automate development tasks", "Improve project efficiency"],
+    "key_success_metrics": ["Reduced development time", "Number of automated tasks"],
+    "concerns_or_hesitations": ["Integration with existing workflows", "Learning curve for new tools"],
+    "desired_level_of_automation": "High, for repetitive and well-defined tasks"
+  },
+  "additional_notes": ""
+} 

@@ -1,0 +1,13 @@
+{
+  "scenarios": [
+    { "id": 1, "description": "Major technology outage", "likelihood": "Medium", "impact": "High", "contingency_response": "Activate backup systems, notify customers" },
+    { "id": 2, "description": "Regulatory disruption", "likelihood": "Low", "impact": "High", "contingency_response": "Engage legal counsel, review compliance" },
+    { "id": 3, "description": "Loss of key partner", "likelihood": "Medium", "impact": "Medium", "contingency_response": "Initiate partner search, renegotiate contracts" }
+  ],
+  "triggers": [
+    "System downtime > 1 hour",
+    "Regulatory notice received",
+    "Partner contract termination"
+  ],
+  "validation_notes": "Scenarios and triggers developed through risk workshops and expert input."
+} 

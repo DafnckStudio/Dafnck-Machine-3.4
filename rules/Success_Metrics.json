@@ -1,0 +1,122 @@
+{
+  "projectId": "P01-ExampleProject",
+  "version": "1.0.0",
+  "lastUpdated": "2024-07-27T10:00:00Z",
+  "definedByTask": "P01-S01-T03-Success-Criteria-Definition",
+  "introduction": "This document outlines the Key Performance Indicators (KPIs) and Acceptance Criteria for the project. These metrics will be used to gauge the success of the project and ensure quality standards are met. All KPIs aim to be SMART (Specific, Measurable, Achievable, Relevant, Time-bound).",
+  "successMetrics": [
+    {
+      "metricId": "KPI-001",
+      "name": "User Acquisition Rate",
+      "description": "Measure the monthly growth rate of new registered users.",
+      "measurement": {
+        "formula": "((New users in current month - New users in previous month) / New users in previous month) * 100%",
+        "target": "Achieve a 15% month-over-month growth in new users for the first 6 months post-launch.",
+        "dataSources": ["Application Database", "Marketing Analytics Platform"]
+      },
+      "smart": {
+        "specific": "Increase the number of new registered users.",
+        "measurable": "Measured by the percentage growth month-over-month.",
+        "achievable": "A 15% growth is challenging but achievable with planned marketing efforts and product features.",
+        "relevant": "Directly reflects market adoption and reach.",
+        "timeBound": "For the first 6 months post-launch, reviewed monthly."
+      },
+      "reportingFrequency": "Monthly"
+    },
+    {
+      "metricId": "KPI-002",
+      "name": "Customer Satisfaction Score (CSAT)",
+      "description": "Measure user satisfaction with the platform via in-app surveys.",
+      "measurement": {
+        "formula": "(Number of satisfied responses (e.g., 4 or 5 on a 5-point scale) / Total survey responses) * 100%",
+        "target": "Maintain an average CSAT score of 80% or higher.",
+        "dataSources": ["In-app Survey Tool", "Feedback Forms"]
+      },
+      "smart": {
+        "specific": "Ensure users are satisfied with their experience on the platform.",
+        "measurable": "Measured by CSAT percentage from survey responses.",
+        "achievable": "An 80% CSAT is a high standard, requiring continuous improvement and responsiveness to feedback.",
+        "relevant": "High satisfaction correlates with retention and positive word-of-mouth.",
+        "timeBound": "Measured and reported quarterly, with ongoing monitoring."
+      },
+      "reportingFrequency": "Quarterly"
+    },
+    {
+      "metricId": "KPI-003",
+      "name": "Average Task Completion Time",
+      "description": "Measure the average time it takes for a user to successfully complete a core task (e.g., creating a new project).",
+      "measurement": {
+        "formula": "Sum of time taken for all successful core task completions / Number of successful core task completions",
+        "target": "Reduce average core task completion time by 25% within 3 months of a major UI/UX update.",
+        "dataSources": ["Application Event Tracking", "User Session Analytics"]
+      },
+      "smart": {
+        "specific": "Improve platform efficiency by reducing time to complete core tasks.",
+        "measurable": "Measured in average minutes/seconds per task completion.",
+        "achievable": "A 25% reduction is achievable through targeted UI/UX improvements.",
+        "relevant": "Faster task completion improves user experience and productivity.",
+        "timeBound": "Within 3 months of a major UI/UX update deployment."
+      },
+      "reportingFrequency": "Monthly (post-update)"
+    }
+  ],
+  "coreFeaturesAcceptanceCriteria": [
+    {
+      "featureId": "CORE-F01",
+      "featureName": "User Registration & Login",
+      "criteria": [
+        {
+          "criterionId": "AC-F01.001",
+          "description": "Given a new user visits the registration page, when they enter a unique email, a password meeting strength criteria (e.g., min 8 chars, 1 uppercase, 1 number, 1 special char), and accept terms, then their account is created, they are logged in, and they receive a welcome email.",
+          "status": "Defined"
+        },
+        {
+          "criterionId": "AC-F01.002",
+          "description": "Given an existing registered user visits the login page, when they enter their correct email and password, then they are successfully authenticated and redirected to their dashboard within 2 seconds.",
+          "status": "Defined"
+        },
+        {
+          "criterionId": "AC-F01.003",
+          "description": "Given a user attempts to register with an already existing email, when they submit the form, then an informative error message is displayed indicating the email is already in use.",
+          "status": "Defined"
+        }
+      ]
+    },
+    {
+      "featureId": "CORE-F02",
+      "featureName": "Project Creation Module",
+      "criteria": [
+        {
+          "criterionId": "AC-F02.001",
+          "description": "Given a logged-in user is on their dashboard, when they click the 'Create New Project' button, then a form with fields for Project Name, Description, and Due Date is displayed.",
+          "status": "Defined"
+        },
+        {
+          "criterionId": "AC-F02.002",
+          "description": "Given a user has filled out the new project form with valid data, when they click 'Save Project', then the project is created, appears in their project list, and a success notification is shown.",
+          "status": "Defined"
+        }
+      ]
+    }
+  ],
+  "qualityStandards": [
+    {
+      "standardId": "QS-001",
+      "name": "Code Quality",
+      "description": "All new code must adhere to the established coding style guide, pass linting checks, and have a minimum of 80% unit test coverage.",
+      "verificationMethod": "Automated CI checks (linter, test runner), code reviews."
+    },
+    {
+      "standardId": "QS-002",
+      "name": "Performance",
+      "description": "Key pages (e.g., dashboard, project view) must load in under 3 seconds on a standard internet connection. API responses for critical endpoints must be under 500ms.",
+      "verificationMethod": "Load testing tools, browser performance profiling."
+    },
+    {
+      "standardId": "QS-003",
+      "name": "Accessibility",
+      "description": "The application must meet WCAG 2.1 Level AA guidelines.",
+      "verificationMethod": "Automated accessibility checkers, manual testing with assistive technologies."
+    }
+  ]
+} 

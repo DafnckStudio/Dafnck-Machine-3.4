@@ -1,0 +1,176 @@
+{
+  "technologyRequirements": {
+    "description": "Core technology capabilities and standards required for the project.",
+    "programmingLanguages": [
+      {
+        "language": "TypeScript",
+        "reasoning": "Strong typing for robust development, good ecosystem, suitable for both frontend and backend (Node.js). Required for DafnckMachine agents.",
+        "version": "Latest stable (e.g., 5.x)"
+      },
+      {
+        "language": "Python",
+        "reasoning": "Excellent for AI/ML tasks, data processing, and scripting. Potentially useful for specific microservices or auxiliary tools if TypeScript is not optimal for a particular AI/ML library.",
+        "version": "Latest stable (e.g., 3.10+)"
+      }
+    ],
+    "databases": [
+      {
+        "type": "NoSQL Document Database",
+        "example": "MongoDB or Firestore",
+        "reasoning": "Flexible schema suitable for evolving data structures, good scalability, often well-integrated with Node.js ecosystem. Firestore offers real-time capabilities."
+      },
+      {
+        "type": "Relational Database",
+        "example": "PostgreSQL",
+        "reasoning": "For structured data requiring strong transactional consistency, complex queries, and relationships. Consider if parts of the system demand ACID properties."
+      }
+    ],
+    "cloudServices": [
+      {
+        "provider": "To be determined (e.g., AWS, Google Cloud, Azure)",
+        "services": [
+          "Compute (e.g., Lambda, EC2, Cloud Functions, App Engine)",
+          "Storage (e.g., S3, Cloud Storage)",
+          "Database Services (e.g., RDS, Cloud SQL, managed MongoDB)",
+          "AI/ML Platform (e.g., SageMaker, Vertex AI, Azure ML)",
+          "Authentication (e.g., Cognito, Firebase Auth, Azure AD B2C)",
+          "API Gateway"
+        ],
+        "reasoning": "Leverage managed services for scalability, reliability, and reduced operational overhead."
+      }
+    ],
+    "apisAndIntegrations": [
+      {
+        "type": "Internal APIs",
+        "description": "RESTful or GraphQL APIs for communication between microservices and frontend applications."
+      },
+      {
+        "type": "External APIs",
+        "description": "Integration with third-party services (e.g., payment gateways, LLM providers, analytics services)."
+      }
+    ],
+    "securityStandards": [
+      "OWASP Top 10",
+      "Data encryption at rest and in transit",
+      "Regular security audits",
+      "Principle of least privilege"
+    ]
+  },
+  "technicalSpecifications": {
+    "description": "Detailed specifications outlining how the technology requirements will be met.",
+    "architecturePattern": "Microservices Architecture or Modular Monolith",
+    "reasoningForPattern": "Allows for independent development, deployment, and scaling of components. A modular monolith could be a starting point if full microservices are initially too complex.",
+    "dataFormats": ["JSON for API communication", "Protocol Buffers for internal high-performance RPC (optional)"],
+    "performanceTargets": {
+      "apiResponseTime": "< 200ms (p95)",
+      "concurrentUsers": "To be defined based on market size and business goals",
+      "dataProcessingThroughput": "To be defined based on expected data volume"
+    },
+    "scalabilityApproach": "Horizontal scaling for stateless services, vertical scaling or sharding for databases.",
+    "reliabilityAndFailover": "Redundant deployments across multiple availability zones, automated backups, and disaster recovery plan.",
+    "deploymentStrategy": "CI/CD pipeline with automated testing and blue/green or canary deployments."
+  },
+  "availableFrameworks": {
+    "description": "Evaluation of potential frameworks and libraries.",
+    "frontend": [
+      {
+        "name": "Next.js (React)",
+        "pros": ["Mature ecosystem", "Server-Side Rendering (SSR)", "Static Site Generation (SSG)", "Large community", "Vercel integration for easy deployment."],
+        "cons": ["Can be complex for simple applications.", "State management requires additional libraries (e.g., Redux, Zustand)."],
+        "suitability": "Excellent for feature-rich web applications, good for SEO and performance."
+      },
+      {
+        "name": "SvelteKit",
+        "pros": ["Compiler-based, highly performant", "Easier learning curve", "Built-in state management and routing."],
+        "cons": ["Smaller ecosystem compared to React/Vue.", "Fewer pre-built component libraries."],
+        "suitability": "Good for performance-critical applications and teams looking for a more integrated experience."
+      }
+    ],
+    "backend": [
+      {
+        "name": "NestJS (Node.js/TypeScript)",
+        "pros": ["Opinionated framework with good structure", "Built-in support for TypeScript", "Modular architecture", "Good for building scalable and maintainable APIs."],
+        "cons": ["Steeper learning curve initially.", "Can feel like overkill for very small services."],
+        "suitability": "Strong choice for building robust backend services, especially with TypeScript."
+      },
+      {
+        "name": "FastAPI (Python)",
+        "pros": ["High performance", "Automatic data validation and serialization (Pydantic)", "Automatic API documentation (Swagger/OpenAPI)."],
+        "cons": ["Python's GIL can be a limitation for CPU-bound tasks without multiprocessing/async."],
+        "suitability": "Excellent for building high-performance Python-based APIs, especially for ML model serving."
+      },
+      {
+        "name": "Express.js (Node.js/JavaScript or TypeScript)",
+        "pros": ["Minimal and flexible", "Large community and many plugins", "Easy to get started."],
+        "cons": ["Unopinionated, requires more setup and discipline to maintain structure in large projects."],
+        "suitability": "Good for smaller services, rapid prototyping, or when maximum flexibility is needed."
+      }
+    ],
+    "aiMlLibraries": [
+      {
+        "name": "Langchain/LangGraph (Python/TypeScript)",
+        "description": "Frameworks for building applications with Large Language Models (LLMs).",
+        "useCase": "Agent orchestration, complex LLM workflows, RAG."
+      },
+      {
+        "name": "TensorFlow/PyTorch (Python)",
+        "description": "Deep learning frameworks.",
+        "useCase": "Custom model training, computer vision, NLP."
+      },
+      {
+        "name": "scikit-learn (Python)",
+        "description": "General-purpose machine learning library.",
+        "useCase": "Classical ML tasks, data preprocessing, model evaluation."
+      },
+      {
+        "name": "Brain.js (JavaScript/TypeScript)",
+        "description": "GPU accelerated Neural networks in JavaScript for Browsers and Node.js.",
+        "useCase": "Simpler ML tasks directly within the Node.js/browser environment."
+      }
+    ]
+  },
+  "developmentTools": {
+    "description": "Tools to support the development lifecycle.",
+    "ides": ["Visual Studio Code (with recommended extensions)", "WebStorm/PyCharm (optional, for specialized needs)"],
+    "versionControl": {
+      "system": "Git",
+      "platform": "GitHub / GitLab / Bitbucket (To be decided)"
+    },
+    "ciCd": [
+      "GitHub Actions",
+      "GitLab CI/CD",
+      "Jenkins (if more control/self-hosting is needed)"
+    ],
+    "projectManagement": "Task Master AI (self-managed), JIRA, Asana, or Trello (To be decided based on team preference)",
+    "communication": "Slack / Microsoft Teams",
+    "documentationTools": [
+      "Markdown (for general docs, READMEs)",
+      "Swagger/OpenAPI (for API documentation, auto-generated where possible)",
+      "MkDocs/Docusaurus (for dedicated documentation sites)"
+    ],
+    "testingFrameworks": {
+      "frontend": ["Jest", "React Testing Library/Svelte Testing Library", "Cypress/Playwright (for E2E)"],
+      "backend": ["Jest/Mocha/Chai (Node.js)", "pytest (Python)"],
+      "apiTesting": ["Postman/Insomnia", "Automated tests using Supertest (Node.js) or requests (Python)"]
+    },
+    "containerizationAndOrchestration": [
+      {
+        "tool": "Docker",
+        "purpose": "Containerizing applications for consistent environments."
+      },
+      {
+        "tool": "Kubernetes (optional, if scaling needs justify complexity)",
+        "purpose": "Container orchestration for large-scale deployments."
+      },
+      {
+        "tool": "Serverless Frameworks (e.g., Serverless.com, AWS SAM)",
+        "purpose": "For deploying and managing serverless applications."
+      }
+    ],
+    "monitoringAndLogging": [
+      "Prometheus & Grafana (for metrics and visualization)",
+      "ELK Stack (Elasticsearch, Logstash, Kibana) or similar for logging",
+      "Sentry/Datadog (for error tracking and APM)"
+    ]
+  }
+} 

@@ -1,0 +1,79 @@
+[
+  {
+    "id": "FR001",
+    "description": "User shall be able to register for a new account using their email address and a secure password.",
+    "priority": "High",
+    "status": "Proposed",
+    "dependencies": []
+  },
+  {
+    "id": "FR002",
+    "description": "User shall be able to log in to their existing account using their registered email address and password.",
+    "priority": "High",
+    "status": "Proposed",
+    "dependencies": ["FR001"]
+  },
+  {
+    "id": "FR003",
+    "description": "User shall be able to create a new project, providing a project name and an optional description.",
+    "priority": "High",
+    "status": "Proposed",
+    "dependencies": ["FR002"]
+  },
+  {
+    "id": "FR004",
+    "description": "User shall be able to view a list of all projects they are a member of or have created.",
+    "priority": "Medium",
+    "status": "Proposed",
+    "dependencies": ["FR002", "FR003"]
+  },
+  {
+    "id": "FR005",
+    "description": "User shall be able to add new tasks to a specific project, including a task title, description, assignee, and due date.",
+    "priority": "High",
+    "status": "Proposed",
+    "dependencies": ["FR003"]
+  },
+  {
+    "id": "FR006",
+    "description": "User shall be able to view all tasks within a selected project, with options to filter by status (e.g., 'To Do', 'In Progress', 'Done') and assignee.",
+    "priority": "High",
+    "status": "Proposed",
+    "dependencies": ["FR003", "FR005"]
+  },
+  {
+    "id": "FR007",
+    "description": "User shall be able to update the status of a task (e.g., from 'To Do' to 'In Progress').",
+    "priority": "Medium",
+    "status": "Proposed",
+    "dependencies": ["FR005"]
+  },
+  {
+    "id": "FR008",
+    "description": "User shall be able to assign or reassign a task to another team member within the same project.",
+    "priority": "Medium",
+    "status": "Proposed",
+    "dependencies": ["FR005"]
+  },
+  {
+    "id": "FR009",
+    "description": "System shall send email notifications to users when a task is assigned to them or when a task they assigned is marked as 'Done'.",
+    "priority": "Medium",
+    "status": "Proposed",
+    "dependencies": ["FR001", "FR005", "FR007"]
+  },
+  {
+    "id": "FR010",
+    "description": "User shall be able to add comments to a task to facilitate discussion and provide updates.",
+    "priority": "Low",
+    "status": "Proposed",
+    "dependencies": ["FR005"]
+  },
+  {
+    "id": "FR011",
+    "description": "User shall be able to search for tasks across all their projects by keywords in the title or description.",
+    "priority": "Medium",
+    "status": "Proposed",
+    "dependencies": ["FR004", "FR005"]
+  }
+] 

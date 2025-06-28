@@ -1,0 +1,21 @@
+{
+  "projections": [
+    { "year": 1, "revenue": 120000, "costs": 90000, "profit": 30000 },
+    { "year": 2, "revenue": 300000, "costs": 180000, "profit": 120000 },
+    { "year": 3, "revenue": 600000, "costs": 300000, "profit": 300000 }
+  ],
+  "break_even_analysis": {
+    "break_even_month": 14,
+    "notes": "Expected to reach break-even in month 14 based on current projections."
+  },
+  "scenarios": [
+    { "name": "Base Case", "description": "Expected growth based on current pipeline.", "revenue_projection": 600000 },
+    { "name": "Optimistic", "description": "Faster adoption and upsell success.", "revenue_projection": 900000 },
+    { "name": "Conservative", "description": "Slower market uptake.", "revenue_projection": 400000 }
+  ],
+  "sensitivity_analysis": [
+    { "variable": "Customer acquisition rate", "impact": "High" },
+    { "variable": "Churn rate", "impact": "Medium" },
+    { "variable": "Average deal size", "impact": "High" }
+  ]
+} 

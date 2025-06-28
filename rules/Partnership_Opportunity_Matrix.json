@@ -1,0 +1,8 @@
+{
+  "partners": [
+    { "name": "Cloud Service Provider", "category": "Technology", "strategic_value": "High", "feasibility": "High", "priority": 1 },
+    { "name": "Industry Association", "category": "Strategic", "strategic_value": "Medium", "feasibility": "High", "priority": 2 },
+    { "name": "Integration Platform", "category": "Technology", "strategic_value": "High", "feasibility": "Medium", "priority": 3 }
+  ],
+  "validation_notes": "Partnerships prioritized based on market access, technology leverage, and alignment with business goals."
+} 

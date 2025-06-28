@@ -1,0 +1,13 @@
+{
+  "models": [
+    { "name": "Co-development", "description": "Joint development of new products or features.", "example_partners": ["AI vendor", "Research institution"] },
+    { "name": "Technology Integration", "description": "Integrating partner technology into core platform.", "example_partners": ["API provider", "Cloud service"] },
+    { "name": "Channel Partnership", "description": "Partners resell or distribute the product.", "example_partners": ["Reseller", "Consultancy"] }
+  ],
+  "governance": [
+    { "model": "Co-development", "governance_structure": "Joint steering committee, shared milestones" },
+    { "model": "Technology Integration", "governance_structure": "Integration agreements, technical review meetings" },
+    { "model": "Channel Partnership", "governance_structure": "Partner agreements, sales performance reviews" }
+  ],
+  "validation_notes": "Collaboration models selected based on strategic fit and partner capabilities. Governance structures ensure accountability and alignment."
+} 

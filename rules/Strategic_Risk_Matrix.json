@@ -1,0 +1,13 @@
+{
+  "risks": [
+    { "id": 1, "description": "Regulatory changes impacting operations", "category": "External", "severity": "High", "likelihood": "Medium", "mitigation": "Monitor regulations, adapt policies" },
+    { "id": 2, "description": "Key technology failure", "category": "Technical", "severity": "High", "likelihood": "Low", "mitigation": "Redundant systems, disaster recovery plan" },
+    { "id": 3, "description": "Loss of strategic partner", "category": "Strategic", "severity": "Medium", "likelihood": "Medium", "mitigation": "Diversify partnerships, contingency contracts" }
+  ],
+  "prioritization_matrix": [
+    { "risk_id": 1, "priority_score": 9 },
+    { "risk_id": 2, "priority_score": 8 },
+    { "risk_id": 3, "priority_score": 7 }
+  ],
+  "validation_notes": "Strategic risks identified and prioritized through scenario analysis and expert review."
+} 

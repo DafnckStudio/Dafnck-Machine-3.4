@@ -1,0 +1,28 @@
+{
+  "breakpoints": {
+    "mobile": {
+      "min": 0,
+      "max": 599,
+      "usage": "Default for phones. Stack content vertically."
+    },
+    "tablet": {
+      "min": 600,
+      "max": 1023,
+      "usage": "Show side navigation if space allows."
+    },
+    "desktop": {
+      "min": 1024,
+      "max": 1439,
+      "usage": "Full navigation, multi-column layouts."
+    },
+    "largeDesktop": {
+      "min": 1440,
+      "max": null,
+      "usage": "Extra spacing, enhanced visuals."
+    }
+  },
+  "validationChecklist": [
+    "All breakpoints are defined",
+    "Usage notes are included for each breakpoint"
+  ]
+} 

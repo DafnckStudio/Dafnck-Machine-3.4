@@ -33,6 +33,33 @@ import asyncio
 import uuid
 from threading import Lock
 
+# Import enhanced performance components
+try:
+    from ..infrastructure.services.performance_cache_manager import (
+        EnhancedRuleCacheManager, 
+        CacheConfiguration,
+        create_performance_cache_manager
+    )
+    from ..infrastructure.services.performance_monitor import (
+        PerformanceMonitor,
+        CacheBenchmark
+    )
+    PERFORMANCE_COMPONENTS_AVAILABLE = True
+except ImportError:
+    PERFORMANCE_COMPONENTS_AVAILABLE = False
+    logger.warning("Performance components not available, falling back to basic cache")
+
+# Import Phase 6 compliance integration
+try:
+    from .phase6_compliance_integration import (
+        ComplianceIntegrator,
+        create_compliance_integrator
+    )
+    COMPLIANCE_INTEGRATION_AVAILABLE = True
+except ImportError:
+    COMPLIANCE_INTEGRATION_AVAILABLE = False
+    logger.warning("Phase 6 compliance integration not available")
+
 # Configure logging
 logger = logging.getLogger(__name__)
 
@@ -1046,16 +1073,73 @@ class NestedRuleManager:
 
 
 class RuleCacheManager:
-    """Intelligent caching system for rule content"""
+    """Enhanced intelligent caching system for rule content with performance optimization"""
     
-    def __init__(self, max_size: int = 100, default_ttl: float = 3600):
-        self.cache: Dict[str, CacheEntry] = {}
+    def __init__(self, max_size: int = 1000, default_ttl: float = 3600, 
+                 enable_performance_cache: bool = True, memory_mb: int = 512):
+        """Initialize cache manager with optional performance enhancements"""
         self.max_size = max_size
         self.default_ttl = default_ttl
-        self.access_order = []  # For LRU eviction
+        self.enable_performance_cache = enable_performance_cache and PERFORMANCE_COMPONENTS_AVAILABLE
+        
+        # Initialize performance cache if available
+        if self.enable_performance_cache:
+            try:
+                self.performance_cache = create_performance_cache_manager(
+                    memory_size=max_size,
+                    memory_mb=memory_mb,
+                    disk_enabled=True,
+                    disk_size_gb=2,
+                    ttl_hours=default_ttl/3600,
+                    enable_metrics=True
+                )
+                
+                # Initialize performance monitor
+                self.performance_monitor = PerformanceMonitor(
+                    cache_manager=self.performance_cache,
+                    monitoring_interval=30.0,  # 30 seconds
+                    history_size=1440  # 24 hours at 1-minute intervals
+                )
+                
+                logger.info("Enhanced performance cache manager initialized")
+                
+            except Exception as e:
+                logger.warning(f"Failed to initialize performance cache, falling back to basic: {e}")
+                self.enable_performance_cache = False
+                self._init_basic_cache()
+        else:
+            self._init_basic_cache()
     
-    def get(self, key: str) -> Optional[RuleContent]:
-        """Get cached rule content"""
+    def _init_basic_cache(self):
+        """Initialize basic cache fallback"""
+        self.cache: Dict[str, CacheEntry] = {}
+        self.access_order = []  # For LRU eviction
+        self.performance_cache = None
+        self.performance_monitor = None
+        logger.info("Basic cache manager initialized")
+    
+    async def get(self, key: str) -> Optional[RuleContent]:
+        """Get cached rule content with async support"""
+        if self.enable_performance_cache and self.performance_cache:
+            try:
+                # Use enhanced cache
+                content = await self.performance_cache.get(key)
+                if content is not None:
+                    # Convert back to RuleContent if needed
+                    if isinstance(content, dict) and 'rule_content' in content:
+                        return content['rule_content']
+                    elif hasattr(content, 'metadata'):
+                        return content
+                return None
+            except Exception as e:
+                logger.error(f"Performance cache get failed: {e}")
+                return None
+        else:
+            # Use basic cache
+            return self._basic_get(key)
+    
+    def _basic_get(self, key: str) -> Optional[RuleContent]:
+        """Basic cache get implementation"""
         if key not in self.cache:
             return None
         
@@ -1063,7 +1147,7 @@ class RuleCacheManager:
         
         # Check TTL
         if time.time() - entry.timestamp > entry.ttl:
-            self.invalidate(key)
+            self.invalidate_sync(key)
             return None
         
         # Update access
@@ -1072,60 +1156,211 @@ class RuleCacheManager:
         
         return entry.content
     
-    def put(self, key: str, content: RuleContent, ttl: Optional[float] = None) -> None:
-        """Cache rule content"""
+    async def put(self, key: str, content: Union[RuleContent, Any], ttl: Optional[float] = None) -> bool:
+        """Cache rule content with async support - handles both RuleContent and raw content"""
         if ttl is None:
             ttl = self.default_ttl
         
-        # Evict if necessary
-        if len(self.cache) >= self.max_size and key not in self.cache:
-            self._evict_lru()
+        # Convert raw content to RuleContent if needed
+        if not isinstance(content, RuleContent):
+            # Create a minimal RuleContent wrapper for raw content
+            metadata = RuleMetadata(
+                path=key,
+                format=RuleFormat.TXT,
+                type=RuleType.CUSTOM,
+                size=len(str(content)),
+                modified=time.time(),
+                checksum=hashlib.md5(str(content).encode()).hexdigest(),
+                dependencies=[],
+                tags=["raw_content"]
+            )
+            content = RuleContent(
+                metadata=metadata,
+                raw_content=str(content),
+                parsed_content={"content": str(content)},
+                sections={"main": str(content)},
+                references=[],
+                variables={}
+            )
         
-        self.cache[key] = CacheEntry(
-            content=content,
-            timestamp=time.time(),
-            access_count=1,
-            ttl=ttl
-        )
-        
-        self._update_access_order(key)
+        if self.enable_performance_cache and self.performance_cache:
+            try:
+                # Use enhanced cache
+                cache_content = {
+                    'rule_content': content,
+                    'metadata': {
+                        'path': content.metadata.path if content.metadata else key,
+                        'type': content.metadata.type.value if content.metadata else 'unknown',
+                        'size': content.metadata.size if content.metadata else len(str(content))
+                    }
+                }
+                
+                tags = []
+                if content.metadata:
+                    tags.extend(content.metadata.tags or [])
+                    tags.append(content.metadata.type.value)
+                
+                return await self.performance_cache.put(
+                    key=key,
+                    content=cache_content,
+                    ttl=ttl,
+                    tags=tags,
+                    priority=1
+                )
+            except Exception as e:
+                logger.error(f"Performance cache put failed: {e}")
+                return False
+        else:
+            # Use basic cache
+            return self._basic_put(key, content, ttl)
     
-    def invalidate(self, key: str) -> None:
-        """Remove item from cache"""
-        if key in self.cache:
-            del self.cache[key]
-            if key in self.access_order:
-                self.access_order.remove(key)
+    def _basic_put(self, key: str, content: RuleContent, ttl: float) -> bool:
+        """Basic cache put implementation"""
+        try:
+            # Evict if necessary
+            if len(self.cache) >= self.max_size and key not in self.cache:
+                self._evict_lru()
+            
+            self.cache[key] = CacheEntry(
+                content=content,
+                timestamp=time.time(),
+                access_count=1,
+                ttl=ttl
+            )
+            
+            self._update_access_order(key)
+            return True
+        except Exception as e:
+            logger.error(f"Basic cache put failed: {e}")
+            return False
     
-    def clear(self) -> None:
-        """Clear all cached items"""
-        self.cache.clear()
-        self.access_order.clear()
+    async def invalidate(self, key: str) -> bool:
+        """Remove item from cache with async support"""
+        if self.enable_performance_cache and self.performance_cache:
+            try:
+                return await self.performance_cache.invalidate(key)
+            except Exception as e:
+                logger.error(f"Performance cache invalidate failed: {e}")
+                return False
+        else:
+            return self.invalidate_sync(key)
+    
+    def invalidate_sync(self, key: str) -> bool:
+        """Synchronous cache invalidation for basic cache"""
+        try:
+            if key in self.cache:
+                del self.cache[key]
+                if key in self.access_order:
+                    self.access_order.remove(key)
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"Basic cache invalidate failed: {e}")
+            return False
+    
+    async def clear(self) -> bool:
+        """Clear all cached items with async support"""
+        if self.enable_performance_cache and self.performance_cache:
+            try:
+                return await self.performance_cache.clear()
+            except Exception as e:
+                logger.error(f"Performance cache clear failed: {e}")
+                return False
+        else:
+            try:
+                self.cache.clear()
+                self.access_order.clear()
+                return True
+            except Exception as e:
+                logger.error(f"Basic cache clear failed: {e}")
+                return False
     
     def _update_access_order(self, key: str) -> None:
-        """Update LRU access order"""
+        """Update LRU access order for basic cache"""
         if key in self.access_order:
             self.access_order.remove(key)
         self.access_order.append(key)
     
     def _evict_lru(self) -> None:
-        """Evict least recently used item"""
+        """Evict least recently used item from basic cache"""
         if self.access_order:
             lru_key = self.access_order[0]
-            self.invalidate(lru_key)
+            self.invalidate_sync(lru_key)
     
     def get_cache_stats(self) -> Dict[str, Any]:
-        """Get cache statistics"""
-        total_access = sum(entry.access_count for entry in self.cache.values())
-        
-        return {
-            "size": len(self.cache),
-            "max_size": self.max_size,
-            "hit_rate": 0 if not total_access else len(self.cache) / total_access,
-            "total_accesses": total_access,
-            "expired_items": sum(1 for entry in self.cache.values() 
-                               if time.time() - entry.timestamp > entry.ttl)
-        }
+        """Get comprehensive cache statistics"""
+        if self.enable_performance_cache and self.performance_cache:
+            try:
+                metrics = self.performance_cache.get_performance_metrics()
+                return {
+                    "cache_type": "enhanced_performance",
+                    "cache_statistics": metrics.get("cache_statistics", {}),
+                    "performance_metrics": metrics.get("performance_metrics", {}),
+                    "cache_levels": metrics.get("cache_levels", {}),
+                    "eviction_statistics": metrics.get("eviction_statistics", {}),
+                    "system_metrics": metrics.get("system_metrics", {}),
+                    "monitoring_active": self.performance_monitor.monitoring_active if self.performance_monitor else False
+                }
+            except Exception as e:
+                logger.error(f"Failed to get performance cache stats: {e}")
+                return {"error": str(e), "cache_type": "enhanced_performance"}
+        else:
+            # Basic cache stats
+            total_access = sum(entry.access_count for entry in self.cache.values())
+            return {
+                "cache_type": "basic",
+                "size": len(self.cache),
+                "max_size": self.max_size,
+                "hit_rate": 0 if not total_access else len(self.cache) / total_access,
+                "total_accesses": total_access,
+                "expired_items": sum(1 for entry in self.cache.values() 
+                                   if time.time() - entry.timestamp > entry.ttl)
+            }
+    
+    async def start_monitoring(self) -> bool:
+        """Start performance monitoring if available"""
+        if self.enable_performance_cache and self.performance_monitor:
+            try:
+                await self.performance_monitor.start_monitoring()
+                return True
+            except Exception as e:
+                logger.error(f"Failed to start performance monitoring: {e}")
+                return False
+        return False
+    
+    async def stop_monitoring(self) -> bool:
+        """Stop performance monitoring if available"""
+        if self.enable_performance_cache and self.performance_monitor:
+            try:
+                await self.performance_monitor.stop_monitoring()
+                return True
+            except Exception as e:
+                logger.error(f"Failed to stop performance monitoring: {e}")
+                return False
+        return False
+    
+    async def run_benchmark(self, num_operations: int = 1000) -> Dict[str, Any]:
+        """Run performance benchmark if enhanced cache is available"""
+        if self.enable_performance_cache and self.performance_cache:
+            try:
+                benchmark = CacheBenchmark(self.performance_cache)
+                return await benchmark.run_basic_benchmark(num_operations)
+            except Exception as e:
+                logger.error(f"Benchmark failed: {e}")
+                return {"error": str(e)}
+        else:
+            return {"error": "Enhanced cache not available for benchmarking"}
+    
+    async def optimize_cache(self) -> Dict[str, Any]:
+        """Optimize cache performance if enhanced cache is available"""
+        if self.enable_performance_cache and self.performance_cache:
+            try:
+                return await self.performance_cache.optimize_cache()
+            except Exception as e:
+                logger.error(f"Cache optimization failed: {e}")
+                return {"error": str(e)}
+        else:
+            return {"message": "Cache optimization not available for basic cache"}
 
 
 class RuleComposer:
@@ -2177,9 +2412,24 @@ class EnhancedRuleOrchestrator:
             
             # Initialize core components
             self.nested_manager = NestedRuleManager(self.parser)
-            self.cache_manager = RuleCacheManager()
+            
+            # Initialize enhanced cache manager with performance optimization
+            self.cache_manager = RuleCacheManager(
+                max_size=2000,  # Increased cache size for better performance
+                default_ttl=7200,  # 2 hours TTL
+                enable_performance_cache=True,
+                memory_mb=1024  # 1GB memory allocation
+            )
+            
             self.composer = RuleComposer()
             self.client_integrator = ClientRuleIntegrator(self.parser)
+            
+            # Phase 6: Initialize compliance integration
+            if COMPLIANCE_INTEGRATION_AVAILABLE:
+                self.compliance_integrator = create_compliance_integrator(self.project_root)
+            else:
+                self.compliance_integrator = None
+                logger.warning("Phase 6 compliance integration not available")
             
             # Load basic rule information
             self.loaded_rules = self._scan_rules()
@@ -2269,5 +2519,80 @@ class EnhancedRuleOrchestrator:
                 "rule_composition": True,
                 "conflict_detection": True,
                 "hierarchy_validation": True
+            },
+            "phase_5_features": {
+                "enhanced_caching": self.cache_manager.enable_performance_cache if self.cache_manager else False,
+                "performance_monitoring": PERFORMANCE_COMPONENTS_AVAILABLE,
+                "cache_optimization": True,
+                "benchmarking": True
+            },
+            "phase_6_features": {
+                "compliance_integration": COMPLIANCE_INTEGRATION_AVAILABLE,
+                "document_validation": self.compliance_integrator is not None,
+                "security_access_control": self.compliance_integrator is not None,
+                "backward_compatibility": self.compliance_integrator is not None,
+                "audit_trail": self.compliance_integrator is not None
             }
-        } 
+        }
+    
+    async def start_cache_monitoring(self) -> Dict[str, Any]:
+        """Start performance monitoring for the cache system"""
+        if self.cache_manager:
+            success = await self.cache_manager.start_monitoring()
+            return {
+                "success": success,
+                "monitoring_active": success,
+                "message": "Cache performance monitoring started" if success else "Failed to start monitoring"
+            }
+        return {"success": False, "error": "Cache manager not initialized"}
+    
+    async def stop_cache_monitoring(self) -> Dict[str, Any]:
+        """Stop performance monitoring for the cache system"""
+        if self.cache_manager:
+            success = await self.cache_manager.stop_monitoring()
+            return {
+                "success": success,
+                "monitoring_active": False,
+                "message": "Cache performance monitoring stopped" if success else "Failed to stop monitoring"
+            }
+        return {"success": False, "error": "Cache manager not initialized"}
+    
+    async def run_cache_benchmark(self, num_operations: int = 1000) -> Dict[str, Any]:
+        """Run performance benchmark on the cache system"""
+        if self.cache_manager:
+            return await self.cache_manager.run_benchmark(num_operations)
+        return {"success": False, "error": "Cache manager not initialized"}
+    
+    async def optimize_cache_performance(self) -> Dict[str, Any]:
+        """Optimize cache performance and return optimization results"""
+        if self.cache_manager:
+            return await self.cache_manager.optimize_cache()
+        return {"success": False, "error": "Cache manager not initialized"}
+    
+    def get_cache_performance_stats(self) -> Dict[str, Any]:
+        """Get detailed cache performance statistics"""
+        if self.cache_manager:
+            stats = self.cache_manager.get_cache_stats()
+            stats["performance_features_enabled"] = PERFORMANCE_COMPONENTS_AVAILABLE
+            return stats
+        return {"error": "Cache manager not initialized"}
+    
+    def validate_operation_compliance(self, operation: str, **kwargs) -> Dict[str, Any]:
+        """Validate operation against Phase 6 compliance rules"""
+        if self.compliance_integrator:
+            return self.compliance_integrator.validate_operation(operation, **kwargs)
+        return {
+            "success": True,
+            "compliance_score": 100.0,
+            "message": "Compliance integration not available, operation allowed"
+        }
+    
+    def get_compliance_dashboard(self) -> Dict[str, Any]:
+        """Get comprehensive compliance dashboard"""
+        if self.compliance_integrator:
+            return self.compliance_integrator.get_compliance_dashboard()
+        return {
+            "success": False,
+            "error": "Compliance integration not available",
+            "phase_6_status": "not_available"
+        }

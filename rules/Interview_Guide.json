@@ -1,0 +1,174 @@
+{
+  "title": "User Validation Interview Guide: [Project Name]",
+  "description": "Semi-structured interview guide for validating problem significance with target users. Associated with task P02-S02-T03.",
+  "version": "1.0",
+  "date": "{{Current Date}}",
+  "sections": [
+    {
+      "title": "1. Introduction & Consent (5-7 minutes)",
+      "purpose": "To introduce the research, build rapport, explain the process, and obtain informed consent.",
+      "questions": [
+        {
+          "id": "1.1",
+          "question": "Welcome and thank you for taking the time to speak with us today. My name is [Interviewer Name], and I'm a researcher working on [briefly, neutrally describe project area, e.g., 'a new tool to help professionals with X'].",
+          "prompts": []
+        },
+        {
+          "id": "1.2",
+          "question": "Today, we're hoping to learn more about your experiences with [problem domain, e.g., 'managing client projects' or 'collaborating on design documents']. Your feedback is incredibly valuable and will help us understand the challenges people face.",
+          "prompts": []
+        },
+        {
+          "id": "1.3",
+          "question": "This session should last about [e.g., 45-60 minutes]. There are no right or wrong answers; we're interested in your honest experiences and opinions.",
+          "prompts": []
+        },
+        {
+          "id": "1.4",
+          "question": "To help with our analysis, would you be comfortable if we record the audio/video of this session? The recording will be kept confidential, used only for internal research purposes by our team, and can be deleted upon your request. You can also ask to stop the recording at any time.",
+          "prompts": ["If yes: Start recording.", "If no: Acknowledge and proceed without recording, relying on thorough notes."]
+        },
+        {
+          "id": "1.5",
+          "question": "Do you have any questions before we begin?",
+          "prompts": []
+        }
+      ]
+    },
+    {
+      "title": "2. Warm-up & Contextual Understanding (10-12 minutes)",
+      "purpose": "To understand the participant's role, responsibilities, and general context related to the problem area.",
+      "questions": [
+        {
+          "id": "2.1",
+          "question": "To start, could you tell me a bit about your current role and your main responsibilities at [Participant's Company/Work Context]?",
+          "prompts": ["What does a typical day/week look like for you?", "What are some of the key tools or software you use regularly for your work?"]
+        },
+        {
+          "id": "2.2",
+          "question": "When it comes to [specific area related to the problem, e.g., 'managing your project timelines' or 'sharing files with collaborators'], can you describe your general approach or process?",
+          "prompts": ["What are the typical steps involved?", "Who else is involved in this process?"]
+        },
+        {
+          "id": "2.3",
+          "question": "What do you generally find works well for you in this area?",
+          "prompts": []
+        },
+        {
+          "id": "2.4",
+          "question": "And what aspects, if any, do you find challenging or frustrating about [specific area related to the problem]?",
+          "prompts": ["Probe gently, don't lead to the specific hypothesized problem yet."]
+        }
+      ]
+    },
+    {
+      "title": "3. Problem Exploration (15-20 minutes)",
+      "purpose": "To dive deep into the specific problem(s) we are investigating, its frequency, and its impact.",
+      "questions": [
+        {
+          "id": "3.1",
+          "question": "We're particularly interested in understanding experiences around [state the core hypothesized problem more directly but still neutrally, e.g., 'the difficulties of coordinating feedback from multiple stakeholders on a document' or 'the challenges of tracking time spent on different project tasks accurately']. Is this something you encounter in your work?",
+          "prompts": ["If yes: Continue with prompts.", "If no: 'That's interesting. Could you tell me more about why that isn't a challenge for you, or perhaps what other significant challenges you face in [broader problem domain]?' (Be prepared to pivot if the core hypothesis isn't resonating, or note it as a key finding)."]
+        },
+        {
+          "id": "3.2",
+          "question": "Can you walk me through a recent specific example or situation where you faced [the problem]?",
+          "prompts": ["What were you trying to achieve?", "What happened?", "Who was involved?", "What tools or methods were you using?", "What was the outcome?"]
+        },
+        {
+          "id": "3.3",
+          "question": "How often would you say you encounter a situation like this, or [the problem] in general?",
+          "prompts": ["Daily, weekly, monthly? Can you give me a rough estimate?"]
+        },
+        {
+          "id": "3.4",
+          "question": "When [the problem] occurs, what is the impact on you, your work, or your team?",
+          "prompts": ["Does it affect time, cost, quality, stress levels, collaboration?", "Can you quantify the impact in any way (e.g., hours lost, delays caused)?"]
+        },
+        {
+          "id": "3.5",
+          "question": "How does it make you feel when you encounter [the problem]?",
+          "prompts": ["Frustrated, annoyed, stressed, indifferent?"]
+        },
+        {
+          "id": "3.6",
+          "question": "On a scale of 1 to 5, where 1 is not at all significant and 5 is extremely significant, how would you rate the significance of [the problem] to your overall work effectiveness or satisfaction?",
+          "prompts": ["Why did you choose that rating?"]
+        }
+      ]
+    },
+    {
+      "title": "4. Current Solutions & Workarounds (10-12 minutes)",
+      "purpose": "To understand how participants currently address the problem and their satisfaction with these methods.",
+      "questions": [
+        {
+          "id": "4.1",
+          "question": "When you encounter [the problem], what do you currently do to try and solve or manage it?",
+          "prompts": ["Are there specific tools, processes, or techniques you use?", "Do you rely on other people?"]
+        },
+        {
+          "id": "4.2",
+          "question": "Can you walk me through how you use [mentioned tool/process/workaround]?",
+          "prompts": ["What do you like about this approach?", "What do you dislike?"]
+        },
+        {
+          "id": "4.3",
+          "question": "How effective or satisfied are you with your current way of dealing with [the problem]?",
+          "prompts": ["On a scale of 1-5 (1=very dissatisfied, 5=very satisfied)? Why?", "What are the main limitations or frustrations with your current approach?"]
+        },
+        {
+          "id": "4.4",
+          "question": "Have you tried any other solutions or tools in the past for [the problem]? What was your experience with those?",
+          "prompts": ["Why did you stop using them?"]
+        }
+      ]
+    },
+    {
+      "title": "5. Unmet Needs & Desired Outcomes (5-7 minutes)",
+      "purpose": "To identify what an ideal solution would look like from the participant's perspective.",
+      "questions": [
+        {
+          "id": "5.1",
+          "question": "If you could wave a magic wand and have the perfect solution to [the problem], what would that look like or do for you?",
+          "prompts": ["What features would it have?", "How would it make your work easier or better?", "What would be the biggest benefit?"]
+        },
+        {
+          "id": "5.2",
+          "question": "What are the most important things a solution would need to do to effectively address [the problem] for you?",
+          "prompts": ["Are there any 'must-have' capabilities?"]
+        },
+        {
+          "id": "5.3",
+          "question": "Are there any specific outcomes you'd hope to achieve if [the problem] was solved or significantly reduced?",
+          "prompts": ["e.g., save time, reduce errors, improve collaboration, lower stress."]
+        }
+      ]
+    },
+    {
+      "title": "6. Wrap-up & Next Steps (3-5 minutes)",
+      "purpose": "To thank the participant, answer their questions, and explain next steps.",
+      "questions": [
+        {
+          "id": "6.1",
+          "question": "Those are all the main questions I had. Is there anything else you'd like to share about your experiences with [problem domain] that we haven't covered?",
+          "prompts": []
+        },
+        {
+          "id": "6.2",
+          "question": "Do you have any questions for me?",
+          "prompts": []
+        },
+        {
+          "id": "6.3",
+          "question": "Thank you so much again for your time and valuable insights. This has been very helpful. We will be using this feedback to [explain briefly how feedback is used, e.g., 'better understand the challenges in this area and explore potential solutions'].",
+          "prompts": ["If applicable, mention the incentive and how/when they will receive it."]
+        },
+        {
+          "id": "6.4",
+          "question": "Would you be open to participating in future research activities, such as usability testing for a prototype, if we move in that direction? (Optional)",
+          "prompts": []
+        }
+      ]
+    }
+  ]
+} 

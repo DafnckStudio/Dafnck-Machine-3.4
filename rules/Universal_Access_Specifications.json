@@ -1,0 +1,28 @@
+{
+  "deviceSupport": [
+    "desktop",
+    "tablet",
+    "mobile"
+  ],
+  "assistiveTechnology": [
+    "screenReader",
+    "voiceControl",
+    "keyboardOnly"
+  ],
+  "languageSupport": [
+    "en-US",
+    "es-ES",
+    "fr-FR"
+  ],
+  "localization": {
+    "dateFormat": "locale-aware",
+    "numberFormat": "locale-aware",
+    "rtlSupport": true
+  },
+  "validationCriteria": [
+    "All device types are supported",
+    "Compatible with major assistive technologies",
+    "Multiple languages/locales available",
+    "RTL (right-to-left) support implemented"
+  ]
+} 
