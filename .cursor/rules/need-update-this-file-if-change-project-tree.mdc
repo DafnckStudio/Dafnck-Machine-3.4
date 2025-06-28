@@ -3,6 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
+
 # Main objectif : build mcp server dhafnck_mcp (dhafnck_mcp_main)
 
 ROOT_PATH on WSL Ubuntu: /home/<username>/agentic-project
@@ -14,10 +15,7 @@ projet_path_root: /home/<username>/agentic-project/dhafnck_mcp_main
 ---
 
 ## 🌳 **ACTIVE BRANCHES**
-task_tree_id: v2.1---multiple-projects-support (current branch)
-architecture_analysis_branch: v1.0.5dev (completed - Task ID: 20250627001)
-
-
+task_tree_id: <current git branch>
 ---
 
 `dhafnck_mcp` is `/home/<username>/agentic-project`, with `project_id: dhafnck_mcp_main` and `projet_path_root: /home//agentic-project/dhafnck_mcp_main`.

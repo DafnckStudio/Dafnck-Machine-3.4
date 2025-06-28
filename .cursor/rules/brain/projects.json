@@ -13,6 +13,11 @@
         "id": "sophisticated-rule-orchestration-platform",
         "name": "Sophisticated Rule Orchestration Platform",
         "description": "Development tree for implementing advanced rule management system with nested loading, client integration, and intelligent composition"
+      },
+      "v2.1---multiple-projects-support": {
+        "id": "v2.1---multiple-projects-support",
+        "name": "V2.1 Multiple Projects Support",
+        "description": "Development tree for implementing multiple projects support functionality in DhafnckMCP v2.1"
       }
     },
     "registered_agents": {},
