@@ -78,5 +78,15 @@
     "useby": ["system-architect-agent", "coding-agent", "uber-orchestrator-agent"],
     "created_at": "2025-06-28T13:31:00Z",
     "created_by": "system-architect-agent"
+  },
+  "DOC-20250127-009": {
+    "name": "Critical Fix: Task-Context Status Alignment Validation",
+    "category": "Critical Bug Fix",
+    "description": "Critical fix for next_task functionality failing to progress when task status and context status are misaligned, causing AI workflow to get stuck",
+    "usecase": "Critical bug resolution, workflow debugging, status alignment validation, next_task troubleshooting",
+    "task-id": "20250628010",
+    "useby": ["system-architect-agent", "coding-agent", "uber-orchestrator-agent", "task-planning-agent"],
+    "created_at": "2025-06-28T13:38:00Z",
+    "created_by": "system-architect-agent"
   }
 } 
