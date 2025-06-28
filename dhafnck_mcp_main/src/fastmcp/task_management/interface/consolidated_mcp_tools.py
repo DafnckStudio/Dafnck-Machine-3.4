@@ -2044,7 +2044,7 @@ class ToolRegistrationOrchestrator:
         if self._config.is_enabled("manage_task"):
             @mcp.tool()
             def manage_task(
-                action: Annotated[str, Field(description="Task action to perform. Available: create, get, update, delete, complete, list, search, next, add_dependency, remove_dependency")],
+                action: Annotated[str, Field(description="Task action to perform. Available: create, get(AI no have permission to get task if user not demand, AI use `next` to get task), update, delete, complete, list, search, next, add_dependency, remove_dependency")],
                 project_id: Annotated[str, Field(description="Project identifier (REQUIRED for all operations)")] = None,
                 task_tree_id: Annotated[str, Field(description="Task tree identifier (defaults to 'main')")] = "main",
                 user_id: Annotated[str, Field(description="User identifier (defaults to 'default_id')")] = "default_id",
