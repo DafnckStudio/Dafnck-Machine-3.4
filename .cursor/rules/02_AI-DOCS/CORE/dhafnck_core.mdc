@@ -5,8 +5,6 @@ alwaysApply: true
 ---
 This document outlines the core operating rules for the AI Assistant, designed for clear and efficient processing by AI agents. These rules govern runtime variables, session management, tool usage, agent interactions, file access, and overall AI assistant orchestration.
 
-Read immediately [ai-must-update-this-file-if-change-git-branch.mdc](mdc:.cursor/rules/ai-must-update-this-file-if-change-git-branch.mdc)
-
 > **📋 For Detailed MCP System Rules**: See [MCP Task Management: Best Practices Guide.mdc](mdc:.cursor/rules/MCP Task Management: Best Practices Guide.mdc) for comprehensive MCP system architecture, workflows, task management, agent coordination, and context management guidelines.
 
 ### 🧠 **AI Assistant Core Operating Rules**
@@ -34,7 +32,7 @@ At the beginning of each new session, perform the following steps:
 1.  **Set `tools_count = 0`**.
 2.  **Load MCP context** using `MCP tools`.
 3.  **Read the core rule file**: `MCP Task Management: Best Practices Guide.mdc`.
-
+4.  **Read the project structure and context** from `need-update-this-file-if-change-project-tree.mdc`.
 
 #### 3. **During Chat Session**
 

@@ -14,15 +14,33 @@
         "name": "Sophisticated Rule Orchestration Platform",
         "description": "Development tree for implementing advanced rule management system with nested loading, client integration, and intelligent composition"
       },
-      "v2.1---multiple-projects-support": {
-        "id": "v2.1---multiple-projects-support",
-        "name": "V2.1 Multiple Projects Support",
-        "description": "Development tree for implementing multiple projects support functionality in DhafnckMCP v2.1"
+      "v1.0.5dev": {
+        "id": "v1.0.5dev",
+        "name": "Branch: v1.0.5dev",
+        "description": "Task tree for git branch 'v1.0.5dev'"
       }
     },
-    "registered_agents": {},
-    "agent_assignments": {},
-    "created_at": "2025-01-01T00:00:00Z"
+    "registered_agents": {
+      "test_agent": {
+        "id": "test_agent",
+        "name": "Test Agent",
+        "call_agent": "@test-agent"
+      }
+    },
+    "agent_assignments": {
+      "test_agent": [
+        "main",
+        "v1.0.5dev",
+        "sophisticated-rule-orchestration-platform"
+      ]
+    },
+    "created_at": "2025-01-01T00:00:00Z",
+    "updated_at": "2025-06-28T19:20:52.699232",
+    "last_git_sync": "2025-06-28T19:20:52.681715",
+    "current_branch": "sophisticated-rule-orchestration-platform",
+    "last_cleanup": "2025-06-28T19:20:52.683397",
+    "last_integrity_check": "2025-06-28T19:20:52.684305",
+    "last_rebalance": "2025-06-28T19:20:52.699239"
   },
   "chaxiaiv2_dashboard_enhancements": {
     "id": "chaxiaiv2_dashboard_enhancements",
