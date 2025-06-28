@@ -1,8 +1,6 @@
 # Docker Compose override for local development without authentication
 # Usage: docker-compose -f docker-compose.yml -f docker-compose.local.yml up
 
-version: '3.8'
-
 services:
   dhafnck-mcp:
     # Override environment variables to disable authentication

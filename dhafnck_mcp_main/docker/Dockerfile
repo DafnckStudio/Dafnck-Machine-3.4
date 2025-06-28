@@ -57,8 +57,8 @@ COPY --from=builder /app/src /app/src
 COPY --from=builder /app/README.md /app/
 COPY --from=builder /app/pyproject.toml /app/
 
-# Copy startup script
-COPY docker-entrypoint.sh /usr/local/bin/
+# Copy startup script from scripts directory
+COPY scripts/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Set proper ownership

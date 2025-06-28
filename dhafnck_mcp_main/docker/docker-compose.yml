@@ -1,10 +1,8 @@
-version: '3.8'
-
 services:
   dhafnck-mcp:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
       target: runtime
     image: dhafnck/mcp-server:latest
     container_name: dhafnck-mcp-server
@@ -56,9 +54,9 @@ services:
       # Development mode: mount source code (comment out for production)
       # - ./src:/app/src:ro
     
-    # Health check for HTTP mode
+    # Health check for HTTP mode (check if port is listening)
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health", "||", "wget", "-q", "--spider", "http://localhost:8000/health"]
+      test: ["CMD-SHELL", "nc -z localhost 8000 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -95,14 +93,6 @@ services:
 volumes:
   dhafnck_data:
     driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data
   
   dhafnck_logs:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./logs 
+    driver: local 
