@@ -11,6 +11,7 @@ import json
 import logging
 from pathlib import Path
 
+import pytest
 from src.fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server
 
 # Configure logging
@@ -18,6 +19,21 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+@pytest.fixture
+async def server():
+    """Create a server instance for testing."""
+    print("🧪 Creating server for testing...")
+    
+    try:
+        server = create_dhafnck_mcp_server()
+        print(f"✅ Server created successfully: {server.name}")
+        yield server
+    except Exception as e:
+        print(f"❌ Server creation failed: {e}")
+        raise
+
+
+@pytest.mark.asyncio
 async def test_server_creation():
     """Test that the server can be created successfully."""
     print("🧪 Testing server creation...")
@@ -25,50 +41,55 @@ async def test_server_creation():
     try:
         server = create_dhafnck_mcp_server()
         print(f"✅ Server created successfully: {server.name}")
-        return server
+        assert server is not None
+        assert hasattr(server, 'name')
     except Exception as e:
         print(f"❌ Server creation failed: {e}")
-        raise
+        pytest.fail(f"Server creation failed: {e}")
 
 
+@pytest.mark.asyncio
 async def test_health_check(server):
     """Test the health check functionality."""
     print("\n🧪 Testing health check...")
     
     try:
-        # Call the health check using the server's _call_tool method
-        result = await server._call_tool("health_check", {})
+        # Call the health check using the server's _mcp_call_tool method
+        result = await server._mcp_call_tool("health_check", {})
         health_data = json.loads(result[0].text)
         print(f"✅ Health check passed: Status = {health_data.get('status', 'unknown')}")
-        return True
+        assert health_data.get('status') is not None
     except Exception as e:
         print(f"❌ Health check failed: {e}")
-        return False
+        pytest.fail(f"Health check failed: {e}")
 
 
+@pytest.mark.asyncio
 async def test_server_capabilities(server):
     """Test the server capabilities functionality."""
     print("\n🧪 Testing server capabilities...")
     
     try:
-        result = await server._call_tool("get_server_capabilities", {})
+        result = await server._mcp_call_tool("get_server_capabilities", {})
         capabilities = json.loads(result[0].text)
         print(f"✅ Server capabilities retrieved:")
         print(f"   Core features: {len(capabilities['core_features'])}")
         print(f"   Available actions: {len(capabilities['available_actions'])}")
-        return True
+        assert 'core_features' in capabilities
+        assert 'available_actions' in capabilities
     except Exception as e:
         print(f"❌ Server capabilities test failed: {e}")
-        return False
+        pytest.fail(f"Server capabilities test failed: {e}")
 
 
+@pytest.mark.asyncio
 async def test_task_management(server):
     """Test basic task management functionality."""
     print("\n🧪 Testing task management...")
     
     try:
         # Test manage_project tool
-        result = await server._call_tool("manage_project", {
+        result = await server._mcp_call_tool("manage_project", {
             "action": "create",
             "project_id": "mvp_test_project",
             "name": "MVP Test Project",
@@ -79,10 +100,10 @@ async def test_task_management(server):
             print("✅ Project creation successful")
         else:
             print(f"❌ Project creation failed: {project_result}")
-            return False
+            pytest.fail(f"Project creation failed: {project_result}")
         
         # Test manage_task tool
-        result = await server._call_tool("manage_task", {
+        result = await server._mcp_call_tool("manage_task", {
             "action": "create",
             "project_id": "mvp_test_project",
             "title": "MVP Test Task",
@@ -93,16 +114,17 @@ async def test_task_management(server):
         task_result = json.loads(result[0].text)
         if task_result.get("success"):
             print("✅ Task creation successful")
-            return True
+            assert task_result.get("success") is True
         else:
             print(f"❌ Task creation failed: {task_result}")
-            return False
+            pytest.fail(f"Task creation failed: {task_result}")
             
     except Exception as e:
         print(f"❌ Task management test failed: {e}")
-        return False
+        pytest.fail(f"Task management test failed: {e}")
 
 
+@pytest.mark.asyncio
 async def test_tool_listing(server):
     """Test that all expected tools are available."""
     print("\n🧪 Testing tool availability...")
@@ -125,16 +147,18 @@ async def test_tool_listing(server):
         missing_tools = [tool for tool in expected_tools if tool not in available_tools]
         if missing_tools:
             print(f"⚠️  Missing expected tools: {missing_tools}")
+            pytest.fail(f"Missing expected tools: {missing_tools}")
         else:
             print("✅ All expected tools are available")
         
-        return len(missing_tools) == 0
+        assert len(missing_tools) == 0
         
     except Exception as e:
         print(f"❌ Tool listing test failed: {e}")
-        return False
+        pytest.fail(f"Tool listing test failed: {e}")
 
 
+# Keep the main function for standalone execution
 async def main():
     """Run all MVP server tests."""
     print("🚀 Starting MVP MCP Server Tests")
@@ -144,23 +168,49 @@ async def main():
     
     try:
         # Test 1: Server Creation
-        server = await test_server_creation()
+        server = create_dhafnck_mcp_server()
         test_results.append(True)
         
         # Test 2: Tool Listing
-        tools_ok = await test_tool_listing(server)
+        tools = await server.get_tools()
+        expected_tools = [
+            "health_check",
+            "get_server_capabilities", 
+            "manage_project",
+            "manage_task",
+            "manage_subtask",
+            "manage_agent",
+            "call_agent"
+        ]
+        
+        available_tools = list(tools.keys())
+        print(f"✅ Available tools ({len(available_tools)}): {', '.join(available_tools)}")
+        
+        missing_tools = [tool for tool in expected_tools if tool not in available_tools]
+        tools_ok = len(missing_tools) == 0
         test_results.append(tools_ok)
         
         # Test 3: Health Check
-        health_ok = await test_health_check(server)
+        result = await server._mcp_call_tool("health_check", {})
+        health_data = json.loads(result[0].text)
+        health_ok = health_data.get('status') is not None
         test_results.append(health_ok)
         
         # Test 4: Server Capabilities
-        capabilities_ok = await test_server_capabilities(server)
+        result = await server._mcp_call_tool("get_server_capabilities", {})
+        capabilities = json.loads(result[0].text)
+        capabilities_ok = 'core_features' in capabilities and 'available_actions' in capabilities
         test_results.append(capabilities_ok)
         
         # Test 5: Task Management
-        task_mgmt_ok = await test_task_management(server)
+        result = await server._mcp_call_tool("manage_project", {
+            "action": "create",
+            "project_id": "mvp_test_project",
+            "name": "MVP Test Project",
+            "description": "Test project for MVP validation"
+        })
+        project_result = json.loads(result[0].text)
+        task_mgmt_ok = project_result.get("success", False)
         test_results.append(task_mgmt_ok)
         
     except Exception as e:

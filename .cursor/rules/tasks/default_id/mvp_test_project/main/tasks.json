@@ -1,0 +1,72 @@
+{
+  "tasks": [
+    {
+      "id": "20250628001",
+      "title": "MVP Test Task",
+      "description": "Test task for MVP validation",
+      "project_id": "mvp_test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T07:28:42.775696+00:00",
+      "updated_at": "2025-06-28T07:28:42.775696+00:00"
+    },
+    {
+      "id": "20250628002",
+      "title": "MVP Test Task",
+      "description": "Test task for MVP validation",
+      "project_id": "mvp_test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T07:28:47.825027+00:00",
+      "updated_at": "2025-06-28T07:28:47.825027+00:00"
+    },
+    {
+      "id": "20250628003",
+      "title": "MVP Test Task",
+      "description": "Test task for MVP validation",
+      "project_id": "mvp_test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T07:31:13.895139+00:00",
+      "updated_at": "2025-06-28T07:31:13.895139+00:00"
+    },
+    {
+      "id": "20250628004",
+      "title": "MVP Test Task",
+      "description": "Test task for MVP validation",
+      "project_id": "mvp_test_project",
+      "status": "todo",
+      "priority": "medium",
+      "details": null,
+      "estimatedEffort": null,
+      "assignees": [],
+      "labels": [],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T07:34:37.556707+00:00",
+      "updated_at": "2025-06-28T07:34:37.556707+00:00"
+    }
+  ]
+}

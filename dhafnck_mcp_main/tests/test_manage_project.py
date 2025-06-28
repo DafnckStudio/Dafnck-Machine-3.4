@@ -47,16 +47,12 @@ def test_priority_ordering():
         expected_order = ['Critical Task', 'Urgent Task', 'High Task', 'Medium Task', 'Low Task']
         actual_order = [task.title for task in sorted_tasks]
         
-        if actual_order == expected_order:
-            print("✅ Priority ordering is correct")
-            return True
-        else:
-            print(f"❌ Priority ordering incorrect. Expected: {expected_order}, Got: {actual_order}")
-            return False
+        assert actual_order == expected_order, f"Priority ordering incorrect. Expected: {expected_order}, Got: {actual_order}"
+        print("✅ Priority ordering is correct")
             
     except Exception as e:
         print(f"❌ Priority ordering test failed: {str(e)}")
-        return False
+        raise
 
 def test_manage_project_actions():
     """Test all manage_project automated actions"""
@@ -114,16 +110,12 @@ def test_manage_project_actions():
         
         print(f"\n📊 manage_project Actions Summary: {passed}/{total} passed")
         
-        if passed == total:
-            print("✅ All manage_project actions working correctly")
-            return True
-        else:
-            print("❌ Some manage_project actions failed")
-            return False
+        assert passed == total, f"Some manage_project actions failed: {passed}/{total} passed"
+        print("✅ All manage_project actions working correctly")
             
     except Exception as e:
         print(f"❌ manage_project actions test failed: {str(e)}")
-        return False
+        raise
 
 def test_task_management_workflow():
     """Test the complete task management workflow"""
@@ -143,11 +135,10 @@ def test_task_management_workflow():
         print("  Testing real task priority ordering...")
         
         print("✅ Task management workflow tests completed")
-        return True
         
     except Exception as e:
         print(f"❌ Task management workflow test failed: {str(e)}")
-        return False
+        raise
 
 def test_agent_management():
     """Test agent registration and assignment functionality"""
@@ -171,11 +162,8 @@ def test_agent_management():
             call_agent="@test-agent"
         )
         
-        if result.get("success"):
-            print("  ✅ Agent registration works")
-        else:
-            print(f"  ❌ Agent registration failed: {result.get('error')}")
-            return False
+        assert result.get("success"), f"Agent registration failed: {result.get('error')}"
+        print("  ✅ Agent registration works")
         
         # Test agent assignment
         print("  Testing agent assignment...")
@@ -185,18 +173,14 @@ def test_agent_management():
             tree_id="main"
         )
         
-        if result.get("success"):
-            print("  ✅ Agent assignment works")
-        else:
-            print(f"  ❌ Agent assignment failed: {result.get('error')}")
-            return False
+        assert result.get("success"), f"Agent assignment failed: {result.get('error')}"
+        print("  ✅ Agent assignment works")
         
         print("✅ Agent management tests completed")
-        return True
         
     except Exception as e:
         print(f"❌ Agent management test failed: {str(e)}")
-        return False
+        raise
 
 def test_rebalance_agents_detailed():
     """Detailed test of the rebalance_agents functionality"""
@@ -214,9 +198,7 @@ def test_rebalance_agents_detailed():
         print("  Running rebalance_agents...")
         result = project_manager.rebalance_agents(project_id)
         
-        if not result.get("success"):
-            print(f"  ❌ rebalance_agents failed: {result.get('error')}")
-            return False
+        assert result.get("success"), f"rebalance_agents failed: {result.get('error')}"
         
         # Verify expected structure
         required_keys = [
@@ -229,9 +211,7 @@ def test_rebalance_agents_detailed():
         ]
         
         for key in required_keys:
-            if key not in result:
-                print(f"  ❌ Missing required key: {key}")
-                return False
+            assert key in result, f"Missing required key: {key}"
         
         # Verify rebalancing summary
         summary = result["rebalancing_summary"]
@@ -249,21 +229,18 @@ def test_rebalance_agents_detailed():
         
         # Check that assignments are valid
         for agent_id, trees in assignments.items():
-            if not isinstance(trees, list):
-                print(f"  ❌ Invalid assignment format for agent {agent_id}")
-                return False
+            assert isinstance(trees, list), f"Invalid assignment format for agent {agent_id}"
         
         print("  ✅ rebalance_agents structure is correct")
         print("  ✅ All required data present")
         print("  ✅ Assignment format is valid")
         
         print("✅ rebalance_agents detailed test completed")
-        return True
         
     except Exception as e:
         print(f"❌ rebalance_agents detailed test failed: {str(e)}")
         traceback.print_exc()
-        return False
+        raise
 
 def test_mcp_tools_integration():
     """Test MCP tools integration and availability"""
@@ -291,18 +268,14 @@ def test_mcp_tools_integration():
         ]
         
         for method in expected_methods:
-            if hasattr(tools, method):
-                print(f"  ✅ Method {method} available")
-            else:
-                print(f"  ❌ Method {method} missing")
-                return False
+            assert hasattr(tools, method), f"Method {method} missing"
+            print(f"  ✅ Method {method} available")
         
         print("✅ MCP tools integration test completed")
-        return True
         
     except Exception as e:
         print(f"❌ MCP tools integration test failed: {str(e)}")
-        return False
+        raise
 
 def run_all_tests():
     """Run all test suites"""
@@ -350,12 +323,8 @@ def run_all_tests():
     print(f"📈 Results: {passed_tests}/{total_tests} passed")
     print(f"📊 Breakdown: {passed_tests} passed, {failed_tests} failed, {error_tests} errors")
     
-    if passed_tests == total_tests:
-        print("\n🎉 ALL TESTS PASSED! All new tools are working correctly.")
-        return True
-    else:
-        print(f"\n⚠️  {failed_tests + error_tests} test(s) failed. Please review the issues above.")
-        return False
+    assert passed_tests == total_tests, f"{failed_tests + error_tests} test(s) failed. Please review the issues above."
+    print("\n🎉 ALL TESTS PASSED! All new tools are working correctly.")
 
 if __name__ == "__main__":
     success = run_all_tests()
