@@ -68,5 +68,15 @@
     "useby": ["task-planning-agent", "system-architect-agent", "coding-agent", "devops-agent"],
     "created_at": "2025-06-28T13:26:00Z",
     "created_by": "task-planning-agent"
+  },
+  "DOC-20250127-008": {
+    "name": "load_core Action Implementation Guide",
+    "category": "Feature Implementation",
+    "description": "Comprehensive implementation guide for the load_core action in manage_rule MCP tool, enabling automatic core rule loading during chat session initialization",
+    "usecase": "Session initialization, automatic rule loading, system setup, troubleshooting guide",
+    "task-id": "20250628009",
+    "useby": ["system-architect-agent", "coding-agent", "uber-orchestrator-agent"],
+    "created_at": "2025-06-28T13:31:00Z",
+    "created_by": "system-architect-agent"
   }
 } 
