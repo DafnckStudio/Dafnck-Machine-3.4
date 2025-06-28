@@ -1,46 +1,39 @@
 ---
-description: 
+description: AI Assistant Core Operating Rules - Runtime variables, session management, tool usage, agent interactions, and orchestration guidelines.
 globs: 
 alwaysApply: true
+task: AI Assistant Core Operating Rules
+step: Core
+task_id: CORE-001
+title: AI Assistant Core Operating Rules
+previous_task: N/A
+next_task: N/A
+version: 0.0.1
+agent: "@uber-orchestrator-agent"
+orchestrator: "@uber-orchestrator-agent"
 ---
 This document outlines the core operating rules for the AI Assistant, designed for clear and efficient processing by AI agents. These rules govern runtime variables, session management, tool usage, agent interactions, file access, and overall AI assistant orchestration.
 
-Read immediately [AI-MUST-READ.mdc](mdc:.cursor/rules/AI-MUST-READ.mdc)
 
 > **📋 For Detailed MCP System Rules**: See [MCP Task Management: Best Practices Guide.mdc](mdc:.cursor/rules/MCP Task Management: Best Practices Guide.mdc) for comprehensive MCP system architecture, workflows, task management, agent coordination, and context management guidelines.
 
 ### 🧠 **AI Assistant Core Operating Rules**
 
-#### 1. **AI Assistant Runtime Variables & Flags**
-*   **`tools_count`**:
-    *   **Initialization**: Set to **`0` at the start of each new session**.
-    *   **Incrementation**: **Increment `tools_count` with each tool usage**.
-    *   **Reset & Sync**: If `tools_count` reaches `20`, **reset it to `0`** and immediately **call `manage_context()` to synchronize the current session**.
-*   **`task_tree_id`**:
-    *   **Definition**: Represents the current Git branch.
-    *   **Updates**: **Update `task_tree_id` if the project branch changes**.
-*   **`CONTINUE_AUTOMATIC`**:
-    *   **State**: Set to `ON`.
-    *   **Behavior (if `ON`)**: **Continue the same task automatically** after completion.
-    *   **Behavior (if `OFF`)**: If `OFF` and the task is completed, **terminate the chat**.
-*   **`USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT`**:
-    *   **State**: Set to `ON`.
-    *   **Path Usage**: **Always use absolute paths from `<projet_path_root>`**.
-    *   **Restriction**: **Never use relative paths** from the current file or folder.
-    *   **Reference**: Refer to `@need-update-this-file-if-change-project-tree.mdc` for path information.
+#### 1. **Runtime Variables Management**
+*   **Variables**: Runtime variables are defined in `.cursor/settings.json` and managed automatically by the system.
+*   **Path Reference**: Refer to `@need-update-this-file-if-change-project-tree.mdc` for path information.
 
 #### 2. **Session Initialization**
 At the beginning of each new session, perform the following steps:
-1.  **Set `tools_count = 0`**.
-2.  **Load MCP context** using `MCP tools`.
-3.  **Read the core rule file**: `MCP Task Management: Best Practices Guide.mdc`.
+1.  **Load MCP context** using `MCP tools`.
+2.  **Read the core rule file**: `MCP Task Management: Best Practices Guide.mdc`.
 
 
 #### 3. **During Chat Session**
 
 ##### A. **Tool Usage**
-*   **Tool Call Increment**: **Every tool use must increment `tools_count`**.
-*   **Context Sync**: If `tools_count` reaches `20`, reset `tools_count` to `0` and **call `manage_context()` to synchronize the current session**.
+*   **Tool Call Tracking**: **Tool usage is automatically tracked** according to settings configuration.
+*   **Context Sync**: **Automatic context synchronization** occurs based on configured thresholds via `manage_context()`.
 
 ##### B. **Terminal Commands**
 *   **Timeout Protection**: All terminal commands **must be run with timeout protection wrapper**.

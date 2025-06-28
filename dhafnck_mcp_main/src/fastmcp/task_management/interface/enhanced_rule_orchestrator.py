@@ -2389,9 +2389,10 @@ class ClientRuleIntegrator:
 class EnhancedRuleOrchestrator:
     """Main orchestrator for the enhanced rule management system"""
     
-    def __init__(self, project_root: Path):
+    def __init__(self, project_root: Path, rules_dir: Path = None):
         self.project_root = project_root
-        self.rules_dir = project_root / ".cursor" / "rules"
+        # Use provided rules_dir or default to .cursor/rules
+        self.rules_dir = rules_dir if rules_dir is not None else project_root / ".cursor" / "rules"
         
         # Initialize components
         self.parser = RuleContentParser()
@@ -2507,7 +2508,7 @@ class EnhancedRuleOrchestrator:
         
         return {
             "orchestrator_status": "active",
-            "rules_directory": str(self.rules_dir),
+            "rules_directory": str(self.rules_dir.relative_to(self.project_root)),
             "total_rules": len(self.loaded_rules),
             "last_scan": self.last_scan,
             "components": component_status,

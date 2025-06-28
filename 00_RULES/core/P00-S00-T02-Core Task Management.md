@@ -1,5 +1,5 @@
 ---
-description: 
+description: Core Task Management System
 globs: 
 alwaysApply: true
 ---

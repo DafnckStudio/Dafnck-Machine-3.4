@@ -2963,8 +2963,10 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
     def _basic_manage_rule_implementation(self, cursor_tools, action: str, target: Optional[str] = None, content: Optional[str] = None) -> Dict[str, Any]:
         """Basic manage_rule implementation as fallback"""
         try:
+            # Get rules directory from settings instead of hardcoded path
+            rules_dir = self._get_rules_directory_from_settings(cursor_tools)
+            
             if action == "list":
-                rules_dir = cursor_tools.project_root / ".cursor" / "rules"
                 if not rules_dir.exists():
                     return {"success": True, "files": [], "message": "Rules directory does not exist"}
                 
@@ -2979,7 +2981,7 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
                 return {"success": True, "files": files}
             
             elif action == "backup":
-                auto_rule_path = cursor_tools.project_root / ".cursor" / "rules" / "auto_rule.mdc"
+                auto_rule_path = rules_dir / "auto_rule.mdc"
                 if not auto_rule_path.exists():
                     return {"success": False, "error": "auto_rule.mdc not found"}
                 
@@ -2992,7 +2994,7 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
                 return {"success": True, "message": "Backup created", "backup_path": str(backup_path)}
             
             elif action == "restore":
-                auto_rule_path = cursor_tools.project_root / ".cursor" / "rules" / "auto_rule.mdc"
+                auto_rule_path = rules_dir / "auto_rule.mdc"
                 backup_path = auto_rule_path.with_suffix('.mdc.backup')
                 
                 if not backup_path.exists():
@@ -3006,7 +3008,6 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
                 return {"success": True, "message": "Restored from backup"}
             
             elif action == "info":
-                rules_dir = cursor_tools.project_root / ".cursor" / "rules"
                 if not rules_dir.exists():
                     return {"success": True, "info": {"directory_exists": False}}
                 
@@ -3019,13 +3020,11 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
                         "directory_exists": True,
                         "file_count": file_count,
                         "total_size": total_size,
-                        "directory_path": str(rules_dir)
+                        "directory_path": str(rules_dir.relative_to(cursor_tools.project_root))
                     }
                 }
             
             elif action == "load_core":
-                rules_dir = cursor_tools.project_root / ".cursor" / "rules"
-                
                 # Define core rule files in priority order
                 core_rules = [
                     "dhafnck_mcp.mdc",           # Main MCP runtime system
@@ -3082,6 +3081,37 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
                 
         except Exception as e:
             return {"success": False, "error": str(e)}
+    
+    def _get_rules_directory_from_settings(self, cursor_tools) -> Path:
+        """Get rules directory from settings.json configuration"""
+        try:
+            import json
+            # First try to read from 00_RULES/core/settings.json
+            settings_path = cursor_tools.project_root / "00_RULES" / "core" / "settings.json"
+            if settings_path.exists():
+                with open(settings_path, 'r', encoding='utf-8') as f:
+                    settings = json.load(f)
+                    rules_path = settings.get("runtime_constants", {}).get("DOCUMENT_RULES_PATH", ".cursor/rules")
+                    return cursor_tools.project_root / rules_path
+            
+            # Fallback to .cursor/settings.json
+            cursor_settings_path = cursor_tools.project_root / ".cursor" / "settings.json"
+            if cursor_settings_path.exists():
+                with open(cursor_settings_path, 'r', encoding='utf-8') as f:
+                    settings = json.load(f)
+                    rules_path = settings.get("runtime_constants", {}).get("DOCUMENT_RULES_PATH", ".cursor/rules")
+                    return cursor_tools.project_root / rules_path
+            
+            # Environment variable override
+            import os
+            if "DOCUMENT_RULES_PATH" in os.environ:
+                return cursor_tools.project_root / os.environ["DOCUMENT_RULES_PATH"]
+                
+        except Exception as e:
+            print(f"Warning: Could not read settings.json: {e}")
+        
+        # Default fallback
+        return cursor_tools.project_root / ".cursor" / "rules"
     
     def _register_update_auto_rule_tool(self, mcp: "FastMCP", cursor_tools):
         """Register only the update_auto_rule tool"""

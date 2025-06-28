@@ -38,11 +38,42 @@ class CursorRulesTools:
             return resolve_path(os.environ["PROJECT_ROOT_PATH"])
         return find_project_root()
     
+    def _get_rules_directory_from_settings(self) -> Path:
+        """Get rules directory from settings.json configuration"""
+        try:
+            # First try to read from 00_RULES/core/settings.json
+            settings_path = self.project_root / "00_RULES" / "core" / "settings.json"
+            if settings_path.exists():
+                with open(settings_path, 'r', encoding='utf-8') as f:
+                    settings = json.load(f)
+                    rules_path = settings.get("runtime_constants", {}).get("DOCUMENT_RULES_PATH", ".cursor/rules")
+                    return self.project_root / rules_path
+            
+            # Fallback to .cursor/settings.json
+            cursor_settings_path = self.project_root / ".cursor" / "settings.json"
+            if cursor_settings_path.exists():
+                with open(cursor_settings_path, 'r', encoding='utf-8') as f:
+                    settings = json.load(f)
+                    rules_path = settings.get("runtime_constants", {}).get("DOCUMENT_RULES_PATH", ".cursor/rules")
+                    return self.project_root / rules_path
+            
+            # Environment variable override
+            if "DOCUMENT_RULES_PATH" in os.environ:
+                return self.project_root / os.environ["DOCUMENT_RULES_PATH"]
+                
+        except Exception as e:
+            print(f"Warning: Could not read settings.json: {e}")
+        
+        # Default fallback
+        return self.project_root / ".cursor" / "rules"
+    
     @property
     def enhanced_orchestrator(self):
         """Lazy initialization of enhanced rule orchestrator"""
         if self._enhanced_orchestrator is None:
-            self._enhanced_orchestrator = EnhancedRuleOrchestrator(self.project_root)
+            # Use configurable rules directory
+            rules_dir = self._get_rules_directory_from_settings()
+            self._enhanced_orchestrator = EnhancedRuleOrchestrator(self.project_root, rules_dir)
             self._enhanced_orchestrator.initialize()
         return self._enhanced_orchestrator
     
@@ -354,7 +385,7 @@ class CursorRulesTools:
 • Hierarchical Support: Complete inheritance and composition management
             """
             try:
-                rules_dir = self.project_root / ".cursor" / "rules"
+                rules_dir = self._get_rules_directory_from_settings()
                 
                 if action == "list":
                     if not rules_dir.exists():
