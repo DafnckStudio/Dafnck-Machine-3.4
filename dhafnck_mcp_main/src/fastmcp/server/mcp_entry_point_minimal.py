@@ -10,6 +10,7 @@ Designed specifically for Cursor MCP integration.
 import logging
 import sys
 import os
+import time
 from pathlib import Path
 from typing import Optional, Dict, Any
 
@@ -92,6 +93,28 @@ def create_minimal_dhafnck_mcp_server() -> FastMCP:
                 "minimal_mode": True
             }
         }
+    
+    # Add HTTP health endpoint for container health checks
+    @server.custom_route("/health", methods=["GET"])
+    async def health_endpoint(request) -> dict:
+        """HTTP health check endpoint for container health checks.
+        
+        Returns:
+            Simple health status for load balancers and container orchestration
+        """
+        from starlette.responses import JSONResponse
+        
+        # Get basic health status
+        health_data = {
+            "status": "healthy",
+            "timestamp": time.time(),
+            "server": server.name,
+            "version": "2.1.0-minimal",
+            "mode": "minimal",
+            "auth_enabled": False
+        }
+        
+        return JSONResponse(health_data)
     
     @server.tool()
     def get_server_capabilities() -> dict:

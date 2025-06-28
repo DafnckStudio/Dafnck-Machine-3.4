@@ -22,6 +22,9 @@ services:
       - FASTMCP_LOG_LEVEL=INFO
       - FASTMCP_ENABLE_RICH_TRACEBACKS=0
       
+      # Data Storage Configuration
+      - DATA_STORAGE_MODE=${DATA_STORAGE_MODE:-internal}
+      
       # Task Management Paths
       - TASKS_JSON_PATH=/data/tasks
       - PROJECTS_FILE_PATH=/data/projects/projects.json

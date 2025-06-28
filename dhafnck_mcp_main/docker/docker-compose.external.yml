@@ -1,0 +1,49 @@
+services:
+  dhafnck-mcp:
+    extends:
+      file: docker-compose.yml
+      service: dhafnck-mcp
+    
+    # Override environment for external storage
+    environment:
+      # Core MCP Configuration
+      - PYTHONPATH=/app/src
+      - FASTMCP_LOG_LEVEL=INFO
+      - FASTMCP_ENABLE_RICH_TRACEBACKS=0
+      
+      # Data Storage Configuration - EXTERNAL MODE
+      - DATA_STORAGE_MODE=external
+      
+      # Task Management Paths
+      - TASKS_JSON_PATH=/data/tasks
+      - PROJECTS_FILE_PATH=/data/projects/projects.json
+      - CURSOR_RULES_DIR=/data/rules
+      - CURSOR_AGENT_DIR_PATH=/app/src/fastmcp
+      
+      # Authentication Configuration
+      - DHAFNCK_AUTH_ENABLED=${DHAFNCK_AUTH_ENABLED:-true}
+      - DHAFNCK_MVP_MODE=${DHAFNCK_MVP_MODE:-false}
+      
+      # Supabase Configuration (Optional - set in .env file)
+      - SUPABASE_URL=${SUPABASE_URL:-}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
+      - DHAFNCK_TOKEN=${DHAFNCK_TOKEN:-}
+      
+      # HTTP Transport Configuration
+      - FASTMCP_TRANSPORT=streamable-http
+      - FASTMCP_HOST=0.0.0.0
+      - FASTMCP_PORT=8000
+    
+    # Volume mounts for EXTERNAL data persistence
+    volumes:
+      # External data persistence - mount host directories
+      - ./data:/data
+      - ./logs:/app/logs
+      
+      # Configuration files (optional - for advanced users)
+      - ./config:/app/config:ro
+      
+      # Development mode: mount source code (comment out for production)
+      # - ./src:/app/src:ro
+
+# No named volumes needed for external mode - using host directories 

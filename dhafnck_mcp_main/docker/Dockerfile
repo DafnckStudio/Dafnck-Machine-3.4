@@ -40,6 +40,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONPATH=/app/src:/app
 ENV FASTMCP_LOG_LEVEL=INFO
 ENV FASTMCP_ENABLE_RICH_TRACEBACKS=0
+ENV DATA_STORAGE_MODE=internal
 
 # Create non-root user for security
 RUN groupadd -r dhafnck && useradd -r -g dhafnck -s /bin/false dhafnck

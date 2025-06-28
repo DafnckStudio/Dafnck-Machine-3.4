@@ -10,6 +10,7 @@ Complete guide for using the DhafnckMCP Docker system for development and deploy
 - [Installation & Setup](#-installation--setup)
 - [Usage Commands](#-usage-commands)
 - [Configuration](#-configuration)
+- [Data Storage](#-data-storage)
 - [Development Mode](#-development-mode)
 - [Troubleshooting](#-troubleshooting)
 - [Architecture](#-architecture)
@@ -203,6 +204,131 @@ FASTMCP_LOG_LEVEL=DEBUG
 DHAFNCK_AUTH_ENABLED=true
 SUPABASE_URL=your-supabase-url
 SUPABASE_ANON_KEY=your-anon-key
+```
+
+## 💾 Data Storage
+
+The DhafnckMCP Docker system supports two data storage modes controlled by the `DATA_STORAGE_MODE` environment variable:
+
+### Storage Modes
+
+#### 1. Internal Storage (Default)
+- **Mode**: `DATA_STORAGE_MODE=internal`
+- **Description**: Data is stored inside the Docker container using named volumes
+- **Use Case**: Simple deployment, container-managed data persistence
+- **Persistence**: Data survives container restarts but not container removal
+- **Backup**: Use `docker volume` commands to backup data
+
+```bash
+# Start with internal storage (default)
+docker-compose -f docker-compose.yml up -d
+
+# Or explicitly set internal mode
+DATA_STORAGE_MODE=internal docker-compose -f docker-compose.yml up -d
+```
+
+#### 2. External Storage
+- **Mode**: `DATA_STORAGE_MODE=external`
+- **Description**: Data is stored in host directories mounted as volumes
+- **Use Case**: Easy data access, backup, and sharing between containers
+- **Persistence**: Data survives container removal and can be easily backed up
+- **Location**: `./data` and `./logs` directories in the project
+
+```bash
+# Start with external storage
+docker-compose -f docker-compose.external.yml up -d
+
+# Or set environment variable
+DATA_STORAGE_MODE=external docker-compose -f docker-compose.yml up -d
+```
+
+### Storage Comparison
+
+| Feature | Internal Storage | External Storage |
+|---------|------------------|------------------|
+| **Setup Complexity** | Simple | Requires directory setup |
+| **Data Access** | Docker commands only | Direct file system access |
+| **Backup** | `docker volume` commands | Standard file backup |
+| **Sharing** | Between containers only | Host and containers |
+| **Performance** | Optimized | Depends on host filesystem |
+| **Portability** | High | Medium (path dependent) |
+
+### Setting Up External Storage
+
+1. **Create host directories**:
+   ```bash
+   mkdir -p data/{tasks,projects,contexts,rules}
+   mkdir -p logs
+   chmod 777 data logs  # Ensure container can write
+   ```
+
+2. **Start with external storage**:
+   ```bash
+   docker-compose -f docker-compose.external.yml up -d
+   ```
+
+3. **Verify data location**:
+   ```bash
+   ls -la data/  # Should show task data
+   ls -la logs/  # Should show application logs
+   ```
+
+### Switching Between Storage Modes
+
+#### From Internal to External
+```bash
+# 1. Stop the container
+docker-compose down
+
+# 2. Export data from internal volumes
+docker run --rm -v docker_dhafnck_data:/source -v $(pwd)/data:/dest alpine cp -r /source/. /dest/
+docker run --rm -v docker_dhafnck_logs:/source -v $(pwd)/logs:/dest alpine cp -r /source/. /dest/
+
+# 3. Start with external storage
+docker-compose -f docker-compose.external.yml up -d
+```
+
+#### From External to Internal
+```bash
+# 1. Stop the container
+docker-compose -f docker-compose.external.yml down
+
+# 2. Start with internal storage (data will be imported automatically if volumes exist)
+docker-compose -f docker-compose.yml up -d
+```
+
+### Data Directory Structure
+
+```
+data/
+├── tasks/                   # Task management data
+│   ├── default_id/         # User-specific tasks
+│   └── shared/             # Shared tasks
+├── projects/               # Project configurations
+│   └── projects.json       # Main projects file
+├── contexts/               # Task contexts
+│   └── default_id/         # User-specific contexts
+└── rules/                  # Cursor rules and auto-generated content
+    ├── brain/              # System brain data
+    ├── tasks/              # Task-specific rules
+    └── contexts/           # Context-specific rules
+
+logs/
+├── fastmcp.log            # Main application log
+├── error.log              # Error logs
+└── access.log             # HTTP access logs
+```
+
+### Environment Variables for Data Storage
+
+```bash
+# Storage mode configuration
+DATA_STORAGE_MODE=internal          # or 'external'
+
+# Data path configuration (used with both modes)
+TASKS_JSON_PATH=/data/tasks
+PROJECTS_FILE_PATH=/data/projects/projects.json
+CURSOR_RULES_DIR=/data/rules
 ```
 
 ## 🔧 Development Mode

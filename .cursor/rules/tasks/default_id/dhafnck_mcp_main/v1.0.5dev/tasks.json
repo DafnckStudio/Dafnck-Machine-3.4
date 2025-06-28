@@ -379,7 +379,7 @@
       "title": "Task: End-to-End Testing & Validation",
       "description": "Create comprehensive test suite covering the complete user journey from account creation to successful Cursor MCP connection and operations.",
       "project_id": "dhafnck_mcp_main",
-      "status": "todo",
+      "status": "in_progress",
       "priority": "high",
       "details": "**Acceptance Criteria:**\n- [ ] User registration/login flow testing\n- [ ] Token generation and management testing\n- [ ] Docker container deployment testing\n- [ ] Cursor MCP connection testing\n- [ ] Core MCP operations testing\n- [ ] Error handling and edge case testing\n- [ ] Performance validation (response times)\n- [ ] Security testing (token validation)\n\n**Test Scenarios:**\n1. User creates account → generates token → copies Docker command\n2. Docker container starts → validates token → exposes MCP endpoints\n3. Cursor connects → lists tools → executes MCP operations\n4. Token revocation → connection fails appropriately\n5. Invalid token → proper error responses\n6. Container restart → data persistence verification\n\n**Testing Tools:**\n- Playwright for frontend E2E testing\n- pytest for backend API testing\n- Docker integration testing\n- Cursor MCP connection validation\n- Performance benchmarking",
       "estimatedEffort": "medium",
@@ -399,7 +399,8 @@
       "subtasks": [],
       "dueDate": "2025-02-08",
       "created_at": "2025-06-27T09:21:59.678070+00:00",
-      "updated_at": "2025-06-27T09:23:19.846996+00:00"
+      "updated_at": "2025-06-28T17:59:32.811518+00:00",
+      "context_id": null
     },
     {
       "id": "20250627011",

@@ -9,6 +9,7 @@ integrated task management, agent orchestration, and authentication.
 import logging
 import sys
 import os
+import time
 from pathlib import Path
 from typing import Optional, Dict, Any
 
@@ -256,6 +257,32 @@ def create_dhafnck_mcp_server() -> FastMCP:
                  "supabase_configured": bool(os.environ.get("SUPABASE_URL"))
              }
         }
+    
+    # Add HTTP health endpoint for container health checks
+    @server.custom_route("/health", methods=["GET"])
+    async def health_endpoint(request) -> dict:
+        """HTTP health check endpoint for container health checks.
+        
+        Returns:
+            Simple health status for load balancers and container orchestration
+        """
+        from starlette.responses import JSONResponse
+        
+        # Get basic health status
+        health_data = {
+            "status": "healthy",
+            "timestamp": time.time(),
+            "server": server.name,
+            "version": "2.1.0"
+        }
+        
+        # Add authentication status if available
+        try:
+            health_data["auth_enabled"] = auth_middleware.enabled
+        except Exception:
+            health_data["auth_enabled"] = False
+        
+        return JSONResponse(health_data)
     
     @server.tool()
     def get_server_capabilities() -> dict:
