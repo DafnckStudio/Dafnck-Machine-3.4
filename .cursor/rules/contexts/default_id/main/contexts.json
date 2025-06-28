@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "created_at": "2025-06-28T17:44:24.780021",
+  "updated_at": "2025-06-28T17:44:24.780057",
+  "contexts": {
+    "20250628002": {
+      "title": "Phase 1: Core Architecture & Rule Content Parser",
+      "status": "todo",
+      "created_at": "2025-06-28T17:44:24.778328",
+      "updated_at": "2025-06-28T17:44:24.778335",
+      "assignees": [
+        "@system_architect_agent",
+        "@coding_agent"
+      ],
+      "file_path": "context_20250628002.json"
+    }
+  }
+}

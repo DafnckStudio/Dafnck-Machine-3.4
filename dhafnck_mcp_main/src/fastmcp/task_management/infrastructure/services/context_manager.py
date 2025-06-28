@@ -4,7 +4,7 @@ from typing import Dict, Any, List, Optional, Union
 from datetime import datetime
 import logging
 
-from .context_schema import TaskContext, ContextSchema, ContextInsight, ContextProgressAction, ContextSubtask, ContextRequirement
+from ...domain.entities.context import TaskContext, ContextSchema, ContextInsight, ContextProgressAction, ContextSubtask, ContextRequirement
 from ..repositories.context_repository import ContextRepository
 from ...domain.entities.task import Task
 

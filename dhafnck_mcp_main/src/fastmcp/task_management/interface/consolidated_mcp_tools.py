@@ -1783,6 +1783,12 @@ class TaskOperationHandler:
         task_trees = project.get("task_trees", {})
         return task_tree_id in task_trees
     
+    def create_task_service(self, project_id: str, task_tree_id: str, user_id: str):
+        """Create a task application service for the specified project/tree"""
+        repository = self._repository_factory.create_repository(project_id, task_tree_id, user_id)
+        from ..application.services.task_application_service import TaskApplicationService
+        return TaskApplicationService(repository, self._auto_rule_generator)
+    
     def handle_list_search_next(self, action, project_id, task_tree_id, user_id, status, priority, assignees, labels, limit, query):
         """Handle list, search, and next actions with hierarchical storage"""
         # Validate project and task tree exist
@@ -2613,7 +2619,7 @@ class ToolRegistrationOrchestrator:
 🗂️ STORAGE: Contexts stored as JSON files in .cursor/rules/contexts/{user_id}/{project_id}/{task_tree_id}/
                 """
                 try:
-                    from ...infrastructure.services.context_manager import ContextManager
+                    from ..infrastructure.services.context_manager import ContextManager
                     
                     context_manager = ContextManager()
                     
@@ -2622,7 +2628,7 @@ class ToolRegistrationOrchestrator:
                             return {"success": False, "error": "task_id is required for create action"}
                         
                         # Get task data to create context
-                        task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                        task_service = self._task_handler.create_task_service(project_id, task_tree_id, user_id)
                         task = task_service._task_repository.find_by_id(task_id)
                         
                         if not task:
@@ -2660,7 +2666,7 @@ class ToolRegistrationOrchestrator:
                         # Update task's context_id when context is successfully updated
                         if success:
                             try:
-                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task_service = self._task_handler.create_task_service(project_id, task_tree_id, user_id)
                                 task = task_service._task_repository.find_by_id(task_id)
                                 if task:
                                     # Set context_id to indicate context has been updated
@@ -2701,7 +2707,7 @@ class ToolRegistrationOrchestrator:
                         # Update task's context_id when context is successfully updated
                         if success:
                             try:
-                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task_service = self._task_handler.create_task_service(project_id, task_tree_id, user_id)
                                 task = task_service._task_repository.find_by_id(task_id)
                                 if task:
                                     # Set context_id to indicate context has been updated
@@ -2721,7 +2727,7 @@ class ToolRegistrationOrchestrator:
                         # Update task's context_id when context is successfully updated
                         if success:
                             try:
-                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task_service = self._task_handler.create_task_service(project_id, task_tree_id, user_id)
                                 task = task_service._task_repository.find_by_id(task_id)
                                 if task:
                                     # Set context_id to indicate context has been updated
@@ -2741,7 +2747,7 @@ class ToolRegistrationOrchestrator:
                         # Update task's context_id when context is successfully updated
                         if success:
                             try:
-                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task_service = self._task_handler.create_task_service(project_id, task_tree_id, user_id)
                                 task = task_service._task_repository.find_by_id(task_id)
                                 if task:
                                     # Set context_id to indicate context has been updated
@@ -2761,7 +2767,7 @@ class ToolRegistrationOrchestrator:
                         # Update task's context_id when context is successfully updated
                         if success:
                             try:
-                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task_service = self._task_handler.create_task_service(project_id, task_tree_id, user_id)
                                 task = task_service._task_repository.find_by_id(task_id)
                                 if task:
                                     # Set context_id to indicate context has been updated
@@ -2781,7 +2787,7 @@ class ToolRegistrationOrchestrator:
                         # Update task's context_id when context is successfully updated
                         if success:
                             try:
-                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task_service = self._task_handler.create_task_service(project_id, task_tree_id, user_id)
                                 task = task_service._task_repository.find_by_id(task_id)
                                 if task:
                                     # Set context_id to indicate context has been updated
@@ -2905,134 +2911,177 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
                 logger.info(f"  - Registered {tool}")
     
     def _register_manage_rule_tool(self, mcp: "FastMCP", cursor_tools):
-        """Register only the manage_rule tool"""
+        """Register the enhanced manage_rule tool with all advanced functionality"""
         @mcp.tool()
         def manage_rule(
             action: str,
             target: Optional[str] = None,
             content: Optional[str] = None
         ) -> Dict[str, Any]:
-            """🗂️ CURSOR RULES ADMINISTRATION - Complete rule file system management"""
+            """🗂️ CURSOR RULES ADMINISTRATION - Complete rule file system management
+            
+            Enhanced rule orchestration platform with nested loading, client integration, 
+            and advanced rule composition capabilities.
+            
+            Available actions: list, backup, restore, clean, info, load_core, parse_rule, 
+            analyze_hierarchy, get_dependencies, enhanced_info, compose_nested_rules, 
+            resolve_rule_inheritance, validate_rule_hierarchy, build_hierarchy, load_nested, 
+            cache_status, register_client, authenticate_client, sync_client, client_diff, 
+            resolve_conflicts, client_status, client_analytics
+            """
             try:
-                if action == "list":
-                    rules_dir = cursor_tools.project_root / ".cursor" / "rules"
-                    if not rules_dir.exists():
-                        return {"success": True, "files": [], "message": "Rules directory does not exist"}
+                # Delegate to the enhanced CursorRulesTools implementation
+                # which contains all the sophisticated functionality
+                if hasattr(cursor_tools, 'register_tools'):
+                    # Create a mock MCP object to capture the tool registration
+                    class MockMCP:
+                        def __init__(self):
+                            self.tools = {}
+                        
+                        def tool(self):
+                            def decorator(func):
+                                self.tools[func.__name__] = func
+                                return func
+                            return decorator
                     
-                    files = []
-                    for file_path in rules_dir.rglob("*.mdc"):
-                        files.append({
-                            "path": str(file_path.relative_to(cursor_tools.project_root)),
-                            "size": file_path.stat().st_size,
-                            "modified": file_path.stat().st_mtime
-                        })
+                    # Get the enhanced manage_rule implementation
+                    mock_mcp = MockMCP()
+                    cursor_tools.register_tools(mock_mcp)
                     
-                    return {"success": True, "files": files}
+                    if 'manage_rule' in mock_mcp.tools:
+                        enhanced_manage_rule = mock_mcp.tools['manage_rule']
+                        return enhanced_manage_rule(action=action, target=target, content=content)
                 
-                elif action == "backup":
-                    auto_rule_path = cursor_tools.project_root / ".cursor" / "rules" / "auto_rule.mdc"
-                    if not auto_rule_path.exists():
-                        return {"success": False, "error": "auto_rule.mdc not found"}
-                    
-                    backup_path = auto_rule_path.with_suffix('.mdc.backup')
-                    with open(auto_rule_path, 'r', encoding='utf-8') as src:
-                        content = src.read()
-                    with open(backup_path, 'w', encoding='utf-8') as dst:
-                        dst.write(content)
-                    
-                    return {"success": True, "message": "Backup created", "backup_path": str(backup_path)}
-                
-                elif action == "restore":
-                    auto_rule_path = cursor_tools.project_root / ".cursor" / "rules" / "auto_rule.mdc"
-                    backup_path = auto_rule_path.with_suffix('.mdc.backup')
-                    
-                    if not backup_path.exists():
-                        return {"success": False, "error": "Backup file not found"}
-                    
-                    with open(backup_path, 'r', encoding='utf-8') as src:
-                        content = src.read()
-                    with open(auto_rule_path, 'w', encoding='utf-8') as dst:
-                        dst.write(content)
-                    
-                    return {"success": True, "message": "Restored from backup"}
-                
-                elif action == "info":
-                    rules_dir = cursor_tools.project_root / ".cursor" / "rules"
-                    if not rules_dir.exists():
-                        return {"success": True, "info": {"directory_exists": False}}
-                    
-                    file_count = len(list(rules_dir.rglob("*.mdc")))
-                    total_size = sum(f.stat().st_size for f in rules_dir.rglob("*.mdc"))
-                    
-                    return {
-                        "success": True,
-                        "info": {
-                            "directory_exists": True,
-                            "file_count": file_count,
-                            "total_size": total_size,
-                            "directory_path": str(rules_dir)
-                        }
-                    }
-                
-                elif action == "load_core":
-                    rules_dir = cursor_tools.project_root / ".cursor" / "rules"
-                    
-                    # Define core rule files in priority order
-                    core_rules = [
-                        "dhafnck_mcp.mdc",           # Main MCP runtime system
-                        "dev_workflow.mdc",          # Development workflow
-                        "cursor_rules.mdc",          # Cursor rule guidelines
-                        "taskmaster.mdc",            # Task management
-                        "mcp.mdc"                    # MCP architecture
-                    ]
-                    
-                    loaded_rules = []
-                    failed_rules = []
-                    total_size = 0
-                    
-                    for rule_file in core_rules:
-                        rule_path = rules_dir / rule_file
-                        if rule_path.exists():
-                            try:
-                                with open(rule_path, 'r', encoding='utf-8') as f:
-                                    content = f.read()
-                                    file_size = rule_path.stat().st_size
-                                    total_size += file_size
-                                    
-                                loaded_rules.append({
-                                    "file": rule_file,
-                                    "path": str(rule_path.relative_to(cursor_tools.project_root)),
-                                    "size": file_size,
-                                    "status": "loaded"
-                                })
-                            except Exception as e:
-                                failed_rules.append({
-                                    "file": rule_file,
-                                    "status": "error",
-                                    "error": str(e)
-                                })
-                        else:
-                            failed_rules.append({
-                                "file": rule_file,
-                                "status": "not_found"
-                            })
-                    
-                    return {
-                        "success": True,
-                        "action": "load_core",
-                        "core_rules_loaded": len(loaded_rules),
-                        "failed_rules": len(failed_rules),
-                        "total_size_bytes": total_size,
-                        "loaded_rules": loaded_rules,
-                        "failed_rules": failed_rules if failed_rules else None,
-                        "session_ready": len(loaded_rules) > 0
-                    }
-                
-                else:
-                    return {"success": False, "error": f"Unknown action: {action}"}
+                # Fallback to basic implementation if enhanced version fails
+                return self._basic_manage_rule_implementation(cursor_tools, action, target, content)
                     
             except Exception as e:
-                return {"success": False, "error": str(e)}
+                # Log the error and fallback to basic implementation
+                logger.warning(f"Enhanced manage_rule failed, falling back to basic: {str(e)}")
+                return self._basic_manage_rule_implementation(cursor_tools, action, target, content)
+    
+    def _basic_manage_rule_implementation(self, cursor_tools, action: str, target: Optional[str] = None, content: Optional[str] = None) -> Dict[str, Any]:
+        """Basic manage_rule implementation as fallback"""
+        try:
+            if action == "list":
+                rules_dir = cursor_tools.project_root / ".cursor" / "rules"
+                if not rules_dir.exists():
+                    return {"success": True, "files": [], "message": "Rules directory does not exist"}
+                
+                files = []
+                for file_path in rules_dir.rglob("*.mdc"):
+                    files.append({
+                        "path": str(file_path.relative_to(cursor_tools.project_root)),
+                        "size": file_path.stat().st_size,
+                        "modified": file_path.stat().st_mtime
+                    })
+                
+                return {"success": True, "files": files}
+            
+            elif action == "backup":
+                auto_rule_path = cursor_tools.project_root / ".cursor" / "rules" / "auto_rule.mdc"
+                if not auto_rule_path.exists():
+                    return {"success": False, "error": "auto_rule.mdc not found"}
+                
+                backup_path = auto_rule_path.with_suffix('.mdc.backup')
+                with open(auto_rule_path, 'r', encoding='utf-8') as src:
+                    content = src.read()
+                with open(backup_path, 'w', encoding='utf-8') as dst:
+                    dst.write(content)
+                
+                return {"success": True, "message": "Backup created", "backup_path": str(backup_path)}
+            
+            elif action == "restore":
+                auto_rule_path = cursor_tools.project_root / ".cursor" / "rules" / "auto_rule.mdc"
+                backup_path = auto_rule_path.with_suffix('.mdc.backup')
+                
+                if not backup_path.exists():
+                    return {"success": False, "error": "Backup file not found"}
+                
+                with open(backup_path, 'r', encoding='utf-8') as src:
+                    content = src.read()
+                with open(auto_rule_path, 'w', encoding='utf-8') as dst:
+                    dst.write(content)
+                
+                return {"success": True, "message": "Restored from backup"}
+            
+            elif action == "info":
+                rules_dir = cursor_tools.project_root / ".cursor" / "rules"
+                if not rules_dir.exists():
+                    return {"success": True, "info": {"directory_exists": False}}
+                
+                file_count = len(list(rules_dir.rglob("*.mdc")))
+                total_size = sum(f.stat().st_size for f in rules_dir.rglob("*.mdc"))
+                
+                return {
+                    "success": True,
+                    "info": {
+                        "directory_exists": True,
+                        "file_count": file_count,
+                        "total_size": total_size,
+                        "directory_path": str(rules_dir)
+                    }
+                }
+            
+            elif action == "load_core":
+                rules_dir = cursor_tools.project_root / ".cursor" / "rules"
+                
+                # Define core rule files in priority order
+                core_rules = [
+                    "dhafnck_mcp.mdc",           # Main MCP runtime system
+                    "dev_workflow.mdc",          # Development workflow
+                    "cursor_rules.mdc",          # Cursor rule guidelines
+                    "taskmaster.mdc",            # Task management
+                    "mcp.mdc"                    # MCP architecture
+                ]
+                
+                loaded_rules = []
+                failed_rules = []
+                total_size = 0
+                
+                for rule_file in core_rules:
+                    rule_path = rules_dir / rule_file
+                    if rule_path.exists():
+                        try:
+                            with open(rule_path, 'r', encoding='utf-8') as f:
+                                content = f.read()
+                                file_size = rule_path.stat().st_size
+                                total_size += file_size
+                                
+                            loaded_rules.append({
+                                "file": rule_file,
+                                "path": str(rule_path.relative_to(cursor_tools.project_root)),
+                                "size": file_size,
+                                "status": "loaded"
+                            })
+                        except Exception as e:
+                            failed_rules.append({
+                                "file": rule_file,
+                                "status": "error",
+                                "error": str(e)
+                            })
+                    else:
+                        failed_rules.append({
+                            "file": rule_file,
+                            "status": "not_found"
+                        })
+                
+                return {
+                    "success": True,
+                    "action": "load_core",
+                    "core_rules_loaded": len(loaded_rules),
+                    "failed_rules": len(failed_rules),
+                    "total_size_bytes": total_size,
+                    "loaded_rules": loaded_rules,
+                    "failed_rules": failed_rules if failed_rules else None,
+                    "session_ready": len(loaded_rules) > 0
+                }
+            
+            else:
+                return {"success": False, "error": f"Unknown action: {action}. Available actions: list, backup, restore, info, load_core"}
+                
+        except Exception as e:
+            return {"success": False, "error": str(e)}
     
     def _register_update_auto_rule_tool(self, mcp: "FastMCP", cursor_tools):
         """Register only the update_auto_rule tool"""

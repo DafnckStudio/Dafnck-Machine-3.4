@@ -7,7 +7,7 @@ from typing import Dict, Any, List, Optional, Union
 from datetime import datetime
 import logging
 
-from ..services.context_schema import TaskContext, ContextSchema
+from ...domain.entities.context import TaskContext, ContextSchema
 from ....tools.tool_path import find_project_root
 
 logger = logging.getLogger(__name__)
