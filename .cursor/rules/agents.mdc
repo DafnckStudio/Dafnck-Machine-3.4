@@ -1,7 +1,7 @@
 ---
-description: 
+description: How using call_agent()
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 # Specialized AI Agents for Cursor
 
@@ -14,42 +14,20 @@ Each agent has specific expertise and can be invoked using @agent-name syntax.
 - Agents can collaborate with each other as specified in their connectivity
 - Each agent has specialized knowledge and capabilities
 - Agent detail can found on `cursor_agent/yaml-lib/<agent-name>/**/*.yaml`
-- All documents created by agents need save on format `.mdc`, inside folder `.cursor/rules/02_AI-DOCS`, after create document, AI need be update document information to .cursor/rules/02_AI-DOCS/index.json
-- When switch agent, agent relative need reading these document
+- All documents created by agents need save on format `.md`, inside folder `.cursor/rules/02_AI-DOCS/GENERATE_BY_AI`, after create document, AI need be update document information to .cursor/rules/02_AI-DOCS/GENERATE_BY_AI/index.json
 - Agent relative can update these document if needed
 {
-    document-id(str): {
+    document-(str): {
         name: str
         category: str
         description: str
         usecase: str
+        task-id: str (actual Task ID or global)
         useby: [str] (list agent AI)
         created_at: ISOdate(format str),
         created_by: ISOdate(format str),
     }
 }
----
-
-## 🔍 How to Get Agent Details
-
-To get detailed information about what any agent does (including its capabilities, input/output formats, and integration details), use the **MCP tool** `call_agent` (preferred method):
-
-- Call the MCP tool `call_agent` with the agent name (e.g., `market_research_agent`).
-
-**Example:**
-```
-call_agent(name_agent="uber-orchestrator-agent")
-```
-
-This will return a structured summary of the agent's role, capabilities, input/output schema, and integration points.
-
-If the MCP tool is unavailable, you can use the fallback script:
-
-```bash
-python cursor_agent/yaml-tools/call_agent.py <agent_name>
-```
-
----
 
 ## Available Agents
 

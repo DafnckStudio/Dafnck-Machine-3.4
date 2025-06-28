@@ -3,70 +3,109 @@ description:
 globs: 
 alwaysApply: true
 ---
-CONTINUE_AUTOMATIC : ON
-if CONTINUE_AUTOMATIC = OFF, terminate chat if task is completed, else continue same task
+Parfait, voici une version consolidée, logique et lisible de toutes les règles que vous avez définies, formatée pour une lecture optimale par l’IA (et agents MCP). Elle respecte vos structures, automatismes, et contraintes de projet multi-agent.
 
 ---
 
-USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT = ON
-If USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT is set to ON, you must use the absolute path from the <projet_path_root> (see [need-update-this-file-if-change-project-tree.mdc](mdc:.cursor/rules/need-update-this-file-if-change-project-tree.mdc)) when creating or updating files to avoid path issues when working with different projects in the same folder.
+## 🧠 **AI Assistant Runti VARIABLES & FLAGS
+
+* `tools_count = 0` → **Init at start**, **increment with each tool usage**
+* `task_tree_id = <current_git_branch>` → **Update if project branch changes**
+* `CONTINUE_AUTOMATIC = ON`
+  → If `OFF` and task is completed → **terminate chat**
+  → If `ON` → **continue same task automatically**
+* `USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT = ON`
+  → Use **absolute path** from `<projet_path_root>`
+  → Refer to: `@need-update-this-file-if-change-pro
+
+
+At each new session:
+
+1. **Set `tools_count = 0`**
+2. Load MCP context using `MCP tools`
+3. Read core rule file:
+   [MCP Task Management: Best Practices Guide.mdc](mdc:.cursor/rules/MCP Task Management: Best Practices Guide.mdc)
+4. Read project structure & context:
+   [need-update-this-file-if-change-project-tree.mdc](mdc:.cursor/rules/need-update-this-file-if-change-project-tree.mdc)
 
 ---
 
-ai must update task_tree_id = <name-git-branch-actual>, if i change branch projet (see @need-update-if-change-project-tree.mdc)
+### 🔁 **DURING CHAT SESSION**
 
-## On chat: 
-**Begin chat session**
-- **Open chat session/ new chat**: AI begin create/set variable tools_count = 0 on background (number tools used on this session) 
-- AI read [contextmaster.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/contextmaster.mdc)
-- AI read [README.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc) (.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc)
-- AI read [README.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc) (.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc)
+#### 📌 TOOL USAGE
 
-**During chat session**
-- **Tool call on chat/edit files**: increment tools_count variable each tool use
-- **Each time tools_count = 20**: reset tools_count = 0, AI use Edit & Reapply available tools in Cursor’s Chat modes for update .cursor/rules/contexts/context_[TASK_ID].md
-- **Each time use terminal commande** : try exit commande if no result (when commande is longer than 20 sec force quit this commande)
-- **Each time use mcp tool call_agent()**
-    ├── Always begin your chat by saying only "Call Agent...", call_agent()
-    ├── Continuer your chat by saying only "Retrieve Knowledge..." retrieve all relevant information 
-    └── End call_agent by saying only "Switch Agent Capacity..."
+* Every **tool use**: `tools_count += 1`
+* If `tools_count == 20`:
+  → `tools_count = 0`
+  → Call: `manage_context()` to sync current session
 
-run terminal commande →
-    ├── force quit if run more than 20s (no result)
-    └── see result
+---
 
+#### 💻 TERMINAL COMMANDS
 
-## Multi-Agent Orchestration documentation & task management
-[.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/README.mdc)
-### Use MCP Server dhafnck_mcp when possible 
-MUST follow [task_management_workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_management_workflow.mdc)
-- ALWAYS use the dhafnck_mcp MCP server for task operations
-- Use dhafnck_mcp MCP to manage tasks
-- ALWAYS use the MCP server first; NEVER access files on folder`.cursor/rules/tasks/**/*` directly unless the user requests it (AI does not have permission)
+* Run with timeout protection
+  → **If no result > 20s** → Force quit
+  → Always show result if any
 
+---
 
-## 📋 **IMPORTANT: SEE CONTEXT WHEN BEGIN TASK and sync context_*.md**
-- **Target File**: `.cursor/rules/auto_rule.mdc`
-- **Purpose**: Provides precise, task-specific context and rules for AI assistant
-- **When get_task, next is called on manage_task()**: AI assistant should ALWAYS check this file (main_objectif.mdc) for know what context need to create if missing or updated if exist
-- **Role alignment**: AI behavior automatically adapts to the assigned role and current phase
-### Ensures context files is relative with task and subtask
+#### 👤 MCP AGENT TOOL CALL
 
+**Use this sequence for each agent interaction:**
 
+```text
+"Call Agent..."         → call_agent()
+"Retrieve Knowledge..." → (gather all relevant info)
+"Switch Agent Capacity..." → (end call)
+"Using dhafnck Tool..." → (for call tools is not call_agent())
+```
 
-## 🔄 **AUTOMATIC AGENT ROLE SWITCHING**
-- **Trigger**: Every time `get_task` or `do_next` is called via MCP server
-- **Process**: System automatically extracts assignee from task and calls appropriate agent
-- **Format**: All assignees use "@" prefix (e.g., `@coding_agent`, `@functional_tester_agent`)
-- **Agent Call**: Automatically executes `call_agent(name_agent="agent_name")` (strips "@" prefix)
-- **YAML Loading**: Loads specialized configuration from `cursor_agent/yaml-lib/[agent_name]/`
-- **Role Switch**: AI adopts the appropriate expertise, behavior, and knowledge for the task
-- **Primary Assignee**: Only the first assignee in the list triggers automatic switching
-- **Documentation**: See [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc) for complete details
+---
 
+### 🔄 **MCP ORCHESTRATIONs must follow: `@task_management_workflow.mdc`
+* When `get_
 
+  * Always check/update context from: `.cursor/rules/auto_rule.mdc`
+  * Sync `context_*.md` to ensure valid state
+  * Align role and context automatically with task/subtask
 
-## [auto_rule.mdc](mdc:.cursor/rules/auto_rule.mdc) : AI CAN READ, AI CAN'T EDIT
+#### 📁 FILE ACCESS RULE
 
-## Agent Auto-Switch to role when call_agent() or assigned task see [Agent_Auto_Switch_Workflow.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc)
+* **NEVER** access `.cursor/rules/tasks/**/*` directly
+  → Use **`dhafnck_mcp` MCP server** to manage all tasks
+  → Only access manually if user explicitly requests it
 
+---
+
+### 🔁 **AGENT AUTO-SWITCH SYSTEM**
+
+Triggered on: `get_task` or `do_next` call
+
+| Element       | Behavior                                                               |
+| ------------- | ---------------------------------------------------------------------- |
+| Assignee      | First `@assignee` triggers auto switch to corresponding role           |
+| Agent Call    | `call_agent(name_agent="agent_name")` (strips "@")                     |
+| Config Load   | Loads config from: `cursor_agent/yaml-lib/[agent_name]/`               |
+| Behavior Swap | AI adapts role/knowledge automatically                                 |
+| Documentation | `@Agent_Auto_Switch_Workflow.mdc` for full agent orchestration process |
+
+---
+
+### 📌 FILE PATH RULE
+
+* **If** `USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT = ON`
+  → Use path relative to `<projet_path_root>`
+  → Never use relative paths from current file/folder
+  → Reference: `@need-update-this-file-if-change-project-tree.mdc`
+
+---
+
+### ✅ RULE FILE BEHAVIOR
+
+* `.cursor/rules/auto_rule.mdc`
+  → AI CAN READ ✅
+  → AI CANNOT EDIT ❌
+
+---
+
+Souhaitez-vous que je transforme ce bloc en `.mdc` ou `
