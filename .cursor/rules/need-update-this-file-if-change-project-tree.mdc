@@ -29,3 +29,6 @@ architecture_analysis_branch: v1.0.5dev (completed - Task ID: 20250627001)
   - Status: ✅ COMPLETE (100%)
   - All 11 phases delivered with multi-agent collaboration
   - Ready for implementation phase 
+
+
+for `dhafnck_mcp` is `/home/<username>/agentic-project`, with `project_id: dhafnck_mcp_main` and `projet_path_root: /home//agentic-project/dhafnck_mcp_main`.

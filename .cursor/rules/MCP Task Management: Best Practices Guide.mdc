@@ -1,3 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
 The MCP (Multi-Agent Coordination Platform) Task Management System is engineered as a **structured, scalable, and maintainable framework** for orchestrating tasks, projects, and AI agents in multi-agent environments. Its core purpose is to **ensure data integrity and automation**, mandating that **all operations are exclusively performed via dedicated MCP tools**.
 
 ## 🏗️ **PROJECT STRUCTURE & DEPLOYMENT MODEL**
@@ -55,20 +60,19 @@ Here's a simplified workflow demonstrating interactions within the MCP Task Mana
     └── **Agent Details Auto-loaded**: When an agent is called, its full capabilities and behaviors are automatically loaded. Agents are assigned to specific task trees via `manage_agent("assign", agent_id="...", project_id="...", tree_id="...")`.
 
 **II. Task Lifecycle & Management**
-→ **Create Task (in Specific Project/Tree)**
+→ **Create Task (in Specific Project/Tree, ai no have permission to use it if no have demande of user, use next instead)**
     ├── Use `manage_task("create", project_id="...", task_tree_id="...", title="...", description="...")`.
     └── **Assign Agent(s)**: In task assignees, **always use the `@` prefix** (e.g., `["@coding_agent"]`). The system automatically normalizes names by adding "@" if missing.
 → **Retrieve Task / Get Next Recommended Task**
     ├── User calls `manage_task("get", task_id="...", project_id="...", task_tree_id="...")` or `manage_task("next", ...)`.
     ├── System loads task data and metadata.
-    └── **Manual Context Management**: Use `manage_context("create", ...)` to create contexts when needed.
+    └── **Manual Context Management**: Use `manage_context("update_property", ...)` to update contexts property.
 
 **III. Agent Role Switching Process**
 → **Manual Trigger**: Agent role switching is triggered by **explicitly using the `call_agent` tool** (e.g., `call_agent(name_agent="coding_agent")`).
     ├── **Specify Agent Name**: Use the agent name directly in `call_agent()`.
     ├── **Normalize Agent Name**: The "@" prefix is stripped to get a clean agent name (e.g., "@coding_agent" → "coding_agent").
     ├── **Execute Agent Call**: The system calls `call_agent(name_agent="...")`.
-    ├── **Load Agent Context**: The system loads the agent's configuration from YAML files in `yaml-lib/` (including `job_desc.yaml`, `rules/`, `tools/`, `contexts/`).
     └── **AI Role Switch**: The AI assistant then adopts the specialized agent's expertise, knowledge base, behavioral patterns, problem-solving approaches, quality standards, and tool preferences. The AI is now ready to work with appropriate expertise.
 
 **IV. Context-Driven Work & Progress Tracking**
@@ -81,7 +85,7 @@ Here's a simplified workflow demonstrating interactions within the MCP Task Mana
 
 ### Important Rules & Best Practices for AI Agents
 
-*   **DO NOT EDIT JSON FILES DIRECTLY**: This is a **critical rule**. All data (tasks, projects, agents, contexts) must be managed **exclusively through MCP tools** (e.g., `manage_project`, `manage_agent`, `manage_task`, `manage_subtask`, `manage_context`) to ensure data integrity and system automation.
+*   **DO NOT EDIT DATA JSON FILES DIRECTLY**: This is a **critical rule**. All data (tasks, projects, agents, contexts) must be managed **exclusively through MCP tools** (e.g., `manage_project`, `manage_agent`, `manage_task`, `manage_subtask`, `manage_context`) to ensure data integrity and system automation.
 *   **Project Structure Awareness**:
     *   **dhafnck_mcp (ROOT)**: Contains full `.cursor/rules/` structure for development
     *   **Client Projects**: NO `.cursor/rules/` directories - data managed remotely via MCP
@@ -95,7 +99,7 @@ Here's a simplified workflow demonstrating interactions within the MCP Task Mana
     *   **Assign only one primary agent per task** for clarity and predictable behavior. Multi-agent collaboration is handled through task decomposition.
     *   Register and assign agents using MCP tools, not by editing JSON.
 *   **Context Management**:
-    *   **Manually create contexts** using `manage_context("create", ...)` when needed.
+    *   **Manually create contexts** using `manage_context("create", ...)` when context of task actual is not created.
     *   **Always check the task context before starting work** using `manage_context("get", ...)`.
     *   **Regularly log progress** using `add_progress` and `add_insight` actions.
     *   **Update `next_steps`** to maintain session continuity.

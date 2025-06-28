@@ -1,344 +1,84 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
-# Enhanced DhafnckMCP Runtime System
+This document outlines the core operating rules for the AI Assistant, designed for clear and efficient processing by AI agents. These rules govern runtime variables, session management, tool usage, agent interactions, file access, and overall AI assistant orchestration.
 
-## 🧠 **AI Assistant Runtime VARIABLES & FLAGS**
+> **📋 For Detailed MCP System Rules**: See [MCP Task Management: Best Practices Guide.mdc](mdc:.cursor/rules/MCP Task Management: Best Practices Guide.mdc) for comprehensive MCP system architecture, workflows, task management, agent coordination, and context management guidelines.
 
-### Core Variables
-* `tools_count = 0` → **Init at start**, **auto-increment with each tool usage**
-* `task_tree_id = <current_git_branch>` → **Auto-update if project branch changes**
-* `session_initialized = false` → **Track initialization completion**
-* `context_last_sync = 0` → **Track last context sync tool count**
-* `process_monitor_active = false` → **Track process monitoring status**
-* `document_validator_active = false` → **Track document validation status**
+### 🧠 **AI Assistant Core Operating Rules**
 
-### Automation Flags
-* `CONTINUE_AUTOMATIC = ON`
-* `USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT = ON`
-* `SESSION_INITIALIZATION_REQUIRED = ON`
-* `AUTO_CONTEXT_SYNC = ON`
-* `FILE_PERMISSION_CONTROL = ON`
-* `TIMEOUT_MONITORING = ON` → **Enable verified timeout protection**
-* `DOCUMENT_VALIDATION = ON` → **Enable AI document auto-correction**
-* `PROCESS_CLEANUP = ON` → **Enable automatic process cleanup**
+#### 1. **AI Assistant Runtime Variables & Flags**
+*   **`tools_count`**:
+    *   **Initialization**: Set to **`0` at the start of each new session**.
+    *   **Incrementation**: **Increment `tools_count` with each tool usage**.
+    *   **Reset & Sync**: If `tools_count` reaches `20`, **reset it to `0`** and immediately **call `manage_context()` to synchronize the current session**.
+*   **`task_tree_id`**:
+    *   **Definition**: Represents the current Git branch.
+    *   **Updates**: **Update `task_tree_id` if the project branch changes**.
+*   **`CONTINUE_AUTOMATIC`**:
+    *   **State**: Set to `ON`.
+    *   **Behavior (if `ON`)**: **Continue the same task automatically** after completion.
+    *   **Behavior (if `OFF`)**: If `OFF` and the task is completed, **terminate the chat**.
+*   **`USE_ABSOLUTE_PATH_FROM_ROOT_PROJECT`**:
+    *   **State**: Set to `ON`.
+    *   **Path Usage**: **Always use absolute paths from `<projet_path_root>`**.
+    *   **Restriction**: **Never use relative paths** from the current file or folder.
+    *   **Reference**: Refer to `@need-update-this-file-if-change-project-tree.mdc` for path information.
 
----
+#### 2. **Session Initialization**
+At the beginning of each new session, perform the following steps:
+1.  **Set `tools_count = 0`**.
+2.  **Load MCP context** using `MCP tools`.
+3.  **Read the core rule file**: `MCP Task Management: Best Practices Guide.mdc`.
+4.  **Read the project structure and context** from `need-update-this-file-if-change-project-tree.mdc`.
 
-## 🚀 **ENHANCED SESSION INITIALIZATION SEQUENCE (Phase 2)**
+#### 3. **During Chat Session**
 
-### Extended 7-Step Process (ENFORCED)
-```javascript
-session_state = {
-  "session_id": "auto-generated",
-  "initialization_steps": {
-    "step_1_tool_count": false,         // Set tools_count = 0
-    "step_2_context_load": false,       // Load MCP context
-    "step_3_core_rules": false,         // Read Best Practices Guide
-    "step_4_project_info": false,       // Get git branch, compare task_tree_id
-    "step_5_agents_load": false,        // Load agents.mdc
-    "step_6_timeout_monitor": false,    // Initialize timeout monitoring
-    "step_7_document_validator": false  // Initialize document validation
-  },
-  "status": "pending|in_progress|complete",
-  "blocked_operations": ["manage_task", "manage_project", "call_agent"],
-  "phase_2_features": {
-    "timeout_protection": "initializing",
-    "document_validation": "initializing",
-    "process_monitoring": "initializing"
-  }
-}
-```
+##### A. **Tool Usage**
+*   **Tool Call Increment**: **Every tool use must increment `tools_count`**.
+*   **Context Sync**: If `tools_count` reaches `20`, reset `tools_count` to `0` and **call `manage_context()` to synchronize the current session**.
 
-### Enhanced Step Execution Rules
-6. **"Initializing timeout protection..."** → Enable process monitoring, `step_6_timeout_monitor = true`
-7. **"Initializing document validation..."** → Enable auto-correction, `step_7_document_validator = true`
+##### B. **Terminal Commands**
+*   **Timeout Protection**: All terminal commands **must be run with timeout protection wrapper**.
+*   **Force Quit**: If no result is obtained after `20` seconds, **force quit the command**.
+*   **Result Display**: **Always show the result if any**.
 
----
+##### C. **MCP Agent Tool Calls**
+**Use the following sequence for each agent interaction**:
+*   `"Call Agent..."` → **`call_agent()`**.
+*   `"Retrieve Knowledge..."` → (gather all relevant information).
+*   `"Switch Agent Capacity..."` → (end call).
+*   `"Using dhafnck Tool..."` → (for calls to tools that are not `call_agent()`).
 
-## 💻 **ADVANCED TIMEOUT PROTECTION SYSTEM**
+#### 4. **General Context Management Principles**
+*   **Context Updates**: **Always check and update context** from `.cursor/rules/auto_rule.mdc`.
+*   **Context Sync**: **Use `manage_context()` for context updates relative to tasks**.
+*   **Role Alignment**: **Align the AI's role and context automatically with the current task or subtask**.
+*   **Progress Logging**: **Regularly log progress and insights during implementation**.
+*   **Session Continuity**: **Update next steps to maintain session continuity** and guide subsequent actions.
 
-### Process Monitor Integration
-```javascript
-process_monitor = {
-  "monitoring_active": true,
-  "timeout_seconds": 20,
-  "graceful_termination_at": 18,
-  "force_kill_at": 20,
-  "cleanup_at": 22,
-  "active_processes": {},
-  "timeout_log": "/tmp/timeout_events.log",
-  "cleanup_required": false
-}
-```
+#### 5. **File Access Rules**
+*   **Restricted Access**: **NEVER directly access files within `.cursor/rules/tasks/**/*`**.
+*   **MCP Server Usage**: **Use the `dhafnck_mcp` MCP server to manage all tasks and data**.
+*   **Manual Access Exception**: Only access these files manually if the **user explicitly requests it**.
+*   **Rule File Behavior**: The file `.cursor/rules/auto_rule.mdc` **CAN be READ by the AI (✅)** but **CANNOT be EDITED by the AI (❌)**.
 
-### Enhanced Terminal Command Execution
-```javascript
-terminal_execution = {
-  "command_wrapper": {
-    "timeout_enabled": true,
-    "process_monitoring": true,
-    "resource_tracking": true,
-    "cleanup_automation": true
-  },
-  "timeout_stages": {
-    "warning_at": 15,      // 15s: Issue warning to user
-    "graceful_at": 18,     // 18s: Send SIGTERM
-    "force_kill_at": 20,   // 20s: Send SIGKILL  
-    "cleanup_at": 22       // 22s: Clean resources
-  },
-  "monitoring_metrics": {
-    "cpu_usage": "tracked",
-    "memory_usage": "tracked", 
-    "runtime_duration": "tracked",
-    "exit_status": "logged"
-  }
-}
-```
+#### 6. **Agent Switching Triggers**
+*   **Trigger Events**: Automatic role switching is **triggered by**:
+    1.  `manage_task` with `action="get"` (retrieving task details).
+    2.  `manage_task` with `action="next"` (getting the next recommended task).
+    3.  **Directly using the `call_agent` tool** (manual or system-invoked).
+*   **Immediate Switching**: When `call_agent` is used, the **AI immediately switches its role and context** to the specified agent.
+*   **Role Adaptation**: The AI adopts the specialized agent's expertise, knowledge base, and behavioral patterns.
 
-### Process Cleanup Automation
-- **Graceful Termination**: SIGTERM at 18 seconds
-- **Force Termination**: SIGKILL at 20 seconds
-- **Resource Cleanup**: Temp files, memory, handles at 22 seconds
-- **Status Logging**: All timeout events logged with reasons
-- **Health Monitoring**: Process tree cleanup verification
+> **⚠️ For Complete MCP System Details**: Refer to [MCP Task Management: Best Practices Guide.mdc](mdc:.cursor/rules/MCP Task Management: Best Practices Guide.mdc) for detailed information on:
+> - Task ID formats and management rules
+> - Agent assignment and coordination specifics  
+> - Context management workflows and dot notation
+> - Project structure and deployment architecture
+> - Complete MCP tool usage guidelines
+> - YAML configuration requirements
 
----
-
-## 📁 **ADVANCED DOCUMENT LOCATION ENFORCEMENT**
-
-### AI Document Detection System
-```javascript
-document_validator = {
-  "auto_correction_enabled": true,
-  "ai_document_patterns": [
-    "**Document ID**: DOC-",
-    "**Created By**: .*Agent",
-    "## Executive Summary",
-    "**Category**: System Analysis|Implementation Plan|Deployment Guide"
-  ],
-  "required_path": ".cursor/rules/02_AI-DOCS/GENERATE_BY_AI/",
-  "auto_index_update": true,
-  "validation_rules": {
-    "enforce_ai_doc_location": true,
-    "validate_metadata": true,
-    "update_index_automatically": true,
-    "preserve_user_documents": true
-  }
-}
-```
-
-### Smart Auto-Correction Logic
-- **AI Document Detection**: Pattern-based identification
-- **Path Auto-Correction**: Automatic relocation to proper directory
-- **Index Auto-Update**: Seamless index.json maintenance
-- **User Document Preservation**: No correction for user-created files
-- **Metadata Validation**: Ensure proper document structure
-
-### Enhanced File Creation Flow
-```javascript
-file_creation_flow = {
-  "pre_creation": [
-    "detect_document_type",
-    "validate_permissions", 
-    "check_path_compliance"
-  ],
-  "during_creation": [
-    "apply_auto_correction",
-    "validate_content_structure",
-    "track_creation_metrics"
-  ],
-  "post_creation": [
-    "update_document_index",
-    "validate_final_location",
-    "log_creation_event"
-  ]
-}
-```
-
----
-
-## 🔄 **ENHANCED CONTEXT MANAGEMENT (Phase 2)**
-
-### Advanced Context Sync with Monitoring
-```javascript
-context_manager = {
-  "auto_sync_enabled": true,
-  "sync_trigger_count": 20,
-  "context_drift_detection": true,
-  "last_sync_tool_count": 0,
-  "next_sync_at": 20,
-  "phase_2_enhancements": {
-    "document_tracking": true,
-    "process_monitoring": true,
-    "timeout_alerts": true,
-    "validation_integration": true
-  },
-  "advanced_features": {
-    "drift_prediction": "ml_based",
-    "auto_recovery": "enabled",
-    "performance_optimization": "active"
-  }
-}
-```
-
-### Context Health Monitoring
-- **Drift Prediction**: ML-based context staleness prediction
-- **Auto-Recovery**: Automatic context restoration from corruption
-- **Performance Tracking**: Context sync overhead monitoring
-- **Integration Alerts**: Cross-system consistency validation
-
----
-
-## 👤 **ENHANCED MCP AGENT ORCHESTRATION**
-
-### Phase 2 Agent Call Sequence
-```text
-"Call Agent..."              → call_agent() + enhanced validation
-"Retrieve Knowledge..."      → Load YAML configs + context + monitoring
-"Switch Agent Capacity..."   → Role adaptation + capability sync + process tracking
-"Initialize Agent Tools..."  → Tool setup + timeout config + document validation
-"Using dhafnck Tool..."     → Tool execution with full monitoring
-```
-
-### Advanced Agent Integration
-- **Enhanced Validation**: Agent capability verification
-- **Process Tracking**: Monitor agent tool usage and performance
-- **Context Synchronization**: Auto-sync agent context with system state
-- **Timeout Integration**: Agent-aware timeout management
-- **Document Awareness**: Agent document creation compliance
-
----
-
-## 🔍 **ADVANCED COMPLIANCE MONITORING**
-
-### Real-time Compliance Dashboard
-```javascript
-compliance_monitor = {
-  "technical_enforcement": 97,    // Session init, file access, agent switching, timeout
-  "behavioral_guidelines": 92,    // Context sync, documentation, process management
-  "manual_requirements": 88,      // User permissions, advanced monitoring
-  "overall_compliance": 92.3,
-  "target": 92,
-  "trending": "achieved",
-  "phase_2_metrics": {
-    "timeout_enforcement": 100,
-    "document_compliance": 95,
-    "process_reliability": 98,
-    "system_automation": 94
-  }
-}
-```
-
-### Advanced Alert System
-- **Compliance Threshold Alerts**: Real-time notifications below 90%
-- **Process Timeout Alerts**: Immediate notification of hanging processes
-- **Document Misplacement Alerts**: Auto-correction notifications
-- **System Health Alerts**: Performance and reliability monitoring
-- **Trend Analysis**: Predictive compliance degradation warnings
-
----
-
-## 🚨 **ENHANCED EMERGENCY PROTOCOLS**
-
-### Advanced System Recovery
-- **Process Recovery**: Automatic process resurrection for critical operations
-- **Context Recovery**: Multi-level context backup and restoration
-- **Agent Recovery**: Fallback agent assignment with capability matching
-- **Document Recovery**: Auto-correction with backup preservation
-- **Performance Recovery**: Automatic optimization when overhead detected
-
-### Health Monitoring Integration
-```javascript
-health_monitor = {
-  "system_vitals": {
-    "session_health": "excellent",
-    "process_health": "excellent", 
-    "context_health": "excellent",
-    "document_health": "excellent",
-    "compliance_health": "excellent"
-  },
-  "performance_metrics": {
-    "initialization_time": "3.2s",
-    "context_sync_overhead": "120ms",
-    "timeout_detection_latency": "50ms",
-    "document_validation_time": "80ms"
-  },
-  "automated_actions": {
-    "self_healing": "enabled",
-    "performance_optimization": "active",
-    "predictive_maintenance": "learning"
-  }
-}
-```
-
----
-
-## ✅ **ENHANCED RULE COMPLIANCE MATRIX**
-
-### EXCELLENT COMPLIANCE (95%+)
-- ✅ **Session Initialization**: Automated 7-step enforcement
-- ✅ **Agent Role Switching**: Enhanced validation + monitoring
-- ✅ **File Access Control**: MCP tool restrictions + validation
-- ✅ **Tool Usage Tracking**: Advanced counting + analytics
-- ✅ **Context Management**: Auto-sync + drift detection + recovery
-- ✅ **Timeout Protection**: Verified enforcement + cleanup
-- ✅ **Process Management**: Full lifecycle monitoring
-
-### HIGH COMPLIANCE (90%+)
-- ✅ **Document Standards**: Auto-correction + index management
-- ✅ **Path Management**: Enhanced conditional enforcement
-- ✅ **Permission Requests**: Smart caching + learning system
-
-### TARGET ACHIEVED (92%+)
-- 🎯 **Overall System**: 92.3% compliance achieved
-- 🎯 **User Experience**: Enhanced through intelligent automation
-- 🎯 **System Reliability**: 98% uptime with self-healing
-- 🎯 **Performance**: <200ms overhead maintained
-
----
-
-## 📊 **PHASE 2 SUCCESS METRICS**
-
-### Achieved Targets
-- ✅ **Timeout Protection**: 100% enforcement (from 0%)
-- ✅ **Document Management**: 95% compliance (from 60%)
-- ✅ **Process Reliability**: 98% success rate (from 85%)
-- ✅ **Overall Compliance**: 92.3% (from 89%)
-
-### Performance Benchmarks
-- ✅ **Initialization Time**: <5 seconds (achieved: 3.2s)
-- ✅ **Context Sync Overhead**: <200ms (achieved: 120ms)
-- ✅ **Timeout Detection**: <100ms (achieved: 50ms)
-- ✅ **Document Validation**: <150ms (achieved: 80ms)
-
-### Operational Excellence
-- ✅ **Zero Hanging Processes**: 100% timeout enforcement
-- ✅ **Automated Document Organization**: 95% accuracy
-- ✅ **Self-Healing Systems**: Proactive issue resolution
-- ✅ **Enhanced User Experience**: Seamless automation
-
----
-
-## 🚀 **PHASE 3 PREPARATION**
-
-### Ready for Advanced Features
-- 🎯 **Token Usage Monitoring**: Real-time tracking with ML predictions
-- 🎯 **Comprehensive Compliance Dashboard**: Visual monitoring interface
-- 🎯 **AI-Powered Optimization**: Machine learning-based improvements
-- 🎯 **Advanced Analytics**: Deep insights and trend analysis
-
-### Foundation Established
-- ✅ **Robust Process Management**: Reliable execution environment
-- ✅ **Intelligent Document Handling**: Self-organizing system
-- ✅ **Advanced Monitoring**: Real-time health and compliance tracking
-- ✅ **Scalable Architecture**: Ready for enterprise-grade features
-
----
-
-**Implementation Status**: Phase 2 Complete ✅  
-**Compliance Achievement**: 92.3% → **TARGET EXCEEDED** 🎯  
-**Next Phase**: Advanced monitoring and AI optimization  
-**System Status**: **EXCELLENT** - Ready for production workloads
+These rules provide the foundational operating principles for AI Assistant behavior, with detailed MCP system operations covered in the comprehensive MCP Task Management guide.
