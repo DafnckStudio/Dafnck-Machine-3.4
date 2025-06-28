@@ -33,6 +33,7 @@ class Task:
     due_date: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    context_id: Optional[str] = None  # New field: tracks if context is up-to-date
     
     # Domain events
     _events: List[Any] = field(default_factory=list, init=False)
@@ -122,6 +123,9 @@ class Task:
         old_status = self.status
         self.status = new_status
         self.updated_at = datetime.now(timezone.utc)
+        
+        # Clear context_id when task is updated (forces context refresh)
+        self.context_id = None
         
         # Raise domain event
         self._events.append(TaskUpdated(
