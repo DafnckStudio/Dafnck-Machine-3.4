@@ -7,7 +7,6 @@ from ...domain.exceptions.task_exceptions import TaskNotFoundError, AutoRuleGene
 from ...domain.events import TaskRetrieved
 from ..dtos.task_dto import TaskResponse
 from ...infrastructure.services.agent_doc_generator import generate_agent_docs, generate_docs_for_assignees
-from ...infrastructure.services.context_generate import generate_task_context_if_needed
 
 
 class GetTaskUseCase:
@@ -33,14 +32,6 @@ class GetTaskUseCase:
         if generate_rules:
             # Mark task as retrieved (triggers domain event)
             task.mark_as_retrieved()
-            
-            # Generate context file if it doesn't exist (for Docker compatibility)
-            try:
-                generate_task_context_if_needed(task)
-            except Exception as e:
-                # Log warning but don't fail the operation
-                import logging
-                logging.warning(f"Context file generation failed for task {task.id}: {e}")
             
             # Handle domain events (auto rule generation)
             events = task.get_events()

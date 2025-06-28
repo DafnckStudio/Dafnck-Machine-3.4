@@ -18,11 +18,11 @@ class ContextManager:
         """Initialize context manager with repository"""
         self.repository = context_repository or ContextRepository()
     
-    def create_context_from_task(self, task: Task, user_id: str = "default_id") -> bool:
+    def create_context_from_task(self, task: Task, user_id: str = "default_id", project_id: str = "", task_tree_id: str = "main") -> bool:
         """Create a new context from a Task entity"""
         try:
             # Create context from task data
-            context = self._task_to_context(task, user_id)
+            context = self._task_to_context(task, user_id, project_id, task_tree_id)
             
             # Save context
             return self.repository.create_context(context, user_id)
@@ -35,17 +35,17 @@ class ContextManager:
         """Get a context by task ID"""
         return self.repository.get_context(task_id, user_id, project_id, task_tree_id)
     
-    def update_context_from_task(self, task: Task, user_id: str = "default_id") -> bool:
+    def update_context_from_task(self, task: Task, user_id: str = "default_id", project_id: str = "", task_tree_id: str = "main") -> bool:
         """Update an existing context from a Task entity"""
         try:
             # Get existing context
             existing_context = self.repository.get_context(
-                task.id.value, user_id, task.project_id, getattr(task, 'task_tree_id', 'main')
+                task.id.value, user_id, project_id, task_tree_id
             )
             
             if not existing_context:
                 # Create new context if it doesn't exist
-                return self.create_context_from_task(task, user_id)
+                return self.create_context_from_task(task, user_id, project_id, task_tree_id)
             
             # Update context with task data
             updated_context = self._update_context_from_task(existing_context, task)
@@ -165,7 +165,7 @@ class ContextManager:
             logger.error(f"Failed to update next steps for task {task_id}: {e}")
             return False
     
-    def should_create_context_for_task(self, task: Task) -> bool:
+    def should_create_context_for_task(self, task: Task, user_id: str = "default_id", project_id: str = "", task_tree_id: str = "main") -> bool:
         """
         Check if context should be created for a task.
         Conditions:
@@ -187,9 +187,9 @@ class ContextManager:
             # Check if context already exists
             if self.context_exists(
                 task.id.value, 
-                "default_id", 
-                task.project_id, 
-                getattr(task, 'task_tree_id', 'main')
+                user_id, 
+                project_id, 
+                task_tree_id
             ):
                 return False
             
@@ -199,15 +199,15 @@ class ContextManager:
             logger.error(f"Failed to check context creation conditions for task {task.id}: {e}")
             return False
     
-    def _task_to_context(self, task: Task, user_id: str) -> TaskContext:
+    def _task_to_context(self, task: Task, user_id: str, project_id: str, task_tree_id: str) -> TaskContext:
         """Convert a Task entity to a TaskContext"""
         # Create empty context with basic information
         context = ContextSchema.create_empty_context(
             task_id=task.id.value,
-            project_id=task.project_id,
+            project_id=project_id,
             title=task.title,
             description=task.description,
-            task_tree_id=getattr(task, 'task_tree_id', 'main'),
+            task_tree_id=task_tree_id,
             user_id=user_id,
             status=task.status.value,
             priority=task.priority.value,

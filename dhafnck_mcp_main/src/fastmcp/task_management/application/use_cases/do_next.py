@@ -2,12 +2,13 @@
 
 from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
+import logging
 
 from ...domain import TaskRepository, TaskStatus, Priority, AutoRuleGenerator
 from ...infrastructure.services.agent_doc_generator import generate_agent_docs, generate_docs_for_assignees
-from ...infrastructure.services.context_generate import generate_task_context_if_needed
 from ...infrastructure.services.context_manager import ContextManager
 
+logger = logging.getLogger(__name__)
 
 @dataclass
 class DoNextResponse:
@@ -51,8 +52,25 @@ class DoNextUseCase:
         self._auto_rule_generator = auto_rule_generator
     
     def execute(self, assignee: Optional[str] = None, project_id: Optional[str] = None, 
-                labels: Optional[List[str]] = None) -> DoNextResponse:
-        """Find the next task or subtask to work on with optional filtering"""
+                labels: Optional[List[str]] = None, task_tree_id: Optional[str] = None, 
+                user_id: Optional[str] = None) -> DoNextResponse:
+        """Find the next task or subtask to work on with optional filtering
+        
+        Args:
+            assignee: Filter by assignee
+            project_id: Filter by project ID
+            labels: Filter by labels
+            task_tree_id: Task tree identifier for context creation (defaults to 'main')
+            user_id: User identifier for context creation (defaults to 'default_id')
+        """
+        # Set defaults for context operations
+        if task_tree_id is None:
+            task_tree_id = getattr(self._task_repository, 'task_tree_id', 'main')
+        if user_id is None:
+            user_id = getattr(self._task_repository, 'user_id', 'default_id')
+        if project_id is None:
+            project_id = getattr(self._task_repository, 'project_id', '')
+            
         all_tasks = self._task_repository.find_all()
         
         if not all_tasks:
@@ -118,21 +136,12 @@ class DoNextUseCase:
             # Check if task has incomplete subtasks
             next_subtask = self._find_next_subtask(task)
             if next_subtask:
-                # Generate context file if it doesn't exist
-                try:
-                    generate_task_context_if_needed(task)
-                except Exception as e:
-                    # Log warning but don't fail the operation
-                    import logging
-                    logging.warning(f"Context file generation failed for task {task.id}: {e}")
-                
                 # Trigger auto rule generation for the parent task (with error handling)
                 try:
                     self._auto_rule_generator.generate_rules_for_task(task)
                 except Exception as e:
                     # Log error but don't fail the entire operation
-                    import logging
-                    logging.warning(f"Auto rule generation failed for task {task.id}: {e}")
+                    logger.warning(f"Auto rule generation failed for task {task.id}: {e}")
                 
                 # Generate agent documentation for all unique assignees (task and subtask)
                 generate_docs_for_assignees(task.assignees, clear_all=False)
@@ -150,20 +159,11 @@ class DoNextUseCase:
                 )
             else:
                 # Task itself is the next item to work on
-                # Generate context file if it doesn't exist
-                try:
-                    generate_task_context_if_needed(task)
-                except Exception as e:
-                    # Log warning but don't fail the operation
-                    import logging
-                    logging.warning(f"Context file generation failed for task {task.id}: {e}")
-                
                 try:
                     self._auto_rule_generator.generate_rules_for_task(task)
                 except Exception as e:
                     # Log error but don't fail the entire operation
-                    import logging
-                    logging.warning(f"Auto rule generation failed for task {task.id}: {e}")
+                    logger.warning(f"Auto rule generation failed for task {task.id}: {e}")
                 
                 # Generate agent documentation for all unique assignees
                 generate_docs_for_assignees(task.assignees, clear_all=False)
@@ -175,15 +175,15 @@ class DoNextUseCase:
                         context_manager = ContextManager()
                         
                         # Check if context should be created and create it
-                        if context_manager.should_create_context_for_task(task):
-                            success = context_manager.create_context_from_task(task)
+                        if context_manager.should_create_context_for_task(task, user_id, project_id, task_tree_id):
+                            success = context_manager.create_context_from_task(task, user_id, project_id, task_tree_id)
                             if success:
                                 # Get the created context for return
                                 context = context_manager.get_context(
                                     task.id.value, 
-                                    "default_id", 
-                                    task.project_id, 
-                                    getattr(task, 'task_tree_id', 'main')
+                                    user_id, 
+                                    project_id, 
+                                    task_tree_id
                                 )
                                 if context:
                                     context_info = {
@@ -195,9 +195,9 @@ class DoNextUseCase:
                             # Get existing context
                             context = context_manager.get_context(
                                 task.id.value, 
-                                "default_id", 
-                                task.project_id, 
-                                getattr(task, 'task_tree_id', 'main')
+                                user_id, 
+                                project_id, 
+                                task_tree_id
                             )
                             if context:
                                 context_info = {
@@ -207,8 +207,7 @@ class DoNextUseCase:
                                 }
                     except Exception as e:
                         # Log warning but don't fail the operation
-                        import logging
-                        logging.warning(f"Context management failed for task {task.id}: {e}")
+                        logger.warning(f"Context management failed for task {task.id}: {e}")
                 
                 return DoNextResponse(
                     has_next=True,
@@ -429,9 +428,9 @@ class DoNextUseCase:
                     # Get context for this task
                     context = context_manager.get_context(
                         task.id.value,
-                        "default_id", 
-                        task.project_id,
-                        getattr(task, 'task_tree_id', 'main')
+                        user_id, 
+                        project_id,
+                        task_tree_id
                     )
                     
                     if context:
@@ -446,8 +445,8 @@ class DoNextUseCase:
                                 "title": task.title,
                                 "task_status": task_status,
                                 "context_status": context_status,
-                                "project_id": task.project_id,
-                                "task_tree_id": getattr(task, 'task_tree_id', 'main'),
+                                "project_id": project_id,
+                                "task_tree_id": task_tree_id,
                                 "fix_action": f"Update context status from '{context_status}' to '{task_status}' or vice versa",
                                 "suggested_command": f"manage_context('update_property', task_id='{task.id.value}', property_path='metadata.status', value='{task_status}')"
                             }
@@ -467,8 +466,8 @@ class DoNextUseCase:
                                     "context_status": context_status,
                                     "issue": "task_done_but_subtasks_incomplete",
                                     "incomplete_subtasks": len(incomplete_subtasks),
-                                    "project_id": task.project_id,
-                                    "task_tree_id": getattr(task, 'task_tree_id', 'main'),
+                                    "project_id": project_id,
+                                    "task_tree_id": task_tree_id,
                                     "fix_action": f"Complete {len(incomplete_subtasks)} remaining subtasks or update task status",
                                     "incomplete_subtask_details": [
                                         {"id": subtask.get('id'), "title": subtask.get('title')} 
@@ -479,13 +478,11 @@ class DoNextUseCase:
                                 
                 except Exception as e:
                     # Log but don't fail for individual task context issues
-                    import logging
-                    logging.warning(f"Context validation failed for task {task.id.value}: {e}")
+                    logger.warning(f"Context validation failed for task {task.id.value}: {e}")
                     continue
                     
         except Exception as e:
             # Log but don't fail the entire validation
-            import logging
-            logging.warning(f"Context manager initialization failed during validation: {e}")
+            logger.warning(f"Context manager initialization failed during validation: {e}")
             
         return mismatches

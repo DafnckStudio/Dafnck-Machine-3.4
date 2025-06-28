@@ -1853,8 +1853,18 @@ class TaskOperationHandler:
     def _get_next_task(self, task_app_service):
         """Get next recommended task"""
         try:
-            do_next_use_case = DoNextUseCase(task_app_service._task_repository, self._auto_rule_generator)
-            response = do_next_use_case.execute()
+            # Extract context information from the repository
+            repository = task_app_service._task_repository
+            task_tree_id = getattr(repository, 'task_tree_id', 'main')
+            user_id = getattr(repository, 'user_id', 'default_id')
+            project_id = getattr(repository, 'project_id', '')
+            
+            do_next_use_case = DoNextUseCase(repository, self._auto_rule_generator)
+            response = do_next_use_case.execute(
+                task_tree_id=task_tree_id,
+                user_id=user_id,
+                project_id=project_id
+            )
             
             if response.has_next and response.next_item:
                 result = {
