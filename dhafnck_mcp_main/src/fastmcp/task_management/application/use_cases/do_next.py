@@ -70,6 +70,19 @@ class DoNextUseCase:
                 message="No tasks match the specified filters."
             )
         
+        # Validate task-context status alignment and detect mismatches
+        status_mismatches = self._validate_task_context_alignment(filtered_tasks)
+        if status_mismatches:
+            return DoNextResponse(
+                has_next=False,
+                context={
+                    "error_type": "status_mismatch",
+                    "mismatches": status_mismatches,
+                    "fix_required": True
+                },
+                message=f"❌ CRITICAL: Found {len(status_mismatches)} task(s) with mismatched task/context status. Fix required before proceeding."
+            )
+        
         # Filter actionable tasks (todo or in_progress, not done/cancelled/blocked/review/testing)
         actionable_statuses = {"todo", "in_progress"}
         active_tasks = [
@@ -400,3 +413,79 @@ class DoNextUseCase:
             blocking_info["blocked_tasks"].append(task_info)
         
         return blocking_info 
+    
+    def _validate_task_context_alignment(self, tasks: List) -> List[Dict[str, Any]]:
+        """
+        Validate that task status matches context status for all tasks.
+        Returns list of mismatches that need to be fixed.
+        """
+        mismatches = []
+        
+        try:
+            context_manager = ContextManager()
+            
+            for task in tasks:
+                try:
+                    # Get context for this task
+                    context = context_manager.get_context(
+                        task.id.value,
+                        "default_id", 
+                        task.project_id,
+                        getattr(task, 'task_tree_id', 'main')
+                    )
+                    
+                    if context:
+                        context_data = context.to_dict()
+                        context_status = context_data.get('metadata', {}).get('status')
+                        task_status = task.status.value
+                        
+                        # Check for status mismatch
+                        if context_status and context_status != task_status:
+                            mismatch_info = {
+                                "task_id": task.id.value,
+                                "title": task.title,
+                                "task_status": task_status,
+                                "context_status": context_status,
+                                "project_id": task.project_id,
+                                "task_tree_id": getattr(task, 'task_tree_id', 'main'),
+                                "fix_action": f"Update context status from '{context_status}' to '{task_status}' or vice versa",
+                                "suggested_command": f"manage_context('update_property', task_id='{task.id.value}', property_path='metadata.status', value='{task_status}')"
+                            }
+                            mismatches.append(mismatch_info)
+                            
+                        # Also check if task is marked as "done" but context shows incomplete subtasks
+                        if task_status == "done" and context_data.get('subtasks', {}).get('items'):
+                            incomplete_subtasks = [
+                                subtask for subtask in context_data['subtasks']['items']
+                                if not subtask.get('completed', False)
+                            ]
+                            if incomplete_subtasks:
+                                mismatch_info = {
+                                    "task_id": task.id.value,
+                                    "title": task.title,
+                                    "task_status": task_status,
+                                    "context_status": context_status,
+                                    "issue": "task_done_but_subtasks_incomplete",
+                                    "incomplete_subtasks": len(incomplete_subtasks),
+                                    "project_id": task.project_id,
+                                    "task_tree_id": getattr(task, 'task_tree_id', 'main'),
+                                    "fix_action": f"Complete {len(incomplete_subtasks)} remaining subtasks or update task status",
+                                    "incomplete_subtask_details": [
+                                        {"id": subtask.get('id'), "title": subtask.get('title')} 
+                                        for subtask in incomplete_subtasks[:3]  # Show first 3
+                                    ]
+                                }
+                                mismatches.append(mismatch_info)
+                                
+                except Exception as e:
+                    # Log but don't fail for individual task context issues
+                    import logging
+                    logging.warning(f"Context validation failed for task {task.id.value}: {e}")
+                    continue
+                    
+        except Exception as e:
+            # Log but don't fail the entire validation
+            import logging
+            logging.warning(f"Context manager initialization failed during validation: {e}")
+            
+        return mismatches
