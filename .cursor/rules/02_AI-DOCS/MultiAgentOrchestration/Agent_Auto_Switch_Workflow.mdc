@@ -42,7 +42,7 @@ flowchart LR
 ### 📋 Step-by-Step Process
 
 1. **Task Operation or call_agent Triggered**
-   - User calls `get_task("20250618001")`, `do_next()`, or `call_agent(name_agent="agent_name")`
+   - User calls `get_task("20250127001")`, `do_next()`, or `call_agent(name_agent="agent_name")`
    - System loads task data and metadata, or directly switches to the specified agent
 
 2. **Extract or Specify Agent Name**
@@ -98,11 +98,11 @@ flowchart LR
 #### Example 1: Development Task
 ```typescript
 // User action
-manage_task(action="get", task_id="20250618001")
+manage_task(action="get", task_id="20250127001")
 
 // Task data returned:
 {
-  "id": "20250618001",
+  "id": "20250127001",
   "title": "Implement user authentication API",
   "assignees": ["@coding_agent"],
   ...
@@ -124,7 +124,7 @@ manage_task(action="next")
 
 // System returns next task:
 {
-  "id": "20250618002", 
+  "id": "20250127002", 
   "title": "Write unit tests for authentication",
   "assignees": ["@functional_tester_agent"],
   ...

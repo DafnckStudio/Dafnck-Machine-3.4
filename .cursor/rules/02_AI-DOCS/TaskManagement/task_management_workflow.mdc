@@ -9,6 +9,7 @@ alwaysApply: false
 This workflow describes how to manage tasks, projects, and agents using the MCP tools with hierarchical storage support. The system manages multiple projects with branch-specific task trees using:
 - **Projects Registry**: `.cursor/rules/brain/projects.json`
 - **Hierarchical Tasks**: `.cursor/rules/tasks/{user_id}/{project_id}/{task_tree_id}/tasks.json`
+- **JSON Context Management**: `.cursor/rules/contexts/{user_id}/{project_id}/{task_tree_id}/context_{task_id}.json`
 - **Legacy Support**: `.cursor/rules/tasks/tasks.json` (deprecated)
 
 ## 1. Project & Task Tree Management
@@ -42,9 +43,17 @@ This workflow describes how to manage tasks, projects, and agents using the MCP 
 
 ### Storage Structure Created
 ```
-.cursor/rules/tasks/default_id/my_web_app/
-├── main/tasks.json              # Default task tree
-└── feature-auth/tasks.json      # Feature-specific tasks
+.cursor/rules/
+├── tasks/default_id/my_web_app/
+│   ├── main/tasks.json              # Default task tree
+│   └── feature-auth/tasks.json      # Feature-specific tasks
+└── contexts/default_id/my_web_app/
+    ├── main/
+    │   ├── contexts.json            # Context index
+    │   └── context_{task_id}.json   # Individual contexts
+    └── feature-auth/
+        ├── contexts.json            # Context index
+        └── context_{task_id}.json   # Individual contexts
 ```
 
 ## 2. Agent Management
@@ -104,7 +113,7 @@ This workflow describes how to manage tasks, projects, and agents using the MCP 
 ### Task Operations
 - **Get task (auto-context generation):**
   ```python
-  manage_task(action="get", task_id="20250625001", project_id="my_web_app", task_tree_id="feature-auth")
+  manage_task(action="get", task_id="20250127001", project_id="my_web_app", task_tree_id="feature-auth")
   ```
 
 - **List tasks by project/tree:**
@@ -114,12 +123,12 @@ This workflow describes how to manage tasks, projects, and agents using the MCP 
 
 - **Update task status:**
   ```python
-  manage_task(action="update", task_id="20250625001", status="in_progress", project_id="my_web_app", task_tree_id="feature-auth")
+  manage_task(action="update", task_id="20250127001", status="in_progress", project_id="my_web_app", task_tree_id="feature-auth")
   ```
 
 - **Complete task:**
   ```python
-  manage_task(action="complete", task_id="20250625001", project_id="my_web_app", task_tree_id="feature-auth")
+  manage_task(action="complete", task_id="20250127001", project_id="my_web_app", task_tree_id="feature-auth")
   ```
 
 ### Subtask Management
@@ -127,7 +136,7 @@ This workflow describes how to manage tasks, projects, and agents using the MCP 
   ```python
   manage_subtask(
       action="add_subtask",
-      task_id="20250625001",
+      task_id="20250127001",
       project_id="my_web_app",
       task_tree_id="feature-auth",
       subtask_data={
@@ -138,40 +147,129 @@ This workflow describes how to manage tasks, projects, and agents using the MCP 
   )
   ```
 
-## 4. Automatic Context & Role Switching
+## 4. JSON Context Management System
+
+### Automatic Context Creation
+- **Auto-created when**: Task status = "todo" AND all subtasks are "todo" or none exist
+- **Storage location**: `.cursor/rules/contexts/{user_id}/{project_id}/{task_tree_id}/context_{task_id}.json`
+- **Structured data**: JSON schema with validation and nested property access
+
+### Context Operations
+- **Get full context:**
+  ```python
+  manage_context(action="get", task_id="20250127001", project_id="my_web_app", task_tree_id="feature-auth")
+  ```
+
+- **Update task status in context:**
+  ```python
+  manage_context(action="update_property", task_id="20250127001", property_path="metadata.status", value="in_progress", project_id="my_web_app", task_tree_id="feature-auth")
+  ```
+
+- **Add agent insight:**
+  ```python
+  manage_context(action="add_insight", task_id="20250127001", agent="coding_agent", category="solution", content="Implemented OAuth2 with JWT tokens", project_id="my_web_app", task_tree_id="feature-auth")
+  ```
+
+- **Update next steps:**
+  ```python
+  manage_context(action="update_next_steps", task_id="20250127001", next_steps=["Add error handling", "Write unit tests", "Update documentation"], project_id="my_web_app", task_tree_id="feature-auth")
+  ```
+
+- **Add progress action:**
+  ```python
+  manage_context(action="add_progress", task_id="20250127001", agent="coding_agent", content="Completed OAuth2 integration with Google", project_id="my_web_app", task_tree_id="feature-auth")
+  ```
+
+- **Merge technical data:**
+  ```python
+  manage_context(action="merge", task_id="20250127001", data={"technical": {"technologies": ["OAuth2", "JWT", "React"], "key_files": ["src/auth/oauth.js", "src/components/LoginForm.jsx"]}}, project_id="my_web_app", task_tree_id="feature-auth")
+  ```
+
+### Context Schema Structure
+```json
+{
+  "metadata": {
+    "task_id": "20250127001",
+    "project_id": "my_web_app",
+    "task_tree_id": "feature-auth",
+    "status": "in_progress",
+    "priority": "high",
+    "assignees": ["@coding_agent"],
+    "labels": ["frontend", "authentication"],
+    "created_at": "2025-01-27T10:00:00Z",
+    "updated_at": "2025-01-27T10:30:00Z"
+  },
+  "objective": {
+    "title": "Implement OAuth2 Login",
+    "description": "Add Google OAuth2 authentication"
+  },
+  "progress": {
+    "completed_actions": [
+      {
+        "action": "Implemented OAuth2 flow",
+        "timestamp": "2025-01-27T10:15:00Z",
+        "agent": "coding_agent"
+      }
+    ],
+    "session_summary": "OAuth2 integration in progress",
+    "next_steps": ["Add error handling", "Write tests"],
+    "completion_percentage": 75
+  },
+  "technical": {
+    "technologies": ["OAuth2", "JWT", "React"],
+    "frameworks": ["Next.js"],
+    "key_files": ["src/auth/oauth.js", "src/components/LoginForm.jsx"]
+  },
+  "notes": {
+    "agent_insights": [
+      {
+        "agent": "coding_agent",
+        "category": "solution",
+        "content": "Used Google OAuth2 library for seamless integration",
+        "timestamp": "2025-01-27T10:20:00Z",
+        "importance": "high"
+      }
+    ]
+  }
+}
+```
+
+## 5. Automatic Context & Role Switching
 
 ### Context File Generation
 - **Auto-generated on task retrieval**: `.cursor/rules/auto_rule.mdc`
-- **Project-specific contexts**: `.cursor/rules/contexts/{user_id}/{project_id}/context_{task_id}.md`
+- **JSON contexts auto-created**: When task conditions are met (status="todo" AND subtasks are "todo"/none)
+- **Project-specific contexts**: Hierarchical storage by user/project/task_tree
 - **Task tree awareness**: Context includes project and tree information
 
 ### Role Switching Workflow
 1. **Task Retrieved**: `manage_task(action="get", task_id="...", project_id="...", task_tree_id="...")`
 2. **Context Generated**: Auto-rule file created with project/tree context
-3. **Agent Activation**: Primary assignee agent role activated
-4. **Branch Awareness**: Context includes current task tree (branch/feature)
+3. **JSON Context Available**: Structured context data accessible via `manage_context`
+4. **Agent Activation**: Primary assignee agent role activated
+5. **Branch Awareness**: Context includes current task tree (branch/feature)
 
-### Context Structure
-```yaml
-# Auto-generated context includes:
-project_context:
-  project_id: "my_web_app"
-  task_tree_id: "feature-auth"
-  current_task: "20250625001"
-  
-role_context:
-  primary_agent: "@coding_agent"
-  collaborating_agents: ["@test_orchestrator_agent"]
-  
-task_context:
-  title: "Implement OAuth2 Login"
-  priority: "high"
-  status: "in_progress"
+### Context Integration Workflow
+```python
+# 1. Get task (triggers context creation if needed)
+task_info = manage_task(action="get", task_id="20250127001", project_id="my_web_app", task_tree_id="feature-auth")
+
+# 2. Check/get context for detailed information
+context = manage_context(action="get", task_id="20250127001", project_id="my_web_app", task_tree_id="feature-auth")
+
+# 3. Work on task and log progress
+manage_context(action="add_insight", task_id="20250127001", agent="coding_agent", category="insight", content="OAuth2 flow requires state parameter for security", project_id="my_web_app", task_tree_id="feature-auth")
+
+# 4. Update progress as work continues
+manage_context(action="update_property", task_id="20250127001", property_path="progress.completion_percentage", value=85, project_id="my_web_app", task_tree_id="feature-auth")
+
+# 5. Update next steps for session continuity
+manage_context(action="update_next_steps", task_id="20250127001", next_steps=["Test OAuth2 flow", "Add error handling", "Write documentation"], project_id="my_web_app", task_tree_id="feature-auth")
 ```
 
 See [Agent Auto-Switch Workflow](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc) for details.
 
-## 5. Complete Multi-Project Workflow Example
+## 6. Complete Multi-Project Workflow Example
 
 ### Setup: E-commerce Platform with Feature Branches
 ```python
@@ -233,7 +331,7 @@ manage_agent(
 )
 ```
 
-### Task Management: Feature Development
+### Task Management: Feature Development with Context
 ```python
 # 5. Create feature-specific tasks
 # Authentication feature tasks
@@ -259,89 +357,157 @@ manage_task(
     priority="high",
     assignees=["@coding_agent"],
     labels=["frontend", "react", "cart"],
-    dependencies=["20250625001"]  # Depends on auth task
+    dependencies=["20250127001"]  # Depends on auth task
 )
 ```
 
-### Work Execution with Context
+### Work Execution with JSON Context Management
 ```python
 # 6. Start working on authentication feature
-manage_task(
+task_info = manage_task(
     action="get", 
-    task_id="20250625001", 
+    task_id="20250127001", 
     project_id="ecommerce_platform", 
     task_tree_id="feature-auth"
 )
 # → Auto-generates context for auth feature
 # → Switches to @security_auditor_agent role
-# → Creates .cursor/rules/contexts/default_id/ecommerce_platform/context_20250625001.md
+# → Creates JSON context at .cursor/rules/contexts/default_id/ecommerce_platform/feature-auth/context_20250127001.json
 
-# 7. Update progress
+# 7. Get and review context before starting work
+context = manage_context(
+    action="get",
+    task_id="20250127001",
+    project_id="ecommerce_platform",
+    task_tree_id="feature-auth"
+)
+
+# 8. Log implementation insights and progress
+manage_context(
+    action="add_insight",
+    task_id="20250127001",
+    agent="security_auditor_agent",
+    category="decision",
+    content="Using Google OAuth2 library with PKCE flow for enhanced security",
+    importance="high",
+    project_id="ecommerce_platform",
+    task_tree_id="feature-auth"
+)
+
+# 9. Update technical details as implementation progresses
+manage_context(
+    action="merge",
+    task_id="20250127001",
+    data={
+        "technical": {
+            "technologies": ["OAuth2", "PKCE", "JWT", "React"],
+            "key_files": [
+                "src/auth/oauth2.js",
+                "src/components/LoginForm.jsx",
+                "src/utils/tokenManager.js"
+            ],
+            "architecture_notes": "Implemented PKCE flow for SPA security best practices"
+        }
+    },
+    project_id="ecommerce_platform",
+    task_tree_id="feature-auth"
+)
+
+# 10. Update progress and next steps
+manage_context(
+    action="add_progress",
+    task_id="20250127001",
+    agent="security_auditor_agent",
+    content="OAuth2 PKCE flow implemented and tested with Google provider",
+    project_id="ecommerce_platform",
+    task_tree_id="feature-auth"
+)
+
+manage_context(
+    action="update_next_steps",
+    task_id="20250127001",
+    next_steps=[
+        "Add error handling for OAuth2 failures",
+        "Implement token refresh mechanism",
+        "Write unit tests for auth flow",
+        "Add logout functionality"
+    ],
+    project_id="ecommerce_platform",
+    task_tree_id="feature-auth"
+)
+
+# 11. Update task status
 manage_task(
     action="update", 
-    task_id="20250625001", 
+    task_id="20250127001", 
     status="in_progress", 
     project_id="ecommerce_platform", 
     task_tree_id="feature-auth",
-    details="OAuth2 integration 80% complete"
+    details="OAuth2 PKCE implementation 80% complete"
 )
 
-# 8. Complete and move to next feature
+# 12. Complete and move to next feature
 manage_task(
     action="complete", 
-    task_id="20250625001", 
+    task_id="20250127001", 
     project_id="ecommerce_platform", 
     task_tree_id="feature-auth"
 )
 
-# 9. Switch to cart feature
-manage_task(
+# 13. Switch to cart feature with context continuity
+task_info = manage_task(
     action="get", 
-    task_id="20250625002", 
+    task_id="20250127002", 
     project_id="ecommerce_platform", 
     task_tree_id="feature-cart"
 )
 # → Auto-switches context to cart feature
 # → Activates @coding_agent for frontend work
+# → Creates new JSON context for cart task
 ```
 
-## 6. Visual Multi-Project Workflow
+## 7. Visual Multi-Project Workflow with Context Management
 ```mermaid
 flowchart TD
     A["Create Project"] --> B["Create Task Trees"]
     B --> C["Register Agents"]
     C --> D["Assign Agents to Trees"]
     D --> E["Create Feature Tasks"]
-    E --> F["Get Task + Auto Context"]
-    F --> G["Agent Role Switch"]
-    G --> H["Work on Task"]
-    H --> I{"Task Complete?"}
-    I -->|No| J["Update Progress"]
-    J --> H
-    I -->|Yes| K["Complete Task"]
-    K --> L{"More Tasks in Tree?"}
-    L -->|Yes| E
-    L -->|No| M{"Switch Task Tree?"}
-    M -->|Yes| N["Select Different Tree"]
-    N --> E
-    M -->|No| O["Feature Complete"]
+    E --> F["Get Next Task"]
+    F --> G["Auto-Create JSON Context"]
+    G --> H["Agent Role Switch"]
+    H --> I["Review Context"]
+    I --> J["Work on Task"]
+    J --> K["Log Progress & Insights"]
+    K --> L["Update Context"]
+    L --> M{"Task Complete?"}
+    M -->|No| N["Update Next Steps"]
+    N --> J
+    M -->|Yes| O["Complete Task"]
+    O --> P{"More Tasks in Tree?"}
+    P -->|Yes| E
+    P -->|No| Q{"Switch Task Tree?"}
+    Q -->|Yes| R["Select Different Tree"]
+    R --> E
+    Q -->|No| S["Feature Complete"]
     
     subgraph "Storage Structure"
-        P[".cursor/rules/tasks/default_id/"]
-        P --> Q["project1/main/tasks.json"]
-        P --> R["project1/feature-auth/tasks.json"]
-        P --> S["project2/main/tasks.json"]
+        T[".cursor/rules/"]
+        T --> U["tasks/default_id/project/tree/tasks.json"]
+        T --> V["contexts/default_id/project/tree/context_*.json"]
+        T --> W["brain/projects.json"]
     end
     
-    subgraph "Context Generation"
-        T["Auto-Rule Generation"]
-        T --> U["Project Context"]
-        T --> V["Task Tree Context"]
-        T --> W["Agent Role Switch"]
+    subgraph "Context Management"
+        X["JSON Context Creation"]
+        X --> Y["Structured Data"]
+        X --> Z["Progress Tracking"]
+        X --> AA["Agent Insights"]
+        X --> BB["Next Steps Management"]
     end
 ```
 
-## 7. Best Practices for Multi-Project Management
+## 8. Best Practices for Multi-Project Management with Context
 
 ### Project Organization
 - **Logical Separation**: Use separate projects for distinct applications/modules
@@ -350,33 +516,44 @@ flowchart TD
   - Good: `"ecommerce_platform"`, `"feature-auth"`
   - Avoid: `"proj1"`, `"tree_a"`
 
-### Task Management
+### Task Management with Context
 - **Always specify context**: Include `project_id` and `task_tree_id` in all operations
 - **Use MCP tools exclusively**: Never edit JSON files directly
 - **Agent assignment**: Use `@` prefix for agent assignees (e.g., `["@coding_agent"]`)
 - **Cross-tree dependencies**: Document dependencies between different task trees
+- **Context-driven work**: Always check context before starting work on a task
+
+### Context Management Best Practices
+- **Regular context updates**: Log progress, insights, and decisions as work progresses
+- **Use appropriate insight categories**: "insight", "challenge", "solution", "decision"
+- **Maintain next steps**: Keep next_steps current for session continuity
+- **Leverage dot notation**: Use property paths for efficient updates (e.g., `metadata.status`)
+- **Document technical details**: Update technologies, frameworks, and key files as implementation evolves
 
 ### File Organization
-- **Hierarchical storage**: Leverage the multi-level directory structure
-- **Regular validation**: Use `validate_tasks_json(project_id, task_tree_id)` regularly
-- **Backup strategy**: Consider backing up `.cursor/rules/brain/projects.json`
+- **Hierarchical storage**: Leverage the multi-level directory structure for both tasks and contexts
+- **Regular validation**: Use validation tools regularly
+- **Backup strategy**: Consider backing up `.cursor/rules/brain/projects.json` and context directories
 
-### Workflow Optimization
+### Workflow Optimization with Context
 - **Context switching**: Minimize switching between projects for better focus
 - **Batch operations**: Group related tasks within the same task tree
-- **Progress tracking**: Regular updates to task status and details
+- **Progress tracking**: Use JSON contexts for detailed progress tracking
+- **Session continuity**: Use context next_steps for resuming work across sessions
 
 ### Migration from Legacy
-- **Gradual transition**: Move from flat `tasks.json` to hierarchical structure
+- **Gradual transition**: Move from flat `tasks.json` and markdown contexts to hierarchical JSON structure
 - **Data validation**: Ensure all tasks have required `project_id` field
+- **Context migration**: Convert existing markdown contexts to JSON format
 - **Backup first**: Always backup before migration
 
-### Multi-Agent Coordination
+### Multi-Agent Coordination with Context
 - **Clear responsibilities**: Assign specific agents to specific task trees
-- **Communication patterns**: Use task dependencies for agent coordination
+- **Communication patterns**: Use task dependencies and context insights for agent coordination
 - **Role specialization**: Match agent expertise to task tree purpose
+- **Context sharing**: Use agent insights in contexts for knowledge transfer between agents
 
-## 8. Validation & Troubleshooting
+## 9. Validation & Troubleshooting
 
 ### Regular Health Checks
 ```python
@@ -388,12 +565,22 @@ manage_project(action="list")
 
 # Verify task trees
 manage_project(action="list_trees", project_id="ecommerce_platform")
+
+# List contexts for a task tree
+manage_context(action="list", project_id="ecommerce_platform", task_tree_id="feature-auth")
 ```
 
 ### Common Issues
 - **Missing project_id**: Ensure all tasks include project_id field
 - **Invalid references**: Check task dependencies exist within accessible scope
-- **Context generation failures**: Verify auto_rule.mdc is being created
+- **Context generation failures**: Verify JSON contexts are being created automatically
 - **Agent role issues**: Confirm agents are properly registered and assigned
+- **Context access issues**: Ensure proper project_id and task_tree_id are specified in context operations
 
-For more, see [Quick Start & Tutorials](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/quick_start.mdc).
+### Context-Specific Troubleshooting
+- **Context not created**: Check if task status is "todo" and subtasks meet auto-creation conditions
+- **Property updates failing**: Verify dot notation syntax and property path existence
+- **Missing insights**: Ensure agent insights are being logged with proper categories
+- **Context corruption**: Use schema validation to check JSON structure integrity
+
+For more, see [Context Master Documentation](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/contextmaster.mdc) and [Quick Start & Tutorials](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/quick_start.mdc).

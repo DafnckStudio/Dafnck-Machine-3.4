@@ -52,26 +52,26 @@ Use the `manage_context` MCP tool for all context operations:
 ### Usage Examples:
 ```python
 # Get full context
-manage_context("get", task_id="123")
+manage_context("get", task_id="20250127001")
 
 # Update specific property
-manage_context("update_property", task_id="123", property_path="metadata.status", value="in_progress")
+manage_context("update_property", task_id="20250127001", property_path="metadata.status", value="in_progress")
 
 # Add agent insight
-manage_context("add_insight", task_id="123", agent="coding_agent", category="solution", content="Used React hooks")
+manage_context("add_insight", task_id="20250127001", agent="coding_agent", category="solution", content="Used React hooks")
 
 # Merge technical data
-manage_context("merge", task_id="123", data={"technical": {"technologies": ["React", "TypeScript"]}})
+manage_context("merge", task_id="20250127001", data={"technical": {"technologies": ["React", "TypeScript"]}})
 
 # Update next steps
-manage_context("update_next_steps", task_id="123", next_steps=["Implement component", "Write tests"])
+manage_context("update_next_steps", task_id="20250127001", next_steps=["Implement component", "Write tests"])
 ```
 
 ## **Context Schema Structure**
 Each context file contains the following sections:
 
 ### Core Metadata
-- `task_id`: Unique task identifier
+- `task_id`: Unique task identifier (date-based format: YYYYMMDDXXX)
 - `project_id`: Project identifier
 - `task_tree_id`: Git branch/task tree
 - `status`: Current task status
@@ -104,12 +104,13 @@ Each context file contains the following sections:
 - `custom_sections`: Extensible sections for specific needs
 
 ## **Best Practices**
-1. **Always check context before starting work**: Use `manage_context("get", task_id="...")` 
+1. **Always check context before starting work**: Use `manage_context("get", task_id="20250127001")` 
 2. **Log progress regularly**: Use `add_progress` and `add_insight` actions
 3. **Update next steps**: Keep `next_steps` current for session continuity
 4. **Use dot notation for specific updates**: More efficient than full context updates
 5. **Leverage automatic creation**: Let the system create contexts when conditions are met
 6. **Use appropriate categories for insights**: "insight", "challenge", "solution", "decision"
+7. **Follow task ID format**: Use date-based format (YYYYMMDDXXX) for all task references
 
 ## **Migration from Old System**
 The new JSON-based system replaces the previous markdown file approach:

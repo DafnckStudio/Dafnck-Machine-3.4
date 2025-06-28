@@ -23,18 +23,18 @@ manage_task({ action: "create", title: "Build Login", description: "Create login
 
 ## 4. Get and Work on a Task
 ```typescript
-manage_task({ action: "get", task_id: "20250619001" })
+manage_task({ action: "get", task_id: "20250127001" })
 // (auto_rule.mdc is generated, agent role switches)
 ```
 
 ## 5. Complete a Task
 ```typescript
-manage_task({ action: "complete", task_id: "20250619001" })
+manage_task({ action: "complete", task_id: "20250127001" })
 ```
 
 ## 6. Add a Subtask
 ```typescript
-manage_subtask({ action: "add_subtask", task_id: "20250619001", subtask_data: { title: "Create API endpoint" } })
+manage_subtask({ action: "add_subtask", task_id: "20250127001", subtask_data: { title: "Create API endpoint" } })
 ```
 
 ## 7. List Projects

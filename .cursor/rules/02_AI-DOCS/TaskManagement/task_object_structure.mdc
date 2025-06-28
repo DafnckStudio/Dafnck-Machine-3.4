@@ -44,7 +44,7 @@ alwaysApply: false
 {
   "tasks": [
     {
-      "id": "20250625001",
+      "id": "20250127001",
       "title": "Build Login Page",
       "description": "React login page with validation",
       "project_id": "my_web_app",
@@ -54,7 +54,7 @@ alwaysApply: false
       "estimated_effort": "medium",
       "assignees": ["@coding_agent"],
       "labels": ["frontend", "authentication"],
-      "dependencies": ["20250625000"],
+      "dependencies": ["20250127000"],
       "subtasks": [],
       "due_date": "2025-07-01T00:00:00Z",
       "created_at": "2025-06-25T20:35:22.450470+00:00",
@@ -76,7 +76,7 @@ alwaysApply: false
 ```json
 [
   {
-    "id": "20250619001",
+    "id": "20250127002",
     "title": "Build Login Page",
     "description": "React login page with validation",
     "status": "todo",

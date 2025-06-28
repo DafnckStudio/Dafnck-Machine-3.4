@@ -8,57 +8,57 @@ alwaysApply: false
 ## **JSON Schema Structure**
 The new context management system uses structured JSON with the following schema:
 
-## **Complete Context Schema Template**
+## **Complete Context Schema Template Example**
 ```json
 {
   "metadata": {
-    "task_id": "string",
-    "project_id": "string", 
-    "task_tree_id": "string",
+    "task_id": "20250127001",
+    "project_id": "dhafnck_mcp_main", 
+    "task_tree_id": "v2.1---multiple-projects-support",
     "status": "todo|in_progress|review|done|cancelled|blocked|deferred",
     "priority": "low|medium|high|urgent|critical",
-    "assignees": ["@agent_name"],
-    "labels": ["tag1", "tag2"],
+    "assignees": ["@coding_agent"],
+    "labels": ["feature", "authentication"],
     "created_at": "2025-01-27T10:00:00Z",
     "updated_at": "2025-01-27T10:00:00Z"
   },
   "objective": {
-    "title": "Task Title",
-    "description": "Detailed task description",
+    "title": "Implement OAuth2 Authentication",
+    "description": "Add OAuth2 authentication system with JWT tokens",
     "estimated_effort": "quick|short|small|medium|large|xlarge|epic|massive",
     "due_date": "2025-01-30"
   },
   "requirements": {
     "checklist": [
-      {"item": "Requirement 1", "completed": false},
-      {"item": "Requirement 2", "completed": true}
+      {"item": "Implement OAuth2 flow", "completed": false},
+      {"item": "Add JWT token handling", "completed": true}
     ],
-    "custom_requirements": ["Custom requirement 1"],
-    "completion_criteria": ["Criteria 1", "Criteria 2"]
+    "custom_requirements": ["Support Google and GitHub providers"],
+    "completion_criteria": ["All tests pass", "Security audit complete"]
   },
   "technical": {
     "technologies": ["React", "TypeScript", "Node.js"],
     "frameworks": ["Next.js", "FastAPI"],
     "key_files": [
-      "src/components/Component.tsx",
-      "src/api/routes.py"
+      "src/components/AuthComponent.tsx",
+      "src/api/auth.py"
     ],
-    "architecture_notes": "Key architectural decisions and patterns"
+    "architecture_notes": "Using PKCE flow for enhanced security in SPA"
   },
   "dependencies": {
-    "task_dependencies": ["task_id_1", "task_id_2"],
-    "external_dependencies": ["API endpoint", "Database schema"],
-    "blocked_by": ["blocker_task_id"]
+    "task_dependencies": ["20250126001", "20250126002"],
+    "external_dependencies": ["OAuth2 provider setup", "Database schema"],
+    "blocked_by": ["20250125001"]
   },
   "progress": {
     "completed_actions": [
       {
-        "action": "Created component structure",
+        "action": "Created OAuth2 component structure",
         "timestamp": "2025-01-27T10:30:00Z",
         "agent": "coding_agent"
       }
     ],
-    "session_summary": "Current session progress and key achievements",
+    "session_summary": "OAuth2 integration in progress, PKCE flow implemented",
     "next_steps": [
       "Implement error handling",
       "Add unit tests",
@@ -69,32 +69,38 @@ The new context management system uses structured JSON with the following schema
   "subtasks": {
     "items": [
       {
-        "id": "1.1",
-        "title": "Subtask title",
+        "id": "20250127001.001",
+        "title": "Create OAuth2 login component",
+        "status": "todo",
+        "progress": 0
+      },
+      {
+        "id": "20250127001.002", 
+        "title": "Implement token refresh logic",
         "status": "todo",
         "progress": 0
       }
     ],
     "completed_count": 0,
-    "total_count": 1
+    "total_count": 2
   },
   "notes": {
     "agent_insights": [
       {
         "agent": "coding_agent",
         "category": "insight|challenge|solution|decision",
-        "content": "Key insight or decision made",
+        "content": "PKCE flow provides better security for SPA applications",
         "timestamp": "2025-01-27T10:45:00Z",
         "importance": "low|medium|high|critical"
       }
     ],
-    "challenges": ["Challenge 1", "Challenge 2"],
-    "solutions": ["Solution 1", "Solution 2"],
-    "decisions": ["Decision 1", "Decision 2"]
+    "challenges": ["OAuth2 state management complexity", "Token refresh timing"],
+    "solutions": ["Used PKCE flow", "Implemented automatic token refresh"],
+    "decisions": ["Chose Google OAuth2 over custom auth", "Used JWT for session management"]
   },
   "custom_sections": {
-    "section_name": {
-      "data": "Custom data for specific needs"
+    "security_notes": {
+      "data": "PKCE implementation prevents authorization code interception"
     }
   }
 }
@@ -105,7 +111,7 @@ For basic task contexts, you can start with this minimal structure:
 ```json
 {
   "metadata": {
-    "task_id": "123",
+    "task_id": "20250127001",
     "project_id": "dhafnck_mcp_main",
     "task_tree_id": "main",
     "status": "todo",
@@ -142,15 +148,18 @@ Use dot notation to access nested properties:
 ### Update Examples:
 ```python
 # Update task status
-manage_context("update_property", task_id="123", property_path="metadata.status", value="in_progress")
+manage_context("update_property", task_id="20250127001", property_path="metadata.status", value="in_progress")
 
 # Add technology
-current_tech = manage_context("get_property", task_id="123", property_path="technical.technologies")
+current_tech = manage_context("get_property", task_id="20250127001", property_path="technical.technologies")
 current_tech.append("Redis")
-manage_context("update_property", task_id="123", property_path="technical.technologies", value=current_tech)
+manage_context("update_property", task_id="20250127001", property_path="technical.technologies", value=current_tech)
 
 # Update completion percentage
-manage_context("update_property", task_id="123", property_path="progress.completion_percentage", value=75)
+manage_context("update_property", task_id="20250127001", property_path="progress.completion_percentage", value=75)
+
+# Update subtask status
+manage_context("update_property", task_id="20250127001", property_path="subtasks.items.0.status", value="in_progress")
 ```
 
 ## **Agent Insight Categories**
@@ -190,12 +199,20 @@ Valid effort values:
 - `epic`: 1-3 months
 - `massive`: 3+ months
 
+## **Task ID Format**
+All task IDs follow the date-based format specified in [Task ID System](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_id_system.mdc):
+
+- **Main Task**: `YYYYMMDDXXX` (e.g., `20250127001`)
+- **Subtask**: `YYYYMMDDXXX.XXX` (e.g., `20250127001.001`)
+- Always use the full date-based format for consistency and sorting
+
 ## **Usage in AI Workflows**
-1. **Before starting work**: Always check context with `manage_context("get", task_id="...")`
+1. **Before starting work**: Always check context with `manage_context("get", task_id="20250127001")`
 2. **During implementation**: Log progress with `add_progress` and `add_insight`
 3. **When completing steps**: Update `next_steps` for session continuity
 4. **When encountering issues**: Add challenges and solutions to notes
 5. **When making decisions**: Document decisions for future reference
+6. **Task ID consistency**: Always use proper date-based format (YYYYMMDDXXX)
 
 ## **Auto-Creation Conditions**
 Contexts are automatically created when:
