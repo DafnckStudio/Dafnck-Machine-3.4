@@ -58,5 +58,15 @@
     "useby": ["system-architect-agent", "uber-orchestrator-agent"],
     "created_at": "2025-01-27T05:00:00Z",
     "created_by": "system-architect-agent"
+  },
+  "DOC-20250127-007": {
+    "name": "Sophisticated Rule Orchestration Platform - Project Roadmap",
+    "category": "Project Roadmap",
+    "description": "Comprehensive project roadmap for implementing enhanced manage_rule() MCP tool with nested rule loading, client integration, and advanced rule composition capabilities",
+    "usecase": "Project planning, development roadmap, technical implementation guide, task management",
+    "task-id": "20250628001",
+    "useby": ["task-planning-agent", "system-architect-agent", "coding-agent", "devops-agent"],
+    "created_at": "2025-06-28T13:26:00Z",
+    "created_by": "task-planning-agent"
   }
 } 
