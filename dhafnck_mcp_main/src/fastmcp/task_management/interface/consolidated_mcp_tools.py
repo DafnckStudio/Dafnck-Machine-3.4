@@ -2099,11 +2099,12 @@ class TaskOperationHandler:
                 return result
             else:
                 return {
-                    "success": True,
+                    "success": False,  # Fixed: Should be False when no valid next task found
                     "action": "next",
                     "next_item": None,
                     "message": response.message,
-                    "context": response.context if response.context else None
+                    "context": response.context if response.context else None,
+                    "error": "No actionable tasks found. Create tasks or update context for existing tasks."
                 }
         except Exception as e:
             return {"success": False, "error": f"Failed to get next task: {str(e)}"}
@@ -2628,6 +2629,16 @@ class ToolRegistrationOrchestrator:
                             return {"success": False, "error": f"Task {task_id} not found"}
                         
                         success = context_manager.create_context_from_task(task, user_id)
+                        
+                        # Update task's context_id when context is successfully created
+                        if success:
+                            try:
+                                # Set context_id to indicate context has been created
+                                task.set_context_id(f"context_{task_id}")
+                                task_service._task_repository.save(task)
+                            except Exception as e:
+                                logger.warning(f"Failed to update task context_id for task {task_id}: {e}")
+                        
                         return {"success": success, "message": f"Context created for task {task_id}" if success else "Failed to create context"}
                     
                     elif action == "get":
@@ -2645,6 +2656,19 @@ class ToolRegistrationOrchestrator:
                             return {"success": False, "error": "task_id and data are required for update action"}
                         
                         success = context_manager.merge_data(task_id, data, user_id, project_id, task_tree_id)
+                        
+                        # Update task's context_id when context is successfully updated
+                        if success:
+                            try:
+                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task = task_service._task_repository.find_by_id(task_id)
+                                if task:
+                                    # Set context_id to indicate context has been updated
+                                    task.set_context_id(f"context_{task_id}")
+                                    task_service._task_repository.save(task)
+                            except Exception as e:
+                                logger.warning(f"Failed to update task context_id for task {task_id}: {e}")
+                        
                         return {"success": success, "message": f"Context updated for task {task_id}" if success else "Failed to update context"}
                     
                     elif action == "delete":
@@ -2673,6 +2697,19 @@ class ToolRegistrationOrchestrator:
                             return {"success": False, "error": "task_id, property_path, and value are required for update_property action"}
                         
                         success = context_manager.update_property(task_id, property_path, value, user_id, project_id, task_tree_id)
+                        
+                        # Update task's context_id when context is successfully updated
+                        if success:
+                            try:
+                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task = task_service._task_repository.find_by_id(task_id)
+                                if task:
+                                    # Set context_id to indicate context has been updated
+                                    task.set_context_id(f"context_{task_id}")
+                                    task_service._task_repository.save(task)
+                            except Exception as e:
+                                logger.warning(f"Failed to update task context_id for task {task_id}: {e}")
+                        
                         return {"success": success, "message": f"Property {property_path} updated for task {task_id}" if success else "Failed to update property"}
                     
                     elif action == "merge":
@@ -2680,6 +2717,19 @@ class ToolRegistrationOrchestrator:
                             return {"success": False, "error": "task_id and data are required for merge action"}
                         
                         success = context_manager.merge_data(task_id, data, user_id, project_id, task_tree_id)
+                        
+                        # Update task's context_id when context is successfully updated
+                        if success:
+                            try:
+                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task = task_service._task_repository.find_by_id(task_id)
+                                if task:
+                                    # Set context_id to indicate context has been updated
+                                    task.set_context_id(f"context_{task_id}")
+                                    task_service._task_repository.save(task)
+                            except Exception as e:
+                                logger.warning(f"Failed to update task context_id for task {task_id}: {e}")
+                        
                         return {"success": success, "message": f"Data merged into context for task {task_id}" if success else "Failed to merge data"}
                     
                     elif action == "add_insight":
@@ -2687,6 +2737,19 @@ class ToolRegistrationOrchestrator:
                             return {"success": False, "error": "task_id, agent, category, and content are required for add_insight action"}
                         
                         success = context_manager.add_insight(task_id, agent, category, content, importance, user_id, project_id, task_tree_id)
+                        
+                        # Update task's context_id when context is successfully updated
+                        if success:
+                            try:
+                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task = task_service._task_repository.find_by_id(task_id)
+                                if task:
+                                    # Set context_id to indicate context has been updated
+                                    task.set_context_id(f"context_{task_id}")
+                                    task_service._task_repository.save(task)
+                            except Exception as e:
+                                logger.warning(f"Failed to update task context_id for task {task_id}: {e}")
+                        
                         return {"success": success, "message": f"Insight added to context for task {task_id}" if success else "Failed to add insight"}
                     
                     elif action == "add_progress":
@@ -2694,6 +2757,19 @@ class ToolRegistrationOrchestrator:
                             return {"success": False, "error": "task_id, agent, and content are required for add_progress action"}
                         
                         success = context_manager.add_progress_action(task_id, content, agent, "", "completed", user_id, project_id, task_tree_id)
+                        
+                        # Update task's context_id when context is successfully updated
+                        if success:
+                            try:
+                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task = task_service._task_repository.find_by_id(task_id)
+                                if task:
+                                    # Set context_id to indicate context has been updated
+                                    task.set_context_id(f"context_{task_id}")
+                                    task_service._task_repository.save(task)
+                            except Exception as e:
+                                logger.warning(f"Failed to update task context_id for task {task_id}: {e}")
+                        
                         return {"success": success, "message": f"Progress action added to context for task {task_id}" if success else "Failed to add progress action"}
                     
                     elif action == "update_next_steps":
@@ -2701,6 +2777,19 @@ class ToolRegistrationOrchestrator:
                             return {"success": False, "error": "task_id and next_steps are required for update_next_steps action"}
                         
                         success = context_manager.update_next_steps(task_id, next_steps, user_id, project_id, task_tree_id)
+                        
+                        # Update task's context_id when context is successfully updated
+                        if success:
+                            try:
+                                task_service = self._task_handler._create_task_service(project_id, task_tree_id, user_id)
+                                task = task_service._task_repository.find_by_id(task_id)
+                                if task:
+                                    # Set context_id to indicate context has been updated
+                                    task.set_context_id(f"context_{task_id}")
+                                    task_service._task_repository.save(task)
+                            except Exception as e:
+                                logger.warning(f"Failed to update task context_id for task {task_id}: {e}")
+                        
                         return {"success": success, "message": f"Next steps updated for task {task_id}" if success else "Failed to update next steps"}
                     
                     else:

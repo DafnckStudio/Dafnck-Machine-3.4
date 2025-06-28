@@ -142,6 +142,9 @@ class Task:
         self.priority = new_priority
         self.updated_at = datetime.now(timezone.utc)
         
+        # Clear context_id when task is updated (forces context refresh)
+        self.context_id = None
+        
         # Raise domain event
         self._events.append(TaskUpdated(
             task_id=self.id,
@@ -159,6 +162,9 @@ class Task:
         old_title = self.title
         self.title = title
         self.updated_at = datetime.now(timezone.utc)
+        
+        # Clear context_id when task is updated (forces context refresh)
+        self.context_id = None
         
         # Raise domain event
         self._events.append(TaskUpdated(
@@ -178,6 +184,9 @@ class Task:
         self.description = description
         self.updated_at = datetime.now(timezone.utc)
         
+        # Clear context_id when task is updated (forces context refresh)
+        self.context_id = None
+        
         # Raise domain event
         self._events.append(TaskUpdated(
             task_id=self.id,
@@ -192,6 +201,9 @@ class Task:
         old_details = self.details
         self.details = details
         self.updated_at = datetime.now(timezone.utc)
+        
+        # Clear context_id when task is updated (forces context refresh)
+        self.context_id = None
         
         # Raise domain event
         self._events.append(TaskUpdated(
@@ -692,6 +704,10 @@ class Task:
     
     def complete_task(self) -> None:
         """Complete the task by marking all subtasks as completed and setting status to done"""
+        # Check if context is updated before allowing completion
+        if not self.can_be_completed():
+            raise ValueError("Context must be updated before completing task. Use manage_context() to update task context.")
+        
         # Complete all subtasks
         for subtask in self.subtasks:
             subtask["completed"] = True
@@ -700,6 +716,8 @@ class Task:
         old_status = self.status
         self.status = TaskStatus.done()
         self.updated_at = datetime.now(timezone.utc)
+        
+        # Note: We don't clear context_id on completion - it remains to show the context was updated
         
         # Raise domain event for task completion
         self._events.append(TaskUpdated(
@@ -857,6 +875,24 @@ class Task:
         """Check if task can be started (no blocking dependencies)"""
         return self.status.is_todo()
     
+    def set_context_id(self, context_id: str) -> None:
+        """Set the context ID to indicate context has been updated"""
+        self.context_id = context_id
+        self.updated_at = datetime.now(timezone.utc)
+    
+    def clear_context_id(self) -> None:
+        """Clear the context ID to indicate context needs updating"""
+        self.context_id = None
+        self.updated_at = datetime.now(timezone.utc)
+    
+    def has_updated_context(self) -> bool:
+        """Check if task has an updated context (context_id is not None)"""
+        return self.context_id is not None
+    
+    def can_be_completed(self) -> bool:
+        """Check if task can be completed (requires updated context)"""
+        return self.has_updated_context()
+    
     def get_events(self) -> List[Any]:
         """Get and clear domain events"""
         events = self._events.copy()
@@ -899,7 +935,8 @@ class Task:
             "subtasks": self.subtasks.copy(),
             "dueDate": self.due_date,
             "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "context_id": self.context_id
         }
     
     def migrate_subtask_ids(self) -> None:
