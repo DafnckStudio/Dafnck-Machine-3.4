@@ -2641,6 +2641,60 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
                         }
                     }
                 
+                elif action == "load_core":
+                    rules_dir = cursor_tools.project_root / ".cursor" / "rules"
+                    
+                    # Define core rule files in priority order
+                    core_rules = [
+                        "dhafnck_mcp.mdc",           # Main MCP runtime system
+                        "dev_workflow.mdc",          # Development workflow
+                        "cursor_rules.mdc",          # Cursor rule guidelines
+                        "taskmaster.mdc",            # Task management
+                        "mcp.mdc"                    # MCP architecture
+                    ]
+                    
+                    loaded_rules = []
+                    failed_rules = []
+                    total_size = 0
+                    
+                    for rule_file in core_rules:
+                        rule_path = rules_dir / rule_file
+                        if rule_path.exists():
+                            try:
+                                with open(rule_path, 'r', encoding='utf-8') as f:
+                                    content = f.read()
+                                    file_size = rule_path.stat().st_size
+                                    total_size += file_size
+                                    
+                                loaded_rules.append({
+                                    "file": rule_file,
+                                    "path": str(rule_path.relative_to(cursor_tools.project_root)),
+                                    "size": file_size,
+                                    "status": "loaded"
+                                })
+                            except Exception as e:
+                                failed_rules.append({
+                                    "file": rule_file,
+                                    "status": "error",
+                                    "error": str(e)
+                                })
+                        else:
+                            failed_rules.append({
+                                "file": rule_file,
+                                "status": "not_found"
+                            })
+                    
+                    return {
+                        "success": True,
+                        "action": "load_core",
+                        "core_rules_loaded": len(loaded_rules),
+                        "failed_rules": len(failed_rules),
+                        "total_size_bytes": total_size,
+                        "loaded_rules": loaded_rules,
+                        "failed_rules": failed_rules if failed_rules else None,
+                        "session_ready": len(loaded_rules) > 0
+                    }
+                
                 else:
                     return {"success": False, "error": f"Unknown action: {action}"}
                     

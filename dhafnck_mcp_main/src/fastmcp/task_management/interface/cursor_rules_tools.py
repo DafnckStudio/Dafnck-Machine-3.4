@@ -211,7 +211,7 @@ class CursorRulesTools:
         
         @mcp.tool()
         def manage_rule(
-            action: Annotated[str, Field(description="Rule management action to perform. Available: list, backup, restore, clean, info")],
+            action: Annotated[str, Field(description="Rule management action to perform. Available: list, backup, restore, clean, info, load_core")],
             target: Annotated[Optional[str], Field(description="Target file or directory (optional, context-dependent)")] = None,
             content: Annotated[Optional[str], Field(description="Content for write operations (optional, context-dependent)")] = None
         ) -> Dict[str, Any]:
@@ -252,6 +252,13 @@ class CursorRulesTools:
 • Returns: Directory structure, file counts, total sizes
 • Overview: Complete rule system health summary
 • Use Case: System monitoring, capacity planning
+
+🚀 LOAD_CORE: Load essential rules for chat session initialization
+• Required: action="load_core"
+• Loads: Core rule files automatically at session start
+• Priority: Loads most critical rules first for optimal performance
+• Fallback: Graceful handling if core rules are missing
+• Use Case: Session initialization, automatic rule loading
 
 💡 ADMINISTRATIVE FEATURES:
 • Path Safety: All operations contained within .cursor/rules/
@@ -368,10 +375,100 @@ class CursorRulesTools:
                         "info": info
                     }
                 
+                elif action == "load_core":
+                    # Define core rule files in priority order
+                    core_rules = [
+                        "dhafnck_mcp.mdc",           # Main MCP runtime system
+                        "dev_workflow.mdc",          # Development workflow
+                        "cursor_rules.mdc",          # Cursor rule guidelines
+                        "taskmaster.mdc",            # Task management
+                        "mcp.mdc"                    # MCP architecture
+                    ]
+                    
+                    loaded_rules = []
+                    failed_rules = []
+                    total_size = 0
+                    
+                    for rule_file in core_rules:
+                        rule_path = rules_dir / rule_file
+                        if rule_path.exists():
+                            try:
+                                with open(rule_path, 'r', encoding='utf-8') as f:
+                                    content = f.read()
+                                    file_size = rule_path.stat().st_size
+                                    total_size += file_size
+                                    
+                                loaded_rules.append({
+                                    "file": rule_file,
+                                    "path": str(rule_path.relative_to(self.project_root)),
+                                    "size": file_size,
+                                    "status": "loaded",
+                                    "content_preview": content[:200] + "..." if len(content) > 200 else content
+                                })
+                            except Exception as e:
+                                failed_rules.append({
+                                    "file": rule_file,
+                                    "path": str(rule_path.relative_to(self.project_root)),
+                                    "status": "error",
+                                    "error": str(e)
+                                })
+                        else:
+                            failed_rules.append({
+                                "file": rule_file,
+                                "path": str(rules_dir / rule_file),
+                                "status": "not_found",
+                                "error": "File does not exist"
+                            })
+                    
+                    # Load additional rules from core directories if they exist
+                    core_directories = ["core", "essential", "session"]
+                    additional_rules = []
+                    
+                    for core_dir in core_directories:
+                        core_dir_path = rules_dir / core_dir
+                        if core_dir_path.exists() and core_dir_path.is_dir():
+                            for rule_file in core_dir_path.glob("*.mdc"):
+                                try:
+                                    with open(rule_file, 'r', encoding='utf-8') as f:
+                                        content = f.read()
+                                        file_size = rule_file.stat().st_size
+                                        total_size += file_size
+                                        
+                                    additional_rules.append({
+                                        "file": rule_file.name,
+                                        "path": str(rule_file.relative_to(self.project_root)),
+                                        "size": file_size,
+                                        "status": "loaded",
+                                        "directory": core_dir,
+                                        "content_preview": content[:200] + "..." if len(content) > 200 else content
+                                    })
+                                except Exception as e:
+                                    failed_rules.append({
+                                        "file": rule_file.name,
+                                        "path": str(rule_file.relative_to(self.project_root)),
+                                        "status": "error",
+                                        "directory": core_dir,
+                                        "error": str(e)
+                                    })
+                    
+                    return {
+                        "success": True,
+                        "action": "load_core",
+                        "core_rules_loaded": len(loaded_rules),
+                        "additional_rules_loaded": len(additional_rules),
+                        "failed_rules": len(failed_rules),
+                        "total_size_bytes": total_size,
+                        "loaded_rules": loaded_rules,
+                        "additional_rules": additional_rules,
+                        "failed_rules": failed_rules if failed_rules else None,
+                        "session_ready": len(loaded_rules) > 0,
+                        "recommendations": self._get_core_loading_recommendations(loaded_rules, failed_rules)
+                    }
+                
                 else:
                     return {
                         "success": False,
-                        "error": f"Unknown action: {action}. Available: list, backup, restore, clean, info"
+                        "error": f"Unknown action: {action}. Available: list, backup, restore, clean, info, load_core"
                     }
                 
             except Exception as e:
@@ -379,6 +476,64 @@ class CursorRulesTools:
                     "success": False,
                     "error": f"Management operation failed: {str(e)}"
                 }
+        
+        def _get_core_loading_recommendations(self, loaded_rules, failed_rules):
+            """Generate recommendations based on core rule loading results"""
+            recommendations = []
+            
+            # Check for critical missing rules
+            critical_rules = ["dhafnck_mcp.mdc", "dev_workflow.mdc"]
+            loaded_files = [rule["file"] for rule in loaded_rules]
+            
+            for critical_rule in critical_rules:
+                if critical_rule not in loaded_files:
+                    recommendations.append({
+                        "type": "critical",
+                        "message": f"Critical rule '{critical_rule}' is missing. Session functionality may be limited.",
+                        "action": "Create or restore this essential rule file"
+                    })
+            
+            # Performance recommendations
+            total_loaded = len(loaded_rules)
+            if total_loaded == 0:
+                recommendations.append({
+                    "type": "warning",
+                    "message": "No core rules loaded. AI assistant will operate with minimal context.",
+                    "action": "Initialize core rule files or check rule directory permissions"
+                })
+            elif total_loaded < 3:
+                recommendations.append({
+                    "type": "info",
+                    "message": f"Only {total_loaded} core rules loaded. Consider adding more essential rules.",
+                    "action": "Review and add missing rule files for optimal functionality"
+                })
+            else:
+                recommendations.append({
+                    "type": "success",
+                    "message": f"Successfully loaded {total_loaded} core rules. Session is ready for optimal operation.",
+                    "action": "Continue with normal operations"
+                })
+            
+            # Error handling recommendations
+            if failed_rules:
+                error_count = len([r for r in failed_rules if r["status"] == "error"])
+                missing_count = len([r for r in failed_rules if r["status"] == "not_found"])
+                
+                if error_count > 0:
+                    recommendations.append({
+                        "type": "warning",
+                        "message": f"{error_count} rule files failed to load due to errors.",
+                        "action": "Check file permissions and content integrity"
+                    })
+                
+                if missing_count > 0:
+                    recommendations.append({
+                        "type": "info",
+                        "message": f"{missing_count} expected rule files were not found.",
+                        "action": "These files are optional but may enhance functionality if created"
+                    })
+            
+            return recommendations
         
         @mcp.tool()
         def regenerate_auto_rule(
