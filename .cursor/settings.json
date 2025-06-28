@@ -71,30 +71,49 @@
           "title": "Get current project path",
           "description": "Get current project path",
           "command": "pwd"
-        }        
-      }
-    
+        },
+        "04": {
+          "state_display_on_chat": true,
+          "content_display_on_chat": "Loading settings...",
+          "title": "Get settings",
+          "tool": {
+            "manage_rule": {
+              "action": "parse_rule",
+              "target": "core/settings.json"
+            }
+          }
+        }
+      }    
     },
     "P00-S00-T01": {
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Core Mechanic Systems...",
-      "title": "Read core rule file",
-      "path": ".cursor/rules/P00-S00-T01-Core Mechanic Systems.md",
-      "description": "Read core rule file to get information about the project"
+      "title": "Read core rule file using manage_rule tool with value",   
+      "manage_rule": {
+        "action": "parse_rule",
+        "target": "core/P00-S00-T01-Core Mechanic Systems.md"
+      },
+      "description": "use MCP to get information about core mechanic systems, and apply it on session chat"      
     },
     "P00-S00-T02": {
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Core Task Management...",
-      "title": "Read core rule file",
-      "path": ".cursor/rules/P00-S00-T02-Core Task Management.md",
-      "description": "Read core task management rules and best practices"
+      "title": "Read core rule file using manage_rule tool with value",   
+      "manage_rule": {
+        "action": "parse_rule",
+        "target": "core/P00-S00-T02-Core Task Management.md"
+      },
+      "description": "use MCP to get information about core task management, and apply it on session chat"      
     },
     "P00-S00-T03": {
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Agents Information...",
-      "title": "Read core rule file",
-      "path": ".cursor/rules/P00-S00-T03-Agents Information.md",
-      "description": "Read agents information to get information about the project"
+      "title": "Read core rule file using manage_rule tool with value",   
+      "manage_rule": {
+        "action": "parse_rule",
+        "target": "core/P00-S00-T03-Agents Information.md"
+      },
+      "description": "use MCP to get information about agents information, and apply it on session chat"      
     }
   },
   "custom_tools": {
