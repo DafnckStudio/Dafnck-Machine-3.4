@@ -9,12 +9,13 @@ external service integrations, and other infrastructure concerns.
 from .repositories import JsonTaskRepository, InMemoryTaskRepository
 
 # Import service implementations  
-from .services import FileAutoRuleGenerator, AgentConverter, AgentDocGenerator
+from .services import FileAutoRuleGenerator, AgentConverter, AgentDocGenerator, ContextManager
 
 __all__ = [
     'JsonTaskRepository',
     'InMemoryTaskRepository', 
     'FileAutoRuleGenerator',
     'AgentConverter',
-    'AgentDocGenerator'
+    'AgentDocGenerator',
+    'ContextManager'
 ] 
