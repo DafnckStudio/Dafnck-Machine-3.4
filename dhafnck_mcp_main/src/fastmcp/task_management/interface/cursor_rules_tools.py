@@ -223,7 +223,7 @@ class CursorRulesTools:
         
         @mcp.tool()
         def manage_rule(
-            action: Annotated[str, Field(description="Rule management action to perform. Available: list, backup, restore, clean, info, load_core, parse_rule, analyze_hierarchy, get_dependencies, enhanced_info, compose_nested_rules, resolve_rule_inheritance, validate_rule_hierarchy, build_hierarchy, load_nested, cache_status, register_client, authenticate_client, sync_client, client_diff, resolve_conflicts, client_status, client_analytics")],
+            action: Annotated[str, Field(description="Rule management action to perform. Available: list, backup, restore, clean, info, load_core, parse_rule, analyze_hierarchy, get_dependencies, enhanced_info, compose_nested_rules, compose_rules, resolve_rule_inheritance, validate_rule_hierarchy, build_hierarchy, load_nested, cache_status, register_client, authenticate_client, sync_client, client_diff, resolve_conflicts, client_status, client_analytics")],
             target: Annotated[Optional[str], Field(description="Target file or directory (optional, context-dependent)")] = None,
             content: Annotated[Optional[str], Field(description="Content for write operations (optional, context-dependent)")] = None
         ) -> Dict[str, Any]:
@@ -301,6 +301,13 @@ class CursorRulesTools:
 • Returns: Unified rule with inheritance applied, composition metadata
 • Advanced: Intelligent merging, conflict resolution, inheritance tracking
 • Use Case: Rule composition, inheritance visualization
+
+🎯 COMPOSE_RULES: Intelligent multi-rule composition with conflict resolution (Phase 4)
+• Required: action="compose_rules", content="rule1.mdc,rule2.mdc,rule3.mdc"
+• Optional: target="output_format" (mdc, md, json, yaml, txt)
+• Returns: Composed rule with intelligent merging, conflict resolution, composition metadata
+• Advanced: Multiple composition strategies (intelligent, sequential, priority_merge), automatic conflict resolution
+• Use Case: Advanced rule composition, multi-rule merging, conflict resolution
 
 🔍 RESOLVE_RULE_INHERITANCE: Show inheritance chain for rule (Phase 2)
 • Required: action="resolve_rule_inheritance", target="rule_file.mdc"
@@ -727,6 +734,110 @@ class CursorRulesTools:
                         return {
                             "success": False,
                             "error": f"Failed to compose nested rules: {str(e)}"
+                        }
+                
+                elif action == "compose_rules":
+                    # Phase 4: Intelligent multi-rule composition with conflict resolution
+                    if not content:
+                        return {
+                            "success": False,
+                            "error": "Content parameter required for compose_rules action (comma-separated list of rule files)"
+                        }
+                    
+                    try:
+                        # Parse rule file list from content parameter
+                        rule_files = [f.strip() for f in content.split(',')]
+                        if not rule_files:
+                            return {
+                                "success": False,
+                                "error": "No rule files specified in content parameter"
+                            }
+                        
+                        # Parse optional parameters
+                        output_format = target or "mdc"  # Default to MDC format
+                        composition_strategy = "intelligent"  # Default strategy
+                        
+                        # Initialize rule composer
+                        from .enhanced_rule_orchestrator import RuleComposer, RuleFormat
+                        rule_composer = RuleComposer()
+                        
+                        # Load and parse all specified rule files
+                        rules_to_compose = []
+                        missing_files = []
+                        
+                        for rule_file in rule_files:
+                            # Handle relative paths
+                            rule_path = rules_dir / rule_file if not os.path.isabs(rule_file) else Path(rule_file)
+                            
+                            if not rule_path.exists():
+                                missing_files.append(rule_file)
+                                continue
+                            
+                            # Parse the rule file
+                            try:
+                                rule_content = self.enhanced_orchestrator.parser.parse_rule_file(rule_path)
+                                rules_to_compose.append(rule_content)
+                            except Exception as e:
+                                return {
+                                    "success": False,
+                                    "error": f"Failed to parse rule file '{rule_file}': {str(e)}"
+                                }
+                        
+                        if missing_files:
+                            return {
+                                "success": False,
+                                "error": f"Rule files not found: {', '.join(missing_files)}"
+                            }
+                        
+                        if not rules_to_compose:
+                            return {
+                                "success": False,
+                                "error": "No valid rule files found to compose"
+                            }
+                        
+                        # Convert output format string to enum
+                        try:
+                            format_enum = RuleFormat(output_format.lower())
+                        except ValueError:
+                            format_enum = RuleFormat.MDC  # Default fallback
+                        
+                        # Compose the rules using the RuleComposer
+                        composition_result = rule_composer.compose_rules(
+                            rules=rules_to_compose,
+                            output_format=format_enum,
+                            composition_strategy=composition_strategy
+                        )
+                        
+                        # Get conflict resolution details
+                        conflict_details = rule_composer.resolve_conflicts(rules_to_compose)
+                        
+                        return {
+                            "success": composition_result.success,
+                            "action": "compose_rules",
+                            "rule_files": rule_files,
+                            "composition_strategy": composition_strategy,
+                            "output_format": output_format,
+                            "composed_content": composition_result.composed_content,
+                            "source_rules": composition_result.source_rules,
+                            "conflicts_resolved": composition_result.conflicts_resolved,
+                            "composition_metadata": composition_result.composition_metadata,
+                            "warnings": composition_result.warnings,
+                            "conflict_analysis": {
+                                "total_conflicts": conflict_details.get("total_conflicts", 0),
+                                "resolved_conflicts": conflict_details.get("resolved_conflicts", 0),
+                                "unresolved_conflicts": conflict_details.get("unresolved_conflicts", 0),
+                                "auto_resolution_rate": conflict_details.get("auto_resolution_rate", 100),
+                                "resolution_details": conflict_details.get("resolution_details", [])
+                            },
+                            "rule_count": len(rules_to_compose),
+                            "total_size": sum(rule.metadata.size for rule in rules_to_compose),
+                            "composed_size": len(composition_result.composed_content)
+                        }
+                        
+                    except Exception as e:
+                        return {
+                            "success": False,
+                            "error": f"Failed to compose rules: {str(e)}"
                         }
                 
                 elif action == "resolve_rule_inheritance":

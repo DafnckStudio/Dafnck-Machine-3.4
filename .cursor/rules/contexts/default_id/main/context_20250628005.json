@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "task_id": "20250628005",
+    "project_id": "",
+    "task_tree_id": "main",
+    "user_id": "default_id",
+    "status": "todo",
+    "priority": "medium",
+    "assignees": [
+      "@coding_agent",
+      "@system_architect_agent"
+    ],
+    "labels": [
+      "phase-4",
+      "composition",
+      "merging",
+      "intelligence"
+    ],
+    "created_at": "2025-06-28T17:45:41.578542",
+    "updated_at": "2025-06-28T17:45:41.578547",
+    "version": "1.0"
+  },
+  "objective": {
+    "title": "Phase 4: Rule Composition & Intelligent Merging",
+    "description": "Implement advanced rule composition, conflict resolution, and intelligent merging capabilities",
+    "estimated_effort": "large",
+    "due_date": null
+  },
+  "requirements": {
+    "checklist": [],
+    "custom_requirements": [
+      "**Phase 4 Objectives:**\nImplement sophisticated rule composition and intelligent merging capabilities with advanced conflict resolution.\n\n**Key Deliverables:**\n1. RuleComposer component implementation\n2. Intelligent rule merging algorithms\n3. compose_rules action for MCP tool\n4. Advanced conflict resolution strategies\n5. Rule precedence and priority systems\n6. Composition validation and testing\n\n**Technical Requirements:**\n- Combine multiple rule sources intelligently\n- Implement merge strategies (merge, override, append)\n- Detect and resolve rule conflicts automatically\n- Support rule precedence and priority systems\n- Validate composed rule integrity\n- Provide composition preview and rollback\n- Support custom composition rules and policies\n\n**Success Criteria:**\n- Successfully compose rules from multiple sources\n- Automatically resolve 80%+ of rule conflicts\n- Maintain rule integrity after composition\n- Support complex composition scenarios\n- Provide clear composition audit trails\n- 95%+ test coverage for composition logic"
+    ],
+    "completion_criteria": []
+  },
+  "technical": {
+    "technologies": [],
+    "frameworks": [],
+    "key_files": [],
+    "key_directories": [],
+    "architecture_notes": "",
+    "patterns_used": []
+  },
+  "dependencies": {
+    "task_dependencies": [
+      {
+        "task_id": "20250628003",
+        "title": "",
+        "status": "unknown",
+        "blocking_reason": ""
+      },
+      {
+        "task_id": "20250628004",
+        "title": "",
+        "status": "unknown",
+        "blocking_reason": ""
+      }
+    ],
+    "external_dependencies": [],
+    "blocked_by": []
+  },
+  "progress": {
+    "completed_actions": [
+      {
+        "timestamp": "2025-06-28T13:25:37.874804+00:00",
+        "action": "Task created",
+        "agent": "@coding_agent",
+        "details": "Task 'Phase 4: Rule Composition & Intelligent Merging' created with status 'todo'",
+        "status": "completed"
+      }
+    ],
+    "current_session_summary": "Task created and ready to be started. Status: todo",
+    "next_steps": [
+      "Begin task implementation",
+      "Review task requirements and dependencies",
+      "Set up development environment if needed",
+      "@coding_agent to start work"
+    ],
+    "completion_percentage": 0.0,
+    "time_spent_minutes": 0
+  },
+  "subtasks": {
+    "items": [],
+    "total_count": 0,
+    "completed_count": 0,
+    "progress_percentage": 0.0
+  },
+  "notes": {
+    "agent_insights": [],
+    "challenges_encountered": [],
+    "solutions_applied": [],
+    "decisions_made": [],
+    "general_notes": ""
+  },
+  "custom_sections": []
+}

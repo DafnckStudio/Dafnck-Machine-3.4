@@ -1128,23 +1128,496 @@ class RuleCacheManager:
         }
 
 
-# Continue with additional components...
 class RuleComposer:
     """Intelligent rule composition and conflict resolution"""
     
     def __init__(self, conflict_strategy: ConflictResolution = ConflictResolution.MERGE):
         self.conflict_strategy = conflict_strategy
         self.composition_rules = {}
+        self.composition_policies = {
+            "priority_order": ["core", "workflow", "project", "agent", "context", "custom"],
+            "merge_strategies": {
+                "metadata": ConflictResolution.MERGE,
+                "content": ConflictResolution.APPEND,
+                "variables": ConflictResolution.MERGE,
+                "sections": ConflictResolution.APPEND
+            },
+            "conflict_auto_resolve": True,
+            "preserve_order": True,
+            "include_source_attribution": True
+        }
     
-    def compose_rules(self, rules: List[RuleContent], output_format: RuleFormat = RuleFormat.MDC) -> str:
-        """Compose multiple rules into a single rule"""
-        # Implementation for intelligent rule composition
-        pass
+    def compose_rules(self, rules: List[RuleContent], output_format: RuleFormat = RuleFormat.MDC, 
+                     composition_strategy: str = "intelligent") -> CompositionResult:
+        """Compose multiple rules into a single rule with intelligent merging"""
+        try:
+            if not rules:
+                return CompositionResult(
+                    composed_content="",
+                    source_rules=[],
+                    inheritance_chain=[],
+                    conflicts_resolved=[],
+                    composition_metadata={"strategy": composition_strategy, "rule_count": 0},
+                    success=False,
+                    warnings=["No rules provided for composition"]
+                )
+            
+            # Sort rules by priority and type
+            sorted_rules = self._sort_rules_by_priority(rules)
+            
+            # Initialize composition result
+            composition_metadata = {
+                "strategy": composition_strategy,
+                "rule_count": len(rules),
+                "output_format": output_format.value,
+                "timestamp": time.time(),
+                "composition_id": str(uuid.uuid4())[:8]
+            }
+            
+            conflicts_resolved = []
+            warnings = []
+            
+            # Compose based on strategy
+            if composition_strategy == "intelligent":
+                composed_content, conflicts, warns = self._intelligent_composition(sorted_rules, output_format)
+            elif composition_strategy == "sequential":
+                composed_content, conflicts, warns = self._sequential_composition(sorted_rules, output_format)
+            elif composition_strategy == "priority_merge":
+                composed_content, conflicts, warns = self._priority_merge_composition(sorted_rules, output_format)
+            else:
+                composed_content, conflicts, warns = self._intelligent_composition(sorted_rules, output_format)
+            
+            conflicts_resolved.extend(conflicts)
+            warnings.extend(warns)
+            
+            # Add source attribution if enabled
+            if self.composition_policies["include_source_attribution"]:
+                composed_content = self._add_source_attribution(composed_content, sorted_rules, composition_metadata)
+            
+            return CompositionResult(
+                composed_content=composed_content,
+                source_rules=[rule.metadata.path for rule in sorted_rules],
+                inheritance_chain=[],  # Not used for direct composition
+                conflicts_resolved=conflicts_resolved,
+                composition_metadata=composition_metadata,
+                success=True,
+                warnings=warnings
+            )
+            
+        except Exception as e:
+            logger.error(f"Rule composition failed: {e}")
+            return CompositionResult(
+                composed_content="",
+                source_rules=[rule.metadata.path for rule in rules] if rules else [],
+                inheritance_chain=[],
+                conflicts_resolved=[],
+                composition_metadata={"error": str(e)},
+                success=False,
+                warnings=[f"Composition failed: {str(e)}"]
+            )
     
-    def resolve_conflicts(self, rules: List[RuleContent]) -> RuleContent:
-        """Resolve conflicts between rules"""
-        # Implementation for conflict resolution
-        pass
+    def resolve_conflicts(self, rules: List[RuleContent]) -> Dict[str, Any]:
+        """Resolve conflicts between rules using advanced strategies"""
+        try:
+            conflicts_found = []
+            conflicts_resolved = []
+            unresolved_conflicts = []
+            
+            # Detect conflicts between rules
+            for i, rule1 in enumerate(rules):
+                for j, rule2 in enumerate(rules[i+1:], i+1):
+                    rule_conflicts = self._detect_rule_conflicts(rule1, rule2)
+                    conflicts_found.extend(rule_conflicts)
+            
+            # Resolve conflicts based on strategy
+            for conflict in conflicts_found:
+                resolution_result = self._resolve_single_rule_conflict(conflict)
+                
+                if resolution_result["resolved"]:
+                    conflicts_resolved.append(resolution_result)
+                else:
+                    unresolved_conflicts.append(conflict)
+            
+            return {
+                "success": True,
+                "total_conflicts": len(conflicts_found),
+                "resolved_conflicts": len(conflicts_resolved),
+                "unresolved_conflicts": len(unresolved_conflicts),
+                "resolution_details": conflicts_resolved,
+                "manual_review_required": unresolved_conflicts,
+                "auto_resolution_rate": len(conflicts_resolved) / len(conflicts_found) * 100 if conflicts_found else 100
+            }
+            
+        except Exception as e:
+            logger.error(f"Conflict resolution failed: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "total_conflicts": 0,
+                "resolved_conflicts": 0,
+                "unresolved_conflicts": 0
+            }
+    
+    def _sort_rules_by_priority(self, rules: List[RuleContent]) -> List[RuleContent]:
+        """Sort rules by type priority and other factors"""
+        priority_order = self.composition_policies["priority_order"]
+        
+        def get_priority_score(rule: RuleContent) -> int:
+            rule_type = rule.metadata.type.value
+            try:
+                return priority_order.index(rule_type)
+            except ValueError:
+                return len(priority_order)  # Unknown types go last
+        
+        # Sort by priority, then by file size (larger files first), then by name
+        return sorted(rules, key=lambda r: (
+            get_priority_score(r),
+            -r.metadata.size,  # Negative for descending order
+            r.metadata.path
+        ))
+    
+    def _intelligent_composition(self, rules: List[RuleContent], output_format: RuleFormat) -> Tuple[str, List[str], List[str]]:
+        """Intelligent composition with section-aware merging"""
+        composed_sections = {}
+        composed_metadata = {}
+        composed_variables = {}
+        conflicts_resolved = []
+        warnings = []
+        
+        # Process each rule
+        for rule in rules:
+            # Merge metadata
+            for key, value in rule.parsed_content.get("metadata", {}).items():
+                if key in composed_metadata:
+                    conflict_resolution = self._resolve_metadata_conflict(key, composed_metadata[key], value, rule)
+                    composed_metadata[key] = conflict_resolution["resolved_value"]
+                    if conflict_resolution["conflict_detected"]:
+                        conflicts_resolved.append(f"Metadata conflict in '{key}': {conflict_resolution['description']}")
+                else:
+                    composed_metadata[key] = value
+            
+            # Merge sections
+            for section_name, section_content in rule.sections.items():
+                if section_name in composed_sections:
+                    # Conflict detected - resolve based on strategy
+                    merge_strategy = self.composition_policies["merge_strategies"].get("sections", ConflictResolution.APPEND)
+                    
+                    if merge_strategy == ConflictResolution.APPEND:
+                        composed_sections[section_name] += f"\n\n<!-- From {rule.metadata.path} -->\n{section_content}"
+                        conflicts_resolved.append(f"Section '{section_name}' appended from {rule.metadata.path}")
+                    elif merge_strategy == ConflictResolution.OVERRIDE:
+                        composed_sections[section_name] = section_content
+                        conflicts_resolved.append(f"Section '{section_name}' overridden by {rule.metadata.path}")
+                    elif merge_strategy == ConflictResolution.MERGE:
+                        composed_sections[section_name] = self._merge_section_content(composed_sections[section_name], section_content)
+                        conflicts_resolved.append(f"Section '{section_name}' merged from {rule.metadata.path}")
+                else:
+                    composed_sections[section_name] = section_content
+            
+            # Merge variables
+            for var_name, var_value in rule.variables.items():
+                if var_name in composed_variables:
+                    if composed_variables[var_name] != var_value:
+                        conflicts_resolved.append(f"Variable conflict '{var_name}': {composed_variables[var_name]} vs {var_value}")
+                        # Use merge strategy for variables
+                        if isinstance(var_value, dict) and isinstance(composed_variables[var_name], dict):
+                            composed_variables[var_name].update(var_value)
+                        else:
+                            composed_variables[var_name] = var_value  # Override with latest
+                else:
+                    composed_variables[var_name] = var_value
+        
+        # Generate composed content
+        composed_content = self._generate_composed_content(composed_sections, composed_variables, composed_metadata, output_format)
+        
+        return composed_content, conflicts_resolved, warnings
+    
+    def _sequential_composition(self, rules: List[RuleContent], output_format: RuleFormat) -> Tuple[str, List[str], List[str]]:
+        """Sequential composition - simply concatenate rules in order"""
+        content_parts = []
+        conflicts_resolved = []
+        warnings = []
+        
+        for i, rule in enumerate(rules):
+            content_parts.append(f"<!-- === Rule {i+1}: {rule.metadata.path} === -->")
+            content_parts.append(rule.raw_content)
+            content_parts.append("")  # Empty line separator
+        
+        composed_content = "\n".join(content_parts)
+        return composed_content, conflicts_resolved, warnings
+    
+    def _priority_merge_composition(self, rules: List[RuleContent], output_format: RuleFormat) -> Tuple[str, List[str], List[str]]:
+        """Priority-based merge - higher priority rules override lower priority ones"""
+        if not rules:
+            return "", [], []
+        
+        # Start with the highest priority rule
+        base_rule = rules[0]
+        composed_sections = base_rule.sections.copy()
+        composed_variables = base_rule.variables.copy()
+        composed_metadata = base_rule.parsed_content.get("metadata", {}).copy()
+        
+        conflicts_resolved = []
+        warnings = []
+        
+        # Merge in lower priority rules
+        for rule in rules[1:]:
+            for section_name, section_content in rule.sections.items():
+                if section_name not in composed_sections:
+                    composed_sections[section_name] = section_content
+                else:
+                    conflicts_resolved.append(f"Section '{section_name}' from {rule.metadata.path} ignored (lower priority)")
+            
+            for var_name, var_value in rule.variables.items():
+                if var_name not in composed_variables:
+                    composed_variables[var_name] = var_value
+                else:
+                    conflicts_resolved.append(f"Variable '{var_name}' from {rule.metadata.path} ignored (lower priority)")
+        
+        composed_content = self._generate_composed_content(composed_sections, composed_variables, composed_metadata, output_format)
+        return composed_content, conflicts_resolved, warnings
+    
+    def _detect_rule_conflicts(self, rule1: RuleContent, rule2: RuleContent) -> List[Dict[str, Any]]:
+        """Detect conflicts between two rules"""
+        conflicts = []
+        
+        # Check for section conflicts
+        common_sections = set(rule1.sections.keys()) & set(rule2.sections.keys())
+        for section in common_sections:
+            if rule1.sections[section] != rule2.sections[section]:
+                conflicts.append({
+                    "type": "section_conflict",
+                    "section": section,
+                    "rule1_path": rule1.metadata.path,
+                    "rule2_path": rule2.metadata.path,
+                    "rule1_content": rule1.sections[section][:100] + "..." if len(rule1.sections[section]) > 100 else rule1.sections[section],
+                    "rule2_content": rule2.sections[section][:100] + "..." if len(rule2.sections[section]) > 100 else rule2.sections[section]
+                })
+        
+        # Check for variable conflicts
+        common_variables = set(rule1.variables.keys()) & set(rule2.variables.keys())
+        for var in common_variables:
+            if rule1.variables[var] != rule2.variables[var]:
+                conflicts.append({
+                    "type": "variable_conflict",
+                    "variable": var,
+                    "rule1_path": rule1.metadata.path,
+                    "rule2_path": rule2.metadata.path,
+                    "rule1_value": rule1.variables[var],
+                    "rule2_value": rule2.variables[var]
+                })
+        
+        return conflicts
+    
+    def _resolve_single_rule_conflict(self, conflict: Dict[str, Any]) -> Dict[str, Any]:
+        """Resolve a single conflict between rules"""
+        try:
+            if conflict["type"] == "section_conflict":
+                return self._resolve_section_conflict(conflict)
+            elif conflict["type"] == "variable_conflict":
+                return self._resolve_variable_conflict(conflict)
+            else:
+                return {"resolved": False, "reason": f"Unknown conflict type: {conflict['type']}"}
+        except Exception as e:
+            return {"resolved": False, "reason": f"Resolution failed: {str(e)}"}
+    
+    def _resolve_section_conflict(self, conflict: Dict[str, Any]) -> Dict[str, Any]:
+        """Resolve section conflicts"""
+        strategy = self.composition_policies["merge_strategies"].get("sections", self.conflict_strategy)
+        
+        if strategy == ConflictResolution.APPEND:
+            resolved_content = f"{conflict['rule1_content']}\n\n<!-- Merged from {conflict['rule2_path']} -->\n{conflict['rule2_content']}"
+            return {
+                "resolved": True,
+                "strategy": "append",
+                "resolved_content": resolved_content,
+                "description": f"Appended content from {conflict['rule2_path']} to {conflict['rule1_path']}"
+            }
+        elif strategy == ConflictResolution.OVERRIDE:
+            return {
+                "resolved": True,
+                "strategy": "override",
+                "resolved_content": conflict['rule2_content'],
+                "description": f"Content from {conflict['rule2_path']} overrides {conflict['rule1_path']}"
+            }
+        elif strategy == ConflictResolution.MERGE:
+            merged_content = self._merge_section_content(conflict['rule1_content'], conflict['rule2_content'])
+            return {
+                "resolved": True,
+                "strategy": "merge",
+                "resolved_content": merged_content,
+                "description": f"Intelligently merged content from {conflict['rule1_path']} and {conflict['rule2_path']}"
+            }
+        else:
+            return {"resolved": False, "reason": "Manual resolution required"}
+    
+    def _resolve_variable_conflict(self, conflict: Dict[str, Any]) -> Dict[str, Any]:
+        """Resolve variable conflicts"""
+        strategy = self.composition_policies["merge_strategies"].get("variables", self.conflict_strategy)
+        
+        if strategy == ConflictResolution.MERGE:
+            # Try to merge if both are dictionaries
+            if isinstance(conflict['rule1_value'], dict) and isinstance(conflict['rule2_value'], dict):
+                merged_value = {**conflict['rule1_value'], **conflict['rule2_value']}
+                return {
+                    "resolved": True,
+                    "strategy": "merge",
+                    "resolved_value": merged_value,
+                    "description": f"Merged dictionary values for variable '{conflict['variable']}'"
+                }
+            # Try to merge if both are lists
+            elif isinstance(conflict['rule1_value'], list) and isinstance(conflict['rule2_value'], list):
+                merged_value = list(set(conflict['rule1_value'] + conflict['rule2_value']))  # Remove duplicates
+                return {
+                    "resolved": True,
+                    "strategy": "merge",
+                    "resolved_value": merged_value,
+                    "description": f"Merged list values for variable '{conflict['variable']}'"
+                }
+        
+        # Default to override strategy
+        return {
+            "resolved": True,
+            "strategy": "override",
+            "resolved_value": conflict['rule2_value'],
+            "description": f"Variable '{conflict['variable']}' overridden with value from {conflict['rule2_path']}"
+        }
+    
+    def _resolve_metadata_conflict(self, key: str, existing_value: Any, new_value: Any, rule: RuleContent) -> Dict[str, Any]:
+        """Resolve metadata conflicts"""
+        if existing_value == new_value:
+            return {"conflict_detected": False, "resolved_value": existing_value, "description": "No conflict"}
+        
+        # Special handling for specific metadata fields
+        if key == "tags" and isinstance(existing_value, list) and isinstance(new_value, list):
+            resolved_value = list(set(existing_value + new_value))  # Merge and deduplicate
+            return {
+                "conflict_detected": True,
+                "resolved_value": resolved_value,
+                "description": f"Merged tags from {rule.metadata.path}"
+            }
+        elif key == "dependencies" and isinstance(existing_value, list) and isinstance(new_value, list):
+            resolved_value = list(set(existing_value + new_value))  # Merge and deduplicate
+            return {
+                "conflict_detected": True,
+                "resolved_value": resolved_value,
+                "description": f"Merged dependencies from {rule.metadata.path}"
+            }
+        else:
+            # Default override strategy
+            return {
+                "conflict_detected": True,
+                "resolved_value": new_value,
+                "description": f"Metadata '{key}' overridden by {rule.metadata.path}"
+            }
+    
+    def _merge_section_content(self, content1: str, content2: str) -> str:
+        """Intelligently merge section content"""
+        # Simple intelligent merging - can be enhanced with more sophisticated algorithms
+        if content1.strip() == content2.strip():
+            return content1
+        
+        # If one is a subset of the other, use the larger one
+        if content1.strip() in content2.strip():
+            return content2
+        elif content2.strip() in content1.strip():
+            return content1
+        
+        # Otherwise, append with clear separation
+        return f"{content1}\n\n<!-- === Merged Content === -->\n{content2}"
+    
+    def _generate_composed_content(self, sections: Dict[str, str], variables: Dict[str, Any], 
+                                 metadata: Dict[str, Any], output_format: RuleFormat) -> str:
+        """Generate the final composed content in the specified format"""
+        if output_format == RuleFormat.MDC:
+            return self._generate_mdc_content(sections, variables, metadata)
+        elif output_format == RuleFormat.MD:
+            return self._generate_markdown_content(sections, variables, metadata)
+        elif output_format == RuleFormat.JSON:
+            return self._generate_json_content(sections, variables, metadata)
+        else:
+            return self._generate_mdc_content(sections, variables, metadata)  # Default to MDC
+    
+    def _generate_mdc_content(self, sections: Dict[str, str], variables: Dict[str, Any], metadata: Dict[str, Any]) -> str:
+        """Generate MDC format content"""
+        content_parts = []
+        
+        # Add frontmatter
+        if metadata or variables:
+            content_parts.append("---")
+            for key, value in metadata.items():
+                if isinstance(value, str):
+                    content_parts.append(f"{key}: {value}")
+                elif isinstance(value, list):
+                    content_parts.append(f"{key}: {value}")
+                else:
+                    content_parts.append(f"{key}: {value}")
+            
+            if variables:
+                content_parts.append("# Variables")
+                for key, value in variables.items():
+                    content_parts.append(f"{key}: {value}")
+            
+            content_parts.append("---")
+            content_parts.append("")
+        
+        # Add sections
+        for section_name, section_content in sections.items():
+            if section_name != "frontmatter":  # Skip frontmatter as it's already processed
+                content_parts.append(section_content)
+                content_parts.append("")
+        
+        return "\n".join(content_parts)
+    
+    def _generate_markdown_content(self, sections: Dict[str, str], variables: Dict[str, Any], metadata: Dict[str, Any]) -> str:
+        """Generate Markdown format content"""
+        content_parts = []
+        
+        # Add title from metadata if available
+        if "title" in metadata:
+            content_parts.append(f"# {metadata['title']}")
+            content_parts.append("")
+        
+        # Add description if available
+        if "description" in metadata:
+            content_parts.append(metadata['description'])
+            content_parts.append("")
+        
+        # Add sections
+        for section_name, section_content in sections.items():
+            content_parts.append(section_content)
+            content_parts.append("")
+        
+        return "\n".join(content_parts)
+    
+    def _generate_json_content(self, sections: Dict[str, str], variables: Dict[str, Any], metadata: Dict[str, Any]) -> str:
+        """Generate JSON format content"""
+        import json
+        
+        composed_data = {
+            "metadata": metadata,
+            "variables": variables,
+            "sections": sections,
+            "composed_at": time.time()
+        }
+        
+        return json.dumps(composed_data, indent=2, ensure_ascii=False)
+    
+    def _add_source_attribution(self, content: str, rules: List[RuleContent], composition_metadata: Dict[str, Any]) -> str:
+        """Add source attribution to the composed content"""
+        attribution_header = f"""<!-- 
+=== COMPOSED RULE ===
+Composition ID: {composition_metadata.get('composition_id', 'unknown')}
+Strategy: {composition_metadata.get('strategy', 'unknown')}
+Generated: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(composition_metadata.get('timestamp', time.time())))}
+
+Source Rules:
+{chr(10).join(f"- {rule.metadata.path} ({rule.metadata.type.value})" for rule in rules)}
+===
+-->
+
+"""
+        return attribution_header + content
 
 
 class ClientRuleIntegrator:
@@ -1645,7 +2118,7 @@ class ClientRuleIntegrator:
     
     def _resolve_single_conflict(self, conflict: RuleConflict, 
                                strategy: ConflictResolution) -> Dict[str, Any]:
-        """Resolve a single rule conflict"""
+        """Resolve a single conflict between rules"""
         # Implementation for conflict resolution
         return {"resolved": True, "resolution": "merged"}
     

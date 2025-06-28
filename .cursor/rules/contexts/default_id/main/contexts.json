@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "created_at": "2025-06-28T17:44:24.780021",
-  "updated_at": "2025-06-28T17:44:24.780057",
+  "updated_at": "2025-06-28T17:45:41.579008",
   "contexts": {
     "20250628002": {
       "title": "Phase 1: Core Architecture & Rule Content Parser",
@@ -13,6 +13,17 @@
         "@coding_agent"
       ],
       "file_path": "context_20250628002.json"
+    },
+    "20250628005": {
+      "title": "Phase 4: Rule Composition & Intelligent Merging",
+      "status": "todo",
+      "created_at": "2025-06-28T17:45:41.578542",
+      "updated_at": "2025-06-28T17:45:41.578547",
+      "assignees": [
+        "@coding_agent",
+        "@system_architect_agent"
+      ],
+      "file_path": "context_20250628005.json"
     }
   }
 }
