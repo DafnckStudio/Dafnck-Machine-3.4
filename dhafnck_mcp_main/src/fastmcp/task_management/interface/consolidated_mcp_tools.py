@@ -2971,7 +2971,7 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
                 files = []
                 for file_path in rules_dir.rglob("*.mdc"):
                     files.append({
-                        "path": str(file_path.relative_to(cursor_tools.project_root)),
+                        "path": str(file_path.relative_to(rules_dir)),
                         "size": file_path.stat().st_size,
                         "modified": file_path.stat().st_mtime
                     })
@@ -3050,7 +3050,7 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
                                 
                             loaded_rules.append({
                                 "file": rule_file,
-                                "path": str(rule_path.relative_to(cursor_tools.project_root)),
+                                "path": str(rule_path.relative_to(rules_dir)),
                                 "size": file_size,
                                 "status": "loaded"
                             })

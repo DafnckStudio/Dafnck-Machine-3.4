@@ -367,7 +367,7 @@ class CursorRulesTools:
                     rule_files = []
                     for file_path in rules_dir.rglob("*.mdc"):
                         rule_files.append({
-                            "path": str(file_path.relative_to(self.project_root)),
+                            "path": str(file_path.relative_to(rules_dir)),
                             "size": file_path.stat().st_size,
                             "modified": file_path.stat().st_mtime
                         })
@@ -395,7 +395,7 @@ class CursorRulesTools:
                     return {
                         "success": True,
                         "message": "Backup created successfully",
-                        "backup_path": str(backup_path.relative_to(self.project_root))
+                        "backup_path": str(backup_path.relative_to(rules_dir))
                     }
                 
                 elif action == "restore":
@@ -433,7 +433,7 @@ class CursorRulesTools:
                             "success": True,
                             "info": {
                                 "directory_exists": False,
-                                "path": str(rules_dir.relative_to(self.project_root))
+                                "path": "."  # Always show as current directory from rules perspective
                             }
                         }
                     
@@ -443,7 +443,7 @@ class CursorRulesTools:
                     
                     info = {
                         "directory_exists": True,
-                        "path": str(rules_dir.relative_to(self.project_root)),
+                        "path": ".",  # Always show as current directory from rules perspective
                         "total_files": len([f for f in all_files if f.is_file()]),
                         "mdc_files": len(mdc_files),
                         "backup_files": len(backup_files),
@@ -481,7 +481,7 @@ class CursorRulesTools:
                                     
                                 loaded_rules.append({
                                     "file": rule_file,
-                                    "path": str(rule_path.relative_to(self.project_root)),
+                                    "path": str(rule_path.relative_to(rules_dir)),
                                     "size": file_size,
                                     "status": "loaded",
                                     "content_preview": content[:200] + "..." if len(content) > 200 else content
@@ -489,14 +489,14 @@ class CursorRulesTools:
                             except Exception as e:
                                 failed_rules.append({
                                     "file": rule_file,
-                                    "path": str(rule_path.relative_to(self.project_root)),
+                                    "path": str(rule_path.relative_to(rules_dir)),
                                     "status": "error",
                                     "error": str(e)
                                 })
                         else:
                             failed_rules.append({
                                 "file": rule_file,
-                                "path": str(rule_path.relative_to(self.project_root)),
+                                "path": str(rule_path.relative_to(rules_dir)),
                                 "status": "not_found",
                                 "error": "File does not exist"
                             })
@@ -555,7 +555,7 @@ class CursorRulesTools:
                         return {
                             "success": True,
                             "action": "parse_rule",
-                            "file_path": str(target_path.relative_to(self.project_root)),
+                            "file_path": str(target_path.relative_to(rules_dir)),
                             "metadata": {
                                 "format": rule_content.metadata.format.value,
                                 "type": rule_content.metadata.type.value,
@@ -668,7 +668,7 @@ class CursorRulesTools:
                         return {
                             "success": True,
                             "action": "get_dependencies",
-                            "file_path": str(target_path.relative_to(self.project_root)),
+                            "file_path": str(target_path.relative_to(rules_dir)),
                             "dependencies": rule_content.metadata.dependencies,
                             "references": rule_content.references,
                             "dependency_analysis": {
@@ -1513,7 +1513,7 @@ class CursorRulesTools:
                         "success": True,
                         "message": "Auto rules regenerated successfully",
                         "role": role or task_context['assignee'],
-                        "output_path": str((self.project_root / ".cursor" / "rules" / "auto_rule.mdc").relative_to(self.project_root))
+                        "output_path": "auto_rule.mdc"  # Always show as relative to rules directory
                     }
                 else:
                     return {
