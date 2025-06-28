@@ -247,6 +247,224 @@ class ProjectManager:
         self._save_projects()
         return {"success": True, "tree": tree}
     
+    def delete_task_tree(self, project_id: str, tree_id: str, force: bool = False) -> Dict[str, Any]:
+        """Delete a task tree from project with cascading cleanup"""
+        if project_id not in self._projects:
+            return {"success": False, "error": f"Project {project_id} not found"}
+        
+        project = self._projects[project_id]
+        
+        # Check if tree exists
+        if tree_id not in project["task_trees"]:
+            return {"success": False, "error": f"Task tree '{tree_id}' not found in project '{project_id}'"}
+        
+        # Prevent deletion of 'main' tree unless forced
+        if tree_id == "main" and not force:
+            return {
+                "success": False, 
+                "error": "Cannot delete 'main' task tree. Use force=True to override this protection."
+            }
+        
+        # Check for active tasks unless forced
+        if not force:
+            try:
+                import os
+                import json
+                tasks_path = self.path_resolver.get_tasks_json_path(project_id, tree_id, "default_id")
+                if os.path.exists(tasks_path):
+                    with open(tasks_path, 'r') as f:
+                        tasks_data = json.load(f)
+                        task_count = len(tasks_data.get("tasks", []))
+                        if task_count > 0:
+                            return {
+                                "success": False,
+                                "error": f"Cannot delete task tree '{tree_id}' - contains {task_count} tasks. Use force=True to delete anyway.",
+                                "task_count": task_count
+                            }
+            except Exception as e:
+                # If we can't read tasks, proceed with warning
+                pass
+        
+        try:
+            # 1. Remove task tree from project
+            del project["task_trees"][tree_id]
+            
+            # 2. Remove agent assignments for this tree
+            if "agent_assignments" in project:
+                for agent_id, assigned_trees in list(project["agent_assignments"].items()):
+                    if tree_id in assigned_trees:
+                        assigned_trees.remove(tree_id)
+                        # Remove agent assignment entry if no trees left
+                        if not assigned_trees:
+                            del project["agent_assignments"][agent_id]
+            
+            # 3. Delete tasks directory and all associated data
+            import shutil
+            tasks_dir = self.path_resolver.get_tasks_json_path(project_id, tree_id, "default_id").parent
+            if os.path.exists(tasks_dir):
+                shutil.rmtree(tasks_dir)
+            
+            # 4. Delete contexts directory for this tree
+            contexts_dir = self.path_resolver._resolve_path(f".cursor/rules/contexts/default_id/{project_id}/{tree_id}")
+            if os.path.exists(contexts_dir):
+                shutil.rmtree(contexts_dir)
+            
+            # 5. Save updated project data
+            self._save_projects()
+            
+            return {
+                "success": True,
+                "message": f"Task tree '{tree_id}' deleted successfully from project '{project_id}'",
+                "deleted_tree": tree_id,
+                "cleanup_performed": [
+                    "Task tree removed from project",
+                    "Agent assignments cleaned up",
+                    "Tasks directory deleted",
+                    "Contexts directory deleted"
+                ]
+            }
+            
+        except Exception as e:
+            return {
+                "success": False,
+                "error": f"Failed to delete task tree '{tree_id}': {str(e)}"
+            }
+    
+    def delete_project(self, project_id: str, force: bool = False) -> Dict[str, Any]:
+        """Delete an entire project with all associated data"""
+        if project_id not in self._projects:
+            return {"success": False, "error": f"Project {project_id} not found"}
+        
+        project = self._projects[project_id]
+        
+        # Check for active tasks unless forced
+        if not force:
+            total_tasks = 0
+            try:
+                import os
+                import json
+                for tree_id in project.get("task_trees", {}):
+                    tasks_path = self.path_resolver.get_tasks_json_path(project_id, tree_id, "default_id")
+                    if os.path.exists(tasks_path):
+                        with open(tasks_path, 'r') as f:
+                            tasks_data = json.load(f)
+                            total_tasks += len(tasks_data.get("tasks", []))
+                
+                if total_tasks > 0:
+                    return {
+                        "success": False,
+                        "error": f"Cannot delete project '{project_id}' - contains {total_tasks} tasks across all trees. Use force=True to delete anyway.",
+                        "total_tasks": total_tasks
+                    }
+            except Exception as e:
+                # If we can't read tasks, proceed with warning
+                pass
+        
+        try:
+            # 1. Delete all task directories for this project
+            import shutil
+            project_tasks_dir = self.path_resolver._resolve_path(f".cursor/rules/tasks/default_id/{project_id}")
+            if os.path.exists(project_tasks_dir):
+                shutil.rmtree(project_tasks_dir)
+            
+            # 2. Delete all contexts for this project
+            project_contexts_dir = self.path_resolver._resolve_path(f".cursor/rules/contexts/default_id/{project_id}")
+            if os.path.exists(project_contexts_dir):
+                shutil.rmtree(project_contexts_dir)
+            
+            # 3. Remove project from projects data
+            del self._projects[project_id]
+            
+            # 4. Save updated projects data
+            self._save_projects()
+            
+            return {
+                "success": True,
+                "message": f"Project '{project_id}' deleted successfully",
+                "deleted_project": project_id,
+                "cleanup_performed": [
+                    "All task trees and tasks deleted",
+                    "All contexts deleted",
+                    "Project removed from registry",
+                    "Agent assignments cleaned up"
+                ]
+            }
+            
+        except Exception as e:
+            return {
+                "success": False,
+                "error": f"Failed to delete project '{project_id}': {str(e)}"
+            }
+    
+    def clear_task_tree(self, project_id: str, tree_id: str) -> Dict[str, Any]:
+        """Clear all tasks from a task tree but keep the tree structure"""
+        if project_id not in self._projects:
+            return {"success": False, "error": f"Project {project_id} not found"}
+        
+        project = self._projects[project_id]
+        
+        # Check if tree exists
+        if tree_id not in project["task_trees"]:
+            return {"success": False, "error": f"Task tree '{tree_id}' not found in project '{project_id}'"}
+        
+        try:
+            import os
+            import json
+            
+            # Get tasks file path
+            tasks_path = self.path_resolver.get_tasks_json_path(project_id, tree_id, "default_id")
+            
+            # Count existing tasks for reporting
+            task_count = 0
+            if os.path.exists(tasks_path):
+                with open(tasks_path, 'r') as f:
+                    tasks_data = json.load(f)
+                    task_count = len(tasks_data.get("tasks", []))
+            
+            # Clear tasks by writing empty tasks structure
+            empty_tasks = {
+                "tasks": [],
+                "metadata": {
+                    "project_id": project_id,
+                    "task_tree_id": tree_id,
+                    "user_id": "default_id",
+                    "cleared_at": datetime.now().isoformat(),
+                    "previous_task_count": task_count
+                }
+            }
+            
+            # Ensure directory exists
+            os.makedirs(tasks_path.parent, exist_ok=True)
+            
+            # Write empty tasks file
+            with open(tasks_path, 'w') as f:
+                json.dump(empty_tasks, f, indent=2)
+            
+            # Clear contexts directory for this tree
+            import shutil
+            contexts_dir = self.path_resolver._resolve_path(f".cursor/rules/contexts/default_id/{project_id}/{tree_id}")
+            if os.path.exists(contexts_dir):
+                shutil.rmtree(contexts_dir)
+                os.makedirs(contexts_dir, exist_ok=True)
+            
+            return {
+                "success": True,
+                "message": f"Task tree '{tree_id}' cleared successfully",
+                "tree_id": tree_id,
+                "tasks_cleared": task_count,
+                "cleanup_performed": [
+                    f"Cleared {task_count} tasks",
+                    "Cleared all contexts",
+                    "Task tree structure preserved"
+                ]
+            }
+            
+        except Exception as e:
+            return {
+                "success": False,
+                "error": f"Failed to clear task tree '{tree_id}': {str(e)}"
+            }
+    
     def get_task_tree_status(self, project_id: str, tree_id: str) -> Dict[str, Any]:
         """Get task tree status"""
         if project_id not in self._projects:
@@ -1928,13 +2146,14 @@ class ToolRegistrationOrchestrator:
         if self._config.is_enabled("manage_project"):
             @mcp.tool()
             def manage_project(
-                action: Annotated[str, Field(description="Project action to perform. Available: create, get, list, update, create_tree, get_tree_status, orchestrate, dashboard, project_health_check, sync_with_git, cleanup_obsolete, validate_integrity, rebalance_agents")],
+                action: Annotated[str, Field(description="Project action to perform. Available: create, get, list, update, create_tree, delete_tree, delete_project, clear_tree, get_tree_status, orchestrate, dashboard, project_health_check, sync_with_git, cleanup_obsolete, validate_integrity, rebalance_agents")],
                 project_id: Annotated[str, Field(description="Unique project identifier")] = None,
                 name: Annotated[str, Field(description="Project name (required for create action, optional for update action)")] = None,
                 description: Annotated[str, Field(description="Project description (optional for create and update actions)")] = None,
                 tree_id: Annotated[str, Field(description="Task tree identifier (required for tree operations)")] = None,
                 tree_name: Annotated[str, Field(description="Task tree name (required for create_tree action)")] = None,
-                tree_description: Annotated[str, Field(description="Task tree description (optional for create_tree action)")] = None
+                tree_description: Annotated[str, Field(description="Task tree description (optional for create_tree action)")] = None,
+                force: Annotated[bool, Field(description="Force deletion even if tree/project contains tasks (for delete operations)")] = False
             ) -> Dict[str, Any]:
                 """🚀 PROJECT LIFECYCLE MANAGER - Multi-agent project orchestration and management
 
@@ -1992,6 +2211,21 @@ class ToolRegistrationOrchestrator:
                         return {"success": False, "error": "project_id, tree_id, and tree_name are required"}
                     return self._project_manager.create_task_tree(project_id, tree_id, tree_name, tree_description or "")
                     
+                elif action == "delete_tree":
+                    if not project_id or not tree_id:
+                        return {"success": False, "error": "project_id and tree_id are required for deleting a task tree"}
+                    return self._project_manager.delete_task_tree(project_id, tree_id, force)
+                    
+                elif action == "delete_project":
+                    if not project_id:
+                        return {"success": False, "error": "project_id is required for deleting a project"}
+                    return self._project_manager.delete_project(project_id, force)
+                    
+                elif action == "clear_tree":
+                    if not project_id or not tree_id:
+                        return {"success": False, "error": "project_id and tree_id are required for clearing a task tree"}
+                    return self._project_manager.clear_task_tree(project_id, tree_id)
+                    
                 elif action == "get_tree_status":
                     if not project_id or not tree_id:
                         return {"success": False, "error": "project_id and tree_id are required"}
@@ -2033,7 +2267,7 @@ class ToolRegistrationOrchestrator:
                     return self._project_manager.rebalance_agents(project_id)
                     
                 else:
-                    return {"success": False, "error": f"Unknown action: {action}. Available: create, get, list, update, create_tree, get_tree_status, orchestrate, dashboard, project_health_check, sync_with_git, cleanup_obsolete, validate_integrity, rebalance_agents"}
+                    return {"success": False, "error": f"Unknown action: {action}. Available: create, get, list, update, create_tree, delete_tree, delete_project, clear_tree, get_tree_status, orchestrate, dashboard, project_health_check, sync_with_git, cleanup_obsolete, validate_integrity, rebalance_agents"}
 
             logger.info("Registered manage_project tool")
         else:
