@@ -271,7 +271,7 @@
       "title": "Task: Next.js Frontend Application",
       "description": "Build complete Next.js frontend with authentication, token management dashboard, and Docker instructions. Focus on functionality over aesthetics for MVP speed.",
       "project_id": "dhafnck_mcp_main",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "details": "**Acceptance Criteria:**\n- [ ] Landing page with clear value proposition\n- [ ] User registration/login with Supabase Auth\n- [ ] Token management dashboard (generate, list, revoke)\n- [ ] Docker instructions with user's token pre-filled\n- [ ] Getting started guide integration\n- [ ] Mobile-responsive design\n- [ ] Error handling and user feedback\n\n**Components to Build:**\n- AuthLayout (login/signup forms)\n- Dashboard (token management)\n- TokenGenerator component\n- DockerInstructions component\n- GettingStarted component\n- Navigation component\n\n**Tech Stack:**\n- Next.js 14 with App Router\n- Supabase client for auth\n- Tailwind CSS for styling\n- Lucide React for icons",
       "estimatedEffort": "medium",
@@ -291,7 +291,7 @@
       "subtasks": [],
       "dueDate": "2025-01-30",
       "created_at": "2025-06-27T09:21:05.331001+00:00",
-      "updated_at": "2025-06-27T09:22:37.900177+00:00"
+      "updated_at": "2025-06-28T06:22:58.935236+00:00"
     },
     {
       "id": "20250627007",
@@ -558,6 +558,207 @@
       "dueDate": "2025-02-07",
       "created_at": "2025-06-27T09:58:17.938753+00:00",
       "updated_at": "2025-06-27T09:58:31.458140+00:00"
+    },
+    {
+      "id": "20250628001",
+      "title": "URGENT: Implement sync_with_git Automated Action",
+      "description": "Implement sync_with_git action for manage_project tool to automatically synchronize task trees with actual git branches. This will resolve data consistency issues where project config contains non-existent branches.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "done",
+      "priority": "urgent",
+      "details": "**IMPLEMENTATION REQUIREMENTS:**\n- Add sync_with_git action to ProjectManager class\n- Compare git branches with project task trees\n- Remove non-existent branch references from project config\n- Create task trees for new git branches automatically\n- Update current branch tracking\n- Return detailed sync report with actions taken\n\n**ACCEPTANCE CRITERIA:**\n- manage_project(\"sync_with_git\", project_id=\"dhafnck_mcp_main\") works\n- Removes v1.0.0beta from project config (non-existent branch)\n- Preserves main and v1.0.5dev task trees\n- Returns sync status report\n- No manual intervention required",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "urgent",
+        "automation",
+        "git-integration",
+        "backend"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T06:06:18.921533+00:00",
+      "updated_at": "2025-06-28T06:13:06.076432+00:00"
+    },
+    {
+      "id": "20250628002",
+      "title": "URGENT: Implement cleanup_obsolete Automated Action",
+      "description": "Implement cleanup_obsolete action to automatically remove non-existent branches and orphaned data from project management system. This prevents confusion and resource waste from obsolete references.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "done",
+      "priority": "urgent",
+      "details": "**IMPLEMENTATION REQUIREMENTS:**\n- Add cleanup_obsolete action to ProjectManager class\n- Identify and remove orphaned task tree references\n- Clean up agent assignments to non-existent branches\n- Remove empty or invalid project data structures\n- Preserve task history and important metadata\n- Generate cleanup report with actions taken\n\n**ACCEPTANCE CRITERIA:**\n- manage_project(\"cleanup_obsolete\", project_id=\"dhafnck_mcp_main\") works\n- Removes all references to non-existent branches\n- Cleans up orphaned agent assignments\n- Preserves valid data and task history\n- Returns detailed cleanup report\n- No data corruption or loss",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "urgent",
+        "automation",
+        "cleanup",
+        "backend"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T06:06:27.979209+00:00",
+      "updated_at": "2025-06-28T06:14:56.052426+00:00"
+    },
+    {
+      "id": "20250628003",
+      "title": "URGENT: Implement validate_integrity Automated Action",
+      "description": "Implement validate_integrity action to automatically check and fix data consistency issues between dashboard metrics and actual task data. This resolves the current issue where dashboard shows 0 tasks but actual trees contain tasks.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "done",
+      "priority": "urgent",
+      "details": "**IMPLEMENTATION REQUIREMENTS:**\n- Add validate_integrity action to ProjectManager class\n- Cross-validate dashboard metrics with actual task data\n- Detect and fix data synchronization issues\n- Validate agent assignments and task references\n- Check for corrupted or inconsistent data structures\n- Auto-repair common data integrity issues\n- Generate comprehensive integrity report\n\n**ACCEPTANCE CRITERIA:**\n- manage_project(\"validate_integrity\", project_id=\"dhafnck_mcp_main\") works\n- Fixes dashboard showing 0 tasks when tasks exist\n- Validates all cross-references between data structures\n- Auto-repairs detected integrity issues\n- Returns detailed validation report with fixes applied\n- No false positives or data corruption",
+      "estimatedEffort": "medium",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "urgent",
+        "automation",
+        "data-integrity",
+        "backend"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T06:06:36.809268+00:00",
+      "updated_at": "2025-06-28T06:18:18.459593+00:00"
+    },
+    {
+      "id": "20250628004",
+      "title": "URGENT: Implement rebalance_agents Automated Action",
+      "description": "Implement rebalance_agents action to automatically redistribute agent assignments optimally across active task trees based on workload and agent capabilities.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "done",
+      "priority": "urgent",
+      "details": "**IMPLEMENTATION REQUIREMENTS:**\n- Add rebalance_agents action to ProjectManager class\n- Analyze current agent workload across all task trees\n- Calculate optimal agent distribution based on task complexity\n- Consider agent capabilities and expertise for task matching\n- Reassign agents from inactive/obsolete branches\n- Balance workload to prevent agent overutilization\n- Generate rebalancing report with assignments made\n\n**ACCEPTANCE CRITERIA:**\n- manage_project(\"rebalance_agents\", project_id=\"dhafnck_mcp_main\") works\n- Redistributes agents from non-existent branches to active ones\n- Balances workload across available agents\n- Matches agent expertise to task requirements\n- Returns detailed rebalancing report\n- No agent conflicts or invalid assignments",
+      "estimatedEffort": "large",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "urgent",
+        "automation",
+        "agent-management",
+        "backend"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T06:06:47.081298+00:00",
+      "updated_at": "2025-06-28T06:36:56.818629+00:00"
+    },
+    {
+      "id": "20250628005",
+      "title": "ADVANCED: Implement migrate_tasks Automated Action",
+      "description": "Implement migrate_tasks action to automatically move tasks between branches during git operations like merges, rebases, and branch deletions while preserving task history and dependencies.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": "**IMPLEMENTATION REQUIREMENTS:**\n- Add migrate_tasks action to ProjectManager class\n- Detect git operations (merge, rebase, branch deletion)\n- Automatically migrate relevant tasks to target branches\n- Preserve task history, dependencies, and metadata\n- Handle cross-branch task references intelligently\n- Support bulk task migration with validation\n- Generate migration report with actions taken\n\n**ACCEPTANCE CRITERIA:**\n- manage_project(\"migrate_tasks\", project_id=\"dhafnck_mcp_main\", source_tree=\"branch1\", target_tree=\"branch2\") works\n- Preserves all task data during migration\n- Maintains task dependencies across branches\n- Handles conflicts and duplicates gracefully\n- Returns detailed migration report\n- No data loss or corruption during migration",
+      "estimatedEffort": "xlarge",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "automation",
+        "git-integration",
+        "task-migration",
+        "backend"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T06:06:55.613502+00:00",
+      "updated_at": "2025-06-28T06:06:55.613502+00:00"
+    },
+    {
+      "id": "20250628006",
+      "title": "ADVANCED: Implement auto_archive Automated Action",
+      "description": "Implement auto_archive action to automatically archive completed branches and preserve task history while keeping the project management system clean and efficient.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": "**IMPLEMENTATION REQUIREMENTS:**\n- Add auto_archive action to ProjectManager class\n- Detect completed/merged branches for archiving\n- Create compressed archive of task data and history\n- Remove archived data from active project structures\n- Maintain searchable archive index for retrieval\n- Support archive restoration if needed\n- Generate archiving report with statistics\n\n**ACCEPTANCE CRITERIA:**\n- manage_project(\"auto_archive\", project_id=\"dhafnck_mcp_main\") works\n- Archives completed branches automatically\n- Preserves complete task history and metadata\n- Reduces active project data size\n- Maintains archive index for future retrieval\n- Returns detailed archiving report\n- No loss of important historical data",
+      "estimatedEffort": "large",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "automation",
+        "archiving",
+        "data-management",
+        "backend"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T06:07:04.717674+00:00",
+      "updated_at": "2025-06-28T06:07:04.717674+00:00"
+    },
+    {
+      "id": "20250628007",
+      "title": "ADVANCED: Implement smart_assign AI-Powered Agent Assignment",
+      "description": "Implement smart_assign action with AI-powered agent assignment that analyzes task content, complexity, and requirements to automatically assign the most suitable agents for optimal productivity.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "high",
+      "details": "**IMPLEMENTATION REQUIREMENTS:**\n- Add smart_assign action to ProjectManager class\n- Implement AI analysis of task content and requirements\n- Create agent capability matching algorithm\n- Consider agent workload and availability\n- Support multi-agent assignment for complex tasks\n- Learn from assignment success/failure patterns\n- Generate intelligent assignment recommendations\n\n**ACCEPTANCE CRITERIA:**\n- manage_project(\"smart_assign\", project_id=\"dhafnck_mcp_main\") works\n- Analyzes task content to determine optimal agent match\n- Considers agent expertise, workload, and availability\n- Supports both single and multi-agent assignments\n- Learns from past assignment outcomes\n- Returns detailed assignment rationale\n- Improves assignment quality over time",
+      "estimatedEffort": "xlarge",
+      "assignees": [
+        "@coding_agent"
+      ],
+      "labels": [
+        "automation",
+        "ai-powered",
+        "agent-assignment",
+        "backend"
+      ],
+      "dependencies": [],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T06:07:13.439439+00:00",
+      "updated_at": "2025-06-28T06:07:13.439439+00:00"
+    },
+    {
+      "id": "20250628008",
+      "title": "🚀 MASTER: Complete Automated Project Management System",
+      "description": "Master coordination task for implementing all missing automated actions in the project management system. This will transform manual project management into fully automated, intelligent workflow management.",
+      "project_id": "dhafnck_mcp_main",
+      "status": "todo",
+      "priority": "critical",
+      "details": "**MASTER TASK OVERVIEW:**\nThis task coordinates the implementation of 7 critical automated actions for the project management system, addressing the automation gaps identified in the project health check.\n\n**DEPENDENCIES:**\nAll 7 automation tasks must be completed:\n- 20250628001: sync_with_git (URGENT)\n- 20250628002: cleanup_obsolete (URGENT)  \n- 20250628003: validate_integrity (URGENT)\n- 20250628004: rebalance_agents (URGENT)\n- 20250628005: migrate_tasks (ADVANCED)\n- 20250628006: auto_archive (ADVANCED)\n- 20250628007: smart_assign (ADVANCED)\n\n**SUCCESS CRITERIA:**\n- All 7 automated actions implemented and tested\n- Project management operates without manual intervention\n- Data consistency issues resolved automatically\n- Agent assignments optimized intelligently\n- Git integration seamless and automatic\n- Complete test coverage for all automation features",
+      "estimatedEffort": "epic",
+      "assignees": [
+        "@coding_agent",
+        "@task_planning_agent"
+      ],
+      "labels": [
+        "critical",
+        "automation",
+        "project-management",
+        "epic"
+      ],
+      "dependencies": [
+        "20250628001",
+        "20250628002",
+        "20250628003",
+        "20250628004",
+        "20250628005",
+        "20250628006",
+        "20250628007"
+      ],
+      "subtasks": [],
+      "dueDate": null,
+      "created_at": "2025-06-28T06:07:25.437432+00:00",
+      "updated_at": "2025-06-28T06:07:59.105779+00:00"
     }
   ]
 }

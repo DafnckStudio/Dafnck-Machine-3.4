@@ -308,7 +308,14 @@ class Orchestrator:
             score = 0.0
             
             # Priority preference
-            priority_scores = {"high": 3, "medium": 2, "low": 1}
+            # PriorityLevel: LOW=1, MEDIUM=2, HIGH=3, URGENT=4, CRITICAL=5
+            priority_scores = {
+                "critical": 5,
+                "urgent": 4,
+                "high": 3,
+                "medium": 2,
+                "low": 1
+            }
             task_priority_score = priority_scores.get(task.priority.value, 1)
             
             if task.priority.value == agent.priority_preference:

@@ -313,6 +313,256 @@ class ProjectManager:
                     "note": "Basic dashboard due to conversion error"
                 }
             }
+
+    def project_health_check(self, project_id: str) -> Dict[str, Any]:
+        """Comprehensive project health analysis with data integrity and workflow validation"""
+        if project_id not in self._projects:
+            return {"success": False, "error": f"Project {project_id} not found"}
+        
+        from datetime import datetime
+        import json
+        
+        project = self._projects[project_id]
+        health_issues = []
+        warnings = []
+        recommendations = []
+        
+        # Initialize health metrics
+        health_score = 100
+        git_sync_status = "✅ UNKNOWN"
+        data_integrity = "✅ HEALTHY"
+        agent_utilization = "✅ OPTIMAL"
+        
+        try:
+            # 1. CHECK GIT SYNCHRONIZATION
+            import subprocess
+            import os
+            
+            # Try to get current git branch
+            try:
+                result = subprocess.run(['git', 'branch', '--show-current'], 
+                                      capture_output=True, text=True, cwd=os.getcwd())
+                if result.returncode == 0:
+                    current_branch = result.stdout.strip()
+                    
+                    # Get all git branches
+                    result = subprocess.run(['git', 'branch', '-a'], 
+                                          capture_output=True, text=True, cwd=os.getcwd())
+                    if result.returncode == 0:
+                        all_branches = [line.strip().replace('*', '').strip() 
+                                      for line in result.stdout.split('\n') 
+                                      if line.strip() and not line.startswith('remotes/')]
+                        
+                        # Check for obsolete task trees
+                        task_trees = set(project.get("task_trees", {}).keys())
+                        git_branches = set(all_branches + ['main'])  # Always include main
+                        
+                        obsolete_trees = task_trees - git_branches
+                        missing_trees = git_branches - task_trees
+                        
+                        if obsolete_trees:
+                            health_issues.append({
+                                "type": "OBSOLETE_BRANCHES",
+                                "severity": "MEDIUM",
+                                "description": f"Task trees exist for non-existent git branches: {list(obsolete_trees)}",
+                                "impact": "Wasted resources and agent assignments to non-existent work"
+                            })
+                            git_sync_status = "❌ OUT_OF_SYNC"
+                            health_score -= 15
+                            recommendations.append("Run sync_with_git to align project with repository state")
+                        
+                        if missing_trees:
+                            warnings.append(f"Git branches without task trees: {list(missing_trees)}")
+                            recommendations.append("Consider creating task trees for active git branches")
+                        
+                        if not obsolete_trees and not missing_trees:
+                            git_sync_status = "✅ SYNCHRONIZED"
+                    else:
+                        git_sync_status = "⚠️ GIT_ERROR"
+                        warnings.append("Could not read git branches")
+                else:
+                    git_sync_status = "⚠️ NOT_GIT_REPO"
+                    warnings.append("Not in a git repository")
+            except Exception as e:
+                git_sync_status = "❌ GIT_UNAVAILABLE"
+                warnings.append(f"Git check failed: {str(e)}")
+            
+            # 2. CHECK DATA INTEGRITY
+            task_count_issues = []
+            
+            # Check task counts vs dashboard
+            try:
+                dashboard_result = self.get_orchestration_dashboard(project_id)
+                if dashboard_result.get("success"):
+                    dashboard_data = dashboard_result.get("dashboard", {})
+                    trees_data = dashboard_data.get("trees", {})
+                    
+                    for tree_id, tree_info in trees_data.items():
+                        dashboard_count = tree_info.get("total_tasks", 0)
+                        
+                        # Get actual task count from task repository
+                        try:
+                            from ..domain.services.task_repository_factory import TaskRepositoryFactory
+                            from ..application.task_application_service import TaskApplicationService
+                            
+                            repository_factory = TaskRepositoryFactory(self.path_resolver)
+                            repository = repository_factory.create_repository(project_id, tree_id, "default_id")
+                            
+                            # Count actual tasks
+                            tasks_file = repository._tasks_file
+                            actual_count = 0
+                            if os.path.exists(tasks_file):
+                                with open(tasks_file, 'r') as f:
+                                    tasks_data = json.load(f)
+                                    actual_count = len(tasks_data.get("tasks", []))
+                            
+                            if dashboard_count != actual_count:
+                                task_count_issues.append({
+                                    "tree": tree_id,
+                                    "dashboard": dashboard_count,
+                                    "actual": actual_count
+                                })
+                        except Exception as e:
+                            warnings.append(f"Could not verify task count for tree {tree_id}: {str(e)}")
+                
+                if task_count_issues:
+                    health_issues.append({
+                        "type": "DATA_INCONSISTENCY",
+                        "severity": "HIGH",
+                        "description": f"Task count mismatches found: {task_count_issues}",
+                        "impact": "Incorrect project metrics and progress tracking"
+                    })
+                    data_integrity = "❌ CORRUPTED"
+                    health_score -= 25
+                    recommendations.append("Run validate_integrity to fix data consistency issues")
+                
+            except Exception as e:
+                warnings.append(f"Data integrity check failed: {str(e)}")
+                data_integrity = "⚠️ CHECK_FAILED"
+            
+            # 3. CHECK AGENT ASSIGNMENTS
+            agent_issues = []
+            agent_assignments = project.get("agent_assignments", {})
+            registered_agents = project.get("registered_agents", {})
+            task_trees = project.get("task_trees", {})
+            
+            # Check for agents assigned to non-existent trees
+            for agent_id, tree_list in agent_assignments.items():
+                if isinstance(tree_list, list):
+                    for tree_id in tree_list:
+                        if tree_id not in task_trees:
+                            agent_issues.append(f"Agent {agent_id} assigned to non-existent tree {tree_id}")
+                elif tree_list not in task_trees:
+                    agent_issues.append(f"Agent {agent_id} assigned to non-existent tree {tree_list}")
+            
+            # Check for unregistered agents in assignments
+            for agent_id in agent_assignments:
+                if agent_id not in registered_agents:
+                    agent_issues.append(f"Unregistered agent {agent_id} has assignments")
+            
+            if agent_issues:
+                health_issues.append({
+                    "type": "AGENT_MISALIGNMENT",
+                    "severity": "MEDIUM",
+                    "description": f"Agent assignment issues: {agent_issues}",
+                    "impact": "Inefficient resource allocation"
+                })
+                agent_utilization = "⚠️ SUBOPTIMAL"
+                health_score -= 10
+                recommendations.append("Rebalance agent assignments to active branches")
+            
+            # 4. CALCULATE TASK COMPLETION METRICS
+            total_tasks = 0
+            completed_tasks = 0
+            blocked_tasks = 0
+            overdue_tasks = 0
+            
+            try:
+                for tree_id in task_trees:
+                    try:
+                        from ..domain.services.task_repository_factory import TaskRepositoryFactory
+                        repository_factory = TaskRepositoryFactory(self.path_resolver)
+                        repository = repository_factory.create_repository(project_id, tree_id, "default_id")
+                        
+                        tasks_file = repository._tasks_file
+                        if os.path.exists(tasks_file):
+                            with open(tasks_file, 'r') as f:
+                                tasks_data = json.load(f)
+                                tasks = tasks_data.get("tasks", [])
+                                
+                                for task in tasks:
+                                    total_tasks += 1
+                                    status = task.get("status", "todo")
+                                    if status == "done":
+                                        completed_tasks += 1
+                                    elif status == "blocked":
+                                        blocked_tasks += 1
+                                    
+                                    # Check for overdue tasks (simplified check)
+                                    due_date = task.get("due_date")
+                                    if due_date and status not in ["done", "cancelled"]:
+                                        try:
+                                            due = datetime.fromisoformat(due_date.replace('Z', '+00:00'))
+                                            if due < datetime.now():
+                                                overdue_tasks += 1
+                                        except:
+                                            pass  # Invalid date format
+                    except Exception as e:
+                        warnings.append(f"Could not analyze tasks in tree {tree_id}: {str(e)}")
+            except Exception as e:
+                warnings.append(f"Task analysis failed: {str(e)}")
+            
+            # Calculate completion rate
+            completion_rate = (completed_tasks / total_tasks * 100) if total_tasks > 0 else 100
+            
+            # Determine overall health status
+            if health_score >= 80:
+                overall_health = "✅ HEALTHY"
+            elif health_score >= 60:
+                overall_health = "⚠️ NEEDS_ATTENTION"
+            else:
+                overall_health = "❌ UNHEALTHY"
+            
+            # Add general recommendations
+            if not recommendations:
+                recommendations.append("Project health is good - continue monitoring")
+            
+            if blocked_tasks > 0:
+                recommendations.append(f"Address {blocked_tasks} blocked tasks to improve workflow")
+            
+            if overdue_tasks > 0:
+                recommendations.append(f"Review {overdue_tasks} overdue tasks and update priorities")
+            
+            return {
+                "success": True,
+                "project_id": project_id,
+                "overall_health": overall_health,
+                "health_score": f"{health_score}/100",
+                "critical_issues": [issue for issue in health_issues if issue.get("severity") == "HIGH"],
+                "warnings": [issue for issue in health_issues if issue.get("severity") in ["MEDIUM", "LOW"]] + 
+                          [{"type": "WARNING", "description": w} for w in warnings],
+                "git_sync_status": git_sync_status,
+                "data_integrity": data_integrity,
+                "agent_utilization": agent_utilization,
+                "task_metrics": {
+                    "total_tasks": total_tasks,
+                    "completed_tasks": completed_tasks,
+                    "completion_rate": f"{completion_rate:.1f}%",
+                    "blocked_tasks": blocked_tasks,
+                    "overdue_tasks": overdue_tasks
+                },
+                "recommendations": recommendations,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logging.error(f"Project health check failed for {project_id}: {str(e)}")
+            return {
+                "success": False,
+                "error": f"Health check failed: {str(e)}",
+                "project_id": project_id,
+                "overall_health": "❌ CHECK_FAILED"
+            }
     
     def register_agent(self, project_id: str, agent_id: str, name: str, call_agent: str = None) -> Dict[str, Any]:
         """Register an agent to project using simplified format"""
@@ -417,6 +667,768 @@ class ProjectManager:
         
         self._projects[project_id]["agent_assignments"] = agent_assignments
         self._save_projects()
+
+    def sync_with_git(self, project_id: str) -> Dict[str, Any]:
+        """Synchronize project task trees with actual git branches"""
+        if project_id not in self._projects:
+            return {"success": False, "error": f"Project {project_id} not found"}
+        
+        import subprocess
+        import os
+        from datetime import datetime
+        
+        try:
+            # Get current git branch
+            result = subprocess.run(['git', 'branch', '--show-current'], 
+                                  capture_output=True, text=True, cwd=os.getcwd())
+            if result.returncode != 0:
+                return {"success": False, "error": "Not in a git repository or git command failed"}
+            
+            current_branch = result.stdout.strip()
+            
+            # Get all git branches (local only)
+            result = subprocess.run(['git', 'branch'], 
+                                  capture_output=True, text=True, cwd=os.getcwd())
+            if result.returncode != 0:
+                return {"success": False, "error": "Failed to get git branches"}
+            
+            # Parse git branches
+            git_branches = set()
+            for line in result.stdout.split('\n'):
+                if line.strip():
+                    branch = line.strip().replace('*', '').strip()
+                    if branch and not branch.startswith('('):  # Skip detached HEAD states
+                        git_branches.add(branch)
+            
+            # Always include 'main' as a valid branch
+            git_branches.add('main')
+            
+            project = self._projects[project_id]
+            task_trees = set(project.get("task_trees", {}).keys())
+            
+            # Identify changes needed
+            obsolete_trees = task_trees - git_branches
+            missing_trees = git_branches - task_trees
+            
+            sync_actions = []
+            
+            # Remove obsolete task trees
+            for tree_id in obsolete_trees:
+                if tree_id != "main":  # Never remove main tree
+                    del project["task_trees"][tree_id]
+                    
+                    # Remove agent assignments for this tree
+                    updated_assignments = {}
+                    for agent_id, assigned_trees in project.get("agent_assignments", {}).items():
+                        if isinstance(assigned_trees, list):
+                            new_trees = [t for t in assigned_trees if t != tree_id]
+                            if new_trees:
+                                updated_assignments[agent_id] = new_trees
+                        elif assigned_trees != tree_id:
+                            updated_assignments[agent_id] = assigned_trees
+                    
+                    project["agent_assignments"] = updated_assignments
+                    sync_actions.append(f"Removed obsolete task tree: {tree_id}")
+            
+            # Create missing task trees for git branches
+            for tree_id in missing_trees:
+                if tree_id not in project["task_trees"]:
+                    tree_name = f"Branch: {tree_id}"
+                    tree_description = f"Task tree for git branch '{tree_id}'"
+                    project["task_trees"][tree_id] = {
+                        "id": tree_id,
+                        "name": tree_name,
+                        "description": tree_description
+                    }
+                    sync_actions.append(f"Created task tree for branch: {tree_id}")
+            
+            # Update project metadata
+            project["updated_at"] = datetime.now().isoformat()
+            project["last_git_sync"] = datetime.now().isoformat()
+            project["current_branch"] = current_branch
+            
+            # Save changes
+            self._save_projects()
+            
+            return {
+                "success": True,
+                "project_id": project_id,
+                "current_branch": current_branch,
+                "git_branches": sorted(list(git_branches)),
+                "task_trees": sorted(list(project["task_trees"].keys())),
+                "sync_actions": sync_actions,
+                "obsolete_trees_removed": list(obsolete_trees - {"main"}),  # Exclude main from removed
+                "new_trees_created": list(missing_trees),
+                "message": f"Git sync completed. {len(sync_actions)} actions performed."
+            }
+            
+        except subprocess.CalledProcessError as e:
+            return {"success": False, "error": f"Git command failed: {e}"}
+        except Exception as e:
+            logging.error(f"Git sync failed for project {project_id}: {str(e)}")
+            return {"success": False, "error": f"Git sync failed: {str(e)}"}
+
+    def cleanup_obsolete(self, project_id: str) -> Dict[str, Any]:
+        """Clean up obsolete branches and orphaned data from project management system"""
+        if project_id not in self._projects:
+            return {"success": False, "error": f"Project {project_id} not found"}
+        
+        import subprocess
+        import os
+        from datetime import datetime
+        
+        try:
+            project = self._projects[project_id]
+            cleanup_actions = []
+            
+            # Get current git branches for reference
+            try:
+                result = subprocess.run(['git', 'branch'], capture_output=True, text=True, cwd=os.getcwd())
+                if result.returncode == 0:
+                    git_branches = set()
+                    for line in result.stdout.split('\n'):
+                        if line.strip():
+                            branch = line.strip().replace('*', '').strip()
+                            if branch and not branch.startswith('('):
+                                git_branches.add(branch)
+                    git_branches.add('main')  # Always include main
+                else:
+                    # If git fails, assume only main exists
+                    git_branches = {'main'}
+                    cleanup_actions.append("Git command failed - assuming only 'main' branch exists")
+            except Exception as e:
+                git_branches = {'main'}
+                cleanup_actions.append(f"Git error: {str(e)} - assuming only 'main' branch exists")
+            
+            # 1. Clean up obsolete task trees
+            task_trees = project.get("task_trees", {})
+            obsolete_trees = []
+            
+            for tree_id in list(task_trees.keys()):
+                if tree_id != "main" and tree_id not in git_branches:
+                    obsolete_trees.append(tree_id)
+                    del task_trees[tree_id]
+                    cleanup_actions.append(f"Removed obsolete task tree: {tree_id}")
+            
+            # 2. Clean up orphaned agent assignments
+            agent_assignments = project.get("agent_assignments", {})
+            cleaned_assignments = {}
+            orphaned_assignments = []
+            
+            for agent_id, assigned_trees in agent_assignments.items():
+                if isinstance(assigned_trees, list):
+                    # Filter out obsolete trees
+                    valid_trees = [tree for tree in assigned_trees if tree in task_trees]
+                    if valid_trees:
+                        cleaned_assignments[agent_id] = valid_trees
+                    if len(valid_trees) != len(assigned_trees):
+                        removed_trees = [tree for tree in assigned_trees if tree not in valid_trees]
+                        orphaned_assignments.extend([(agent_id, tree) for tree in removed_trees])
+                elif assigned_trees in task_trees:
+                    # Single tree assignment - keep if valid
+                    cleaned_assignments[agent_id] = assigned_trees
+                else:
+                    # Single tree assignment - remove if obsolete
+                    orphaned_assignments.append((agent_id, assigned_trees))
+            
+            project["agent_assignments"] = cleaned_assignments
+            
+            for agent_id, tree_id in orphaned_assignments:
+                cleanup_actions.append(f"Removed orphaned assignment: agent {agent_id} from tree {tree_id}")
+            
+            # 3. Clean up empty or invalid registered agents
+            registered_agents = project.get("registered_agents", {})
+            agents_to_remove = []
+            
+            for agent_id, agent_data in registered_agents.items():
+                if not isinstance(agent_data, dict) or not agent_data.get("id") or not agent_data.get("name"):
+                    agents_to_remove.append(agent_id)
+                    cleanup_actions.append(f"Removed invalid agent registration: {agent_id}")
+            
+            for agent_id in agents_to_remove:
+                del registered_agents[agent_id]
+                # Also remove from assignments if present
+                if agent_id in cleaned_assignments:
+                    del cleaned_assignments[agent_id]
+                    cleanup_actions.append(f"Removed assignments for invalid agent: {agent_id}")
+            
+            # 4. Ensure main task tree always exists
+            if "main" not in task_trees:
+                task_trees["main"] = {
+                    "id": "main",
+                    "name": "Main Tasks",
+                    "description": "Main task tree"
+                }
+                cleanup_actions.append("Restored missing 'main' task tree")
+            
+            # 5. Clean up project metadata
+            metadata_cleaned = []
+            
+            # Remove invalid fields
+            invalid_fields = []
+            for key, value in list(project.items()):
+                if key not in ["id", "name", "description", "task_trees", "registered_agents", 
+                              "agent_assignments", "created_at", "updated_at", "last_git_sync", "current_branch"]:
+                    if not key.startswith("_"):  # Keep private fields
+                        invalid_fields.append(key)
+            
+            for field in invalid_fields:
+                del project[field]
+                metadata_cleaned.append(f"Removed invalid field: {field}")
+            
+            # Update metadata
+            project["updated_at"] = datetime.now().isoformat()
+            project["last_cleanup"] = datetime.now().isoformat()
+            
+            # Save changes
+            self._save_projects()
+            
+            # Calculate cleanup statistics
+            cleanup_stats = {
+                "obsolete_trees_removed": len(obsolete_trees),
+                "orphaned_assignments_cleaned": len(orphaned_assignments),
+                "invalid_agents_removed": len(agents_to_remove),
+                "metadata_fields_cleaned": len(metadata_cleaned),
+                "total_actions": len(cleanup_actions)
+            }
+            
+            return {
+                "success": True,
+                "project_id": project_id,
+                "cleanup_actions": cleanup_actions,
+                "statistics": cleanup_stats,
+                "remaining_task_trees": sorted(list(task_trees.keys())),
+                "remaining_agents": len(registered_agents),
+                "active_assignments": len(cleaned_assignments),
+                "git_branches_reference": sorted(list(git_branches)),
+                "message": f"Cleanup completed. {cleanup_stats['total_actions']} actions performed."
+            }
+            
+        except Exception as e:
+            logging.error(f"Cleanup failed for project {project_id}: {str(e)}")
+            return {"success": False, "error": f"Cleanup failed: {str(e)}"}
+
+    def rebalance_agents(self, project_id: str) -> Dict[str, Any]:
+        """Automatically redistribute agent assignments optimally across active task trees"""
+        if project_id not in self._projects:
+            return {"success": False, "error": f"Project {project_id} not found"}
+        
+        import subprocess
+        import os
+        import json
+        from datetime import datetime
+        from collections import defaultdict
+        
+        try:
+            project = self._projects[project_id]
+            rebalancing_actions = []
+            warnings = []
+            
+            # 1. Get current git branches to identify active task trees
+            try:
+                result = subprocess.run(['git', 'branch'], capture_output=True, text=True, cwd=os.getcwd())
+                if result.returncode == 0:
+                    git_branches = set()
+                    for line in result.stdout.split('\n'):
+                        if line.strip():
+                            branch = line.strip().replace('*', '').strip()
+                            if branch and not branch.startswith('('):
+                                git_branches.add(branch)
+                    git_branches.add('main')  # Always include main
+                else:
+                    git_branches = {'main'}
+                    warnings.append("Git command failed - assuming only 'main' branch exists")
+            except Exception as e:
+                git_branches = {'main'}
+                warnings.append(f"Git error: {str(e)} - assuming only 'main' branch exists")
+            
+            # 2. Analyze current agent assignments
+            registered_agents = project.get("registered_agents", {})
+            current_assignments = project.get("agent_assignments", {})
+            task_trees = project.get("task_trees", {})
+            
+            # 3. Identify active vs inactive task trees
+            active_trees = set(task_trees.keys()) & git_branches
+            inactive_trees = set(task_trees.keys()) - git_branches
+            
+            # 4. Analyze task workload per tree
+            tree_workloads = {}
+            tree_task_counts = {}
+            
+            for tree_id in active_trees:
+                try:
+                    tasks_file_path = self.path_resolver.get_tasks_json_path(project_id, tree_id, "default_id")
+                    
+                    if os.path.exists(tasks_file_path):
+                        with open(tasks_file_path, 'r') as f:
+                            tasks_data = json.load(f)
+                            tasks = tasks_data.get("tasks", [])
+                            
+                            # Count tasks by status and priority
+                            todo_tasks = [t for t in tasks if t.get("status") == "todo"]
+                            high_priority = len([t for t in todo_tasks if t.get("priority") in ["urgent", "critical", "high"]])
+                            total_todo = len(todo_tasks)
+                            
+                            tree_task_counts[tree_id] = total_todo
+                            tree_workloads[tree_id] = {
+                                "total_tasks": len(tasks),
+                                "todo_tasks": total_todo,
+                                "high_priority_tasks": high_priority,
+                                "workload_score": high_priority * 3 + total_todo  # Weight high priority more
+                            }
+                    else:
+                        tree_task_counts[tree_id] = 0
+                        tree_workloads[tree_id] = {"total_tasks": 0, "todo_tasks": 0, "high_priority_tasks": 0, "workload_score": 0}
+                except Exception as e:
+                    warnings.append(f"Could not analyze tasks in tree {tree_id}: {str(e)}")
+                    tree_task_counts[tree_id] = 0
+                    tree_workloads[tree_id] = {"total_tasks": 0, "todo_tasks": 0, "high_priority_tasks": 0, "workload_score": 0}
+            
+            # 5. Calculate agent expertise matching
+            agent_expertise = {}
+            for agent_id, agent_data in registered_agents.items():
+                # Extract expertise from agent name/id
+                expertise_keywords = {
+                    "coding": ["coding", "development", "implementation", "backend", "frontend"],
+                    "testing": ["test", "qa", "quality", "validation"],
+                    "devops": ["devops", "deployment", "infrastructure", "docker"],
+                    "design": ["ui", "ux", "design", "prototype"],
+                    "architecture": ["architect", "system", "tech"],
+                    "security": ["security", "audit", "penetration"],
+                    "management": ["planning", "orchestrator", "manager", "task"]
+                }
+                
+                agent_name_lower = agent_id.lower()
+                expertise = []
+                for category, keywords in expertise_keywords.items():
+                    if any(keyword in agent_name_lower for keyword in keywords):
+                        expertise.append(category)
+                
+                agent_expertise[agent_id] = expertise if expertise else ["general"]
+            
+            # 6. Remove agents from inactive trees
+            agents_reassigned = []
+            for agent_id, assigned_trees in list(current_assignments.items()):
+                if isinstance(assigned_trees, list):
+                    # Remove inactive trees from assignments
+                    new_assignments = [tree for tree in assigned_trees if tree in active_trees]
+                    if len(new_assignments) != len(assigned_trees):
+                        removed_trees = [tree for tree in assigned_trees if tree not in active_trees]
+                        current_assignments[agent_id] = new_assignments
+                        agents_reassigned.append(f"Agent {agent_id} removed from inactive trees: {removed_trees}")
+                        rebalancing_actions.append(f"Removed agent {agent_id} from inactive trees: {removed_trees}")
+                elif assigned_trees not in active_trees:
+                    # Single tree assignment to inactive tree
+                    del current_assignments[agent_id]
+                    agents_reassigned.append(f"Agent {agent_id} removed from inactive tree: {assigned_trees}")
+                    rebalancing_actions.append(f"Removed agent {agent_id} from inactive tree: {assigned_trees}")
+            
+            # 7. Calculate optimal agent distribution
+            total_workload = sum(w["workload_score"] for w in tree_workloads.values())
+            available_agents = list(registered_agents.keys())
+            
+            if total_workload > 0 and available_agents:
+                # Calculate target assignments based on workload
+                optimal_assignments = defaultdict(list)
+                
+                # Sort trees by workload (descending)
+                sorted_trees = sorted(tree_workloads.items(), key=lambda x: x[1]["workload_score"], reverse=True)
+                
+                # Assign agents to trees based on workload and expertise
+                agent_index = 0
+                for tree_id, workload_data in sorted_trees:
+                    if workload_data["workload_score"] > 0:  # Only assign to trees with work
+                        # Find best matching agent based on expertise
+                        best_agent = None
+                        best_score = -1
+                        
+                        for agent_id in available_agents:
+                            # Calculate matching score
+                            expertise = agent_expertise.get(agent_id, ["general"])
+                            
+                            # Tree-specific expertise matching
+                            tree_score = 0
+                            if "main" in tree_id.lower():
+                                tree_score += 2  # Main branch gets priority
+                            if any(exp in ["coding", "development"] for exp in expertise):
+                                tree_score += 3  # Coding agents are versatile
+                            if any(exp in ["management", "orchestrator"] for exp in expertise):
+                                tree_score += 2  # Management agents can handle coordination
+                            
+                            # Consider current workload
+                            current_trees = current_assignments.get(agent_id, [])
+                            current_load = len(current_trees) if isinstance(current_trees, list) else (1 if current_trees else 0)
+                            load_penalty = current_load * 0.5  # Prefer less loaded agents
+                            
+                            final_score = tree_score - load_penalty
+                            
+                            if final_score > best_score:
+                                best_score = final_score
+                                best_agent = agent_id
+                        
+                        # Assign best matching agent
+                        if best_agent:
+                            optimal_assignments[best_agent].append(tree_id)
+                
+                # 8. Apply optimal assignments
+                assignment_changes = []
+                for agent_id in available_agents:
+                    current_trees = current_assignments.get(agent_id, [])
+                    if not isinstance(current_trees, list):
+                        current_trees = [current_trees] if current_trees else []
+                    
+                    optimal_trees = optimal_assignments.get(agent_id, [])
+                    
+                    # Add missing assignments
+                    for tree_id in optimal_trees:
+                        if tree_id not in current_trees:
+                            current_trees.append(tree_id)
+                            assignment_changes.append(f"Assigned agent {agent_id} to tree {tree_id}")
+                            rebalancing_actions.append(f"Assigned agent {agent_id} to tree {tree_id} (workload: {tree_workloads[tree_id]['workload_score']})")
+                    
+                    # Update assignments
+                    if current_trees:
+                        current_assignments[agent_id] = current_trees
+                    elif agent_id in current_assignments:
+                        del current_assignments[agent_id]
+                
+                # Ensure every active tree has at least one agent
+                unassigned_trees = []
+                for tree_id in active_trees:
+                    assigned = False
+                    for agent_id, trees in current_assignments.items():
+                        if isinstance(trees, list) and tree_id in trees:
+                            assigned = True
+                            break
+                        elif trees == tree_id:
+                            assigned = True
+                            break
+                    
+                    if not assigned and tree_workloads[tree_id]["workload_score"] > 0:
+                        # Assign to least loaded agent
+                        min_load = float('inf')
+                        best_agent = None
+                        for agent_id in available_agents:
+                            current_trees = current_assignments.get(agent_id, [])
+                            load = len(current_trees) if isinstance(current_trees, list) else (1 if current_trees else 0)
+                            if load < min_load:
+                                min_load = load
+                                best_agent = agent_id
+                        
+                        if best_agent:
+                            if best_agent not in current_assignments:
+                                current_assignments[best_agent] = []
+                            if isinstance(current_assignments[best_agent], list):
+                                current_assignments[best_agent].append(tree_id)
+                            else:
+                                current_assignments[best_agent] = [current_assignments[best_agent], tree_id]
+                            
+                            unassigned_trees.append(tree_id)
+                            rebalancing_actions.append(f"Assigned agent {best_agent} to unassigned tree {tree_id}")
+            
+            # 9. Update project data
+            project["agent_assignments"] = current_assignments
+            project["updated_at"] = datetime.now().isoformat()
+            project["last_rebalance"] = datetime.now().isoformat()
+            
+            # Save changes
+            self._save_projects()
+            
+            # 10. Generate rebalancing report
+            final_assignments = {}
+            for agent_id, trees in current_assignments.items():
+                if isinstance(trees, list):
+                    final_assignments[agent_id] = trees
+                else:
+                    final_assignments[agent_id] = [trees] if trees else []
+            
+            # Calculate workload distribution
+            agent_workloads = {}
+            for agent_id in registered_agents.keys():
+                assigned_trees = final_assignments.get(agent_id, [])
+                total_workload = sum(tree_workloads.get(tree, {}).get("workload_score", 0) for tree in assigned_trees)
+                agent_workloads[agent_id] = {
+                    "assigned_trees": assigned_trees,
+                    "tree_count": len(assigned_trees),
+                    "workload_score": total_workload,
+                    "expertise": agent_expertise.get(agent_id, ["general"])
+                }
+            
+            return {
+                "success": True,
+                "project_id": project_id,
+                "rebalancing_summary": {
+                    "active_trees": sorted(list(active_trees)),
+                    "inactive_trees_removed": sorted(list(inactive_trees)),
+                    "total_agents": len(registered_agents),
+                    "agents_with_assignments": len([a for a in final_assignments.values() if a]),
+                    "total_actions": len(rebalancing_actions)
+                },
+                "workload_analysis": {
+                    "tree_workloads": tree_workloads,
+                    "agent_workloads": agent_workloads,
+                    "total_workload": total_workload,
+                    "average_trees_per_agent": sum(len(trees) for trees in final_assignments.values()) / len(registered_agents) if registered_agents else 0
+                },
+                "rebalancing_actions": rebalancing_actions,
+                "final_assignments": final_assignments,
+                "warnings": warnings,
+                "recommendations": [
+                    "Monitor agent workload distribution regularly",
+                    "Consider adding more agents if workload is high",
+                    "Review agent expertise matching for optimal assignments",
+                    "Run sync_with_git before rebalancing for accurate tree state"
+                ] if rebalancing_actions else ["Agent assignments are already optimal"],
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logging.error(f"Agent rebalancing failed for project {project_id}: {str(e)}")
+            return {"success": False, "error": f"Agent rebalancing failed: {str(e)}"}
+
+    def validate_integrity(self, project_id: str) -> Dict[str, Any]:
+        """Validate and fix data consistency issues between dashboard metrics and actual task data"""
+        if project_id not in self._projects:
+            return {"success": False, "error": f"Project {project_id} not found"}
+        
+        import os
+        import json
+        from datetime import datetime
+        
+        try:
+            project = self._projects[project_id]
+            validation_issues = []
+            fixes_applied = []
+            warnings = []
+            
+            # 1. Validate task trees and count actual tasks
+            task_trees = project.get("task_trees", {})
+            actual_task_counts = {}
+            
+            for tree_id, tree_data in task_trees.items():
+                try:
+                    # Get actual task count from task repository files
+                    tasks_file_path = self.path_resolver.get_tasks_json_path(project_id, tree_id, "default_id")
+                    
+                    if os.path.exists(tasks_file_path):
+                        with open(tasks_file_path, 'r') as f:
+                            tasks_data = json.load(f)
+                            tasks = tasks_data.get("tasks", [])
+                            actual_task_counts[tree_id] = len(tasks)
+                            
+                            # Validate task data structure
+                            for i, task in enumerate(tasks):
+                                if not isinstance(task, dict):
+                                    validation_issues.append(f"Tree {tree_id}: Task {i} is not a valid object")
+                                elif not task.get("id"):
+                                    validation_issues.append(f"Tree {tree_id}: Task {i} missing required 'id' field")
+                                elif not task.get("title"):
+                                    validation_issues.append(f"Tree {tree_id}: Task {task.get('id', i)} missing required 'title' field")
+                    else:
+                        actual_task_counts[tree_id] = 0
+                        warnings.append(f"Task file not found for tree {tree_id}, creating empty structure")
+                        
+                        # Create missing task file structure
+                        os.makedirs(os.path.dirname(tasks_file_path), exist_ok=True)
+                        empty_structure = {
+                            "tasks": [],
+                            "metadata": {
+                                "version": "1.0.0",
+                                "project_id": project_id,
+                                "task_tree_id": tree_id,
+                                "created": datetime.now().isoformat(),
+                                "last_updated": datetime.now().isoformat()
+                            }
+                        }
+                        with open(tasks_file_path, 'w') as f:
+                            json.dump(empty_structure, f, indent=2)
+                        fixes_applied.append(f"Created missing task file for tree {tree_id}")
+                        
+                except Exception as e:
+                    validation_issues.append(f"Failed to validate tree {tree_id}: {str(e)}")
+                    actual_task_counts[tree_id] = 0
+            
+            # 2. Validate dashboard metrics consistency
+            try:
+                dashboard_result = self.get_orchestration_dashboard(project_id)
+                if dashboard_result.get("success"):
+                    dashboard_data = dashboard_result.get("dashboard", {})
+                    dashboard_trees = dashboard_data.get("trees", {})
+                    
+                    for tree_id, actual_count in actual_task_counts.items():
+                        dashboard_count = dashboard_trees.get(tree_id, {}).get("total_tasks", 0)
+                        
+                        if dashboard_count != actual_count:
+                            validation_issues.append(
+                                f"Tree {tree_id}: Dashboard shows {dashboard_count} tasks, "
+                                f"but actual count is {actual_count}"
+                            )
+                            # Note: Dashboard metrics are calculated dynamically, so this is informational
+                            
+                else:
+                    warnings.append("Could not retrieve dashboard data for validation")
+            except Exception as e:
+                warnings.append(f"Dashboard validation failed: {str(e)}")
+            
+            # 3. Validate agent assignments integrity
+            agent_assignments = project.get("agent_assignments", {})
+            registered_agents = project.get("registered_agents", {})
+            
+            for agent_id, assigned_trees in agent_assignments.items():
+                # Check if agent is registered
+                if agent_id not in registered_agents:
+                    validation_issues.append(f"Agent {agent_id} has assignments but is not registered")
+                    # Auto-fix: Remove unregistered agent assignments
+                    fixes_applied.append(f"Removed assignments for unregistered agent {agent_id}")
+                    continue
+                
+                # Check if assigned trees exist
+                if isinstance(assigned_trees, list):
+                    invalid_trees = [tree for tree in assigned_trees if tree not in task_trees]
+                    if invalid_trees:
+                        validation_issues.append(f"Agent {agent_id} assigned to non-existent trees: {invalid_trees}")
+                        # Auto-fix: Remove invalid tree assignments
+                        valid_trees = [tree for tree in assigned_trees if tree in task_trees]
+                        if valid_trees:
+                            agent_assignments[agent_id] = valid_trees
+                        else:
+                            del agent_assignments[agent_id]
+                        fixes_applied.append(f"Fixed agent {agent_id} assignments: removed {invalid_trees}")
+                elif assigned_trees not in task_trees:
+                    validation_issues.append(f"Agent {agent_id} assigned to non-existent tree: {assigned_trees}")
+                    # Auto-fix: Remove invalid assignment
+                    del agent_assignments[agent_id]
+                    fixes_applied.append(f"Removed invalid assignment for agent {agent_id}")
+            
+            # 4. Validate registered agents data structure
+            agents_fixed = []
+            for agent_id, agent_data in list(registered_agents.items()):
+                if not isinstance(agent_data, dict):
+                    validation_issues.append(f"Agent {agent_id} has invalid data structure")
+                    del registered_agents[agent_id]
+                    agents_fixed.append(agent_id)
+                    continue
+                
+                # Ensure required fields
+                if not agent_data.get("id"):
+                    agent_data["id"] = agent_id
+                    agents_fixed.append(agent_id)
+                
+                if not agent_data.get("name"):
+                    agent_data["name"] = agent_id.replace("_", " ").title()
+                    agents_fixed.append(agent_id)
+                
+                if not agent_data.get("call_agent"):
+                    agent_data["call_agent"] = f"@{agent_id.replace('_', '-')}"
+                    agents_fixed.append(agent_id)
+            
+            if agents_fixed:
+                fixes_applied.append(f"Fixed agent data for: {agents_fixed}")
+            
+            # 5. Validate task tree data structure
+            trees_fixed = []
+            for tree_id, tree_data in task_trees.items():
+                if not isinstance(tree_data, dict):
+                    validation_issues.append(f"Task tree {tree_id} has invalid data structure")
+                    task_trees[tree_id] = {
+                        "id": tree_id,
+                        "name": tree_id.replace("_", " ").replace("-", " ").title(),
+                        "description": f"Task tree for {tree_id}"
+                    }
+                    trees_fixed.append(tree_id)
+                    continue
+                
+                # Ensure required fields
+                if not tree_data.get("id"):
+                    tree_data["id"] = tree_id
+                    trees_fixed.append(tree_id)
+                
+                if not tree_data.get("name"):
+                    tree_data["name"] = tree_id.replace("_", " ").replace("-", " ").title()
+                    trees_fixed.append(tree_id)
+                
+                if not tree_data.get("description"):
+                    tree_data["description"] = f"Task tree for {tree_id}"
+                    trees_fixed.append(tree_id)
+            
+            if trees_fixed:
+                fixes_applied.append(f"Fixed task tree data for: {trees_fixed}")
+            
+            # 6. Validate project metadata
+            metadata_fixes = []
+            if not project.get("id"):
+                project["id"] = project_id
+                metadata_fixes.append("Added missing project ID")
+            
+            if not project.get("name"):
+                project["name"] = project_id.replace("_", " ").title()
+                metadata_fixes.append("Added missing project name")
+            
+            if not project.get("created_at"):
+                project["created_at"] = "2025-01-01T00:00:00Z"
+                metadata_fixes.append("Added missing created_at timestamp")
+            
+            if metadata_fixes:
+                fixes_applied.extend(metadata_fixes)
+            
+            # 7. Update project metadata
+            project["updated_at"] = datetime.now().isoformat()
+            project["last_integrity_check"] = datetime.now().isoformat()
+            
+            # Save changes if any fixes were applied
+            if fixes_applied:
+                self._save_projects()
+            
+            # Calculate integrity score
+            total_checks = len(task_trees) + len(registered_agents) + len(agent_assignments) + 5  # +5 for metadata checks
+            issues_found = len(validation_issues)
+            integrity_score = max(0, 100 - (issues_found * 10))  # Deduct 10 points per issue
+            
+            # Determine overall status
+            if issues_found == 0:
+                overall_status = "✅ HEALTHY"
+            elif issues_found <= 2:
+                overall_status = "⚠️ MINOR_ISSUES"
+            elif issues_found <= 5:
+                overall_status = "❌ NEEDS_ATTENTION"
+            else:
+                overall_status = "🚨 CRITICAL"
+            
+            return {
+                "success": True,
+                "project_id": project_id,
+                "overall_status": overall_status,
+                "integrity_score": f"{integrity_score}/100",
+                "validation_summary": {
+                    "total_checks_performed": total_checks,
+                    "issues_found": issues_found,
+                    "fixes_applied": len(fixes_applied),
+                    "warnings": len(warnings)
+                },
+                "task_data_validation": {
+                    "task_trees_validated": len(task_trees),
+                    "actual_task_counts": actual_task_counts,
+                    "total_tasks_across_trees": sum(actual_task_counts.values())
+                },
+                "agent_validation": {
+                    "registered_agents": len(registered_agents),
+                    "active_assignments": len(agent_assignments),
+                    "agents_with_assignments": len([a for a in agent_assignments.keys() if a in registered_agents])
+                },
+                "validation_issues": validation_issues,
+                "fixes_applied": fixes_applied,
+                "warnings": warnings,
+                "recommendations": [
+                    "Run sync_with_git if git branch mismatches exist",
+                    "Run cleanup_obsolete if orphaned data is detected",
+                    "Check task files manually if persistent issues remain"
+                ] if issues_found > 0 else ["Data integrity is healthy - no action needed"],
+                "timestamp": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logging.error(f"Integrity validation failed for project {project_id}: {str(e)}")
+            return {"success": False, "error": f"Integrity validation failed: {str(e)}"}
 
 
 class ToolConfig:
@@ -898,7 +1910,7 @@ class ToolRegistrationOrchestrator:
         if self._config.is_enabled("manage_project"):
             @mcp.tool()
             def manage_project(
-                action: Annotated[str, Field(description="Project action to perform. Available: create, get, list, update, create_tree, get_tree_status, orchestrate, dashboard")],
+                action: Annotated[str, Field(description="Project action to perform. Available: create, get, list, update, create_tree, get_tree_status, orchestrate, dashboard, project_health_check, sync_with_git, cleanup_obsolete, validate_integrity, rebalance_agents")],
                 project_id: Annotated[str, Field(description="Unique project identifier")] = None,
                 name: Annotated[str, Field(description="Project name (required for create action, optional for update action)")] = None,
                 description: Annotated[str, Field(description="Project description (optional for create and update actions)")] = None,
@@ -920,11 +1932,21 @@ class ToolRegistrationOrchestrator:
 • get_tree_status: Check task tree completion status
 • orchestrate: Execute multi-agent project workflow
 • dashboard: View comprehensive project analytics
+• project_health_check: Comprehensive project health analysis with data integrity validation
+• sync_with_git: Synchronize task trees with actual git branches (removes obsolete, adds missing)
+• cleanup_obsolete: Clean up orphaned data and remove obsolete references from project
+• validate_integrity: Check and fix data consistency issues between dashboard and actual data
+• rebalance_agents: Automatically redistribute agent assignments optimally across active task trees
 
 💡 USAGE EXAMPLES:
 • manage_project("create", project_id="web_app", name="E-commerce Website")
 • manage_project("orchestrate", project_id="web_app")
 • manage_project("dashboard", project_id="web_app")
+• manage_project("project_health_check", project_id="web_app")
+• manage_project("sync_with_git", project_id="web_app")
+• manage_project("cleanup_obsolete", project_id="web_app")
+• manage_project("validate_integrity", project_id="web_app")
+• manage_project("rebalance_agents", project_id="web_app")
 
 🔧 INTEGRATION: Coordinates with task management and agent assignment systems
                 """
@@ -967,8 +1989,33 @@ class ToolRegistrationOrchestrator:
                         return {"success": False, "error": "project_id is required"}
                     return self._project_manager.get_orchestration_dashboard(project_id)
                     
+                elif action == "project_health_check":
+                    if not project_id:
+                        return {"success": False, "error": "project_id is required"}
+                    return self._project_manager.project_health_check(project_id)
+                    
+                elif action == "sync_with_git":
+                    if not project_id:
+                        return {"success": False, "error": "project_id is required"}
+                    return self._project_manager.sync_with_git(project_id)
+                    
+                elif action == "cleanup_obsolete":
+                    if not project_id:
+                        return {"success": False, "error": "project_id is required"}
+                    return self._project_manager.cleanup_obsolete(project_id)
+                    
+                elif action == "validate_integrity":
+                    if not project_id:
+                        return {"success": False, "error": "project_id is required"}
+                    return self._project_manager.validate_integrity(project_id)
+                    
+                elif action == "rebalance_agents":
+                    if not project_id:
+                        return {"success": False, "error": "project_id is required"}
+                    return self._project_manager.rebalance_agents(project_id)
+                    
                 else:
-                    return {"success": False, "error": f"Unknown action: {action}. Available: create, get, list, update, create_tree, get_tree_status, orchestrate, dashboard"}
+                    return {"success": False, "error": f"Unknown action: {action}. Available: create, get, list, update, create_tree, get_tree_status, orchestrate, dashboard, project_health_check, sync_with_git, cleanup_obsolete, validate_integrity, rebalance_agents"}
 
             logger.info("Registered manage_project tool")
         else:

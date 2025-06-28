@@ -193,12 +193,21 @@ class DoNextUseCase:
         return filtered_tasks
     
     def _sort_tasks_by_priority(self, tasks: List) -> List:
-        """Sort tasks by priority (high > medium > low) then by status (todo > in_progress)"""
-        priority_order = {"critical": -1, "high": 0, "medium": 1, "low": 2}
+        """Sort tasks by priority (critical > urgent > high > medium > low) then by status (todo > in_progress)"""
+        # Use inverted priority levels since sorted() sorts ascending but we want highest priority first
+        # PriorityLevel: LOW=1, MEDIUM=2, HIGH=3, URGENT=4, CRITICAL=5
+        # Inverted for descending sort: CRITICAL=0, URGENT=1, HIGH=2, MEDIUM=3, LOW=4
+        priority_order = {
+            "critical": 0,
+            "urgent": 1, 
+            "high": 2,
+            "medium": 3,
+            "low": 4
+        }
         status_order = {"todo": 0, "in_progress": 1}
         
         return sorted(tasks, key=lambda task: (
-            priority_order.get(task.priority.value, 3),
+            priority_order.get(task.priority.value, 5),  # Unknown priorities get lowest priority
             status_order.get(task.status.value, 2)
         ))
     

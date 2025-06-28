@@ -86,7 +86,14 @@ class TaskTree:
             return None
         
         # Sort by priority and return highest priority task
-        priority_order = {"high": 3, "medium": 2, "low": 1}
+        # PriorityLevel: LOW=1, MEDIUM=2, HIGH=3, URGENT=4, CRITICAL=5
+        priority_order = {
+            "critical": 5,
+            "urgent": 4,
+            "high": 3,
+            "medium": 2,
+            "low": 1
+        }
         available_tasks.sort(
             key=lambda t: (priority_order.get(t.priority.value, 0), t.created_at),
             reverse=True

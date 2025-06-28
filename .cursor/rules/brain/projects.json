@@ -9,11 +9,6 @@
         "name": "Main Tasks",
         "description": "Main task tree"
       },
-      "v1.0.0beta": {
-        "id": "v1.0.0beta",
-        "name": "Version 1.0.0 Beta Development",
-        "description": "Current development branch focusing on beta testing, test suite stabilization, and performance optimization."
-      },
       "v1.0.5dev": {
         "id": "v1.0.5dev",
         "name": "Version 1.0.5 Development - Cloud Scaling Architecture",
@@ -63,12 +58,6 @@
       }
     },
     "agent_assignments": {
-      "coding_agent": [
-        "v1.0.0beta"
-      ],
-      "test_orchestrator_agent": [
-        "v1.0.0beta"
-      ],
       "system_architect_agent": [
         "v1.0.5dev"
       ],
@@ -77,10 +66,17 @@
       ],
       "health_monitor_agent": [
         "v1.0.5dev"
+      ],
+      "coding_agent": [
+        "v1.0.5dev"
       ]
     },
     "created_at": "2025-01-01T00:00:00Z",
-    "updated_at": "2025-06-27T11:53:05.032210"
+    "updated_at": "2025-06-28T08:36:51.893315",
+    "last_git_sync": "2025-06-28T08:17:25.672812",
+    "current_branch": "v1.0.5dev",
+    "last_cleanup": "2025-06-28T08:17:31.800519",
+    "last_rebalance": "2025-06-28T08:36:51.893321"
   },
   "chaxiaiv2_dashboard_enhancements": {
     "id": "chaxiaiv2_dashboard_enhancements",
