@@ -1,9 +1,9 @@
 ---
-description: How using call_agent()
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
-# Specialized AI Agents for Cursor
+# Specialized AI Agents
 
 This file contains specialized AI agents converted from the DafnckMachine agent system.
 Each agent has specific expertise and can be invoked using @agent-name syntax.
