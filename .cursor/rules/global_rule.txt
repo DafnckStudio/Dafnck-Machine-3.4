@@ -10,7 +10,7 @@ grep_search: Search in the codebase based on a specific creator
 list_dir: Get a list of files and folders in a specific directory”
 
 - ALWAYS edit file in small chunks
-- ALWAYS read `.cursor/rules/dhafnck_mcp.mdc` first
+- ALWAYS read `.cursor/settings.json` first
 - ALWAYS use sequential-thinking mcp for complex request or tasks
 - ALWAYS ask default_user before creating new files
 
