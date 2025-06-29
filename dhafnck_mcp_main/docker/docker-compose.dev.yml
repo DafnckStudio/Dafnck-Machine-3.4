@@ -10,12 +10,19 @@ services:
     environment:
       - FASTMCP_LOG_LEVEL=DEBUG
       - FASTMCP_ENABLE_RICH_TRACEBACKS=1
+      # Python development settings
+      - PYTHONDONTWRITEBYTECODE=1  # Don't create .pyc files
+      - PYTHONUNBUFFERED=1         # Unbuffered output for better logging
+      # Development mode indicators
+      - DEVELOPMENT_MODE=true
+      - HOT_RELOAD=true
     
     # Mount source code for live reload
     volumes:
       - ./src:/app/src:ro
-      - ./pyproject.toml:/app/pyproject.toml:ro
-      - ./uv.lock:/app/uv.lock:ro
+      - ./tests:/app/tests:ro  # Mount tests for in-container testing
+      # Mount rule files from parent project for development
+      - ../00_RULES:/data/rules/mounted:ro  # Your actual rule files
     
     # Remove resource limits for development
     deploy:

@@ -147,7 +147,7 @@ dual_mode_config = DualModeConfig()
 
 # Convenience functions
 def get_runtime_mode() -> str:
-    """Get current runtime mode"""
+    """Get current runtime mode (with live reload test)"""
     return dual_mode_config.runtime_mode
 
 
