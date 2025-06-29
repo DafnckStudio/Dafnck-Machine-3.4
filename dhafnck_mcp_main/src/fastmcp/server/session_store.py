@@ -20,6 +20,7 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict
 import pickle
 import hashlib
+import uuid
 
 try:
     import redis.asyncio as redis
@@ -185,24 +186,31 @@ class RedisEventStore(EventStore):
     
     async def store_event(
         self,
-        session_id: str,
-        event_type: str,
-        event_data: Dict[str, Any],
-        ttl: Optional[int] = None
-    ) -> bool:
+        stream_id: str,
+        message: JSONRPCMessage
+    ) -> str:
         """Store an event for a session"""
+        # Generate a unique event ID
+        event_id = f"{stream_id}:{int(time.time() * 1000)}:{uuid.uuid4().hex[:8]}"
+        
+        # Create session event from the message
         event = SessionEvent(
-            session_id=session_id,
-            event_type=event_type,
-            event_data=event_data,
+            session_id=stream_id,
+            event_type="message",
+            event_data={
+                "message": message.model_dump() if hasattr(message, 'model_dump') else message.__dict__,
+                "event_id": event_id
+            },
             timestamp=time.time(),
-            ttl=ttl or self.default_ttl
+            ttl=self.default_ttl
         )
         
         if self._using_fallback:
-            return await self._store_event_memory(event)
+            await self._store_event_memory(event)
         else:
-            return await self._store_event_redis(event)
+            await self._store_event_redis(event)
+        
+        return event_id
     
     async def _store_event_redis(self, event: SessionEvent) -> bool:
         """Store event in Redis"""
@@ -512,30 +520,35 @@ class MemoryEventStore(EventStore):
     
     async def store_event(
         self,
-        session_id: str,
-        event_type: str,
-        event_data: Dict[str, Any],
-        ttl: Optional[int] = None
-    ) -> bool:
+        stream_id: str,
+        message: JSONRPCMessage
+    ) -> str:
         """Store an event for a session"""
+        # Generate a unique event ID
+        event_id = f"{stream_id}:{int(time.time() * 1000)}:{uuid.uuid4().hex[:8]}"
+        
+        # Create session event from the message
         event = SessionEvent(
-            session_id=session_id,
-            event_type=event_type,
-            event_data=event_data,
+            session_id=stream_id,
+            event_type="message",
+            event_data={
+                "message": message.model_dump() if hasattr(message, 'model_dump') else message.__dict__,
+                "event_id": event_id
+            },
             timestamp=time.time(),
-            ttl=ttl or self.default_ttl
+            ttl=self.default_ttl
         )
         
-        if session_id not in self._store:
-            self._store[session_id] = []
+        if stream_id not in self._store:
+            self._store[stream_id] = []
         
-        events = self._store[session_id]
+        events = self._store[stream_id]
         events.insert(0, event)
         
         if len(events) > self.max_events_per_session:
-            self._store[session_id] = events[:self.max_events_per_session]
+            self._store[stream_id] = events[:self.max_events_per_session]
         
-        return True
+        return event_id
     
     async def get_events(
         self,

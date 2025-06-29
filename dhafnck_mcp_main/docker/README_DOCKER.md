@@ -587,4 +587,10 @@ tail -f docker/logs/*.log
 **Compatibility**: Docker 20.10+, Docker Compose v2.0+ 
 
 
-docker-compose -f docker/docker-compose.redis.yml down && docker-compose -f docker/docker-compose.redis.yml build --no-cache dhafnck-mcp
+### quickstart
+
+cd dhafnck_mcp_main
+
+docker-compose -f docker/docker-compose.redis.yml down && docker-compose -f docker/docker-compose.redis.yml build --no-cache dhafnck-mcp && ./scripts/manage-docker.sh start
+
+./scripts/manage-docker.sh start

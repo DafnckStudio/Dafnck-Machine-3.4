@@ -55,7 +55,7 @@ services:
       - ./config:/app/config:ro
       
       # Development mode: mount source code (comment out for production)
-      - ../dhafnck_mcp_main/src:/app/src:ro
+      # - ./src:/app/src:ro  # Commented out for self-contained container
     
     # Health check for HTTP mode (check if port is listening)
     healthcheck:

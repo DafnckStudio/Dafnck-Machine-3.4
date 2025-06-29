@@ -145,6 +145,21 @@ health_check() {
     log "   /app/src/fastmcp/server exists: $([ -d '/app/src/fastmcp/server' ] && echo 'YES' || echo 'NO')"
     log "   /app/src/fastmcp/server/mcp_entry_point.py exists: $([ -f '/app/src/fastmcp/server/mcp_entry_point.py' ] && echo 'YES' || echo 'NO')"
     
+    # Debug: Show actual folder structure (2 levels deep)
+    log "🔍 Folder Structure Debug (2 levels):"
+    if [ -d "/app/src" ]; then
+        log "   Contents of /app/src:"
+        find /app/src -maxdepth 2 -type d | sort | while read dir; do
+            log "     📁 $dir"
+        done
+        log "   Files in /app/src:"
+        find /app/src -maxdepth 1 -type f | sort | while read file; do
+            log "     📄 $file"
+        done
+    else
+        log "   ❌ /app/src does not exist!"
+    fi
+    
     # Debug: Show folder structure (2 levels deep)
     log "🔍 Folder Structure Debug (2 levels):"
     if [ -d '/app' ]; then

@@ -30,7 +30,7 @@ COPY src/ src/
 COPY yaml-lib/ yaml-lib/
 
 # Copy rule files (needed for runtime)
-COPY 00_RULES ./00_RULES/
+COPY ../00_RULES ./00_RULES/
 
 # Create virtual environment and install dependencies
 RUN uv venv .venv
