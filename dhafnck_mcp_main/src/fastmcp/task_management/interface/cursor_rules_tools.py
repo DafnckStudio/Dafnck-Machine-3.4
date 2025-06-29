@@ -12,6 +12,7 @@ from ..domain.services import AutoRuleGenerator
 from .enhanced_rule_orchestrator import EnhancedRuleOrchestrator
 
 from fastmcp.tools.tool_path import find_project_root
+from fastmcp.dual_mode_config import dual_mode_config, get_rules_directory, is_http_mode
 
 
 def resolve_path(path, base=None):
@@ -39,33 +40,49 @@ class CursorRulesTools:
         return find_project_root()
     
     def _get_rules_directory_from_settings(self) -> Path:
-        """Get rules directory from settings.json configuration"""
+        """Get rules directory using dual-mode configuration with settings fallback"""
         try:
-            # First try to read from 00_RULES/core/settings.json
-            settings_path = self.project_root / "00_RULES" / "core" / "settings.json"
-            if settings_path.exists():
-                with open(settings_path, 'r', encoding='utf-8') as f:
-                    settings = json.load(f)
-                    rules_path = settings.get("runtime_constants", {}).get("DOCUMENT_RULES_PATH", ".cursor/rules")
+            # First, try using the dual-mode configuration
+            rules_dir = get_rules_directory()
+            if rules_dir.exists():
+                return rules_dir
+            
+            # Fallback: try to read from settings files (stdio mode only)
+            if not is_http_mode():
+                # Try 00_RULES/core/settings.json
+                settings_path = self.project_root / "00_RULES" / "core" / "settings.json"
+                if settings_path.exists():
+                    with open(settings_path, 'r', encoding='utf-8') as f:
+                        settings = json.load(f)
+                        rules_path = settings.get("runtime_constants", {}).get("DOCUMENT_RULES_PATH", "00_RULES")
+                        if os.path.isabs(rules_path):
+                            return Path(rules_path)
+                        return self.project_root / rules_path
+                
+                # Try .cursor/settings.json
+                cursor_settings_path = self.project_root / ".cursor" / "settings.json"
+                if cursor_settings_path.exists():
+                    with open(cursor_settings_path, 'r', encoding='utf-8') as f:
+                        settings = json.load(f)
+                        rules_path = settings.get("runtime_constants", {}).get("DOCUMENT_RULES_PATH", "00_RULES")
+                        if os.path.isabs(rules_path):
+                            return Path(rules_path)
+                        return self.project_root / rules_path
+                
+                # Environment variable override
+                if "DOCUMENT_RULES_PATH" in os.environ:
+                    rules_path = os.environ["DOCUMENT_RULES_PATH"]
+                    if os.path.isabs(rules_path):
+                        return Path(rules_path)
                     return self.project_root / rules_path
             
-            # Fallback to .cursor/settings.json
-            cursor_settings_path = self.project_root / ".cursor" / "settings.json"
-            if cursor_settings_path.exists():
-                with open(cursor_settings_path, 'r', encoding='utf-8') as f:
-                    settings = json.load(f)
-                    rules_path = settings.get("runtime_constants", {}).get("DOCUMENT_RULES_PATH", ".cursor/rules")
-                    return self.project_root / rules_path
-            
-            # Environment variable override
-            if "DOCUMENT_RULES_PATH" in os.environ:
-                return self.project_root / os.environ["DOCUMENT_RULES_PATH"]
+            # Return the dual-mode default even if it doesn't exist yet
+            return rules_dir
                 
         except Exception as e:
-            print(f"Warning: Could not read settings.json: {e}")
-        
-        # Default fallback
-        return self.project_root / ".cursor" / "rules"
+            print(f"Warning: Could not resolve rules directory: {e}")
+            # Ultimate fallback using dual-mode config
+            return get_rules_directory()
     
     @property
     def enhanced_orchestrator(self):

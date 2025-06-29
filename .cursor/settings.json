@@ -21,11 +21,11 @@
   },
   "runtime_constants": {
     "project_id": "<demande to user>",
-    "projet_path_root": "/home/<username>/agentic-project/dhafnck_mcp_main",
+    "projet_path_root": "/app",
     "username": "<whoami command result>",
-    "DOCUMENT_RULES_PATH": "00_RULES",
-    "DOCUMENT_AI_WRITING_PATH": "01_AI-DOCS/GENERATE_BY_AI",
-    "DOCUMENT_AI_WRITING_INDEX_PATH": "01_AI-DOCS/GENERATE_BY_AI/index.json",
+    "DOCUMENT_RULES_PATH": "/app/00_RULES",
+    "DOCUMENT_AI_WRITING_PATH": "/app/02_AI-DOCS/GENERATE_BY_AI",
+    "DOCUMENT_AI_WRITING_INDEX_PATH": "/app/02_AI-DOCS/GENERATE_BY_AI/index.json",
     "CONTINUE_AUTOMATIC": {
       "value": "ON",
       "description": "Continue same task automatically after completion (OFF = terminate chat)"
@@ -227,8 +227,8 @@
           "files": [
             "*.md"
           ],
-          "save_path": ".cursor/rules/02_AI-DOCS/GENERATE_BY_AI",
-          "next_action": "Update .cursor/rules/02_AI-DOCS/index.json"
+          "save_path": "/app/02_AI-DOCS/GENERATE_BY_AI",
+          "next_action": "Update /app/02_AI-DOCS/index.json"
         }
       }
     }
