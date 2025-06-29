@@ -12,18 +12,18 @@ services:
     # Redis configuration
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     
-    # Port mapping (optional - for external access)
+    # Port mapping (optional - for debugging)
     ports:
       - "6379:6379"
     
-    # Volume for Redis data persistence
+    # Volume for data persistence
     volumes:
-      - dhafnck_redis_data:/data
+      - redis_data:/data
     
     # Health check
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
+      interval: 10s
       timeout: 5s
       retries: 3
       start_period: 10s
@@ -35,8 +35,8 @@ services:
           memory: 256M
           cpus: '0.2'
         reservations:
-          memory: 64M
-          cpus: '0.05'
+          memory: 128M
+          cpus: '0.1'
     
     # Logging configuration
     logging:
@@ -48,17 +48,25 @@ services:
     # Security options
     security_opt:
       - no-new-privileges:true
-    
-    # Network
-    networks:
-      - dhafnck_network
 
   # Updated MCP server with Redis session persistence
   dhafnck-mcp:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: runtime
+    image: dhafnck/mcp-server:latest
+    container_name: dhafnck-mcp-server
+    restart: unless-stopped
+    
     # Add dependency on Redis
     depends_on:
       redis:
         condition: service_healthy
+    
+    # Port mapping for HTTP MCP server
+    ports:
+      - "8000:8000"
     
     # Enhanced environment variables for session persistence
     environment:
@@ -104,24 +112,59 @@ services:
       # Enhanced logging for session debugging
       SESSION_DEBUG_LOGGING: false
     
-    # Add Redis to the network
-    networks:
-      - dhafnck_network
+    # Volume mounts for data persistence
+    volumes:
+      # Data persistence
+      - dhafnck_data:/data
+      - dhafnck_logs:/app/logs
+      
+      # Configuration files (optional - for advanced users)
+      - ./config:/app/config:ro
+      
+      # Development mode: mount source code (comment out for production)
+      - ./src:/app/src:ro
     
-    # Enhanced health check that includes session store
+    # Health check for HTTP mode (check if port is listening)
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"import sys; sys.path.insert(0, '/app/src'); from fastmcp.server.session_store import get_global_event_store; import asyncio; store = asyncio.run(get_global_event_store()); print('✅ Session store healthy:', type(store).__name__)\" && nc -z localhost 8000"]
+      test: ["CMD-SHELL", "nc -z localhost 8000 || exit 1"]
       interval: 30s
-      timeout: 15s
+      timeout: 10s
       retries: 3
-      start_period: 45s
+      start_period: 30s
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.1'
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
 
-# Additional volumes for Redis data
+# Named volumes for data persistence
 volumes:
-  dhafnck_redis_data:
+  dhafnck_data:
+    driver: local
+  
+  dhafnck_logs:
+    driver: local
+    
+  redis_data:
     driver: local
 
-# Network for service communication
+# Network configuration (optional - services can communicate by name)
 networks:
-  dhafnck_network:
+  default:
     driver: bridge 
