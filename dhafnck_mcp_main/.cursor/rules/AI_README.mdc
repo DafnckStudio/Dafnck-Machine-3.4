@@ -7,4 +7,6 @@ alwaysApply: true
 **Next Milestone**: MVP Development (Phase 00 implementation)
 
 
-venv is not correct, dhafnck_mcp_main/.venv is correct path for vitual
+`venv` is not correct, `dhafnck_mcp_main/.venv` is correct path for vitual
+`*test.py` file need save on correct location of `dhafnck_mcp_main/tests`
+document `*.md` using for develop this project need save on `dhafnck_mcp_main/docs`, always clean/update document or content obsolete first, then continue task
