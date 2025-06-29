@@ -26,6 +26,9 @@ COPY pyproject.toml uv.lock* README.md ./
 # Copy source code
 COPY src/ src/
 
+# Copy YAML agent library (needed for agent system)
+COPY yaml-lib/ yaml-lib/
+
 # Copy rule files (needed for runtime)
 COPY 00_RULES ./00_RULES/
 
@@ -60,6 +63,9 @@ COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src /app/src
 COPY --from=builder /app/README.md /app/
 COPY --from=builder /app/pyproject.toml /app/
+
+# Copy YAML agent library from builder stage
+COPY --from=builder /app/yaml-lib /app/yaml-lib
 
 # Copy rule files from builder stage
 COPY --from=builder /app/00_RULES /data/rules
