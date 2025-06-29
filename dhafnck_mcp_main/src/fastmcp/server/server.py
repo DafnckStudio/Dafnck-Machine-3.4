@@ -1512,11 +1512,25 @@ class FastMCP(Generic[LifespanResultT]):
         """
 
         if transport == "streamable-http":
+            # Import and create EventStore for session persistence
+            from .session_store import get_global_event_store
+            import asyncio
+            
+            # Get or create the global event store
+            try:
+                event_store = asyncio.create_task(get_global_event_store())
+                # Wait for event store to be ready
+                event_store = asyncio.get_event_loop().run_until_complete(event_store)
+            except Exception as e:
+                from .session_store import MemoryEventStore
+                logger.warning(f"Failed to initialize Redis EventStore, using memory fallback: {e}")
+                event_store = MemoryEventStore()
+            
             return create_streamable_http_app(
                 server=self,
                 streamable_http_path=path
                 or self._deprecated_settings.streamable_http_path,
-                event_store=None,
+                event_store=event_store,
                 auth=self.auth,
                 json_response=(
                     json_response
