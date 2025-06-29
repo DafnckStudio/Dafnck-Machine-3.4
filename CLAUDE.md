@@ -11,7 +11,6 @@ grep_search: Search in the codebase based on a specific creator
 list_dir: Get a list of files and folders in a specific directory”
 
 - ALWAYS edit file in small chunks
-- ALWAYS read `.cursor/settings.json` first
 - ALWAYS use sequential-thinking mcp for complex request or tasks
 - ALWAYS ask default_user before creating new files
 
@@ -31,13 +30,6 @@ list_dir: Get a list of files and folders in a specific directory”
 
 - If a request would require paid usage beyond Pro limits, AI MUST immediately terminate the chat and inform default_user to start a new chat
 
----
-
-when open claude:
-- read `/home/<username>/agentic-project/.cursor/rules/dhafnck_mcp.mdc`
-- read `/home/<username>/agentic-project/.cursor/rules/agents.mdc`
-- read `.cursor/rules/AI-MUST-READ.mdc`
-
-when get_task() or next_task() : read `.cursor/rules/auto_rule.mdc`
-
-when change project or change git branch: update .cursor/rules/need-update-this-file-if-change-project-tree.mdc
+Phase Initialization:
+1) If new projet (not exist .git folder), need launch git init and make first commit on main branch 
+2) process to do master task and setup environment on `.cursor/settings.json` for connect to "DhafnckMCP - Task Management & Agent Orchestration" server
