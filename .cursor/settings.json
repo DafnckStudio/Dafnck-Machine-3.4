@@ -67,18 +67,7 @@
           "title": "Get project context info",
           "description": "Get current git branch, username, and project path",
           "command": "echo \"Branch: $(git rev-parse --abbrev-ref HEAD)\" && echo \"User: $(whoami)\" && echo \"Path: $(pwd)\""
-        },
-        "02": {
-          "state_display_on_chat": true,
-          "content_display_on_chat": "Loading settings...",
-          "title": "Get settings",
-          "tool": {
-            "manage_rule": {
-              "action": "parse_rule",
-              "target": "core/settings.json"
-            }
-          }
-        }
+        }   
       },
       "next_step": "P00-S00-T01"
     },
