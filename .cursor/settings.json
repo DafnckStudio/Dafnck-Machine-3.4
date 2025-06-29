@@ -2,19 +2,22 @@
   "protect": true,
   "rules": [
     "if protect is true, ai no have permission to write on this file, read only",
-    "Begin session need complete master-step",
+    "Begin chat need complete master_flow",
     "save runtime_variables and runtime_constants on memory",
     "tool count on cursor chat need follow runtime_variables.tools_count",
     "need branch id for use mcp server",
-    "apply custom_tools on cursor chat",
-    "apply default_tools on cursor chat",
-    "Préfixe tes demandes avec @nom-de-l-agent pour activer un agent spécifique",
+    "apply custom_config.custom_tools on cursor chat",
+    "apply custom_config.default_tools on cursor chat",
     "Combine plusieurs agents si nécessaire pour des tâches complexes",
     "Fournis toujours suffisamment de contexte pour que l'agent comprenne la situation"
   ],
-  "customInstructions": {
-    "enabled": true,
-    "source": ".cursorrules"
+  "master_flow":{
+    "01" : "master_step.P00-S00-T00",
+    "02" : "master_step.P00-S00-T01",
+    "03" : "master_step.P00-S00-T02",
+    "04" : "master_step.P00-S00-T03",
+    "05" : "master_step.P00-S00-T04",
+    "06" : "master_step.P00-S00-T05"
   },
   "runtime_constants": {
     "project_id": "<demande to user>",
@@ -61,21 +64,11 @@
       "description": "Run available tools in Cursor’s Chat modes to get information about the project",
       "tools": {
         "01": {
-          "title": "Get current git branch",
-          "description": "Get current git branch",
-          "command": "git rev-parse --abbrev-ref HEAD"
+          "title": "Get project context info",
+          "description": "Get current git branch, username, and project path",
+          "command": "echo \"Branch: $(git rev-parse --abbrev-ref HEAD)\" && echo \"User: $(whoami)\" && echo \"Path: $(pwd)\""
         },
         "02": {
-          "title": "Get current username",
-          "description": "Get current username",
-          "command": "whoami"
-        },
-        "03": {
-          "title": "Get current project path",
-          "description": "Get current project path",
-          "command": "pwd"
-        },
-        "04": {
           "state_display_on_chat": true,
           "content_display_on_chat": "Loading settings...",
           "title": "Get settings",
@@ -143,98 +136,100 @@
     }
     
   },
-  "custom_tools": {
-    "enabled": true,
-    "tools": {
-      "call_agent": {
-        "title": "Call agent",
-        "description": "Call agent to get information",
-        "before_call": {
-          "state_display_on_chat": true,
-          "content_display_on_chat": "Loading Agents Information..."
+  "custom_config": {
+    "custom_tools": {
+      "enabled": true,
+      "tools": {
+        "call_agent": {
+          "title": "Call agent",
+          "description": "Call agent to get information",
+          "before_call": {
+            "state_display_on_chat": true,
+            "content_display_on_chat": "Loading Agents Information..."
+          },
+          "after_call": {
+            "state_display_on_chat": true,
+            "content_display_on_chat": "Switch to agent"
+          },
+          "action": {
+            "title": "Switch to agent",
+            "description": "**AI Role Switch**: The AI assistant then adopts the specialized agent's expertise, knowledge base, behavioral patterns, problem-solving approaches, quality standards, and tool preferences. The AI is now ready to work with appropriate expertise",
+            "use_documents": true,
+            "name": "call_agent.name_agent",
+            "documents": "call_agent.documents",
+            "use_tools": true
+          }
         },
-        "after_call": {
-          "state_display_on_chat": true,
-          "content_display_on_chat": "Switch to agent"
+        "manage_task": {
+          "title": "Manage task",
+          "description": "Call manage_task to get information",
+          "before_call": {
+            "state_display_on_chat": true,
+            "content_display_on_chat": "Loading Task Information..."
+          }        
         },
-        "action": {
-          "title": "Switch to agent",
-          "description": "**AI Role Switch**: The AI assistant then adopts the specialized agent's expertise, knowledge base, behavioral patterns, problem-solving approaches, quality standards, and tool preferences. The AI is now ready to work with appropriate expertise",
-          "use_documents": true,
-          "name": "call_agent.name_agent",
-          "documents": "call_agent.documents",
-          "use_tools": true
-        }
-      },
-      "manage_task": {
-        "title": "Manage task",
-        "description": "Call manage_task to get information",
-        "before_call": {
-          "state_display_on_chat": true,
-          "content_display_on_chat": "Loading Task Information..."
-        }        
-      },
-      "manage_subtask": {
-        "title": "Manage subtask",
-        "description": "Call manage_subtask to get information",
-        "before_call": {
-          "state_display_on_chat": true,
-          "content_display_on_chat": "Loading Subtask Information..."
-        }
-      },
-      "manage_context": {
-        "title": "Manage context",
-        "description": "Call manage_context to get information",
-        "before_call": {
-          "state_display_on_chat": true,
-          "content_display_on_chat": "Loading Context Information..."
-        }
-      },
-      "manage_project": {
-        "title": "Manage project",
-        "description": "Call manage_project to get information",
-        "before_call": {
-          "state_display_on_chat": true,
-          "content_display_on_chat": "Loading Project Information..."
-        }
-      },
-      "manage_rule": {
-        "title": "Manage rule",
-        "description": "Call manage_rule to get information",
-        "before_call": {
-          "state_display_on_chat": true,
-          "content_display_on_chat": "Loading Rule Information..."
-        }
-      },
-      "heal_check": {
-        "title": "Heal check",
-        "description": "Call heal_check to get information",
-        "before_call": {
-          "state_display_on_chat": true,
-          "content_display_on_chat": "Loading Heal Check Information..."
-        }
-      },
-      "get_server_capabilities": {
-        "title": "Get server capabilities",
-        "description": "Call get_server_capabilities to get information",
-        "before_call": {
-          "state_display_on_chat": true,
-          "content_display_on_chat": "Loading Server Capabilities Information..."
+        "manage_subtask": {
+          "title": "Manage subtask",
+          "description": "Call manage_subtask to get information",
+          "before_call": {
+            "state_display_on_chat": true,
+            "content_display_on_chat": "Loading Subtask Information..."
+          }
+        },
+        "manage_context": {
+          "title": "Manage context",
+          "description": "Call manage_context to get information",
+          "before_call": {
+            "state_display_on_chat": true,
+            "content_display_on_chat": "Loading Context Information..."
+          }
+        },
+        "manage_project": {
+          "title": "Manage project",
+          "description": "Call manage_project to get information",
+          "before_call": {
+            "state_display_on_chat": true,
+            "content_display_on_chat": "Loading Project Information..."
+          }
+        },
+        "manage_rule": {
+          "title": "Manage rule",
+          "description": "Call manage_rule to get information",
+          "before_call": {
+            "state_display_on_chat": true,
+            "content_display_on_chat": "Loading Rule Information..."
+          }
+        },
+        "heal_check": {
+          "title": "Heal check",
+          "description": "Call heal_check to get information",
+          "before_call": {
+            "state_display_on_chat": true,
+            "content_display_on_chat": "Loading Heal Check Information..."
+          }
+        },
+        "get_server_capabilities": {
+          "title": "Get server capabilities",
+          "description": "Call get_server_capabilities to get information",
+          "before_call": {
+            "state_display_on_chat": true,
+            "content_display_on_chat": "Loading Server Capabilities Information..."
+          }
         }
       }
-    }
-  },
-  "default_tools": {
-    "description": "Default tools are tools that are always available to the AI in Cursor’s Chat modes",
-    "tools": {
-      "Edit & Reapply": {
-        "title": "Edit & Reapply",
-        "description": "Edit and reapply the current file to the project",
-        "files": [
-          "*.md"
-        ],
-        "save_path": ".cursor/rules/02_AI-DOCS/GENERATE_BY_AI",
-        "next_action": "Update .cursor/rules/02_AI-DOCS/index.json"
+    },
+    "default_tools": {
+      "description": "Default tools are tools that are always available to the AI in Cursor’s Chat modes",
+      "tools": {
+        "Edit & Reapply": {
+          "title": "Edit & Reapply",
+          "description": "Edit and reapply the current file to the project",
+          "files": [
+            "*.md"
+          ],
+          "save_path": ".cursor/rules/02_AI-DOCS/GENERATE_BY_AI",
+          "next_action": "Update .cursor/rules/02_AI-DOCS/index.json"
+        }
       }
     }
   }
