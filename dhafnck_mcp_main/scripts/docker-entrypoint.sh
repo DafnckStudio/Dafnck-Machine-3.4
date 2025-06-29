@@ -123,8 +123,13 @@ health_check() {
     log "🐍 Python version: $(python --version)"
     
     # Test Python import
-    if ! python -c "from src.fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server" 2>/dev/null; then
+    if ! python -c "from fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server" 2>/dev/null; then
         log "❌ ERROR: Failed to import DhafnckMCP server"
+        # Show detailed error for debugging
+        log "🔍 Detailed import error:"
+        python -c "from fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server" 2>&1 | head -10 | while read line; do
+            log "   $line"
+        done
         exit 1
     fi
     
