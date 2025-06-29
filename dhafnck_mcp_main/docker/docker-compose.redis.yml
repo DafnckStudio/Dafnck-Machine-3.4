@@ -71,7 +71,7 @@ services:
     # Enhanced environment variables for session persistence
     environment:
       # Core MCP Configuration (inherited from base)
-      PYTHONPATH: /app/src
+      PYTHONPATH: /app/src:/app
       FASTMCP_LOG_LEVEL: INFO
       FASTMCP_ENABLE_RICH_TRACEBACKS: 0
       

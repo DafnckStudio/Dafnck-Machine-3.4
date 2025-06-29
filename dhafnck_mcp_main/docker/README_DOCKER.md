@@ -585,3 +585,6 @@ tail -f docker/logs/*.log
 **Last Updated**: 2025-06-28  
 **Version**: 2.0.0  
 **Compatibility**: Docker 20.10+, Docker Compose v2.0+ 
+
+
+docker-compose -f docker/docker-compose.redis.yml down && docker-compose -f docker/docker-compose.redis.yml build --no-cache dhafnck-mcp

@@ -34,8 +34,8 @@ COPY 00_RULES ./00_RULES/
 
 # Create virtual environment and install dependencies
 RUN uv venv .venv
+# Use uv sync which installs both dependencies AND the current package
 RUN uv sync --frozen
-RUN uv pip install -e .
 
 # Stage 2: Runtime stage
 FROM python:3.11-slim AS runtime
@@ -93,4 +93,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 # Default command
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["python", "-m", "fastmcp.server.mcp_entry_point"] 
+CMD ["python", "-m", "fastmcp"] 

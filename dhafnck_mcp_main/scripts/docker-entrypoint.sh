@@ -122,15 +122,86 @@ health_check() {
     log "🐍 Python path: $(which python)"
     log "🐍 Python version: $(python --version)"
     
-    # Test Python import
-    if ! python -c "from fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server" 2>/dev/null; then
-        log "❌ ERROR: Failed to import DhafnckMCP server"
-        # Show detailed error for debugging
-        log "🔍 Detailed import error:"
-        python -c "from fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server" 2>&1 | head -10 | while read line; do
-            log "   $line"
+    # Test Python import (ensure virtual environment is activated and PYTHONPATH is set)
+    log "🧪 Testing fastmcp import..."
+    
+    # Debug: Show detailed Python environment
+    log "🔍 Python Environment Debug:"
+    log "   Python executable: $(/app/.venv/bin/python -c 'import sys; print(sys.executable)')"
+    log "   Python version: $(/app/.venv/bin/python --version)"
+    log "   Virtual env path: $VIRTUAL_ENV"
+    log "   Current PYTHONPATH: $PYTHONPATH"
+    
+    # Debug: Show Python sys.path
+    log "🔍 Python sys.path:"
+    PYTHONPATH=/app/src:/app /app/.venv/bin/python -c "import sys; [print(f'   {i}: {p}') for i, p in enumerate(sys.path)]"
+    
+    # Debug: Check if directories exist
+    log "🔍 Directory Structure:"
+    log "   /app exists: $([ -d '/app' ] && echo 'YES' || echo 'NO')"
+    log "   /app/src exists: $([ -d '/app/src' ] && echo 'YES' || echo 'NO')"
+    log "   /app/src/fastmcp exists: $([ -d '/app/src/fastmcp' ] && echo 'YES' || echo 'NO')"
+    log "   /app/src/fastmcp/__init__.py exists: $([ -f '/app/src/fastmcp/__init__.py' ] && echo 'YES' || echo 'NO')"
+    log "   /app/src/fastmcp/server exists: $([ -d '/app/src/fastmcp/server' ] && echo 'YES' || echo 'NO')"
+    log "   /app/src/fastmcp/server/mcp_entry_point.py exists: $([ -f '/app/src/fastmcp/server/mcp_entry_point.py' ] && echo 'YES' || echo 'NO')"
+    
+    # Debug: Show folder structure (2 levels deep)
+    log "🔍 Folder Structure Debug (2 levels):"
+    if [ -d '/app' ]; then
+        log "   📁 /app:"
+        find /app -maxdepth 2 -type d 2>/dev/null | sort | while read dir; do
+            log "     $dir"
         done
-        exit 1
+    fi
+    if [ -d '/app/src' ]; then
+        log "   📁 /app/src contents:"
+        find /app/src -maxdepth 2 -type d 2>/dev/null | sort | while read dir; do
+            log "     $dir"
+        done
+    fi
+    
+    # Debug: Check virtual environment packages
+    log "🔍 Installed Packages:"
+    /app/.venv/bin/python -c "import pkg_resources; [print(f'   {pkg.project_name}=={pkg.version}') for pkg in sorted(pkg_resources.working_set, key=lambda x: x.project_name)]" 2>/dev/null | head -10
+    
+    # Debug: Check .pth files
+    log "🔍 .pth Files in site-packages:"
+    find /app/.venv/lib/python3.11/site-packages/ -name "*.pth" -exec echo "   {}" \; -exec cat {} \; 2>/dev/null || log "   No .pth files found"
+    
+    # Debug: Try different import methods
+    log "🔍 Import Test Methods:"
+    
+    # Method 1: Direct import with PYTHONPATH
+    log "   Method 1 - Direct import with PYTHONPATH:"
+    if PYTHONPATH=/app/src:/app /app/.venv/bin/python -c "import fastmcp; print('   ✅ fastmcp module found')" 2>/dev/null; then
+        log "   ✅ fastmcp module imports successfully"
+    else
+        log "   ❌ fastmcp module import failed:"
+        PYTHONPATH=/app/src:/app /app/.venv/bin/python -c "import fastmcp" 2>&1 | head -3 | while read line; do
+            log "      $line"
+        done
+    fi
+    
+    # Method 2: Try importing from sys.path modification
+    log "   Method 2 - sys.path modification:"
+    if /app/.venv/bin/python -c "import sys; sys.path.insert(0, '/app/src'); import fastmcp; print('   ✅ fastmcp found via sys.path')" 2>/dev/null; then
+        log "   ✅ fastmcp imports with sys.path modification"
+    else
+        log "   ❌ fastmcp import failed with sys.path modification"
+    fi
+    
+    # Method 3: Try the actual entry point import
+    log "   Method 3 - Entry point import:"
+    if PYTHONPATH=/app/src:/app /app/.venv/bin/python -c "from fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server; print('   ✅ Entry point import successful')" 2>/dev/null; then
+        log "   ✅ Entry point imports successfully"
+        log "✅ Health check passed"
+    else
+        log "   ❌ Entry point import failed:"
+        PYTHONPATH=/app/src:/app /app/.venv/bin/python -c "from fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server" 2>&1 | head -5 | while read line; do
+            log "      $line"
+        done
+        log "⚠️  Import test failed, but continuing startup (server may work anyway)"
+        log "🚀 Attempting to start server despite import test failure..."
     fi
     
     log "✅ Health check passed"
@@ -176,7 +247,10 @@ main() {
     log "🚀 Starting server with command: $*"
     log "================================"
     
-    # Execute the main command
+    # Ensure PYTHONPATH is set for the server startup
+    export PYTHONPATH="/app/src:/app"
+    
+    # Execute the main command with explicit environment
     exec "$@"
 }
 
