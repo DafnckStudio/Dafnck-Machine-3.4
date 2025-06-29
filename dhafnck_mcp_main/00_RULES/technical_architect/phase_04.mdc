@@ -1,0 +1,713 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Phase 04: Database Architecture Design
+
+**Document ID**: TECH-ARCH-04  
+**Created**: 2025-06-27  
+**Status**: Complete  
+**Agents**: @system-architect-agent, @devops-agent, @security-auditor-agent  
+
+---
+
+## Executive Summary
+
+### Database Transformation Strategy
+The transition from file-based JSON storage to a scalable distributed database architecture is critical for achieving 1,000-1,000,000 RPS. This phase designs a comprehensive database strategy that evolves from PostgreSQL to globally distributed systems.
+
+### Database Evolution Roadmap
+
+| Scale Tier | Database Architecture | Primary Storage | Cache Layer | Search Engine |
+|------------|----------------------|-----------------|-------------|---------------|
+| **Tier 1** | PostgreSQL + Read Replicas | PostgreSQL 15+ | Redis 7+ | Basic Search |
+| **Tier 2** | Sharded PostgreSQL | PostgreSQL Cluster | Redis Cluster | Elasticsearch |
+| **Tier 3** | Multi-Region DB | CockroachDB/Citus | Global Redis | ES Cluster |
+| **Tier 4** | Distributed Mesh | TiDB/FaunaDB | Edge Cache | Global Search |
+
+---
+
+## Database Analysis
+
+### 🏛️ Data Architecture Assessment
+*Agent: @system-architect-agent*
+
+#### Current Data Model Analysis
+
+**Existing File-Based Structure:**
+```json
+{
+  "projects": {
+    "dhafnck_mcp_main": {
+      "id": "dhafnck_mcp_main",
+      "name": "DhafnckMCP - Advanced MCP Server Framework",
+      "task_trees": {...},
+      "registered_agents": {...},
+      "agent_assignments": {...}
+    }
+  },
+  "tasks": {
+    "user_id/project_id/task_tree_id": {
+      "tasks": [...],
+      "metadata": {...}
+    }
+  },
+  "contexts": {
+    "user_id/project_id": {
+      "auto_rule.mdc": "...",
+      "contexts": {...}
+    }
+  }
+}
+```
+
+**Data Relationships:**
+```
+Users (1) ──→ (N) Projects
+Projects (1) ──→ (N) TaskTrees  
+TaskTrees (1) ──→ (N) Tasks
+Tasks (1) ──→ (N) Subtasks
+Projects (1) ──→ (N) Agents
+Agents (N) ──→ (N) TaskTrees (assignments)
+Projects (1) ──→ (1) Context
+```
+
+#### Relational Database Schema Design
+
+**Core Tables Structure:**
+```sql
+-- Users and Authentication
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    last_login TIMESTAMP WITH TIME ZONE,
+    is_active BOOLEAN DEFAULT true
+);
+
+-- Projects
+CREATE TABLE projects (
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(500) NOT NULL,
+    description TEXT,
+    owner_id UUID NOT NULL REFERENCES users(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    is_active BOOLEAN DEFAULT true,
+    metadata JSONB DEFAULT '{}'
+);
+
+-- Task Trees
+CREATE TABLE task_trees (
+    id VARCHAR(255) NOT NULL,
+    project_id VARCHAR(255) NOT NULL REFERENCES projects(id),
+    name VARCHAR(500) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    is_active BOOLEAN DEFAULT true,
+    PRIMARY KEY (id, project_id)
+);
+
+-- Tasks
+CREATE TABLE tasks (
+    id VARCHAR(255) PRIMARY KEY,
+    project_id VARCHAR(255) NOT NULL,
+    task_tree_id VARCHAR(255) NOT NULL,
+    title VARCHAR(1000) NOT NULL,
+    description TEXT,
+    status VARCHAR(50) DEFAULT 'todo',
+    priority VARCHAR(50) DEFAULT 'medium',
+    estimated_effort VARCHAR(50),
+    details TEXT,
+    due_date TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    completed_at TIMESTAMP WITH TIME ZONE,
+    parent_task_id VARCHAR(255) REFERENCES tasks(id),
+    FOREIGN KEY (task_tree_id, project_id) REFERENCES task_trees(id, project_id)
+);
+
+-- Agents
+CREATE TABLE agents (
+    id VARCHAR(255) NOT NULL,
+    project_id VARCHAR(255) NOT NULL REFERENCES projects(id),
+    name VARCHAR(500) NOT NULL,
+    call_agent VARCHAR(255),
+    capabilities JSONB DEFAULT '[]',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    is_active BOOLEAN DEFAULT true,
+    PRIMARY KEY (id, project_id)
+);
+
+-- Task Assignments
+CREATE TABLE task_assignments (
+    task_id VARCHAR(255) NOT NULL REFERENCES tasks(id),
+    agent_id VARCHAR(255) NOT NULL,
+    project_id VARCHAR(255) NOT NULL,
+    assigned_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    PRIMARY KEY (task_id, agent_id),
+    FOREIGN KEY (agent_id, project_id) REFERENCES agents(id, project_id)
+);
+
+-- Task Labels
+CREATE TABLE task_labels (
+    task_id VARCHAR(255) NOT NULL REFERENCES tasks(id),
+    label VARCHAR(255) NOT NULL,
+    PRIMARY KEY (task_id, label)
+);
+
+-- Task Dependencies
+CREATE TABLE task_dependencies (
+    task_id VARCHAR(255) NOT NULL REFERENCES tasks(id),
+    depends_on_task_id VARCHAR(255) NOT NULL REFERENCES tasks(id),
+    dependency_type VARCHAR(50) DEFAULT 'blocks',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    PRIMARY KEY (task_id, depends_on_task_id)
+);
+
+-- Contexts and Rules
+CREATE TABLE contexts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id VARCHAR(255) NOT NULL REFERENCES projects(id),
+    user_id UUID NOT NULL REFERENCES users(id),
+    context_type VARCHAR(100) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(project_id, user_id, context_type)
+);
+```
+
+**Indexing Strategy:**
+```sql
+-- Performance indexes
+CREATE INDEX idx_tasks_project_tree ON tasks(project_id, task_tree_id);
+CREATE INDEX idx_tasks_status ON tasks(status) WHERE status != 'done';
+CREATE INDEX idx_tasks_assignee ON task_assignments(agent_id);
+CREATE INDEX idx_tasks_priority ON tasks(priority, created_at);
+CREATE INDEX idx_tasks_due_date ON tasks(due_date) WHERE due_date IS NOT NULL;
+CREATE INDEX idx_projects_owner ON projects(owner_id);
+
+-- Full-text search indexes
+CREATE INDEX idx_tasks_search ON tasks USING gin(to_tsvector('english', title || ' ' || COALESCE(description, '')));
+CREATE INDEX idx_projects_search ON projects USING gin(to_tsvector('english', name || ' ' || COALESCE(description, '')));
+
+-- JSONB indexes for metadata
+CREATE INDEX idx_projects_metadata ON projects USING gin(metadata);
+CREATE INDEX idx_agents_capabilities ON agents USING gin(capabilities);
+```
+
+#### Data Migration Strategy
+
+**Phase 1: Dual-Write Implementation**
+```python
+class DatabaseMigrationService:
+    def __init__(self):
+        self.file_storage = FileBasedStorage()
+        self.db_storage = PostgreSQLStorage()
+        
+    async def create_task(self, task_data):
+        # Write to both systems during migration
+        try:
+            # Write to database first
+            db_result = await self.db_storage.create_task(task_data)
+            
+            # Write to file system (backup)
+            file_result = await self.file_storage.create_task(task_data)
+            
+            return db_result
+        except Exception as e:
+            # Rollback and use file system as fallback
+            await self.file_storage.create_task(task_data)
+            raise e
+    
+    async def migrate_existing_data(self):
+        # Batch migration of existing file data
+        projects = await self.file_storage.get_all_projects()
+        
+        for project in projects:
+            await self.db_storage.create_project(project)
+            
+            tasks = await self.file_storage.get_project_tasks(project.id)
+            for task in tasks:
+                await self.db_storage.create_task(task)
+```
+
+### ⚙️ Database Infrastructure Design
+*Agent: @devops-agent*
+
+#### Tier 1: PostgreSQL Foundation (1,000 RPS)
+
+**Single Master with Read Replicas:**
+```yaml
+Primary Database:
+  Instance: db.r5.xlarge (4 vCPU, 32GB RAM)
+  Storage: 500GB GP3 SSD (3,000 IOPS)
+  Backup: Automated daily backups, 7-day retention
+  
+Read Replicas:
+  Count: 2 replicas in different AZs
+  Instance: db.r5.large (2 vCPU, 16GB RAM)
+  Lag: <100ms replication lag
+  
+Connection Pooling:
+  Tool: PgBouncer
+  Max Connections: 200 per instance
+  Pool Mode: Transaction pooling
+  
+Configuration:
+  shared_buffers: 8GB
+  effective_cache_size: 24GB
+  work_mem: 64MB
+  maintenance_work_mem: 2GB
+  checkpoint_completion_target: 0.9
+  wal_buffers: 16MB
+  random_page_cost: 1.1 (SSD optimized)
+```
+
+**Monitoring and Alerting:**
+```yaml
+Metrics:
+  - Connection count
+  - Query performance (slow queries >100ms)
+  - Replication lag
+  - Cache hit ratio (target >95%)
+  - Lock waits and deadlocks
+  
+Alerts:
+  - Connection pool >80% utilization
+  - Replication lag >5 seconds
+  - Disk space >85% usage
+  - CPU utilization >80% for 5 minutes
+```
+
+#### Tier 2: Sharded PostgreSQL (10,000 RPS)
+
+**Horizontal Sharding Strategy:**
+```yaml
+Sharding Key: project_id (consistent with access patterns)
+Shard Count: 4 initial shards, expandable to 16
+
+Shard Distribution:
+  Shard 1: project_id hash % 4 == 0
+  Shard 2: project_id hash % 4 == 1  
+  Shard 3: project_id hash % 4 == 2
+  Shard 4: project_id hash % 4 == 3
+
+Each Shard:
+  Primary: db.r5.2xlarge (8 vCPU, 64GB RAM)
+  Replicas: 2 read replicas per shard
+  Storage: 1TB GP3 SSD per shard
+  
+Connection Pooling:
+  Tool: PgBouncer per shard
+  Total Connections: 800 (200 per shard)
+  
+Proxy Layer:
+  Tool: PgProxy or custom routing
+  Function: Route queries to correct shard
+  Failover: Automatic failover to replicas
+```
+
+**Cross-Shard Operations:**
+```python
+class ShardedQueryExecutor:
+    def __init__(self):
+        self.shards = {
+            0: PostgreSQLConnection("shard-0"),
+            1: PostgreSQLConnection("shard-1"),
+            2: PostgreSQLConnection("shard-2"),
+            3: PostgreSQLConnection("shard-3")
+        }
+    
+    def get_shard(self, project_id: str) -> int:
+        return hash(project_id) % 4
+    
+    async def execute_query(self, project_id: str, query: str):
+        shard_id = self.get_shard(project_id)
+        return await self.shards[shard_id].execute(query)
+    
+    async def execute_cross_shard_query(self, query: str):
+        # For analytics queries across all projects
+        results = []
+        for shard in self.shards.values():
+            result = await shard.execute(query)
+            results.append(result)
+        return self.merge_results(results)
+```
+
+#### Tier 3-4: Distributed Database (100,000+ RPS)
+
+**CockroachDB Cluster Configuration:**
+```yaml
+Cluster Setup:
+  Regions: 3 (us-east-1, eu-west-1, ap-southeast-1)
+  Nodes per Region: 3 (9 total nodes)
+  Instance Type: c5.2xlarge (8 vCPU, 16GB RAM)
+  Storage: 2TB NVMe SSD per node
+
+Replication:
+  Factor: 3 (data replicated across 3 zones)
+  Consistency: Strong consistency by default
+  Geo-Partitioning: Partition data by user location
+  
+Performance Optimization:
+  - Follow-the-workload: Data moves closer to access patterns
+  - Locality-optimized search: Prefer local reads
+  - Zone-specific replicas for compliance
+```
+
+**Global Data Distribution:**
+```sql
+-- Geo-partitioned tables
+ALTER TABLE users PARTITION BY LIST (region);
+CREATE TABLE users_us PARTITION OF users FOR VALUES IN ('us-east-1', 'us-west-2');
+CREATE TABLE users_eu PARTITION OF users FOR VALUES IN ('eu-west-1', 'eu-central-1');
+CREATE TABLE users_ap PARTITION OF users FOR VALUES IN ('ap-southeast-1', 'ap-northeast-1');
+
+-- Pin partitions to specific regions
+ALTER PARTITION users_us OF TABLE users CONFIGURE ZONE USING constraints = '[+region=us-east-1]';
+ALTER PARTITION users_eu OF TABLE users CONFIGURE ZONE USING constraints = '[+region=eu-west-1]';
+ALTER PARTITION users_ap OF TABLE users CONFIGURE ZONE USING constraints = '[+region=ap-southeast-1]';
+```
+
+### 🛡️ Database Security Architecture
+*Agent: @security-auditor-agent*
+
+#### Security Layers
+
+**1. Network Security:**
+```yaml
+VPC Configuration:
+  - Private subnets for database instances
+  - Security groups with minimal access
+  - VPC endpoints for AWS services
+  - No direct internet access to databases
+
+Network Access Control:
+  - Application servers only from specific subnets
+  - Read replicas accessible from read-only applications
+  - Bastion hosts for administrative access
+  - VPN required for external access
+```
+
+**2. Authentication and Authorization:**
+```yaml
+Database Authentication:
+  - Strong passwords with rotation
+  - Certificate-based authentication for applications
+  - IAM database authentication for AWS RDS
+  - Service accounts with minimal privileges
+
+Role-Based Access Control:
+  - Application role: Read/write access to application tables
+  - Read-only role: Analytics and reporting access
+  - Migration role: Schema changes and data migration
+  - Backup role: Backup and restore operations
+  
+Connection Security:
+  - SSL/TLS required for all connections
+  - Certificate validation enabled
+  - Connection string encryption
+```
+
+**3. Data Protection:**
+```yaml
+Encryption at Rest:
+  - AES-256 encryption for all data
+  - AWS KMS key management
+  - Separate keys per environment
+  - Automatic key rotation
+
+Encryption in Transit:
+  - TLS 1.3 for all database connections
+  - Certificate pinning for applications
+  - Encrypted replication streams
+  
+Data Masking:
+  - PII data masked in non-production environments
+  - Dynamic data masking for sensitive queries
+  - Audit trails for data access
+```
+
+**4. Compliance and Auditing:**
+```yaml
+Audit Logging:
+  - All DDL operations logged
+  - Failed authentication attempts
+  - Data modification tracking
+  - Query performance monitoring
+
+Data Retention:
+  - Automated data archival policies
+  - GDPR compliance with data deletion
+  - Backup retention policies
+  - Log retention for compliance
+
+Security Monitoring:
+  - Real-time anomaly detection
+  - Unusual query pattern alerts
+  - Failed authentication monitoring
+  - Data exfiltration detection
+```
+
+---
+
+## Cache Architecture Design
+
+### Redis Implementation Strategy
+
+#### Tier 1: Single Redis Instance
+```yaml
+Configuration:
+  Instance: cache.r6g.large (2 vCPU, 13GB RAM)
+  Memory: 10GB available for data
+  Persistence: RDB + AOF for durability
+  Eviction: allkeys-lru policy
+
+Use Cases:
+  - Session storage
+  - Frequently accessed tasks
+  - API response caching
+  - Real-time features (pub/sub)
+
+Cache Patterns:
+  - Cache-aside for task data
+  - Write-through for session data
+  - Pub/sub for real-time notifications
+```
+
+#### Tier 2: Redis Cluster
+```yaml
+Cluster Configuration:
+  Nodes: 6 (3 masters, 3 replicas)
+  Instance: cache.r6g.xlarge (4 vCPU, 26GB RAM)
+  Sharding: Automatic key distribution
+  High Availability: Automatic failover
+
+Data Distribution:
+  - Task data: Sharded by project_id
+  - Session data: Distributed across cluster
+  - Cache data: TTL-based expiration
+  - Pub/sub: Cluster-wide messaging
+```
+
+#### Tier 3-4: Global Redis Enterprise
+```yaml
+Multi-Region Setup:
+  - Active-active replication across regions
+  - Conflict resolution with LWW (Last Write Wins)
+  - Local read/write in each region
+  - Global eventual consistency
+
+Edge Caching:
+  - Redis at edge locations
+  - CDN integration for static data
+  - Smart cache warming
+  - Predictive caching with ML
+```
+
+---
+
+## Search Engine Architecture
+
+### Elasticsearch Implementation
+
+#### Search Requirements Analysis
+```yaml
+Search Use Cases:
+  - Full-text search across tasks and projects
+  - Faceted search with filters
+  - Auto-complete and suggestions
+  - Analytics and aggregations
+  - Real-time search updates
+
+Data Volume Estimation:
+  Tier 1: 1M tasks, 10K projects
+  Tier 2: 10M tasks, 100K projects  
+  Tier 3: 100M tasks, 1M projects
+  Tier 4: 1B+ tasks, 10M+ projects
+```
+
+#### Elasticsearch Cluster Design
+
+**Tier 2: Basic Cluster (10,000 RPS)**
+```yaml
+Cluster Configuration:
+  Nodes: 3 (1 master, 2 data nodes)
+  Instance: m5.large (2 vCPU, 8GB RAM)
+  Storage: 500GB GP3 SSD per node
+  
+Index Strategy:
+  - tasks index: Sharded by project_id
+  - projects index: Single shard (small dataset)
+  - Daily indices for time-series data
+  
+Mapping Configuration:
+  tasks:
+    title: text with keyword sub-field
+    description: text
+    status: keyword
+    priority: keyword
+    assignees: keyword array
+    created_at: date
+    project_id: keyword (for filtering)
+```
+
+**Tier 3-4: Multi-Region Cluster (100,000+ RPS)**
+```yaml
+Global Architecture:
+  - Dedicated clusters per region
+  - Cross-cluster replication for global search
+  - Local indices for region-specific data
+  - Global indices for cross-region queries
+
+Performance Optimization:
+  - Index templates with optimized settings
+  - Custom analyzers for different languages
+  - Aggregation optimization
+  - Search result caching
+```
+
+---
+
+## Performance Optimization
+
+### Query Optimization Strategies
+
+**1. Database Query Optimization:**
+```sql
+-- Optimized task retrieval with pagination
+SELECT t.*, array_agg(ta.agent_id) as assignees
+FROM tasks t
+LEFT JOIN task_assignments ta ON t.id = ta.task_id
+WHERE t.project_id = $1 
+  AND t.task_tree_id = $2
+  AND t.status != 'done'
+ORDER BY t.priority DESC, t.created_at ASC
+LIMIT 50 OFFSET $3;
+
+-- Materialized view for dashboard analytics
+CREATE MATERIALIZED VIEW project_stats AS
+SELECT 
+    project_id,
+    COUNT(*) as total_tasks,
+    COUNT(*) FILTER (WHERE status = 'done') as completed_tasks,
+    COUNT(*) FILTER (WHERE status = 'in_progress') as active_tasks,
+    AVG(EXTRACT(EPOCH FROM (completed_at - created_at))/3600) as avg_completion_hours
+FROM tasks
+GROUP BY project_id;
+```
+
+**2. Caching Strategies:**
+```python
+class TaskCacheManager:
+    def __init__(self):
+        self.redis = Redis()
+        self.ttl = {
+            'task': 3600,      # 1 hour
+            'project': 7200,   # 2 hours
+            'user': 1800,      # 30 minutes
+        }
+    
+    async def get_task(self, task_id: str):
+        # Multi-level caching
+        cache_key = f"task:{task_id}"
+        
+        # L1: Application cache
+        if task := self.app_cache.get(cache_key):
+            return task
+            
+        # L2: Redis cache
+        if cached := await self.redis.get(cache_key):
+            task = json.loads(cached)
+            self.app_cache.set(cache_key, task, ttl=300)
+            return task
+            
+        # L3: Database
+        task = await self.db.get_task(task_id)
+        await self.redis.setex(cache_key, self.ttl['task'], json.dumps(task))
+        self.app_cache.set(cache_key, task, ttl=300)
+        
+        return task
+```
+
+### Database Monitoring and Maintenance
+
+**Automated Maintenance:**
+```yaml
+Daily Tasks:
+  - Update table statistics
+  - Reindex fragmented indexes
+  - Vacuum analyze for PostgreSQL
+  - Backup verification
+
+Weekly Tasks:
+  - Full database backup
+  - Index usage analysis
+  - Query performance review
+  - Capacity planning update
+
+Monthly Tasks:
+  - Security audit
+  - Performance baseline update
+  - Disaster recovery testing
+  - Cost optimization review
+```
+
+---
+
+## Migration Timeline
+
+### Phase-by-Phase Implementation
+
+**Phase 1 (Weeks 1-4): PostgreSQL Foundation**
+- Week 1: Schema design and database setup
+- Week 2: Data migration scripts and testing
+- Week 3: Application layer integration
+- Week 4: Performance testing and optimization
+
+**Phase 2 (Weeks 5-8): Caching and Search**
+- Week 5: Redis implementation and integration
+- Week 6: Elasticsearch setup and indexing
+- Week 7: Search API development
+- Week 8: Performance testing and tuning
+
+**Phase 3 (Weeks 9-12): Scaling Preparation**
+- Week 9: Sharding strategy implementation
+- Week 10: Connection pooling and optimization
+- Week 11: Monitoring and alerting setup
+- Week 12: Load testing and validation
+
+---
+
+## Next Steps
+
+### Phase 05 Prerequisites
+1. **Cloud Infrastructure Design**: Kubernetes and cloud-native architecture
+2. **API Gateway Design**: Service mesh and API management
+3. **Monitoring Strategy**: Comprehensive observability stack
+4. **Deployment Strategy**: CI/CD and blue-green deployments
+
+### Critical Decisions Required
+1. **Cloud Provider Selection**: AWS vs GCP vs Azure
+2. **Database Migration Timeline**: Gradual vs big-bang approach
+3. **Backup and Disaster Recovery**: RTO/RPO requirements
+4. **Compliance Requirements**: GDPR, SOC2, industry-specific needs
+
+---
+
+## Agent Contributions
+
+- **@system-architect-agent**: Database schema design, data modeling, migration strategy, performance optimization
+- **@devops-agent**: Infrastructure design, sharding strategy, monitoring setup, deployment automation
+- **@security-auditor-agent**: Security architecture, encryption strategy, compliance requirements, audit logging
+
+**Document Version**: 1.0  
+**Last Updated**: 2025-06-27  
+**Next Review**: Phase 05 completion

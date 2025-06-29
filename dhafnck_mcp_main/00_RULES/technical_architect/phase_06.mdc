@@ -1,0 +1,1270 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Phase 06: Frontend Architecture & API Gateway
+
+**Document ID**: TECH-ARCH-06  
+**Created**: 2025-06-27  
+**Status**: Complete  
+**Agents**: @ui-designer-agent, @system-architect-agent, @security-auditor-agent  
+
+---
+
+## Executive Summary
+
+### Frontend & API Gateway Transformation
+This phase designs a comprehensive frontend architecture and API gateway strategy capable of serving 1,000-1,000,000 concurrent users with modern web technologies, progressive web app capabilities, and intelligent API management.
+
+### Frontend Evolution Strategy
+
+| Scale Tier | Frontend Architecture | API Gateway | CDN Strategy | User Experience |
+|------------|----------------------|-------------|--------------|-----------------|
+| **Tier 1** | Next.js CSR ("use client") | Express.js | CloudFront | Basic Responsive |
+| **Tier 2** | Next.js SSR/SSG | Kong Gateway | Global CDN | PWA Features |
+| **Tier 3** | Micro-frontends | Service Mesh | Edge Computing | Real-time Updates |
+| **Tier 4** | Edge-Side Rendering | AI-Powered Gateway | Global Edge | Personalized UI |
+
+---
+
+## Frontend Architecture Analysis
+
+### 🖼️ User Interface Design Strategy
+*Agent: @ui-designer-agent*
+
+#### Design System Architecture
+
+**Component Library Structure:**
+```
+dhafnck-design-system/
+├── tokens/
+│   ├── colors.json
+│   ├── typography.json
+│   ├── spacing.json
+│   └── breakpoints.json
+├── components/
+│   ├── atoms/
+│   │   ├── Button/
+│   │   ├── Input/
+│   │   ├── Icon/
+│   │   └── Badge/
+│   ├── molecules/
+│   │   ├── SearchBox/
+│   │   ├── TaskCard/
+│   │   ├── AgentSelector/
+│   │   └── StatusIndicator/
+│   ├── organisms/
+│   │   ├── TaskBoard/
+│   │   ├── ProjectDashboard/
+│   │   ├── AgentOrchestrator/
+│   │   └── NavigationHeader/
+│   └── templates/
+│       ├── DashboardLayout/
+│       ├── TaskManagementLayout/
+│       └── ProjectSetupLayout/
+└── themes/
+    ├── light.json
+    ├── dark.json
+    └── high-contrast.json
+```
+
+**Design Token System:**
+```json
+{
+  "colors": {
+    "primary": {
+      "50": "#f0f9ff",
+      "100": "#e0f2fe",
+      "500": "#0ea5e9",
+      "600": "#0284c7",
+      "900": "#0c4a6e"
+    },
+    "semantic": {
+      "success": "#10b981",
+      "warning": "#f59e0b",
+      "error": "#ef4444",
+      "info": "#3b82f6"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": ["Inter", "system-ui", "sans-serif"],
+      "mono": ["JetBrains Mono", "monospace"]
+    },
+    "fontSize": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem"
+    }
+  },
+  "spacing": {
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "4": "1rem",
+    "8": "2rem",
+    "16": "4rem"
+  }
+}
+```
+
+#### Responsive Design Strategy
+
+**Breakpoint System:**
+```css
+/* Mobile First Approach */
+:root {
+  --breakpoint-sm: 640px;   /* Small devices */
+  --breakpoint-md: 768px;   /* Tablets */
+  --breakpoint-lg: 1024px;  /* Laptops */
+  --breakpoint-xl: 1280px;  /* Desktops */
+  --breakpoint-2xl: 1536px; /* Large screens */
+}
+
+/* Container Queries for Component-Level Responsiveness */
+.task-board {
+  container-type: inline-size;
+}
+
+@container (min-width: 768px) {
+  .task-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+}
+```
+
+**Progressive Web App Features:**
+```javascript
+// Service Worker for Offline Capability
+const CACHE_NAME = 'dhafnck-mcp-v1.0.5';
+const urlsToCache = [
+  '/',
+  '/static/js/bundle.js',
+  '/static/css/main.css',
+  '/manifest.json'
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(urlsToCache))
+  );
+});
+
+// Background Sync for Task Updates
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'task-sync') {
+    event.waitUntil(syncTasks());
+  }
+});
+```
+
+**Accessibility Implementation:**
+```jsx
+// WCAG 2.1 AA Compliant Components
+const TaskCard = ({ task, onUpdate }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  return (
+    <article
+      className="task-card"
+      role="article"
+      aria-labelledby={`task-${task.id}-title`}
+      aria-describedby={`task-${task.id}-description`}
+    >
+      <header>
+        <h3 id={`task-${task.id}-title`} className="task-title">
+          {task.title}
+        </h3>
+        <button
+          aria-expanded={isExpanded}
+          aria-controls={`task-${task.id}-details`}
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="expand-button"
+        >
+          {isExpanded ? 'Collapse' : 'Expand'} task details
+        </button>
+      </header>
+      
+      <div
+        id={`task-${task.id}-details`}
+        className={`task-details ${isExpanded ? 'expanded' : 'collapsed'}`}
+        aria-hidden={!isExpanded}
+      >
+        <p id={`task-${task.id}-description`}>
+          {task.description}
+        </p>
+        <div className="task-meta">
+          <span className="status" aria-label={`Status: ${task.status}`}>
+            {task.status}
+          </span>
+          <span className="priority" aria-label={`Priority: ${task.priority}`}>
+            {task.priority}
+          </span>
+        </div>
+      </div>
+    </article>
+  );
+};
+```
+
+#### User Experience Optimization
+
+**Performance-First Design:**
+```javascript
+// Code Splitting and Lazy Loading
+const TaskBoard = lazy(() => import('./components/TaskBoard'));
+const ProjectDashboard = lazy(() => import('./components/ProjectDashboard'));
+
+// Image Optimization
+const OptimizedImage = ({ src, alt, width, height }) => (
+  <picture>
+    <source
+      srcSet={`${src}?format=webp&w=${width}&h=${height}`}
+      type="image/webp"
+    />
+    <img
+      src={`${src}?w=${width}&h=${height}`}
+      alt={alt}
+      width={width}
+      height={height}
+      loading="lazy"
+      decoding="async"
+    />
+  </picture>
+);
+
+// Virtual Scrolling for Large Lists
+const VirtualTaskList = ({ tasks }) => {
+  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 50 });
+  
+  return (
+    <FixedSizeList
+      height={600}
+      itemCount={tasks.length}
+      itemSize={120}
+      onItemsRendered={({ visibleStartIndex, visibleStopIndex }) => {
+        setVisibleRange({ start: visibleStartIndex, end: visibleStopIndex });
+      }}
+    >
+      {({ index, style }) => (
+        <div style={style}>
+          <TaskCard task={tasks[index]} />
+        </div>
+      )}
+    </FixedSizeList>
+  );
+};
+```
+
+### 🏛️ Frontend Architecture Design
+*Agent: @system-architect-agent*
+
+#### Technology Stack Evolution
+
+**Tier 1: Next.js Client-Side Rendering (1,000 concurrent users)**
+```javascript
+// Next.js 14 with Client-Side Rendering
+const TechStack = {
+  frontend: {
+    framework: "Next.js 14",
+    rendering: "Client-Side Rendering (use client)",
+    stateManagement: "Zustand",
+    routing: "Next.js App Router",
+    styling: "Tailwind CSS",
+    bundler: "Turbopack",
+    testing: "Jest + React Testing Library"
+  },
+  build: {
+    optimization: "Tree shaking, code splitting",
+    bundleAnalysis: "Next.js Bundle Analyzer",
+    performance: "Web Vitals monitoring"
+  }
+};
+
+// Client-Side Component with "use client"
+'use client';
+
+import { create } from 'zustand';
+import { useEffect } from 'react';
+
+const useTaskStore = create((set, get) => ({
+  tasks: [],
+  loading: false,
+  error: null,
+  
+  fetchTasks: async (projectId) => {
+    set({ loading: true, error: null });
+    try {
+      const tasks = await api.getTasks(projectId);
+      set({ tasks, loading: false });
+    } catch (error) {
+      set({ error: error.message, loading: false });
+    }
+  },
+  
+  updateTask: (taskId, updates) => {
+    set((state) => ({
+      tasks: state.tasks.map(task =>
+        task.id === taskId ? { ...task, ...updates } : task
+      )
+    }));
+  }
+}));
+
+// Client-Side Task Dashboard
+export default function TaskDashboard({ projectId }) {
+  const { tasks, loading, error, fetchTasks } = useTaskStore();
+  
+  useEffect(() => {
+    fetchTasks(projectId);
+  }, [projectId, fetchTasks]);
+  
+  if (loading) return <TasksSkeleton />;
+  if (error) return <ErrorDisplay error={error} />;
+  
+  return (
+    <div className="task-dashboard">
+      <TaskBoard tasks={tasks} />
+    </div>
+  );
+}
+```
+
+**Tier 2: Next.js SSR/SSG Migration (10,000 concurrent users)**
+```javascript
+// Next.js 14 with App Router - Migration from CSR to SSR
+const AppArchitecture = {
+  framework: "Next.js 14",
+  rendering: "SSR + SSG + ISR (migrated from CSR)",
+  caching: "React Server Components",
+  dataFetching: "Server Actions + Client Components",
+  authentication: "NextAuth.js",
+  deployment: "Vercel Edge Functions"
+};
+
+// Server Component (default - no "use client")
+export default async function TasksPage({ params }) {
+  // Server-side data fetching
+  const tasks = await getTasks(params.projectId);
+  
+  return (
+    <div>
+      <TasksHeader projectId={params.projectId} />
+      <Suspense fallback={<TasksSkeleton />}>
+        <TaskBoard initialTasks={tasks} projectId={params.projectId} />
+      </Suspense>
+    </div>
+  );
+}
+
+// Hybrid Client Component for interactivity
+'use client';
+
+import { useState, useOptimistic } from 'react';
+
+export function TaskBoard({ initialTasks, projectId }) {
+  const [tasks, setTasks] = useState(initialTasks);
+  const [optimisticTasks, addOptimisticTask] = useOptimistic(
+    tasks,
+    (state, newTask) => [...state, newTask]
+  );
+  
+  const createTask = async (taskData) => {
+    // Optimistic update
+    addOptimisticTask({ ...taskData, id: 'temp-' + Date.now() });
+    
+    // Server action
+    const newTask = await createTaskAction(taskData);
+    setTasks(prev => [...prev.filter(t => !t.id.startsWith('temp-')), newTask]);
+  };
+  
+  return (
+    <div className="task-board">
+      {optimisticTasks.map(task => (
+        <TaskCard key={task.id} task={task} />
+      ))}
+    </div>
+  );
+}
+
+// Incremental Static Regeneration
+export async function generateStaticParams() {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    projectId: project.id,
+  }));
+}
+
+// API Routes with Edge Runtime
+export const runtime = 'edge';
+
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const projectId = searchParams.get('projectId');
+  
+  const tasks = await getTasks(projectId);
+  
+  return Response.json({ tasks });
+}
+```
+
+**Tier 3: Micro-frontend Architecture (100,000 concurrent users)**
+```javascript
+// Module Federation Configuration
+const ModuleFederationPlugin = require('@module-federation/webpack');
+
+module.exports = {
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'dhafnck_shell',
+      remotes: {
+        taskManagement: 'taskManagement@http://localhost:3001/remoteEntry.js',
+        projectDashboard: 'projectDashboard@http://localhost:3002/remoteEntry.js',
+        agentOrchestrator: 'agentOrchestrator@http://localhost:3003/remoteEntry.js',
+      },
+    }),
+  ],
+};
+
+// Shell Application
+const App = () => {
+  const [currentModule, setCurrentModule] = useState('dashboard');
+  
+  return (
+    <Router>
+      <ErrorBoundary>
+        <NavigationShell onModuleChange={setCurrentModule}>
+          <Routes>
+            <Route path="/tasks/*" element={<TaskManagementApp />} />
+            <Route path="/projects/*" element={<ProjectDashboardApp />} />
+            <Route path="/agents/*" element={<AgentOrchestratorApp />} />
+          </Routes>
+        </NavigationShell>
+      </ErrorBoundary>
+    </Router>
+  );
+};
+
+// Independent Micro-frontend
+const TaskManagementApp = React.lazy(() => import('taskManagement/App'));
+```
+
+**Tier 4: Edge-Side Rendering (1,000,000 concurrent users)**
+```javascript
+// Edge Functions for Personalization
+export default async function handler(request) {
+  const { geo, ip } = request;
+  const userId = getUserId(request);
+  
+  // Personalized content at the edge
+  const personalizedTasks = await getPersonalizedTasks(userId, geo.country);
+  
+  // Server-side rendering at the edge
+  const html = await renderToString(
+    <TaskDashboard 
+      tasks={personalizedTasks}
+      locale={geo.country}
+      timezone={geo.timezone}
+    />
+  );
+  
+  return new Response(html, {
+    headers: {
+      'content-type': 'text/html',
+      'cache-control': 'public, max-age=60',
+    },
+  });
+}
+```
+
+#### API Gateway Architecture
+
+**Kong Gateway Configuration:**
+```yaml
+# Kong Gateway Setup
+services:
+  - name: dhafnck-mcp-api
+    url: http://backend:8000
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 1000
+          hour: 10000
+      - name: cors
+        config:
+          origins: ["https://app.dhafnck.com"]
+          methods: ["GET", "POST", "PUT", "DELETE"]
+      - name: jwt
+        config:
+          secret_is_base64: false
+      - name: prometheus
+        config:
+          per_consumer: true
+
+routes:
+  - name: api-v1
+    service: dhafnck-mcp-api
+    paths: ["/api/v1"]
+    strip_path: true
+    
+  - name: websocket
+    service: dhafnck-mcp-api
+    paths: ["/ws"]
+    protocols: ["http", "https", "ws", "wss"]
+```
+
+**GraphQL Federation:**
+```javascript
+// Federated Schema
+const gateway = new ApolloGateway({
+  serviceList: [
+    { name: 'tasks', url: 'http://tasks-service:4001/graphql' },
+    { name: 'projects', url: 'http://projects-service:4002/graphql' },
+    { name: 'agents', url: 'http://agents-service:4003/graphql' },
+    { name: 'users', url: 'http://users-service:4004/graphql' },
+  ],
+});
+
+// Unified Schema
+const server = new ApolloServer({
+  gateway,
+  subscriptions: false,
+  plugins: [
+    ApolloServerPluginDrainHttpServer({ httpServer }),
+    ApolloServerPluginLandingPageLocalDefault({ embed: true }),
+  ],
+});
+```
+
+### 🛡️ Frontend Security Architecture
+*Agent: @security-auditor-agent*
+
+#### Security Implementation Strategy
+
+**Content Security Policy:**
+```javascript
+// CSP Headers for XSS Protection
+const cspPolicy = {
+  'default-src': ["'self'"],
+  'script-src': [
+    "'self'",
+    "'unsafe-inline'", // Only for development
+    "https://cdn.jsdelivr.net",
+    "https://unpkg.com"
+  ],
+  'style-src': [
+    "'self'",
+    "'unsafe-inline'",
+    "https://fonts.googleapis.com"
+  ],
+  'font-src': [
+    "'self'",
+    "https://fonts.gstatic.com"
+  ],
+  'img-src': [
+    "'self'",
+    "data:",
+    "https:"
+  ],
+  'connect-src': [
+    "'self'",
+    "https://api.dhafnck.com",
+    "wss://api.dhafnck.com"
+  ]
+};
+```
+
+**Authentication & Authorization:**
+```javascript
+// JWT Token Management
+class AuthManager {
+  constructor() {
+    this.tokenKey = 'dhafnck_token';
+    this.refreshKey = 'dhafnck_refresh';
+  }
+  
+  async login(credentials) {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials)
+    });
+    
+    if (response.ok) {
+      const { token, refreshToken } = await response.json();
+      this.setTokens(token, refreshToken);
+      return true;
+    }
+    
+    throw new Error('Authentication failed');
+  }
+  
+  setTokens(token, refreshToken) {
+    // Secure storage with httpOnly cookies
+    document.cookie = `${this.tokenKey}=${token}; Secure; HttpOnly; SameSite=Strict`;
+    localStorage.setItem(this.refreshKey, refreshToken);
+  }
+  
+  async refreshToken() {
+    const refreshToken = localStorage.getItem(this.refreshKey);
+    if (!refreshToken) throw new Error('No refresh token');
+    
+    const response = await fetch('/api/auth/refresh', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${refreshToken}` }
+    });
+    
+    if (response.ok) {
+      const { token } = await response.json();
+      this.setTokens(token, refreshToken);
+      return token;
+    }
+    
+    this.logout();
+    throw new Error('Token refresh failed');
+  }
+}
+```
+
+**Input Validation & Sanitization:**
+```javascript
+// Client-side Validation with Zod
+import { z } from 'zod';
+
+const taskSchema = z.object({
+  title: z.string()
+    .min(1, 'Title is required')
+    .max(200, 'Title too long')
+    .regex(/^[a-zA-Z0-9\s\-_]+$/, 'Invalid characters'),
+  description: z.string()
+    .max(2000, 'Description too long')
+    .optional(),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']),
+  assignees: z.array(z.string().regex(/^@[a-z-]+$/))
+});
+
+// Sanitization for XSS Prevention
+import DOMPurify from 'dompurify';
+
+const sanitizeInput = (input) => {
+  return DOMPurify.sanitize(input, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a'],
+    ALLOWED_ATTR: ['href']
+  });
+};
+```
+
+**API Security:**
+```javascript
+// Request Interceptor with Security Headers
+axios.interceptors.request.use((config) => {
+  // Add CSRF token
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+  if (csrfToken) {
+    config.headers['X-CSRF-Token'] = csrfToken;
+  }
+  
+  // Add request ID for tracing
+  config.headers['X-Request-ID'] = generateRequestId();
+  
+  // Add client fingerprint
+  config.headers['X-Client-Fingerprint'] = getClientFingerprint();
+  
+  return config;
+});
+
+// Response Interceptor for Error Handling
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      await authManager.refreshToken();
+      return axios.request(error.config);
+    }
+    
+    // Log security events
+    if (error.response?.status === 403) {
+      securityLogger.logUnauthorizedAccess(error.config);
+    }
+    
+    return Promise.reject(error);
+  }
+);
+```
+
+---
+
+## Migration Strategy: CSR to SSR
+
+### Phase-by-Phase Migration Approach
+
+**Phase 1: Start with Next.js CSR (Tier 1)**
+```javascript
+// Initial implementation - pure client-side
+'use client';
+
+import { useEffect, useState } from 'react';
+
+export default function TasksPage({ params }) {
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    async function loadTasks() {
+      const response = await fetch(`/api/tasks?projectId=${params.projectId}`);
+      const data = await response.json();
+      setTasks(data.tasks);
+      setLoading(false);
+    }
+    
+    loadTasks();
+  }, [params.projectId]);
+  
+  if (loading) return <div>Loading...</div>;
+  
+  return <TaskBoard tasks={tasks} />;
+}
+```
+
+**Phase 2: Hybrid Approach (Tier 1.5)**
+```javascript
+// Server component for initial data + Client component for interactivity
+// Server Component (no "use client")
+export default async function TasksPage({ params }) {
+  const initialTasks = await getTasks(params.projectId);
+  
+  return (
+    <div>
+      <TasksHeader projectId={params.projectId} />
+      <ClientTaskBoard initialTasks={initialTasks} projectId={params.projectId} />
+    </div>
+  );
+}
+
+// Client Component for dynamic features
+'use client';
+export function ClientTaskBoard({ initialTasks, projectId }) {
+  const [tasks, setTasks] = useState(initialTasks);
+  
+  // Client-side updates and real-time features
+  useEffect(() => {
+    const ws = new WebSocket(`wss://api.dhafnck.com/ws/${projectId}`);
+    ws.onmessage = (event) => {
+      const update = JSON.parse(event.data);
+      setTasks(prev => updateTaskInList(prev, update));
+    };
+    
+    return () => ws.close();
+  }, [projectId]);
+  
+  return <TaskBoard tasks={tasks} onTaskUpdate={handleTaskUpdate} />;
+}
+```
+
+**Phase 3: Full SSR Migration (Tier 2)**
+```javascript
+// Server Actions for mutations
+'use server';
+
+export async function createTaskAction(formData) {
+  const taskData = {
+    title: formData.get('title'),
+    description: formData.get('description'),
+    projectId: formData.get('projectId')
+  };
+  
+  const newTask = await createTask(taskData);
+  revalidatePath(`/projects/${taskData.projectId}/tasks`);
+  
+  return newTask;
+}
+
+// Server Component with streaming
+export default async function TasksPage({ params }) {
+  return (
+    <div>
+      <Suspense fallback={<TasksHeaderSkeleton />}>
+        <TasksHeader projectId={params.projectId} />
+      </Suspense>
+      
+      <Suspense fallback={<TasksBoardSkeleton />}>
+        <TasksBoard projectId={params.projectId} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function TasksBoard({ projectId }) {
+  const tasks = await getTasks(projectId);
+  
+  return (
+    <form action={createTaskAction}>
+      <input type="hidden" name="projectId" value={projectId} />
+      <TaskCreateForm />
+      <TaskList tasks={tasks} />
+    </form>
+  );
+}
+```
+
+### Migration Benefits & Trade-offs
+
+**CSR → SSR Migration Benefits:**
+```yaml
+Performance:
+  - Faster initial page load (SSR)
+  - Better Core Web Vitals scores
+  - Improved SEO and social sharing
+  - Reduced client-side bundle size
+
+User Experience:
+  - Instant content visibility
+  - Progressive enhancement
+  - Better perceived performance
+  - Offline-capable with proper caching
+
+Developer Experience:
+  - Server Actions for mutations
+  - Type-safe data fetching
+  - Simplified state management
+  - Better error boundaries
+```
+
+**Migration Challenges:**
+```yaml
+Technical:
+  - State management complexity
+  - Client/Server boundary decisions
+  - Hydration mismatches
+  - Real-time features implementation
+
+Performance:
+  - Server load increase
+  - Database connection pooling
+  - Caching strategy complexity
+  - Edge case handling
+
+Development:
+  - Team learning curve
+  - Testing strategy changes
+  - Deployment complexity
+  - Debug tooling differences
+```
+
+### Implementation Timeline
+
+**Week 1-2: CSR Foundation**
+- Set up Next.js 14 with App Router
+- Implement client-side components with "use client"
+- Basic routing and state management
+- API integration and error handling
+
+**Week 3-4: Hybrid Components**
+- Identify components for server-side rendering
+- Implement server components for static content
+- Add client components for interactivity
+- Optimize data fetching patterns
+
+**Week 5-6: SSR Migration**
+- Convert to server actions
+- Implement streaming and suspense
+- Add ISR for dynamic content
+- Performance optimization and monitoring
+
+**Week 7-8: Optimization**
+- Bundle analysis and optimization
+- Caching strategy implementation
+- Error boundary improvements
+- Production deployment and monitoring
+
+---
+
+## Performance Optimization
+
+### Frontend Performance Strategy
+
+**Core Web Vitals Optimization:**
+```javascript
+// Largest Contentful Paint (LCP) Optimization
+const LCPOptimization = {
+  // Preload critical resources
+  preloadCriticalResources: () => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.href = '/api/dashboard/critical-data';
+    link.as = 'fetch';
+    link.crossOrigin = 'anonymous';
+    document.head.appendChild(link);
+  },
+  
+  // Optimize images
+  optimizeImages: () => {
+    return (
+      <img
+        src="/hero-image.webp"
+        alt="Dashboard"
+        width="800"
+        height="400"
+        priority
+        placeholder="blur"
+        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ..."
+      />
+    );
+  }
+};
+
+// First Input Delay (FID) Optimization
+const FIDOptimization = {
+  // Break up long tasks
+  scheduleWork: (work) => {
+    if ('scheduler' in window) {
+      scheduler.postTask(work, { priority: 'user-blocking' });
+    } else {
+      setTimeout(work, 0);
+    }
+  },
+  
+  // Use web workers for heavy computation
+  heavyComputation: (data) => {
+    const worker = new Worker('/workers/task-processor.js');
+    worker.postMessage(data);
+    return new Promise((resolve) => {
+      worker.onmessage = (e) => resolve(e.data);
+    });
+  }
+};
+
+// Cumulative Layout Shift (CLS) Prevention
+const CLSPrevention = {
+  // Reserve space for dynamic content
+  reserveSpace: () => (
+    <div className="task-list-container" style={{ minHeight: '400px' }}>
+      <Suspense fallback={<TasksSkeleton />}>
+        <TaskList />
+      </Suspense>
+    </div>
+  ),
+  
+  // Use transform for animations
+  animateWithTransform: () => ({
+    transform: 'translateY(0)',
+    transition: 'transform 0.3s ease'
+  })
+};
+```
+
+**Bundle Optimization:**
+```javascript
+// Webpack Configuration
+module.exports = {
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+        common: {
+          name: 'common',
+          minChunks: 2,
+          chunks: 'all',
+          enforce: true,
+        },
+      },
+    },
+  },
+  
+  // Tree shaking
+  sideEffects: false,
+  
+  // Compression
+  plugins: [
+    new CompressionPlugin({
+      algorithm: 'gzip',
+      test: /\.(js|css|html|svg)$/,
+      threshold: 8192,
+      minRatio: 0.8,
+    }),
+  ],
+};
+```
+
+### API Gateway Performance
+
+**Caching Strategy:**
+```yaml
+# Redis Caching Configuration
+redis:
+  cluster:
+    enabled: true
+    nodes:
+      - redis-1:6379
+      - redis-2:6379
+      - redis-3:6379
+  
+  cache_policies:
+    - name: tasks_cache
+      ttl: 300  # 5 minutes
+      patterns: ["/api/v1/tasks/*"]
+      
+    - name: projects_cache
+      ttl: 900  # 15 minutes
+      patterns: ["/api/v1/projects/*"]
+      
+    - name: user_cache
+      ttl: 1800  # 30 minutes
+      patterns: ["/api/v1/users/*"]
+```
+
+**Rate Limiting:**
+```javascript
+// Distributed Rate Limiting
+const rateLimiter = {
+  policies: [
+    {
+      name: 'authenticated_user',
+      limit: 1000,
+      window: '1h',
+      key: 'user_id'
+    },
+    {
+      name: 'anonymous_user',
+      limit: 100,
+      window: '1h',
+      key: 'ip_address'
+    },
+    {
+      name: 'api_burst',
+      limit: 20,
+      window: '1m',
+      key: 'user_id'
+    }
+  ]
+};
+```
+
+---
+
+## Monitoring & Analytics
+
+### Frontend Monitoring
+
+**Real User Monitoring (RUM):**
+```javascript
+// Performance Monitoring
+const performanceMonitor = {
+  trackWebVitals: () => {
+    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+      getCLS(sendToAnalytics);
+      getFID(sendToAnalytics);
+      getFCP(sendToAnalytics);
+      getLCP(sendToAnalytics);
+      getTTFB(sendToAnalytics);
+    });
+  },
+  
+  trackUserInteractions: () => {
+    // Track task creation, updates, deletions
+    document.addEventListener('click', (event) => {
+      if (event.target.matches('[data-track]')) {
+        const action = event.target.dataset.track;
+        analytics.track(action, {
+          element: event.target.tagName,
+          timestamp: Date.now(),
+          userId: getCurrentUserId()
+        });
+      }
+    });
+  }
+};
+
+// Error Tracking
+window.addEventListener('error', (event) => {
+  errorLogger.log({
+    message: event.message,
+    filename: event.filename,
+    lineno: event.lineno,
+    colno: event.colno,
+    stack: event.error?.stack,
+    userAgent: navigator.userAgent,
+    url: window.location.href,
+    userId: getCurrentUserId()
+  });
+});
+```
+
+**A/B Testing Framework:**
+```javascript
+// Feature Flag System
+const featureFlags = {
+  async getFlag(flagName, userId) {
+    const response = await fetch(`/api/flags/${flagName}?userId=${userId}`);
+    const { enabled, variant } = await response.json();
+    
+    return { enabled, variant };
+  },
+  
+  async trackConversion(experimentId, userId, conversionType) {
+    await fetch('/api/experiments/conversion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        experimentId,
+        userId,
+        conversionType,
+        timestamp: Date.now()
+      })
+    });
+  }
+};
+
+// Usage in Components
+const TaskBoard = () => {
+  const [newDesignEnabled, setNewDesignEnabled] = useState(false);
+  
+  useEffect(() => {
+    featureFlags.getFlag('new_task_board_design', userId)
+      .then(({ enabled }) => setNewDesignEnabled(enabled));
+  }, [userId]);
+  
+  return newDesignEnabled ? <NewTaskBoard /> : <LegacyTaskBoard />;
+};
+```
+
+---
+
+## Deployment Strategy
+
+### Multi-Environment Setup
+
+**Environment Configuration:**
+```yaml
+# Development Environment
+development:
+  frontend:
+    url: http://localhost:3000
+    api_url: http://localhost:8000
+    websocket_url: ws://localhost:8000/ws
+  
+  features:
+    debug_mode: true
+    hot_reload: true
+    source_maps: true
+
+# Staging Environment
+staging:
+  frontend:
+    url: https://staging.dhafnck.com
+    api_url: https://staging-api.dhafnck.com
+    websocket_url: wss://staging-api.dhafnck.com/ws
+  
+  features:
+    debug_mode: false
+    performance_monitoring: true
+    a_b_testing: true
+
+# Production Environment
+production:
+  frontend:
+    url: https://app.dhafnck.com
+    api_url: https://api.dhafnck.com
+    websocket_url: wss://api.dhafnck.com/ws
+  
+  features:
+    debug_mode: false
+    performance_monitoring: true
+    error_tracking: true
+    analytics: true
+```
+
+**CI/CD Pipeline:**
+```yaml
+# GitHub Actions Workflow
+name: Frontend Deployment
+on:
+  push:
+    branches: [main, staging, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - run: npm ci
+      - run: npm run test:unit
+      - run: npm run test:e2e
+      - run: npm run test:accessibility
+      
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - run: npm ci
+      - run: npm run build
+      - run: npm run build:analyze
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-files
+          path: dist/
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          vercel-args: '--prod'
+```
+
+---
+
+## Next Steps
+
+### Phase 07 Prerequisites
+1. **Backend Microservices Architecture**: Service decomposition and communication patterns
+2. **Event-Driven Architecture**: Message queues and event streaming
+3. **Database Sharding Strategy**: Data partitioning and distribution
+4. **Container Orchestration**: Kubernetes deployment and scaling
+
+### Critical Decisions Required
+1. **Frontend Framework Selection**: React vs Vue vs Angular for different modules
+2. **State Management Strategy**: Client-side vs server-side state
+3. **Authentication Provider**: Auth0 vs Firebase Auth vs custom solution
+4. **CDN Strategy**: CloudFront vs Cloudflare vs multi-CDN approach
+
+---
+
+## Agent Contributions
+
+- **@ui-designer-agent**: Design system architecture, component library, accessibility implementation, user experience optimization
+- **@system-architect-agent**: Frontend architecture design, technology stack selection, performance optimization, deployment strategy
+- **@security-auditor-agent**: Security implementation, authentication system, input validation, API security measures
+
+**Document Version**: 1.0  
+**Last Updated**: 2025-06-27  
+**Next Review**: Phase 07 completion

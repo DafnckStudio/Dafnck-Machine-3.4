@@ -1,8 +1,11 @@
-{
+{ 
+  "protect": true,
   "rules": [
+    "if protect is true, ai no have permission to write on this file, read only",
     "Begin session need complete master-step",
     "save runtime_variables and runtime_constants on memory",
     "tool count on cursor chat need follow runtime_variables.tools_count",
+    "need branch id for use mcp server",
     "apply custom_tools on cursor chat",
     "apply default_tools on cursor chat",
     "Préfixe tes demandes avec @nom-de-l-agent pour activer un agent spécifique",
@@ -14,7 +17,7 @@
     "source": ".cursorrules"
   },
   "runtime_constants": {
-    "project_id": "dhafnck_mcp_main",
+    "project_id": "<demande to user>",
     "projet_path_root": "/home/<username>/agentic-project/dhafnck_mcp_main",
     "username": "<whoami command result>",
     "DOCUMENT_RULES_PATH": "00_RULES",
@@ -44,7 +47,7 @@
       "reset_action": "call manage_context() to synchronize current session"
     },
     "task_tree_id": {
-      "value": "<master_step.P00-S00-T00.tools.01.command>",
+      "value": "main",
       "title": "Task tree ID",
       "description": "Current Git branch - update if project branch changes",
       "state_display_on_chat": false
@@ -83,7 +86,8 @@
             }
           }
         }
-      }    
+      },
+      "next_step": "P00-S00-T01"
     },
     "P00-S00-T01": {
       "state_display_on_chat": true,
@@ -93,7 +97,9 @@
         "action": "parse_rule",
         "target": "core/P00-S00-T01-Core Mechanic Systems.md"
       },
-      "description": "use MCP to get information about core mechanic systems, and apply it on session chat"      
+      "description": "use MCP to get information about core mechanic systems, and apply it on session chat",
+      "next_step": "P00-S00-T02",
+      "previous_step": "P00-S00-T00"
     },
     "P00-S00-T02": {
       "state_display_on_chat": true,
@@ -103,7 +109,9 @@
         "action": "parse_rule",
         "target": "core/P00-S00-T02-Core Task Management.md"
       },
-      "description": "use MCP to get information about core task management, and apply it on session chat"      
+      "description": "use MCP to get information about core task management, and apply it on session chat",
+      "next_step": "P00-S00-T03",
+      "previous_step": "P00-S00-T01"
     },
     "P00-S00-T03": {
       "state_display_on_chat": true,
@@ -113,8 +121,27 @@
         "action": "parse_rule",
         "target": "core/P00-S00-T03-Agents Information.md"
       },
-      "description": "use MCP to get information about agents information, and apply it on session chat"      
+      "description": "use MCP to get information about agents information, and apply it on session chat",
+      "next_step": "P00-S00-T04",
+      "previous_step": "P00-S00-T02"
+    },
+    "P00-S00-T04": {
+      "state_display_on_chat": true,
+      "content_display_on_chat": "Loading Custom Tools Information...",
+      "title": "Apply custom tools", 
+      "description": "Apply custom tools to the session chat",
+      "next_step": "P00-S00-T05",
+      "previous_step": "P00-S00-T03"
+    },
+    "P00-S00-T05": {
+      "state_display_on_chat": true,
+      "content_display_on_chat": "Loading Default Tools Information...",
+      "title": "Apply default tools",
+      "description": "Apply default tools to the session chat",
+      "next_step": "P00-S00-T06",
+      "previous_step": "P00-S00-T04"
     }
+    
   },
   "custom_tools": {
     "enabled": true,

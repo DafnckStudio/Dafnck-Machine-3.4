@@ -1,0 +1,260 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Agent Auto-Switch Workflow Documentation
+
+## 🔄 Automatic Agent Role Switching System
+
+### Overview
+The Agentic Coding Framework includes an intelligent automatic role switching system that seamlessly transitions the AI assistant to the appropriate specialized agent based on task assignments or when the `call_agent` tool is used. This ensures that each task is handled by an AI with the optimal expertise, knowledge, and behavioral patterns.
+
+### ⚡ Trigger Events
+
+**Automatic role switching is triggered by:**
+1. `manage_task` with action="get" (retrieving task details)
+2. `manage_task` with action="next" (getting next recommended task)
+3. **Directly using the `call_agent` tool** (manual or system-invoked)
+
+> **Note:** Whenever the `call_agent` tool is used (e.g., `call_agent(name_agent="coding_agent")`), the AI immediately switches its role and context to the specified agent, loading the corresponding YAML configuration and adopting the agent's expertise and behavior. This applies even outside of task assignment workflows.
+
+### 🎯 Agent Assignment Format
+
+**Current Standard (Post-Update):**
+- **All assignees in tasks use "@" prefix**: "@coding_agent", "@functional_tester_agent"
+- **System automatically normalizes**: Accepts agents with or without "@", automatically adds "@" if missing
+- **Agent folders use underscore format**: `cursor_agent/yaml-lib/coding_agent/`
+- **call_agent() uses clean names**: `call_agent(name_agent="coding_agent")` (strips "@" prefix)
+
+### 🔄 Automatic Switch Process
+
+```mermaid
+flowchart LR
+    A["Task Operation<br/>(get_task/do_next/call_agent)"] --> B["Extract/Specify Agent Name"]
+    B --> C["Strip '@' Prefix if present<br/>(@coding_agent → coding_agent)"]
+    C --> D["Call Agent<br/>call_agent(name_agent='coding_agent')"]
+    D --> E["Load YAML Config<br/>cursor_agent/yaml-lib/coding_agent/"]
+    E --> F["Switch AI Role & Context<br/>Adopt specialized expertise"]
+    F --> G["Begin Task Work<br/>With appropriate skills"]
+```
+
+### 📋 Step-by-Step Process
+
+1. **Task Operation or call_agent Triggered**
+   - User calls `get_task("20250127001")`, `do_next()`, or `call_agent(name_agent="agent_name")`
+   - System loads task data and metadata, or directly switches to the specified agent
+
+2. **Extract or Specify Agent Name**
+   - System extracts first assignee from task's assignees array, or uses the agent specified in `call_agent`
+   - Example: `["@coding_agent", "@senior_developer"]` → Primary: "@coding_agent"
+   - Or: `call_agent(name_agent="coding_agent")`
+
+3. **Normalize Agent Name**
+   - Strip "@" prefix to get clean agent name
+   - "@coding_agent" → "coding_agent"
+   - Handle legacy formats and edge cases
+
+4. **Execute Agent Call**
+   - Automatically call: `call_agent(name_agent="coding_agent")`
+   - Load agent configuration from YAML files
+   - No manual intervention required
+
+5. **Load Agent Context**
+   - Load from: `cursor_agent/yaml-lib/coding_agent/`
+   - Files loaded:
+     - `job_desc.yaml` (role definition and persona)
+     - `rules/` (specialized best practices)
+     - `tools/` (role-specific utilities)
+     - `contexts/` (situational guidance)
+
+6. **AI Role Switch**
+   - AI adopts the specialized agent's:
+     - Expertise and knowledge base
+     - Behavioral patterns and communication style
+     - Problem-solving approaches
+     - Quality standards and practices
+     - Tool preferences and workflows
+
+7. **Begin Specialized Work**
+   - AI is now ready to work on the task with appropriate expertise
+   - All subsequent actions follow the agent's specialized patterns
+
+### 🎭 Agent Mapping Examples
+
+| Task Assignee | Agent Call | Specialized Role |
+|---------------|------------|------------------|
+| `@coding_agent` | `call_agent("coding_agent")` | Feature implementation, code generation |
+| `@functional_tester_agent` | `call_agent("functional_tester_agent")` | QA testing, test case creation |
+| `@senior_developer` | `call_agent("senior_developer")` | Architecture, complex problem solving |
+| `@task_planner` | `call_agent("task_planner")` | Planning, requirement analysis |
+| `@security_auditor_agent` | `call_agent("security_auditor_agent")` | Security analysis, vulnerability assessment |
+| `@documentation_agent` | `call_agent("documentation_agent")` | Technical writing, documentation |
+| `@devops_agent` | `call_agent("devops_agent")` | Infrastructure, deployment, CI/CD |
+| `@system_architect_agent` | `call_agent("system_architect_agent")` | System design, architecture patterns |
+
+### 🛠️ Implementation Examples
+
+#### Example 1: Development Task
+```typescript
+// User action
+manage_task(action="get", task_id="20250127001")
+
+// Task data returned:
+{
+  "id": "20250127001",
+  "title": "Implement user authentication API",
+  "assignees": ["@coding_agent"],
+  ...
+}
+
+// Automatic system actions:
+1. Extract assignee: "@coding_agent"
+2. Strip prefix: "coding_agent"
+3. Call: call_agent(name_agent="coding_agent")
+4. Load: cursor_agent/yaml-lib/coding_agent/
+5. AI switches to development expertise
+6. Ready for implementation work
+```
+
+#### Example 2: Testing Task
+```typescript
+// User action
+manage_task(action="next")
+
+// System returns next task:
+{
+  "id": "20250127002", 
+  "title": "Write unit tests for authentication",
+  "assignees": ["@functional_tester_agent"],
+  ...
+}
+
+// Automatic system actions:
+1. Extract assignee: "@functional_tester_agent"
+2. Strip prefix: "functional_tester_agent"
+3. Call: call_agent(name_agent="functional_tester_agent")
+4. Load: cursor_agent/yaml-lib/functional_tester_agent/
+5. AI switches to QA/testing expertise
+6. Ready for test creation and validation
+```
+
+### 🎯 Multiple Assignees Handling
+
+**Primary Assignee Rule:**
+- Only the **first assignee** in the list triggers automatic role switching
+- This ensures consistent, predictable behavior
+- Multi-agent collaboration handled through task decomposition
+
+**Example:**
+```json
+{
+  "assignees": ["@senior_developer", "@security_auditor_agent", "@devops_agent"]
+}
+```
+- **Triggers**: `call_agent(name_agent="senior_developer")`
+- **Primary role**: Senior Developer
+- **Collaboration**: Other agents involved through subtasks or dependencies
+
+### 🔧 Configuration and Maintenance
+
+#### YAML Structure Validation
+Each agent must have the following YAML structure:
+```
+cursor_agent/yaml-lib/[agent_name]/
+├── job_desc.yaml          # Core role definition
+├── contexts/              # Situational guidance
+│   ├── planning.yaml
+│   ├── implementation.yaml
+│   └── review.yaml
+├── rules/                 # Best practices and standards
+│   ├── core_principles.yaml
+│   ├── quality_standards.yaml
+│   └── workflow_rules.yaml
+└── tools/                 # Role-specific utilities
+    └── [tool_files]
+```
+
+#### Error Handling
+- **Missing Agent**: Falls back to generic behavior, logs warning
+- **Invalid YAML**: Uses minimal role definition, reports validation errors
+- **Network Issues**: Caches last successful agent configuration
+- **Malformed Assignee**: Attempts fuzzy matching, then defaults
+
+### 📊 Benefits and Advantages
+
+#### 🚀 **Workflow Efficiency**
+- **Zero Manual Switching**: No need to manually change AI roles
+- **Seamless Transitions**: Smooth handoffs between different types of work
+- **Context Preservation**: Maintains task context through role switches
+- **Reduced Cognitive Load**: Users focus on work, not role management
+
+#### 🎯 **Expertise Optimization**
+- **Specialized Knowledge**: Each agent brings domain-specific expertise
+- **Appropriate Tools**: Role-specific tools and methodologies
+- **Quality Standards**: Agent-specific quality gates and practices
+- **Best Practices**: YAML-defined standards and conventions
+
+#### 🔄 **Consistency and Reliability**
+- **Predictable Behavior**: Same agent always handles same types of tasks
+- **Standard Processes**: Consistent approaches across similar work
+- **Quality Assurance**: Role-specific validation and quality checks
+- **Audit Trail**: Clear record of which agent handled each task
+
+#### 📈 **Scalability and Maintenance**
+- **Easy Agent Addition**: New agents integrate seamlessly
+- **YAML Configuration**: Easy to update and maintain agent definitions
+- **Centralized Management**: All agent configs in one location
+- **Version Control**: Agent configurations tracked in git
+
+### 🚨 Troubleshooting
+
+#### Common Issues and Solutions
+
+**1. Agent Not Switching**
+- **Check**: Task has valid assignee with "@" prefix
+- **Verify**: Agent YAML folder exists in `cursor_agent/yaml-lib/`
+- **Solution**: Ensure agent name matches folder name exactly
+
+**2. Wrong Agent Called**
+- **Check**: Primary assignee (first in list) is correct
+- **Verify**: Agent name spelling and format
+- **Solution**: Update task assignees to correct order
+
+**3. Missing Agent Configuration**
+- **Check**: `cursor_agent/yaml-lib/[agent_name]/job_desc.yaml` exists
+- **Verify**: YAML files are valid and complete
+- **Solution**: Create missing YAML configuration files
+
+**4. Role Switch Not Applied**
+- **Check**: `call_agent` tool is available and functional
+- **Verify**: MCP server is running and responsive
+- **Solution**: Restart MCP server or check tool availability
+
+### 📝 Best Practices
+
+#### Task Assignment
+- **Use specific agents**: Assign tasks to the most appropriate specialist
+- **Single primary agent**: Keep one primary assignee for clarity
+- **Consistent naming**: Use standard agent names with "@" prefix
+- **Clear responsibilities**: Define clear scope for each agent type
+
+#### Agent Configuration
+- **Complete YAML**: Ensure all required YAML files are present
+- **Regular Updates**: Keep agent configurations current
+- **Validation**: Regularly validate YAML syntax and completeness
+- **Documentation**: Document agent capabilities and limitations
+
+#### Workflow Integration
+- **Always use `call_agent` when you want to explicitly switch the AI to a specific agent role, even outside of task assignment.**
+- **Trust the system**: Let automatic switching handle role changes
+- **Monitor effectiveness**: Track which agents handle which tasks
+- **Feedback loop**: Update agent configs based on performance
+- **Continuous improvement**: Refine agent definitions over time
+
+### 🔮 Future Enhancements
+
+#### Planned Improvements
+- **Multi-agent collaboration**: Enhanced support for collaborative tasks
+- **Dynamic role switching**: Switch agents mid-task based on context
+- **Agent learning**: Improve agent configurations based on usage patterns

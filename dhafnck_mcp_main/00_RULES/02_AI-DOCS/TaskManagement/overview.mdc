@@ -1,0 +1,28 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Task Management System Overview
+
+This documentation covers the architecture, logic, and best practices for the MCP-based Task Management system in agentic projects.
+
+## Purpose
+- Provide a robust, scalable, and maintainable framework for managing tasks, projects, and agents in multi-agent environments.
+- Ensure all operations are performed via MCP tools for data integrity and automation.
+
+## System Architecture
+- **Tasks**: The atomic units of work, managed in `.cursor/rules/tasks/tasks.json` (never edited directly; always use MCP tools).
+- **Projects**: Logical containers for related work, each with one or more task trees (workstreams).
+- **Agents**: Specialized AI or human roles, assigned to projects, task trees, or individual tasks.
+- **Orchestration**: The coordination layer that manages dependencies, agent assignments, and workflow progression.
+
+## Key Features
+- Automatic context generation for each task (see `/ .cursor/rules/auto_rule.mdc`).
+- Role-based agent assignment and auto-switching (see `.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc`).
+- Hierarchical project/task structure with support for cross-tree dependencies.
+- Full lifecycle management: create, update, complete, delete, and recommend next tasks.
+- YAML-based agent configuration for easy extension and maintenance.
+
+## Documentation Structure
+See the [README.mdc](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/README.mdc) for a categorized index of all TaskManagement documentation files.

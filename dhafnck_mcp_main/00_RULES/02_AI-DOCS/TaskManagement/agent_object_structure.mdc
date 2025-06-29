@@ -1,0 +1,52 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Agent Object Structure & Management
+
+## Source of Truth
+- Agent data is managed by MCP tools and stored in `/cursor_agent/.cursor/rules/brain/projects.json` (never edit directly).
+
+## Agent Fields (Actual Implementation)
+| Field         | Type        | Description                       |
+|-------------- |------------ |-----------------------------------|
+| id            | str         | Agent identifier                   |
+| name          | str         | Agent name                         |
+| call_agent    | str         | Agent call reference (e.g., @agent_name) |
+
+## Agent Assignment
+- Each agent can be assigned to one or more task trees within a project.
+- Assignment is managed via the `agent_assignments` mapping in the project object.
+
+## Example (from actual projects.json)
+```json
+"registered_agents": {
+  "frontend_specialist": {
+    "id": "frontend_specialist",
+    "name": "Frontend Specialist Agent",
+    "call_agent": "@frontend_specialist_agent"
+  }
+},
+"agent_assignments": {
+  "frontend_specialist": ["frontend"]
+}
+```
+
+## MCP Tool: manage_agent
+- The `manage_agent` tool provides a simple interface for agent management.
+- **Parameters:**
+  - `action: str` (register, assign, get, list, update, unassign, etc.)
+  - `project_id: Optional[str]`
+  - `agent_id: Optional[str]`
+  - `name: Optional[str]`
+  - `call_agent: Optional[str]`
+  - `tree_id: Optional[str]`
+- No direct support for advanced fields (capabilities, metrics, etc.) in the current tool interface.
+
+## Advanced/Optional Fields
+- Advanced agent properties (capabilities, metrics, etc.) are not present in the current implementation but may be added in the future. See [Advanced Patterns & Orchestration](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/advanced_patterns.mdc).
+
+## Integration & Relationships
+- Agents are registered and assigned to projects and task trees via MCP tools.
+- See [Project Object Structure](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/project_object_structure.mdc) and [Task Object Structure](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_object_structure.mdc).

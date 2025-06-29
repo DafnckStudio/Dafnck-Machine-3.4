@@ -1,0 +1,91 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Troubleshooting & FAQ
+
+## Overview
+
+This guide provides systematic approaches to diagnosing and resolving common issues in multi-agent orchestration systems. Each issue includes symptoms, root cause analysis, and step-by-step solutions.
+
+---
+
+## 🚨 Common Issues and Solutions
+
+### 1. Agents Not Responding to Task Assignments
+- **Symptoms**: Tasks stuck in "todo", no agent activity, orchestration completes but no work
+- **Diagnosis**: Check agent registration, status, and assignments
+- **Solutions**:
+  - Register missing agents
+  - Update agent capabilities
+  - Assign agents to correct workstreams
+
+### 2. Task Dependencies Creating Circular Loops
+- **Symptoms**: Tasks stuck in "blocked", circular dependency errors
+- **Diagnosis**: Validate task structure, check for cycles
+- **Solutions**:
+  - Break circular dependencies
+  - Restructure task hierarchy
+
+### 3. Agent Overload and Bottlenecks
+- **Symptoms**: Some agents overloaded, others idle, project delays
+- **Diagnosis**: Analyze workload distribution, check dashboard
+- **Solutions**:
+  - Automatic rebalancing
+  - Add additional agents
+  - Increase agent capacity
+
+### 4. Poor Task Completion Quality
+- **Symptoms**: Tasks marked complete but fail requirements, high rework
+- **Diagnosis**: Analyze completion patterns, quality metrics
+- **Solutions**:
+  - Implement quality gates
+  - Add specialized review agents
+  - Enhance agent capabilities
+
+### 5. Communication Breakdowns Between Agents
+- **Symptoms**: Conflicting solutions, duplicated effort, integration failures
+- **Diagnosis**: Check shared context, analyze communication logs
+- **Solutions**:
+  - Implement shared context updates
+  - Regular synchronization points
+  - Define communication protocols
+
+---
+
+## 🔧 Diagnostic Tools and Commands
+- **System Health Check**: Validate project, agents, tasks, assignments, and integrity
+- **Performance Analysis**: Monitor completion rate, utilization, bottlenecks, delays
+- **Agent Capability Audit**: Identify capability gaps and unassignable tasks
+
+---
+
+## 📊 Monitoring and Prevention
+- Set up proactive monitoring and automated remediation
+- Regular health and performance checks
+- Automated fixes for common issues
+
+---
+
+## 🎯 Best Practices for Issue Prevention
+1. Regular health checks and monitoring
+2. Gradual scaling of agent teams
+3. Maintain clear documentation
+4. Implement quality gates
+5. Establish communication protocols
+6. Audit and update agent capabilities
+7. Plan dependencies carefully
+8. Continuously optimize performance
+
+---
+
+## 📚 Quick Reference
+- **Emergency Commands**: Rebalance, unassign, validate, dashboard
+- **Common Fix Patterns**: Register/assign agents, update stuck tasks, create quality/sync tasks
+
+---
+
+*For more on advanced orchestration and collaboration, see:*
+- [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/collaboration_patterns.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/collaboration_patterns.mdc)
+- [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/overview.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/overview.mdc)

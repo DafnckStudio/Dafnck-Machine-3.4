@@ -1,0 +1,120 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Context Master Documentation
+
+## **Overview**
+The Context Management System provides a JSON-based approach for managing task contexts in the DhafnckMCP system. This replaces the previous markdown file-based system with a structured, validated, and cloud-compatible solution.
+
+## **Key Features**
+1. **JSON-Based Storage**: Structured data with schema validation
+2. **CRUD Operations**: Full create, read, update, delete support
+3. **Nested Property Access**: Dot notation for deep property updates (e.g., `metadata.status`, `progress.next_steps.0`)
+4. **Automatic Context Creation**: Auto-generated when task conditions are met
+5. **Cloud Compatible**: Works entirely in Docker/cloud without local file creation
+6. **AI Integration**: Direct MCP tool access for AI agents
+
+## **Context File Structure**
+```
+.cursor/rules/contexts/
+├── {user_id}/           # default_id
+│   ├── {project_id}/    # dhafnck_mcp_main
+│   │   ├── {task_tree_id}/  # current git branch
+│   │   │   ├── contexts.json     # Index file
+│   │   │   └── context_{task_id}.json  # Individual context files
+```
+
+## **When Context Files Are Created/Updated**
+1. **Automatic Creation**: When task status = "todo" AND all subtasks are "todo" or none exist
+2. **Manual Creation**: Via `manage_context("create", ...)` MCP tool
+3. **Task Updates**: When task properties change via MCP tools
+4. **Agent Actions**: When AI agents call `manage_context` tool
+5. **Progress Tracking**: When adding insights, progress actions, or next steps
+
+## **MCP Tool Integration**
+Use the `manage_context` MCP tool for all context operations:
+
+### Available Actions:
+- `create`: Create new context for a task
+- `get`: Retrieve context or specific property
+- `update`: Update context properties (supports dot notation)
+- `delete`: Remove context entirely
+- `list`: List all contexts in project/tree
+- `get_property`: Get specific property using dot notation
+- `update_property`: Update specific property using dot notation
+- `merge`: Merge data into existing context
+- `add_insight`: Add agent insight/note to context
+- `add_progress`: Add progress action to context
+- `update_next_steps`: Update next steps list
+
+### Usage Examples:
+```python
+# Get full context
+manage_context("get", task_id="20250127001")
+
+# Update specific property
+manage_context("update_property", task_id="20250127001", property_path="metadata.status", value="in_progress")
+
+# Add agent insight
+manage_context("add_insight", task_id="20250127001", agent="coding_agent", category="solution", content="Used React hooks")
+
+# Merge technical data
+manage_context("merge", task_id="20250127001", data={"technical": {"technologies": ["React", "TypeScript"]}})
+
+# Update next steps
+manage_context("update_next_steps", task_id="20250127001", next_steps=["Implement component", "Write tests"])
+```
+
+## **Context Schema Structure**
+Each context file contains the following sections:
+
+### Core Metadata
+- `task_id`: Unique task identifier (date-based format: YYYYMMDDXXX)
+- `project_id`: Project identifier
+- `task_tree_id`: Git branch/task tree
+- `status`: Current task status
+- `priority`: Task priority level
+- `assignees`: List of assigned agents
+- `labels`: Task categorization tags
+- `created_at`: Creation timestamp
+- `updated_at`: Last update timestamp
+
+### Task Information
+- `title`: Task title
+- `description`: Task description
+- `estimated_effort`: Effort estimation
+- `due_date`: Task due date
+
+### Requirements & Technical Details
+- `requirements`: Checklist and completion criteria
+- `technical`: Technologies, frameworks, key files, architecture notes
+- `dependencies`: Task dependencies and external dependencies
+
+### Progress Tracking
+- `completed_actions`: List of completed actions with timestamps
+- `session_summary`: Current session summary
+- `next_steps`: List of upcoming actions
+- `completion_percentage`: Progress percentage
+
+### Subtasks & Notes
+- `subtasks`: Nested subtask tracking
+- `notes`: Agent insights, challenges, solutions, decisions
+- `custom_sections`: Extensible sections for specific needs
+
+## **Best Practices**
+1. **Always check context before starting work**: Use `manage_context("get", task_id="20250127001")` 
+2. **Log progress regularly**: Use `add_progress` and `add_insight` actions
+3. **Update next steps**: Keep `next_steps` current for session continuity
+4. **Use dot notation for specific updates**: More efficient than full context updates
+5. **Leverage automatic creation**: Let the system create contexts when conditions are met
+6. **Use appropriate categories for insights**: "insight", "challenge", "solution", "decision"
+7. **Follow task ID format**: Use date-based format (YYYYMMDDXXX) for all task references
+
+## **Migration from Old System**
+The new JSON-based system replaces the previous markdown file approach:
+- **Old**: `.cursor/rules/contexts/default_id/<project_id>/<projet_path_root>/context_[TASK_ID].md`
+- **New**: `.cursor/rules/contexts/{user_id}/{project_id}/{task_tree_id}/context_{task_id}.json`
+
+The new system provides better structure, validation, and cloud compatibility while maintaining all functionality of the previous system.

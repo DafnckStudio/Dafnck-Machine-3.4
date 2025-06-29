@@ -1,0 +1,63 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Object Structure & JSON Schema
+
+## Source of Truth
+- Project data is managed by MCP tools and stored in `/cursor_agent/.cursor/rules/brain/projects.json` (never edit directly).
+
+## Project Object Fields (Actual Implementation)
+| Field                | Type              | Description |
+|----------------------|-------------------|-------------|
+| id                   | str               | Project identifier |
+| name                 | str               | Project name |
+| description          | str               | Project description |
+| task_trees           | dict              | Mapping of tree_id to task tree objects |
+| registered_agents    | dict              | Mapping of agent_id to agent info (id, name, call_agent) |
+| agent_assignments    | dict              | Mapping of agent_id to list of assigned tree_ids |
+| created_at           | str               | ISO timestamp |
+
+### Task Tree Fields
+| Field         | Type        | Description                       |
+|-------------- |------------ |-----------------------------------|
+| id            | str         | Task tree identifier               |
+| name          | str         | Task tree name                     |
+| description   | str         | Task tree description              |
+
+### Registered Agent Fields
+| Field         | Type        | Description                       |
+|-------------- |------------ |-----------------------------------|
+| id            | str         | Agent identifier                   |
+| name          | str         | Agent name                         |
+| call_agent    | str         | Agent call reference (e.g., @agent_name) |
+
+### Agent Assignment Fields
+- Maps agent_id to a list of tree_ids the agent is assigned to.
+
+## Example (from actual projects.json)
+```json
+{
+  "id": "multi_agent_test",
+  "name": "Multi-Agent Orchestration Test",
+  "description": "Testing multi-agent collaboration and orchestration capabilities through MCP",
+  "task_trees": {
+    "frontend": { "id": "frontend", "name": "Frontend Development", "description": "UI/UX development workstream" }
+  },
+  "registered_agents": {
+    "frontend_specialist": { "id": "frontend_specialist", "name": "Frontend Specialist Agent", "call_agent": "@frontend_specialist_agent" }
+  },
+  "agent_assignments": {
+    "frontend_specialist": ["frontend"]
+  },
+  "created_at": "2025-01-01T00:00:00Z"
+}
+```
+
+## Advanced/Optional Fields
+- Fields like `cross_tree_dependencies`, `orchestration_status`, etc. are not present in the current implementation but may be added for advanced orchestration scenarios. See [Advanced Patterns & Orchestration](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/advanced_patterns.mdc).
+
+## Integration & Relationships
+- Projects orchestrate the management of tasks through their task trees and agent assignments.
+- See [Task Object Structure](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/task_object_structure.mdc) and [Agent Object Structure](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/agent_object_structure.mdc).

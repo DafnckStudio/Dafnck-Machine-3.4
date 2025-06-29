@@ -1,0 +1,69 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Advanced Techniques
+
+## Overview
+
+This section covers advanced orchestration patterns, monitoring, error handling, and optimization strategies for multi-agent systems.
+
+---
+
+## 🔧 Advanced Orchestration Patterns
+
+### 1. Dynamic Agent Scaling
+- Monitor agent workload and scale teams dynamically
+- Register additional agents and rebalance as needed
+
+### 2. Quality Gates and Checkpoints
+- Create quality gate tasks for code review, security, and performance
+- Use multi-agent checkpoints to ensure standards
+
+### 3. Feedback Loop Integration
+- Collect user feedback with specialized agents
+- Implement improvement tasks based on feedback analysis
+
+---
+
+## 📊 Workflow Monitoring
+
+- Use real-time dashboards to track project status, agent activity, bottlenecks, and estimated completion
+- Monitor agent performance: utilization, task time, quality score
+
+---
+
+## 🚨 Error Handling and Recovery
+
+- Monitor agent health and reassign tasks on failure
+- Handle circular dependencies with validation and resolution
+- Implement robust error recovery and backup agent assignment
+
+---
+
+## 📈 Optimization Strategies
+
+1. **Agent Specialization**: Assign tasks matching agent expertise
+2. **Task Granularity**: Break large tasks into manageable subtasks
+3. **Communication Efficiency**: Use shared context and clear protocols
+4. **Resource Optimization**: Monitor and balance agent workload
+
+---
+
+## 🎯 Best Practices Summary
+
+1. Plan agent collaboration patterns in advance
+2. Monitor continuously with dashboards and metrics
+3. Handle failures gracefully with recovery mechanisms
+4. Optimize orchestration parameters regularly
+5. Document workflows and patterns
+6. Test orchestration before production
+7. Gather and analyze feedback
+8. Scale agent teams based on real workload
+
+---
+
+*For more on orchestration patterns and troubleshooting, see:*
+- [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/collaboration_patterns.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/collaboration_patterns.mdc)
+- [.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/troubleshooting.mdc](mdc:.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/troubleshooting.mdc)

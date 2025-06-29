@@ -1,0 +1,14 @@
+# Multi-Agent Orchestration Documentation
+
+Welcome to the Multi-Agent Orchestration documentation suite. This collection is organized by category for clarity and easy maintenance.
+
+## Table of Contents
+
+1. [Overview & System Architecture](.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/overview.mdc)
+2. [Agent Registration & Management](.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/agent_registration.mdc)
+3. [Collaboration & Workflow Patterns](.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/collaboration_patterns.mdc)
+4. [Quick Start & Tutorials](.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/quick_start.mdc)
+5. [Practical Orchestration Examples](.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/orchestration_examples.mdc)
+6. [Troubleshooting & FAQ](.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/troubleshooting.mdc)
+7. [Advanced Techniques](.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/advanced_techniques.mdc)
+8. [Agent Auto-Switch Workflow](.cursor/rules/02_AI-DOCS/MultiAgentOrchestration/Agent_Auto_Switch_Workflow.mdc) 

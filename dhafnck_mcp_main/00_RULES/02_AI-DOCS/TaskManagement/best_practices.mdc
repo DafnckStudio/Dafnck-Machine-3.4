@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Best Practices: MCP Task Management
+
+## Agent Assignment
+- Always use the `@` prefix for agent assignees in tasks.
+- Assign only one primary agent per task for clarity and predictable auto-switching.
+- Register and assign agents using MCP tools, not by editing JSON.
+
+## Task and Subtask IDs
+- Use the full date-based format for all new tasks and subtasks.
+- Let the system auto-generate IDs; do not create them manually.
+- Always quote IDs in tool calls.
+
+## YAML Configuration
+- Keep agent YAML configs in `/cursor_agent/yaml-lib/[agent_name]/` up to date.
+- Ensure each agent has a `job_desc.yaml` and at least one rules/context file.
+
+## Tool Usage
+- Always use MCP tools for all operations; never edit JSON files directly.
+- Use `manage_project`, `manage_agent`, `manage_task`, and `manage_subtask` for all management tasks.
+- Use `call_agent` to explicitly switch to a specific agent role when needed.
+
+## Maintainability
+- Document any custom fields or advanced patterns clearly.
+- Keep the documentation in `/ .cursor/rules/02_AI-DOCS/TaskManagement/` up to date with real usage.
+
+For more, see [Task Management Workflow](mdc:.cursor/rules/02_AI-DOCS/TaskManagement/dhafnck_mcp_workflow.mdc).

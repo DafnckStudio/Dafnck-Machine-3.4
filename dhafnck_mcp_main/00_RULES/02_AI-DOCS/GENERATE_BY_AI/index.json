@@ -1,0 +1,132 @@
+{
+  "DOC-20250127-001": {
+    "name": "MCP Rule Loading and AI Compliance Analysis",
+    "category": "System Analysis",
+    "description": "Comprehensive analysis of MCP rule loading system and AI compliance evaluation across four critical configuration files",
+    "usecase": "System architecture analysis, rule compliance evaluation, operational improvement recommendations",
+    "task-id": "global",
+    "useby": ["system-architect-agent"],
+    "created_at": "2025-01-27T00:00:00Z",
+    "created_by": "system-architect-agent"
+  },
+  "DOC-20250127-002": {
+    "name": "MCP Rule Compliance Improvement Implementation Plan",
+    "category": "Implementation Plan",
+    "description": "Detailed technical implementation plan to achieve 90%+ MCP rule compliance across all categories while maintaining system flexibility",
+    "usecase": "System enhancement, compliance automation, technical architecture improvement",
+    "task-id": "global",
+    "useby": ["system-architect-agent", "devops-agent", "coding-agent"],
+    "created_at": "2025-01-27T01:00:00Z",
+    "created_by": "system-architect-agent"
+  },
+  "DOC-20250127-003": {
+    "name": "Enhanced DhafnckMCP Runtime System with 90% Compliance",
+    "category": "System Configuration",
+    "description": "Enhanced version of dhafnck_mcp.mdc with Phase 1 compliance improvements implemented, targeting 90%+ rule compliance",
+    "usecase": "Runtime system configuration, automated compliance enforcement, session management",
+    "task-id": "global",
+    "useby": ["system-architect-agent", "uber-orchestrator-agent"],
+    "created_at": "2025-01-27T02:00:00Z",
+    "created_by": "system-architect-agent"
+  },
+  "DOC-20250127-004": {
+    "name": "Phase 2 Deployment Guide: Advanced Compliance Enhancements",
+    "category": "Deployment Guide",
+    "description": "Technical deployment guide for Phase 2 enhancements including advanced timeout protection and document location enforcement",
+    "usecase": "System deployment, operational enhancement, compliance automation implementation",
+    "task-id": "global",
+    "useby": ["system-architect-agent", "devops-agent"],
+    "created_at": "2025-01-27T03:00:00Z",
+    "created_by": "system-architect-agent"
+  },
+  "DOC-20250127-005": {
+    "name": "Phase 2 Validation Script & Testing Framework",
+    "category": "Testing Framework",
+    "description": "Comprehensive validation and testing procedures for Phase 2 enhancements to ensure 92% compliance achievement",
+    "usecase": "System validation, compliance testing, deployment verification, quality assurance",
+    "task-id": "global",
+    "useby": ["system-architect-agent", "test-orchestrator-agent", "devops-agent"],
+    "created_at": "2025-01-27T04:00:00Z",
+    "created_by": "system-architect-agent"
+  },
+  "DOC-20250127-006": {
+    "name": "Phase 2 Implementation Verification Report",
+    "category": "Verification Report",
+    "description": "Comprehensive verification report confirming successful implementation of Phase 2 enhancements with 92.3% compliance achievement",
+    "usecase": "Implementation verification, system validation, operational readiness assessment, production approval",
+    "task-id": "global",
+    "useby": ["system-architect-agent", "uber-orchestrator-agent"],
+    "created_at": "2025-01-27T05:00:00Z",
+    "created_by": "system-architect-agent"
+  },
+  "DOC-20250127-007": {
+    "name": "Sophisticated Rule Orchestration Platform - Project Roadmap",
+    "category": "Project Roadmap",
+    "description": "Comprehensive project roadmap for implementing enhanced manage_rule() MCP tool with nested rule loading, client integration, and advanced rule composition capabilities",
+    "usecase": "Project planning, development roadmap, technical implementation guide, task management",
+    "task-id": "20250628001",
+    "useby": ["task-planning-agent", "system-architect-agent", "coding-agent", "devops-agent"],
+    "created_at": "2025-06-28T13:26:00Z",
+    "created_by": "task-planning-agent"
+  },
+  "DOC-20250127-008": {
+    "name": "load_core Action Implementation Guide",
+    "category": "Feature Implementation",
+    "description": "Comprehensive implementation guide for the load_core action in manage_rule MCP tool, enabling automatic core rule loading during chat session initialization",
+    "usecase": "Session initialization, automatic rule loading, system setup, troubleshooting guide",
+    "task-id": "20250628009",
+    "useby": ["system-architect-agent", "coding-agent", "uber-orchestrator-agent"],
+    "created_at": "2025-06-28T13:31:00Z",
+    "created_by": "system-architect-agent"
+  },
+  "DOC-20250127-009": {
+    "name": "Critical Fix: Task-Context Status Alignment Validation",
+    "category": "Critical Bug Fix",
+    "description": "Critical fix for next_task functionality failing to progress when task status and context status are misaligned, causing AI workflow to get stuck",
+    "usecase": "Critical bug resolution, workflow debugging, status alignment validation, next_task troubleshooting",
+    "task-id": "20250628010",
+    "useby": ["system-architect-agent", "coding-agent", "uber-orchestrator-agent", "task-planning-agent"],
+    "created_at": "2025-06-28T13:38:00Z",
+    "created_by": "system-architect-agent"
+  },
+  "DOC-20250628001": {
+    "name": "Enhanced Rule Orchestration Platform - Technical Documentation",
+    "category": "System Analysis",
+    "description": "Comprehensive technical documentation for the Enhanced Rule Orchestration Platform implementation, including architecture, components, and advanced features",
+    "usecase": "System architecture documentation, implementation guide, technical reference, development guidelines",
+    "task-id": "20250628001",
+    "useby": ["system-architect-agent", "coding-agent", "devops-agent"],
+    "created_at": "2025-01-27T14:05:00Z",
+    "created_by": "system-architect-agent"
+  },
+  "DOC-20250628002": {
+    "name": "DhafnckMCP Platform - Production Readiness Report",
+    "category": "Production Assessment",
+    "description": "Comprehensive production readiness assessment with 96.5% test coverage, 67 validated MCP actions, and enhanced performance monitoring operational status",
+    "usecase": "Production deployment validation, system readiness assessment, performance verification, deployment approval",
+    "task-id": "global",
+    "useby": ["test-orchestrator-agent", "health-monitor-agent", "devops-agent", "uber-orchestrator-agent"],
+    "created_at": "2025-06-28T18:54:00Z",
+    "created_by": "test-orchestrator-agent"
+  },
+  "DOC-20250628007": {
+    "name": "Phase 6: Integration & Compliance Verification Report",
+    "category": "Integration Verification",
+    "description": "Comprehensive verification report confirming successful Phase 6 integration with 100% backward compatibility and all Phase 2 compliance systems fully integrated",
+    "usecase": "Integration verification, compliance validation, system certification, production readiness assessment",
+    "task-id": "20250628007",
+    "useby": ["system-architect-agent", "security-auditor-agent"],
+    "created_at": "2025-01-28T00:00:00Z",
+    "created_by": "system-architect-agent"
+  },
+  "DOC-20250628008": {
+    "name": "Phase 7: Testing, Documentation & Deployment Strategy",
+    "category": "Testing Strategy",
+    "description": "Comprehensive Phase 7 strategy for achieving 95%+ test coverage, complete system documentation, and production deployment readiness",
+    "usecase": "Testing strategy, documentation planning, deployment preparation, production readiness validation",
+    "task-id": "20250628008",
+    "useby": ["test-orchestrator-agent", "documentation-agent", "devops-agent"],
+    "created_at": "2025-01-28T19:25:00Z",
+    "created_by": "test-orchestrator-agent"
+  }
+} 

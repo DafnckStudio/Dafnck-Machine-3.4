@@ -26,6 +26,9 @@ COPY pyproject.toml uv.lock* README.md ./
 # Copy source code
 COPY src/ src/
 
+# Copy rule files (needed for runtime)
+COPY 00_RULES ./00_RULES/
+
 # Create virtual environment and install dependencies
 RUN uv venv .venv
 RUN uv sync --frozen
@@ -47,7 +50,7 @@ RUN groupadd -r dhafnck && useradd -r -g dhafnck -s /bin/false dhafnck
 
 # Create directories
 WORKDIR /app
-RUN mkdir -p /data /app/logs && \
+RUN mkdir -p /data /data/rules /app/logs && \
     chown -R dhafnck:dhafnck /app /data
 
 # Copy Python environment from builder
@@ -58,12 +61,15 @@ COPY --from=builder /app/src /app/src
 COPY --from=builder /app/README.md /app/
 COPY --from=builder /app/pyproject.toml /app/
 
+# Copy rule files from builder stage
+COPY --from=builder /app/00_RULES /data/rules
+
 # Copy startup script from scripts directory
 COPY scripts/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Set proper ownership
-RUN chown -R dhafnck:dhafnck /app
+# Set proper ownership for both app and data directories
+RUN chown -R dhafnck:dhafnck /app /data
 
 # Switch to non-root user
 USER dhafnck
