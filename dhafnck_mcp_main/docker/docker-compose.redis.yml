@@ -1,0 +1,127 @@
+# Redis Session Persistence Override for Docker Compose
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.redis.yml up
+# This adds Redis for persistent MCP sessions
+
+services:
+  # Redis service for session persistence
+  redis:
+    image: redis:7-alpine
+    container_name: dhafnck-redis
+    restart: unless-stopped
+    
+    # Redis configuration
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    
+    # Port mapping (optional - for external access)
+    ports:
+      - "6379:6379"
+    
+    # Volume for Redis data persistence
+    volumes:
+      - dhafnck_redis_data:/data
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.2'
+        reservations:
+          memory: 64M
+          cpus: '0.05'
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    
+    # Network
+    networks:
+      - dhafnck_network
+
+  # Updated MCP server with Redis session persistence
+  dhafnck-mcp:
+    # Add dependency on Redis
+    depends_on:
+      redis:
+        condition: service_healthy
+    
+    # Enhanced environment variables for session persistence
+    environment:
+      # Core MCP Configuration (inherited from base)
+      PYTHONPATH: /app/src
+      FASTMCP_LOG_LEVEL: INFO
+      FASTMCP_ENABLE_RICH_TRACEBACKS: 0
+      
+      # Data Storage Configuration
+      DATA_STORAGE_MODE: internal
+      
+      # Task Management Paths
+      TASKS_JSON_PATH: /data/tasks
+      PROJECTS_FILE_PATH: /data/projects/projects.json
+      CURSOR_RULES_DIR: /data/rules
+      CURSOR_AGENT_DIR_PATH: /app/yaml-lib
+      
+      # Authentication Configuration
+      DHAFNCK_AUTH_ENABLED: true
+      DHAFNCK_MVP_MODE: false
+      
+      # HTTP Transport Configuration
+      FASTMCP_TRANSPORT: streamable-http
+      FASTMCP_HOST: 0.0.0.0
+      FASTMCP_PORT: 8000
+      
+      # Session Persistence Configuration
+      REDIS_URL: redis://redis:6379/0
+      SESSION_TTL: 3600
+      MAX_EVENTS_PER_SESSION: 1000
+      SESSION_COMPRESSION: true
+      SESSION_KEY_PREFIX: "mcp:session:"
+      
+      # Redis connection settings
+      REDIS_SOCKET_TIMEOUT: 5
+      REDIS_CONNECT_TIMEOUT: 5
+      REDIS_HEALTH_CHECK_INTERVAL: 30
+      
+      # Enable session persistence features
+      SESSION_PERSISTENCE_ENABLED: true
+      FALLBACK_TO_MEMORY: true
+      
+      # Enhanced logging for session debugging
+      SESSION_DEBUG_LOGGING: false
+    
+    # Add Redis to the network
+    networks:
+      - dhafnck_network
+    
+    # Enhanced health check that includes session store
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import sys; sys.path.insert(0, '/app/src'); from fastmcp.server.session_store import get_global_event_store; import asyncio; store = asyncio.run(get_global_event_store()); print('✅ Session store healthy:', type(store).__name__)\" && nc -z localhost 8000"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 45s
+
+# Additional volumes for Redis data
+volumes:
+  dhafnck_redis_data:
+    driver: local
+
+# Network for service communication
+networks:
+  dhafnck_network:
+    driver: bridge 

@@ -20,6 +20,8 @@ dependencies = [
     # Authentication and security dependencies
     "httpx>=0.28.1",  # Already included above for HTTP requests to Supabase
     "cryptography>=42.0.0",  # For secure token generation and hashing
+    # Session persistence dependencies
+    "redis>=5.0.0",  # Redis client for session persistence
 ]
 requires-python = ">=3.10"
 readme = "README.md"
