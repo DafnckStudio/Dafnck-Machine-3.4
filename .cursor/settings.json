@@ -12,16 +12,16 @@
     "Fournis toujours suffisamment de contexte pour que l'agent comprenne la situation"
   ],
   "master_flow":{
-    "01" : "master_step.P00-S00-T00",
-    "02" : "master_step.P00-S00-T01",
-    "03" : "master_step.P00-S00-T02",
-    "04" : "master_step.P00-S00-T03",
-    "05" : "master_step.P00-S00-T04",
-    "06" : "master_step.P00-S00-T05",
-    "07" : "master_step.P00-S00-T06",
-    "08" : "master_step.P00-S00-T07",
-    "09" : "master_step.P00-S00-T08",
-    "10" : "master_step.P00-S00-T09"
+    "01" : "master_step.P00-MT00",
+    "02" : "master_step.P00-MT01",
+    "03" : "master_step.P00-MT02",
+    "04" : "master_step.P00-MT03",
+    "05" : "master_step.P00-MT04",
+    "06" : "master_step.P00-MT05",
+    "07" : "master_step.P00-MT06",
+    "08" : "master_step.P00-MT07",
+    "09" : "master_step.P00-MT08",
+    "10" : "master_step.P00-MT09"
   },
   "runtime_constants": {
     "project_id": "<demande to user>",
@@ -61,7 +61,7 @@
     }
   },
   "master_step": {
-    "P00-S00-T00": {
+    "P00-MT00": {
       "condition_to_run": "Automatic on Begin chat or user say 'start' or 'init' or 'continue' or 'next' or 'start_project' or 'start_task' or 'start_subtask' or 'start_context' or 'start_project' or 'start_task' or 'start_subtask'",
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading core project information...",
@@ -79,71 +79,71 @@
           "mcp_tool": "manage_project()"
         }
       },
-      "next_step": "P00-S00-T01"
+      "next_step": "P00-MT01"
     },
-    "P00-S00-T01": {
+    "P00-MT01": {
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Core Mechanic Systems...",
       "title": "Read core rule file using manage_rule tool with value",   
       "manage_rule": {
         "action": "parse_rule",
-        "target": "core/P00-S00-T01-Core Mechanic Systems.md"
+        "target": "core/P00-MT01-Core Mechanic Systems.md"
       },
       "description": "use MCP to get information about core mechanic systems, and apply it on session chat, update memory with new information",
-      "next_step": "P00-S00-T02",
-      "previous_step": "P00-S00-T00"
+      "next_step": "P00-MT02",
+      "previous_step": "P00-MT00"
     },
-    "P00-S00-T02": {
+    "P00-MT02": {
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Core Task Management...",
       "title": "Read core rule file using manage_rule tool with value",   
       "manage_rule": {
         "action": "parse_rule",
-        "target": "core/P00-S00-T02-Core Task Management.md"
+        "target": "core/P00-MT02-Core Task Management.md"
       },
       "description": "use MCP to get information about core task management, and apply it on session chat, update memory with new information",
-      "next_step": "P00-S00-T03",
-      "previous_step": "P00-S00-T01"
+      "next_step": "P00-MT03",
+      "previous_step": "P00-MT01"
     },
-    "P00-S00-T03": {
+    "P00-MT03": {
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Agents Information...",
       "title": "Read core rule file using manage_rule tool with value",   
       "manage_rule": {
         "action": "parse_rule",
-        "target": "core/P00-S00-T03-Agents Information.md"
+        "target": "core/P00-MT03-Agents Information.md"
       },
       "description": "use MCP to get information about agents information, and apply it on session chat, update memory with new information",
-      "next_step": "P00-S00-T04",
-      "previous_step": "P00-S00-T02"
+      "next_step": "P00-MT04",
+      "previous_step": "P00-MT02"
     },
-    "P00-S00-T04": {
+    "P00-MT04": {
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Custom Tools Information...",
       "title": "Apply custom tools", 
       "description": "Apply custom tools to the session chat, update memory with new information",
-      "next_step": "P00-S00-T05",
-      "previous_step": "P00-S00-T03"
+      "next_step": "P00-MT05",
+      "previous_step": "P00-MT03"
     },
-    "P00-S00-T05": {
+    "P00-MT05": {
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Default Tools Information...",
       "title": "Apply default tools",
       "description": "Apply default tools to the session chat, update memory with new information",
-      "next_step": "P00-S00-T05A",
-      "previous_step": "P00-S00-T04"
+      "next_step": "P00-MT05A",
+      "previous_step": "P00-MT04"
     },
-    "P00-S00-T05A": {
+    "P00-MT05A": {
       "condition_to_run": "Architecture_Technique exist and PRD exist",
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Project Tasks...",
       "title": "Call manage_task tool to get next task",
       "description": "Call manage_task tool to get next task, if no task, recheck project_id and tree_id, if not found, demande to user what to do next",
       "result_need": "Next task content valid",
-      "next_step": "P00-S00-T06 or do task found",
-      "previous_step": "P00-S00-T05"
+      "next_step": "P00-MT06 or do task found",
+      "previous_step": "P00-MT05"
     },
-    "P00-S00-T06": {
+    "P00-MT06": {
       "condition_to_run": "Verify PRD project not exist",
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Project Context...",
@@ -154,10 +154,10 @@
       "content_name": "PRD",  
       "content_type": "md",
       "result_need": "Document PRD exist with content",
-      "next_step": "P00-S00-T07",
-      "previous_step": "P00-S00-T05"
+      "next_step": "P00-MT07",
+      "previous_step": "P00-MT05"
     },
-    "P00-S00-T07": {
+    "P00-MT07": {
       "condition_to_run": "Verify Architecture_Technique not exist",
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Project Context...",
@@ -168,28 +168,28 @@
       "content_name": "Architecture_Technique",   
       "content_type": "md",
       "result_need": "Document Architecture_Technique exist with content",
-      "next_step": "P00-S00-T08",
-      "previous_step": "P00-S00-T06"
+      "next_step": "P00-MT08",
+      "previous_step": "P00-MT06"
     },
-    "P00-S00-T08": {
+    "P00-MT08": {
       "condition_to_run": "Architecture_Technique exist and PRD exist, no tasks on project",
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Project Tasks...",
       "title": "Verify Project Tasks exist",
       "description": "Check manage_task tool, if not, call_agent to create it",
       "result_need": "List of tasks on project, use manage_task tool to verify it",
-      "next_step": "P00-S00-T09",
-      "previous_step": "P00-S00-T07"
+      "next_step": "P00-MT09",
+      "previous_step": "P00-MT07"
     },
     
-    "P00-S00-T10": {
+    "P00-MT10": {
       "condition_to_run": "tree_id different with git branch actual",
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Check Git Branch...",
       "title": "Create new branch or switch to branch",
       "description": "Check if tree_id different with git branch actual, if different, create new branch or switch to branch",
       "result_need": "tree_id = git branch actual",
-      "previous_step": "P00-S00-T09"
+      "previous_step": "P00-MT09"
     }
   },
   "custom_config": {
