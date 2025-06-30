@@ -178,7 +178,17 @@
       "title": "Call manage_task tool to get next task",
       "description": "Call manage_task tool to get next task, if no task, demande to user next task",
       "result_need": "Next task on project, use manage_task tool to verify it",
+      "next_step": "P00-S00-T10",
       "previous_step": "P00-S00-T08"
+    },
+    "P00-S00-T10": {
+      "condition_to_run": "tree_id different with git branch actual",
+      "state_display_on_chat": true,
+      "content_display_on_chat": "Loading Check Git Branch...",
+      "title": "Create new branch or switch to branch",
+      "description": "Check if tree_id different with git branch actual, if different, create new branch or switch to branch",
+      "result_need": "tree_id = git branch actual",
+      "previous_step": "P00-S00-T09"
     }
   },
   "custom_config": {
