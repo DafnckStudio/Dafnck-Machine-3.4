@@ -130,8 +130,18 @@
       "content_display_on_chat": "Loading Default Tools Information...",
       "title": "Apply default tools",
       "description": "Apply default tools to the session chat, update memory with new information",
-      "next_step": "P00-S00-T06",
+      "next_step": "P00-S00-T05A",
       "previous_step": "P00-S00-T04"
+    },
+    "P00-S00-T05A": {
+      "condition_to_run": "Architecture_Technique exist and PRD exist",
+      "state_display_on_chat": true,
+      "content_display_on_chat": "Loading Project Tasks...",
+      "title": "Call manage_task tool to get next task",
+      "description": "Call manage_task tool to get next task, if no task, recheck project_id and tree_id, if not found, demande to user what to do next",
+      "result_need": "Next task content valid",
+      "next_step": "P00-S00-T06 or do task found",
+      "previous_step": "P00-S00-T05"
     },
     "P00-S00-T06": {
       "condition_to_run": "Verify PRD project not exist",
@@ -171,16 +181,7 @@
       "next_step": "P00-S00-T09",
       "previous_step": "P00-S00-T07"
     },
-    "P00-S00-T09": {
-      "condition_to_run": "Architecture_Technique exist and PRD exist, tasks exist on project",
-      "state_display_on_chat": true,
-      "content_display_on_chat": "Loading Project Tasks...",
-      "title": "Call manage_task tool to get next task",
-      "description": "Call manage_task tool to get next task, if no task, demande to user next task",
-      "result_need": "Next task on project, use manage_task tool to verify it",
-      "next_step": "P00-S00-T10",
-      "previous_step": "P00-S00-T08"
-    },
+    
     "P00-S00-T10": {
       "condition_to_run": "tree_id different with git branch actual",
       "state_display_on_chat": true,

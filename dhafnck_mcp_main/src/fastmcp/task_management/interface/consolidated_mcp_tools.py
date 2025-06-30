@@ -60,6 +60,7 @@ from fastmcp.task_management.domain.entities.project import Project as ProjectEn
 from fastmcp.task_management.domain.entities.task_tree import TaskTree as TaskTreeEntity
 from fastmcp.task_management.domain.entities.task import Task
 from fastmcp.task_management.domain.services.orchestrator import Orchestrator
+from fastmcp.task_management.domain.document_manager import DocumentManager
 
 # ═══════════════════════════════════════════════════════════════════
 # 🛠️ CONFIGURATION AND PATH MANAGEMENT
@@ -1660,6 +1661,7 @@ class ToolConfig:
             "manage_agent": True, 
             "manage_rule": True,
             "call_agent": True, 
+            "manage_document": True,
             "update_auto_rule": False,
             "validate_rules": False, 
             "regenerate_auto_rule": False, 
@@ -2124,6 +2126,7 @@ class ToolRegistrationOrchestrator:
         self._task_handler = task_handler
         self._project_manager = project_manager
         self._call_agent_use_case = call_agent_use_case
+        self._document_manager = DocumentManager()
     
     def register_all_tools(self, mcp: "FastMCP"):
         """Register all MCP tools in organized categories"""
@@ -2133,6 +2136,7 @@ class ToolRegistrationOrchestrator:
         self._register_project_tools(mcp)
         self._register_task_tools(mcp)
         self._register_agent_tools(mcp)
+        self._register_document_tools(mcp)
         self._register_cursor_tools(mcp)
         
         logger.info("Finished registering all tools.")
@@ -2860,6 +2864,110 @@ expertise, behavioral rules, and specialized knowledge for optimal task performa
             logger.info("Registered call_agent tool")
         else:
             logger.info("Skipped call_agent tool (disabled)")
+    
+    def _register_document_tools(self, mcp: "FastMCP"):
+        """Register document management tools"""
+        if self._config.is_enabled("manage_document"):
+            @mcp.tool()
+            def manage_document(
+                action: Annotated[str, Field(description="Document action to perform. Available: scan, add, get, list, update, remove, add_dependency, validate_locations, search_knowledge, get_statistics")],
+                project_id: Annotated[str, Field(description="Project identifier")] = "",
+                path: Annotated[str, Field(description="Document path (required for add, get actions)")] = None,
+                document_id: Annotated[str, Field(description="Document ID (required for get, update, remove actions)")] = None,
+                directory: Annotated[str, Field(description="Directory to scan (optional for scan action)")] = None,
+                recursive: Annotated[bool, Field(description="Recursive scan (default: true)")] = True,
+                tags: Annotated[List[str], Field(description="Document tags")] = None,
+                category: Annotated[str, Field(description="Document category")] = None,
+                source_id: Annotated[str, Field(description="Source document ID for dependency")] = None,
+                target_id: Annotated[str, Field(description="Target document ID for dependency")] = None,
+                dependency_type: Annotated[str, Field(description="Dependency type: one_to_one, one_to_many, many_to_one, many_to_many")] = None,
+                relationship_nature: Annotated[str, Field(description="Nature of the relationship")] = None,
+                strength: Annotated[str, Field(description="Dependency strength: weak, medium, strong")] = "medium",
+                query: Annotated[str, Field(description="Search query for knowledge search")] = None,
+                limit: Annotated[int, Field(description="Maximum number of results")] = None
+            ) -> Dict[str, Any]:
+                """📄 DOCUMENT MANAGEMENT SYSTEM - Complete document tracking and organization
+
+⭐ WHAT IT DOES: Comprehensive document management with tracking, dependencies, location validation, and knowledge search
+📋 WHEN TO USE: Managing project documents, tracking file dependencies, validating document locations, searching knowledge
+
+🎯 ACTIONS AVAILABLE:
+• scan: Scan directory for documents and add them to index
+• add: Manually add a document to the index
+• get: Get document by ID or path
+• list: List documents with optional filtering
+• update: Update document properties
+• remove: Remove document from index
+• add_dependency: Add dependency between documents
+• validate_locations: Validate document locations against rules
+• search_knowledge: Search knowledge entries
+• get_statistics: Get document management statistics
+
+💡 USAGE EXAMPLES:
+• manage_document("scan", project_id="my_project", directory="docs", recursive=True)
+• manage_document("add", path="docs/readme.md", project_id="my_project", tags=["documentation"])
+• manage_document("get", document_id="doc_123")
+• manage_document("list", project_id="my_project", category="documentation")
+• manage_document("add_dependency", source_id="doc1", target_id="doc2", dependency_type="one_to_one", relationship_nature="references")
+• manage_document("validate_locations", project_id="my_project")
+• manage_document("search_knowledge", query="API documentation", limit=10)
+• manage_document("get_statistics", project_id="my_project")
+
+🔧 INTEGRATION: Integrates with project structure and provides document tracking for development workflows
+                """
+                try:
+                    if action == "scan":
+                        return self._document_manager.scan_directory(directory, project_id, recursive)
+                    
+                    elif action == "add":
+                        if not path:
+                            return {"success": False, "error": "path is required for add action"}
+                        return self._document_manager.add_document(path, project_id, tags, category)
+                    
+                    elif action == "get":
+                        if not document_id and not path:
+                            return {"success": False, "error": "document_id or path is required for get action"}
+                        return self._document_manager.get_document(document_id, path)
+                    
+                    elif action == "list":
+                        return self._document_manager.list_documents(project_id, category, tags[0] if tags else None, limit)
+                    
+                    elif action == "update":
+                        if not document_id:
+                            return {"success": False, "error": "document_id is required for update action"}
+                        return self._document_manager.update_document(document_id, tags, category, project_id)
+                    
+                    elif action == "remove":
+                        if not document_id:
+                            return {"success": False, "error": "document_id is required for remove action"}
+                        return self._document_manager.remove_document(document_id)
+                    
+                    elif action == "add_dependency":
+                        if not all([source_id, target_id, dependency_type, relationship_nature]):
+                            return {"success": False, "error": "source_id, target_id, dependency_type, and relationship_nature are required for add_dependency action"}
+                        return self._document_manager.add_dependency(source_id, target_id, dependency_type, relationship_nature, strength)
+                    
+                    elif action == "validate_locations":
+                        return self._document_manager.validate_locations(project_id)
+                    
+                    elif action == "search_knowledge":
+                        if not query:
+                            return {"success": False, "error": "query is required for search_knowledge action"}
+                        return self._document_manager.search_knowledge(query, category, limit or 10)
+                    
+                    elif action == "get_statistics":
+                        return self._document_manager.get_statistics(project_id)
+                    
+                    else:
+                        return {"success": False, "error": f"Unknown action: {action}. Available: scan, add, get, list, update, remove, add_dependency, validate_locations, search_knowledge, get_statistics"}
+                
+                except Exception as e:
+                    logger.error(f"Error in manage_document: {e}")
+                    return {"success": False, "error": f"Document management error: {str(e)}"}
+
+            logger.info("Registered manage_document tool")
+        else:
+            logger.info("Skipped manage_document tool (disabled)")
     
     def _register_cursor_tools(self, mcp: "FastMCP"):
         """Register cursor rules tools conditionally"""
