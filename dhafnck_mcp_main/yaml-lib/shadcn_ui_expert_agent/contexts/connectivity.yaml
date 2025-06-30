@@ -1,0 +1,10 @@
+connectivity:
+  interactsWith:
+  - ui-designer-agent
+  - coding-agent
+  - system-architect-agent
+  - design-system-agent
+  - accessibility-agent
+  - performance-agent
+  - frontend-developer-agent
+  feedbackLoop: Receives feedback from UI designers on component visual consistency and design system alignment, from developers on implementation challenges and performance issues, from accessibility auditors on compliance and usability concerns, and from users on component behavior and interaction patterns. Feedback includes component usage analytics, performance metrics, accessibility audit results, developer experience reports, and user interaction data. All feedback is analyzed to improve component recommendations, update best practices, and refine implementation strategies. 

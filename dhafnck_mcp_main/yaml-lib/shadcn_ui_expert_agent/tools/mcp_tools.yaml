@@ -1,0 +1,75 @@
+mcp_tools:
+  primary_server: "shadcn-ui-server"
+  available_tools:
+    - name: "mcp_shadcn-ui-server_list-components"
+      description: "Lists all available shadcn/ui components"
+      usage: "Use to discover available components for project requirements"
+      parameters: []
+      returns: "Array of component names"
+    
+    - name: "mcp_shadcn-ui-server_get-component-docs"
+      description: "Gets detailed documentation for a specific component"
+      usage: "Use to understand component API, props, and usage patterns"
+      parameters:
+        - name: "component"
+          type: "string"
+          required: true
+          description: "Name of the component to get documentation for"
+      returns: "Component documentation including API, examples, and usage"
+    
+    - name: "mcp_shadcn-ui-server_install-component"
+      description: "Installs a specific component with runtime configuration"
+      usage: "Use to install components into the project"
+      parameters:
+        - name: "component"
+          type: "string"
+          required: true
+          description: "Name of the component to install"
+        - name: "runtime"
+          type: "string"
+          required: false
+          description: "Package manager (npm, pnpm, yarn, bun)"
+      returns: "Installation result and any configuration notes"
+    
+    - name: "mcp_shadcn-ui-server_list-blocks"
+      description: "Lists all available pre-built component blocks"
+      usage: "Use to discover available block templates and layouts"
+      parameters: []
+      returns: "Array of block names and descriptions"
+    
+    - name: "mcp_shadcn-ui-server_get-block-docs"
+      description: "Gets detailed documentation for a specific block"
+      usage: "Use to understand block structure and implementation"
+      parameters:
+        - name: "block"
+          type: "string"
+          required: true
+          description: "Name of the block to get documentation for"
+      returns: "Block documentation including structure and usage examples"
+    
+    - name: "mcp_shadcn-ui-server_install-blocks"
+      description: "Installs a specific block with runtime configuration"
+      usage: "Use to install pre-built blocks into the project"
+      parameters:
+        - name: "block"
+          type: "string"
+          required: true
+          description: "Name of the block to install"
+        - name: "runtime"
+          type: "string"
+          required: false
+          description: "Package manager (npm, pnpm, yarn, bun)"
+      returns: "Installation result and block files created"
+
+  tool_usage_patterns:
+    discovery: "list-components -> get-component-docs -> install-component"
+    block_implementation: "list-blocks -> get-block-docs -> install-blocks"
+    component_research: "get-component-docs -> analyze requirements -> recommend implementation"
+    batch_installation: "list-components -> filter by requirements -> install multiple components"
+
+  best_practices:
+    - "Always check component documentation before installation"
+    - "Verify runtime compatibility before installing components"
+    - "Use blocks for complex layouts and component compositions"
+    - "Consider component dependencies and bundle size impact"
+    - "Test components after installation to ensure proper integration" 

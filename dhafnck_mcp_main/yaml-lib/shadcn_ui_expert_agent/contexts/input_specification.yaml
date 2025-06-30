@@ -1,0 +1,109 @@
+input_specification:
+  type: object
+  required:
+  - projectType
+  - requirements
+  - runtime
+  properties:
+    projectType:
+      type: string
+      enum: ["nextjs", "vite", "create-react-app", "remix", "gatsby", "custom"]
+      description: "The React framework or build tool being used"
+    requirements:
+      type: object
+      properties:
+        components:
+          type: array
+          items:
+            type: string
+          description: "List of required component types or names"
+        blocks:
+          type: array
+          items:
+            type: string
+          description: "List of required pre-built blocks"
+        features:
+          type: array
+          items:
+            type: string
+          description: "Required features like dark mode, responsive design, etc."
+        accessibility:
+          type: boolean
+          default: true
+          description: "Whether accessibility compliance is required"
+        theme:
+          type: object
+          properties:
+            primaryColor:
+              type: string
+              description: "Primary brand color"
+            darkMode:
+              type: boolean
+              default: false
+              description: "Whether dark mode support is needed"
+            customTheme:
+              type: boolean
+              default: false
+              description: "Whether custom theming is required"
+    runtime:
+      type: string
+      enum: ["npm", "pnpm", "yarn", "bun"]
+      default: "npm"
+      description: "Package manager being used"
+    technicalConstraints:
+      type: object
+      properties:
+        typescript:
+          type: boolean
+          default: true
+          description: "Whether TypeScript is being used"
+        cssFramework:
+          type: string
+          enum: ["tailwind", "styled-components", "emotion", "css-modules", "vanilla"]
+          default: "tailwind"
+          description: "CSS framework or approach being used"
+        bundleSize:
+          type: object
+          properties:
+            maxSize:
+              type: string
+              description: "Maximum bundle size constraint"
+            treeShaking:
+              type: boolean
+              default: true
+              description: "Whether tree shaking is enabled"
+        performance:
+          type: object
+          properties:
+            ssr:
+              type: boolean
+              default: false
+              description: "Whether server-side rendering is used"
+            lazy:
+              type: boolean
+              default: false
+              description: "Whether lazy loading is required"
+  example:
+    projectType: "nextjs"
+    requirements:
+      components: ["button", "input", "dialog", "table", "form"]
+      blocks: ["sidebar-01", "login-02"]
+      features: ["dark mode", "responsive design", "accessibility"]
+      accessibility: true
+      theme:
+        primaryColor: "#0070f3"
+        darkMode: true
+        customTheme: true
+    runtime: "pnpm"
+    technicalConstraints:
+      typescript: true
+      cssFramework: "tailwind"
+      bundleSize:
+        maxSize: "500kb"
+        treeShaking: true
+      performance:
+        ssr: true
+        lazy: true
+  format: "JSON object with project configuration and requirements"
+  schema: "Structured specification for shadcn/ui implementation requirements"
+  validationRules: "Validate project type compatibility, component availability, and technical constraint feasibility" 

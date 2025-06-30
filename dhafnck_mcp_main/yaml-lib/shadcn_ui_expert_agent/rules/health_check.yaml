@@ -1,0 +1,3 @@
+health_check:
+  interval: "daily"
+  actions: "Verify shadcn/ui MCP server connectivity, validate component documentation access, check for component library updates, test component installation procedures, and monitor performance metrics. Report any issues with component availability or installation failures." 
