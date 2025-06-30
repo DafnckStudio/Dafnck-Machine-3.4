@@ -149,9 +149,7 @@ services:
         max-size: "10m"
         max-file: "3"
     
-    # Security options
-    security_opt:
-      - no-new-privileges:true
+    # Security options inherited from base docker-compose.yml
 
 # Named volumes for data persistence
 volumes:
