@@ -23,6 +23,9 @@
     "09" : "master_step.P00-MT08",
     "10" : "master_step.P00-MT09"
   },
+  "custom_flow":{    
+    
+  },
   "runtime_constants": {
     "project_id": "<demande to user>",
     "projet_path_root": "/app",
