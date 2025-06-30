@@ -10,3 +10,14 @@ alwaysApply: true
 `venv` is not correct, `dhafnck_mcp_main/.venv` is correct path for vitual
 `*test.py` file need save on correct location of `dhafnck_mcp_main/tests`
 document `*.md` using for develop this project need save on `dhafnck_mcp_main/docs`, always clean/update document or content obsolete first, then continue task
+
+FIX knowledge :
+
+The async test failures were caused by missing pytest-asyncio plugin. I've resolved this by:
+
+  1. Added pytest-asyncio dependency using uv add pytest-asyncio
+  2. Updated pytest.ini to include asyncio_mode = auto and the missing test markers
+  3. Verified the fix by running the previously failing tests with uv run python -m pytest
+  
+
+deprecation warning about using datetime.utcnow(). Let me fix this by replacing it with the recommended datetime.now(datetime.UTC)

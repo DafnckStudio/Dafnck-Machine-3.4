@@ -35,6 +35,27 @@ from utilities.docker_test_utils import DockerTestManager, PerformanceMonitor
 logger = logging.getLogger(__name__)
 
 
+def parse_sse_response(text: str) -> dict:
+    """Parse Server-Sent Events response to extract JSON data"""
+    lines = text.strip().split('\n')
+    data_line = None
+    
+    for line in lines:
+        if line.startswith('data: '):
+            data_line = line[6:]  # Remove 'data: ' prefix
+            break
+    
+    if data_line:
+        try:
+            return json.loads(data_line)
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse SSE data as JSON: {e}")
+            logger.error(f"Raw data: {data_line}")
+            raise
+    else:
+        raise ValueError(f"No data line found in SSE response: {text}")
+
+
 class ComprehensiveE2ETestSuite:
     """Complete End-to-End Test Suite with Real Integration"""
     
@@ -264,7 +285,12 @@ class ComprehensiveE2ETestSuite:
             if tools_response.status_code != 200:
                 raise Exception(f"Tool discovery failed: {tools_response.status_code}")
             
-            tools_data = tools_response.json()
+            # Parse response (handle both JSON and SSE formats)
+            try:
+                tools_data = tools_response.json()
+            except json.JSONDecodeError:
+                tools_data = parse_sse_response(tools_response.text)
+            
             tools = tools_data.get("result", {}).get("tools", [])
             print(f"✅ Discovered {len(tools)} tools")
             
@@ -593,7 +619,7 @@ class ComprehensiveE2ETestSuite:
             concurrent_requests = 10
             start_time = time.time()
             
-            async def make_request(session_id):
+            def make_request(session_id):
                 response = requests.post(
                     f"{self.get_base_url()}/mcp/call",
                     json={
@@ -613,9 +639,12 @@ class ComprehensiveE2ETestSuite:
                 )
                 return response.status_code == 200
             
-            # Use asyncio for concurrent requests
-            tasks = [make_request(i) for i in range(concurrent_requests)]
-            results = await asyncio.gather(*tasks, return_exceptions=True)
+            # Use concurrent futures for concurrent requests
+            import concurrent.futures
+            
+            with concurrent.futures.ThreadPoolExecutor(max_workers=concurrent_requests) as executor:
+                futures = [executor.submit(make_request, i) for i in range(concurrent_requests)]
+                results = [future.result() for future in concurrent.futures.as_completed(futures)]
             
             end_time = time.time()
             load_test_time = end_time - start_time

@@ -18,10 +18,11 @@ dependencies = [
     "psutil>=5.9.0",
     "pydantic>=2.11.7",
     # Authentication and security dependencies
-    "httpx>=0.28.1",  # Already included above for HTTP requests to Supabase
-    "cryptography>=42.0.0",  # For secure token generation and hashing
+    "httpx>=0.28.1", # Already included above for HTTP requests to Supabase
+    "cryptography>=42.0.0", # For secure token generation and hashing
     # Session persistence dependencies
-    "redis>=5.0.0",  # Redis client for session persistence
+    "redis>=5.0.0", # Redis client for session persistence
+    "pytest-asyncio>=1.0.0",
 ]
 requires-python = ">=3.10"
 readme = "README.md"

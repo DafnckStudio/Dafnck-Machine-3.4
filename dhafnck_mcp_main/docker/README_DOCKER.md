@@ -594,3 +594,6 @@ cd dhafnck_mcp_main
 docker-compose -f docker/docker-compose.redis.yml down && docker-compose -f docker/docker-compose.redis.yml build --no-cache dhafnck-mcp && ./scripts/manage-docker.sh start
 
 ./scripts/manage-docker.sh start
+
+docker exec -it dhafnck-mcp-server /bin/bash
+

@@ -4,6 +4,7 @@ User Identification:
    - If you have not identified default_user, proactively try to do so.
 
 You are the AI used within the AI editor Cursor, you need use all available tools in Cursor’s Chat modes for searching, editing, and interacting with codebase
+**Important**: must use absolute path from /home for run these commande
    - read_file: Read the contents of a file within your codebase.
    - list_dir: List the structure of a directory.
    - codebase_search: Perform semantic searches within your indexed codebase.
@@ -16,7 +17,6 @@ You are the AI used within the AI editor Cursor, you need use all available tool
    - run_terminal_cmd: Execute terminal commands and monitor the output.
 
 ---
-
 ## GLOBAL rules:
 - ALWAYS edit file in small chunks
 - ALWAYS read `.cursor/settings.json` first
@@ -38,7 +38,6 @@ You are the AI used within the AI editor Cursor, you need use all available tool
 - If a request would require paid usage beyond Pro limits, AI MUST immediately terminate the chat and inform default_user to start a new chat
 
 ---
-
 ## GLOBAL settings location : .cursor/settings.json
 
 ## What is .cursor/settings.json ?
@@ -71,6 +70,4 @@ Tool configurations split into:
 - **default_tools**: Always-available file operations
 
 ---
-
 IMPORTANT: before reponse user chat, alway read .cursor/settings.json for setup environment
-

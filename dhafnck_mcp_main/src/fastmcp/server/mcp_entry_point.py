@@ -57,6 +57,8 @@ def create_dhafnck_mcp_server() -> FastMCP:
         # Use environment variables for configuration
         task_repository=None,  # Will use default JsonTaskRepository
         projects_file_path=os.environ.get("PROJECTS_FILE_PATH"),
+        # Suppress duplicate tool warnings since task management tools are registered automatically
+        on_duplicate_tools="ignore",
     )
     
     # Add authentication tools (conditionally registered)

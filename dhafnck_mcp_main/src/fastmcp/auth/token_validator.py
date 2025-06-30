@@ -9,7 +9,7 @@ import asyncio
 import logging
 import time
 from collections import defaultdict, deque
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from typing import Dict, Optional, Tuple
 from dataclasses import dataclass
 
@@ -228,7 +228,7 @@ class TokenValidator:
                 "reason": reason,
                 "failure_count": len(failures),
                 "client_info": client_info or {},
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(UTC).isoformat()
             }
         )
         
@@ -259,7 +259,7 @@ class TokenValidator:
             await self.supabase_client.log_security_event(
                 "token_revoked",
                 token_hash,
-                {"revoked_at": datetime.utcnow().isoformat()}
+                {"revoked_at": datetime.now(UTC).isoformat()}
             )
         
         return success

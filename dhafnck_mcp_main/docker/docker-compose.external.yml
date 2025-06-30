@@ -18,7 +18,7 @@ services:
       - TASKS_JSON_PATH=/data/tasks
       - PROJECTS_FILE_PATH=/data/projects/projects.json
       - CURSOR_RULES_DIR=/data/rules
-      - CURSOR_AGENT_DIR_PATH=/app/src/fastmcp
+      - CURSOR_AGENT_DIR_PATH=/app/yaml-lib
       
       # Authentication Configuration
       - DHAFNCK_AUTH_ENABLED=${DHAFNCK_AUTH_ENABLED:-true}

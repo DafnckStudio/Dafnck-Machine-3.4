@@ -81,7 +81,7 @@ setup_environment() {
     export TASKS_JSON_PATH="${TASKS_JSON_PATH:-/data/tasks}"
     export PROJECTS_FILE_PATH="${PROJECTS_FILE_PATH:-/data/projects/projects.json}"
     export CURSOR_RULES_DIR="${CURSOR_RULES_DIR:-/data/rules}"
-    export CURSOR_AGENT_DIR_PATH="${CURSOR_AGENT_DIR_PATH:-/app/src/fastmcp}"
+    export CURSOR_AGENT_DIR_PATH="${CURSOR_AGENT_DIR_PATH:-/app/yaml-lib}"
     
     # Create projects.json if it doesn't exist
     if [ ! -f "$PROJECTS_FILE_PATH" ]; then
@@ -144,6 +144,8 @@ health_check() {
     log "   /app/src/fastmcp/__init__.py exists: $([ -f '/app/src/fastmcp/__init__.py' ] && echo 'YES' || echo 'NO')"
     log "   /app/src/fastmcp/server exists: $([ -d '/app/src/fastmcp/server' ] && echo 'YES' || echo 'NO')"
     log "   /app/src/fastmcp/server/mcp_entry_point.py exists: $([ -f '/app/src/fastmcp/server/mcp_entry_point.py' ] && echo 'YES' || echo 'NO')"
+    log "   /app/yaml-lib exists: $([ -d '/app/yaml-lib' ] && echo 'YES' || echo 'NO')"
+    log "   /app/yaml-lib/task_planning_agent exists: $([ -d '/app/yaml-lib/task_planning_agent' ] && echo 'YES' || echo 'NO')"
     
     # Debug: Show actual folder structure (2 levels deep)
     log "🔍 Folder Structure Debug (2 levels):"

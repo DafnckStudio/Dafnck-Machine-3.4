@@ -25,6 +25,27 @@ import psutil
 logger = logging.getLogger(__name__)
 
 
+def parse_sse_response(text: str) -> dict:
+    """Parse Server-Sent Events response to extract JSON data"""
+    lines = text.strip().split('\n')
+    data_line = None
+    
+    for line in lines:
+        if line.startswith('data: '):
+            data_line = line[6:]  # Remove 'data: ' prefix
+            break
+    
+    if data_line:
+        try:
+            return json.loads(data_line)
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse SSE data as JSON: {e}")
+            logger.error(f"Raw data: {data_line}")
+            raise
+    else:
+        raise ValueError(f"No data line found in SSE response: {text}")
+
+
 def find_free_port(start_port: int = 8002, max_attempts: int = 100) -> int:
     """Find a free port starting from start_port"""
     for port in range(start_port, start_port + max_attempts):
@@ -41,7 +62,34 @@ class DockerTestManager:
     """Manages Docker containers for testing purposes"""
     
     def __init__(self, project_root: Path = None):
-        self.project_root = project_root or Path(__file__).parent.parent.parent
+        # More robust path resolution for project root
+        if project_root:
+            self.project_root = project_root
+        else:
+            # Try multiple path resolution strategies
+            current_file_path = Path(__file__).resolve()
+            
+            # Strategy 1: Standard parent.parent.parent from test utilities
+            candidate1 = current_file_path.parent.parent.parent
+            
+            # Strategy 2: Look for pyproject.toml to find project root
+            candidate2 = current_file_path
+            while candidate2.parent != candidate2:  # Stop at filesystem root
+                if (candidate2 / "pyproject.toml").exists():
+                    break
+                candidate2 = candidate2.parent
+            
+            # Strategy 3: Use current working directory if it has pyproject.toml
+            candidate3 = Path.cwd()
+            
+            # Choose the best candidate
+            for candidate in [candidate1, candidate2, candidate3]:
+                if (candidate / "pyproject.toml").exists() and (candidate / "docker" / "Dockerfile").exists():
+                    self.project_root = candidate
+                    break
+            else:
+                # Fallback to the original strategy
+                self.project_root = candidate1
         self.docker_client = docker.from_env()
         self.test_containers = []
         self.test_networks = []
@@ -52,14 +100,46 @@ class DockerTestManager:
         """Build the DhafnckMCP Docker image for testing"""
         try:
             dockerfile_path = self.project_root / "docker" / "Dockerfile"
-            if not dockerfile_path.exists():
-                raise FileNotFoundError(f"Dockerfile not found at {dockerfile_path}")
             
-            logger.info("🏗️ Building DhafnckMCP test image...")
+            # Enhanced debugging information
+            logger.info(f"🏗️ Building DhafnckMCP test image...")
+            logger.info(f"Project root: {self.project_root}")
+            logger.info(f"Dockerfile path: {dockerfile_path}")
+            logger.info(f"Project root exists: {self.project_root.exists()}")
+            logger.info(f"Docker directory exists: {(self.project_root / 'docker').exists()}")
+            logger.info(f"Dockerfile exists: {dockerfile_path.exists()}")
+            
+            if not dockerfile_path.exists():
+                # Try to find Dockerfile in alternative locations
+                alternative_paths = [
+                    self.project_root / "Dockerfile",
+                    Path.cwd() / "docker" / "Dockerfile",
+                    Path.cwd() / "Dockerfile"
+                ]
+                
+                for alt_path in alternative_paths:
+                    logger.info(f"Checking alternative path: {alt_path}")
+                    if alt_path.exists():
+                        dockerfile_path = alt_path
+                        logger.info(f"Found Dockerfile at alternative location: {dockerfile_path}")
+                        break
+                else:
+                    raise FileNotFoundError(
+                        f"Dockerfile not found at {dockerfile_path}. "
+                        f"Project root: {self.project_root}, "
+                        f"Current working directory: {Path.cwd()}, "
+                        f"Checked alternatives: {alternative_paths}"
+                    )
+            
+            # Ensure we have the correct build context
+            build_context = dockerfile_path.parent.parent if dockerfile_path.name == "Dockerfile" and dockerfile_path.parent.name == "docker" else dockerfile_path.parent
+            
+            logger.info(f"Using build context: {build_context}")
+            logger.info(f"Using dockerfile: {dockerfile_path}")
             
             # Build the image
             image, build_logs = self.docker_client.images.build(
-                path=str(self.project_root),
+                path=str(build_context),
                 dockerfile=str(dockerfile_path),
                 tag="dhafnck-mcp:test",
                 rm=True,
@@ -71,12 +151,18 @@ class DockerTestManager:
                 "success": True,
                 "image_id": image.id,
                 "image_tags": image.tags,
-                "size": image.attrs.get("Size", 0)
+                "size": image.attrs.get("Size", 0),
+                "project_root": str(self.project_root),
+                "dockerfile_path": str(dockerfile_path),
+                "build_context": str(build_context)
             }
             
         except Exception as e:
-            logger.error(f"Docker image build failed: {e}")
-            return {"success": False, "error": str(e)}
+            error_msg = f"Docker image build failed: {e}"
+            logger.error(error_msg)
+            logger.error(f"Project root: {self.project_root}")
+            logger.error(f"Current working directory: {Path.cwd()}")
+            return {"success": False, "error": error_msg}
     
     async def start_test_container(self, 
                                  container_name: str = "dhafnck-mcp-test",
@@ -482,7 +568,12 @@ class DockerTestManager:
             )
             
             if list_response.status_code == 200:
-                projects_data = list_response.json()
+                # Parse response (handle both JSON and SSE formats)
+                try:
+                    projects_data = list_response.json()
+                except json.JSONDecodeError:
+                    projects_data = parse_sse_response(list_response.text)
+                
                 persistence_test_exists = any(
                     p.get("id") == "persistence_test" 
                     for p in projects_data.get("projects", [])

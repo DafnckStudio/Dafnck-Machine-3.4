@@ -25,10 +25,10 @@ def test_dual_mode_imports():
             is_stdio_mode
         )
         print("✅ Dual mode configuration imports successful")
-        return True
+        assert True, "Imports should be successful"
     except ImportError as e:
         print(f"❌ Import failed: {e}")
-        return False
+        assert False, f"Import failed: {e}"
 
 
 def test_mode_detection():
@@ -49,10 +49,10 @@ def test_mode_detection():
         del os.environ["FASTMCP_TRANSPORT"]
         
         print("✅ Mode detection tests passed")
-        return True
+        assert True, "Mode detection should work"
     except Exception as e:
         print(f"❌ Mode detection failed: {e}")
-        return False
+        assert False, f"Mode detection failed: {e}"
 
 
 def test_path_resolution():
@@ -74,10 +74,10 @@ def test_path_resolution():
             del os.environ["FASTMCP_TRANSPORT"]
         
         print("✅ Path resolution tests passed")
-        return True
+        assert True, "Path resolution should work"
     except Exception as e:
         print(f"❌ Path resolution failed: {e}")
-        return False
+        assert False, f"Path resolution failed: {e}"
 
 
 def test_convenience_functions():
@@ -109,10 +109,10 @@ def test_convenience_functions():
         print(f"Resolved path: {resolved}")
         
         print("✅ Convenience functions tests passed")
-        return True
+        assert True, "Convenience functions should work"
     except Exception as e:
         print(f"❌ Convenience functions failed: {e}")
-        return False
+        assert False, f"Convenience functions failed: {e}"
 
 
 def run_all_tests():
@@ -131,7 +131,11 @@ def run_all_tests():
     results = []
     for test in tests:
         print(f"\nRunning {test.__name__}...")
-        results.append(test())
+        try:
+            test()
+            results.append(True)
+        except AssertionError:
+            results.append(False)
     
     print("\n" + "=" * 60)
     print("TEST RESULTS")

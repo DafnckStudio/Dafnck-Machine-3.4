@@ -67,7 +67,12 @@
           "title": "Get project context info",
           "description": "Get current git branch, username, and project path",
           "command": "echo \"Branch: $(git rev-parse --abbrev-ref HEAD)\" && echo \"User: $(whoami)\" && echo \"Path: $(pwd)\""
-        }   
+        },
+        "02": {
+          "title": "Using manage_project tool for update project and branch",
+          "description": "Create/Update a new project and branch using manage_project tool, update memory with new information of actual project and branch",
+          "mcp_tool": "manage_project()"
+        }
       },
       "next_step": "P00-S00-T01"
     },
@@ -79,7 +84,7 @@
         "action": "parse_rule",
         "target": "core/P00-S00-T01-Core Mechanic Systems.md"
       },
-      "description": "use MCP to get information about core mechanic systems, and apply it on session chat",
+      "description": "use MCP to get information about core mechanic systems, and apply it on session chat, update memory with new information",
       "next_step": "P00-S00-T02",
       "previous_step": "P00-S00-T00"
     },
@@ -91,7 +96,7 @@
         "action": "parse_rule",
         "target": "core/P00-S00-T02-Core Task Management.md"
       },
-      "description": "use MCP to get information about core task management, and apply it on session chat",
+      "description": "use MCP to get information about core task management, and apply it on session chat, update memory with new information",
       "next_step": "P00-S00-T03",
       "previous_step": "P00-S00-T01"
     },
@@ -103,7 +108,7 @@
         "action": "parse_rule",
         "target": "core/P00-S00-T03-Agents Information.md"
       },
-      "description": "use MCP to get information about agents information, and apply it on session chat",
+      "description": "use MCP to get information about agents information, and apply it on session chat, update memory with new information",
       "next_step": "P00-S00-T04",
       "previous_step": "P00-S00-T02"
     },
@@ -111,7 +116,7 @@
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Custom Tools Information...",
       "title": "Apply custom tools", 
-      "description": "Apply custom tools to the session chat",
+      "description": "Apply custom tools to the session chat, update memory with new information",
       "next_step": "P00-S00-T05",
       "previous_step": "P00-S00-T03"
     },
@@ -119,7 +124,7 @@
       "state_display_on_chat": true,
       "content_display_on_chat": "Loading Default Tools Information...",
       "title": "Apply default tools",
-      "description": "Apply default tools to the session chat",
+      "description": "Apply default tools to the session chat, update memory with new information",
       "next_step": "P00-S00-T06",
       "previous_step": "P00-S00-T04"
     }

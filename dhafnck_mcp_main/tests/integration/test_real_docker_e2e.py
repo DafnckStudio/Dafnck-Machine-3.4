@@ -17,12 +17,46 @@ import json
 import logging
 import time
 import subprocess
+import socket
 from pathlib import Path
 import pytest
 import requests
 import docker
 
 logger = logging.getLogger(__name__)
+
+
+def parse_sse_response(text: str) -> dict:
+    """Parse Server-Sent Events response to extract JSON data"""
+    lines = text.strip().split('\n')
+    data_line = None
+    
+    for line in lines:
+        if line.startswith('data: '):
+            data_line = line[6:]  # Remove 'data: ' prefix
+            break
+    
+    if data_line:
+        try:
+            return json.loads(data_line)
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse SSE data as JSON: {e}")
+            logger.error(f"Raw data: {data_line}")
+            raise
+    else:
+        raise ValueError(f"No data line found in SSE response: {text}")
+
+
+def find_free_port(start_port: int = 8002, max_attempts: int = 100) -> int:
+    """Find a free port starting from start_port"""
+    for port in range(start_port, start_port + max_attempts):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind(('localhost', port))
+                return port
+            except OSError:
+                continue
+    raise RuntimeError(f"No free port found in range {start_port}-{start_port + max_attempts}")
 
 
 class RealDockerE2ETest:
@@ -32,6 +66,7 @@ class RealDockerE2ETest:
         self.docker_client = docker.from_env()
         self.container_name = "dhafnck-mcp-real-test"
         self.test_results = []
+        self.test_port = None
         
     async def run_full_test(self):
         """Run the complete real Docker E2E test"""
@@ -87,7 +122,7 @@ class RealDockerE2ETest:
                     print("✅ Using existing Docker image")
                 except docker.errors.ImageNotFound:
                     print("📦 Building new Docker image...")
-                    # Build from project root
+                    # Build from dhafnck_mcp_main root  
                     project_root = Path(__file__).parent.parent.parent
                     dockerfile_path = project_root / "docker" / "Dockerfile"
                     
@@ -107,16 +142,21 @@ class RealDockerE2ETest:
             
             # Start container
             print("🚀 Starting container...")
+            
+            # Find a free port for testing
+            self.test_port = find_free_port()
+            print(f"🔍 Using free port {self.test_port} for test container")
+            
             container = self.docker_client.containers.run(
                 image="dhafnck-mcp:test",
                 name=self.container_name,
-                ports={"8000/tcp": 8000},
+                ports={"8000/tcp": self.test_port},
                 environment={
                     "PYTHONPATH": "/app/src",
                     "FASTMCP_LOG_LEVEL": "INFO",
                     "FASTMCP_TRANSPORT": "streamable-http",
                     "FASTMCP_HOST": "0.0.0.0",
-                    "FASTMCP_PORT": "8000",
+                    "FASTMCP_PORT": "8000",  # Internal container port stays 8000
                     "DHAFNCK_AUTH_ENABLED": "false",
                     "DHAFNCK_MVP_MODE": "true",
                     "DEV_MODE": "1"
@@ -162,7 +202,7 @@ class RealDockerE2ETest:
                     continue
                 
                 # Check health endpoint
-                response = requests.get("http://localhost:8000/health", timeout=5)
+                response = requests.get(f"http://localhost:{self.test_port}/health", timeout=5)
                 if response.status_code == 200:
                     return True
                     
@@ -178,13 +218,57 @@ class RealDockerE2ETest:
         print("-" * 30)
         
         try:
-            # Test health check
-            print("🩺 Testing health check...")
-            health_response = requests.post(
-                "http://localhost:8000/mcp/call",
+            # First initialize MCP session
+            print("🔗 Initializing MCP session...")
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/event-stream"
+            }
+            
+            init_response = requests.post(
+                f"http://localhost:{self.test_port}/mcp/initialize",
+                headers=headers,
                 json={
                     "jsonrpc": "2.0",
                     "id": 1,
+                    "method": "initialize",
+                    "params": {
+                        "protocolVersion": "2024-11-05",
+                        "capabilities": {},
+                        "clientInfo": {
+                            "name": "test-client",
+                            "version": "1.0.0"
+                        }
+                    }
+                },
+                timeout=10
+            )
+            
+            if init_response.status_code != 200:
+                raise Exception(f"Session initialization failed: {init_response.status_code}")
+            
+            # Extract session ID from response headers
+            session_id = init_response.headers.get("mcp-session-id")
+            if not session_id:
+                raise Exception("No session ID returned from initialization")
+            
+            # Add session ID to headers for subsequent requests
+            headers_with_session = headers.copy()
+            headers_with_session["mcp-session-id"] = session_id
+            
+            print("✅ MCP session initialized")
+            
+            # Give the server a moment to complete initialization
+            await asyncio.sleep(0.1)
+            
+            # Test health check
+            print("🩺 Testing health check...")
+            health_response = requests.post(
+                f"http://localhost:{self.test_port}/mcp/call",
+                headers=headers_with_session,
+                json={
+                    "jsonrpc": "2.0",
+                    "id": 2,
                     "method": "tools/call",
                     "params": {
                         "name": "health_check",
@@ -195,17 +279,29 @@ class RealDockerE2ETest:
             )
             
             if health_response.status_code == 200:
-                print("✅ Health check successful")
+                # Verify the response can be parsed
+                try:
+                    try:
+                        health_data = health_response.json()
+                    except json.JSONDecodeError:
+                        health_data = parse_sse_response(health_response.text)
+                    print("✅ Health check successful")
+                except Exception as e:
+                    print(f"⚠️ Health check returned 200 but response parsing failed: {e}")
+                    print(f"❌ Response body: {health_response.text}")
             else:
+                print(f"❌ Health check response: {health_response.status_code}")
+                print(f"❌ Response body: {health_response.text}")
                 raise Exception(f"Health check failed: {health_response.status_code}")
             
             # Test tool listing
             print("🛠️ Testing tool discovery...")
             tools_response = requests.post(
-                "http://localhost:8000/mcp/call",
+                f"http://localhost:{self.test_port}/mcp/call",
+                headers=headers_with_session,
                 json={
                     "jsonrpc": "2.0",
-                    "id": 2,
+                    "id": 3,
                     "method": "tools/list",
                     "params": {}
                 },
@@ -213,8 +309,19 @@ class RealDockerE2ETest:
             )
             
             if tools_response.status_code == 200:
-                tools_data = tools_response.json()
-                tools = tools_data.get("result", {}).get("tools", [])
+                try:
+                    # Try to parse as regular JSON first
+                    try:
+                        tools_data = tools_response.json()
+                    except json.JSONDecodeError:
+                        # If that fails, try parsing as SSE
+                        tools_data = parse_sse_response(tools_response.text)
+                    
+                    tools = tools_data.get("result", {}).get("tools", [])
+                except Exception as e:
+                    print(f"❌ Failed to parse response: {e}")
+                    print(f"❌ Response body: {tools_response.text}")
+                    raise Exception(f"Response parsing failed: {e}")
                 print(f"✅ Discovered {len(tools)} tools")
                 
                 expected_tools = ["health_check", "manage_project", "manage_task"]
@@ -231,10 +338,11 @@ class RealDockerE2ETest:
             # Test project management
             print("📁 Testing project management...")
             project_response = requests.post(
-                "http://localhost:8000/mcp/call",
+                f"http://localhost:{self.test_port}/mcp/call",
+                headers=headers_with_session,
                 json={
                     "jsonrpc": "2.0",
-                    "id": 3,
+                    "id": 4,
                     "method": "tools/call",
                     "params": {
                         "name": "manage_project",
@@ -245,7 +353,15 @@ class RealDockerE2ETest:
             )
             
             if project_response.status_code == 200:
-                print("✅ Project management working")
+                try:
+                    try:
+                        project_data = project_response.json()
+                    except json.JSONDecodeError:
+                        project_data = parse_sse_response(project_response.text)
+                    print("✅ Project management working")
+                except Exception as e:
+                    print(f"⚠️ Project management returned 200 but response parsing failed: {e}")
+                    print(f"❌ Response body: {project_response.text}")
             else:
                 raise Exception(f"Project management failed: {project_response.status_code}")
             
@@ -276,7 +392,7 @@ class RealDockerE2ETest:
             for i in range(5):
                 start_time = time.time()
                 response = requests.post(
-                    "http://localhost:8000/mcp/call",
+                    f"http://localhost:{self.test_port}/mcp/call",
                     json={
                         "jsonrpc": "2.0",
                         "id": i,
@@ -332,7 +448,7 @@ class RealDockerE2ETest:
             # Test invalid tool
             print("🔧 Testing invalid tool handling...")
             invalid_response = requests.post(
-                "http://localhost:8000/mcp/call",
+                f"http://localhost:{self.test_port}/mcp/call",
                 json={
                     "jsonrpc": "2.0",
                     "id": 1,
@@ -354,7 +470,7 @@ class RealDockerE2ETest:
             print("📝 Testing malformed request handling...")
             try:
                 malformed_response = requests.post(
-                    "http://localhost:8000/mcp/call",
+                    f"http://localhost:{self.test_port}/mcp/call",
                     data="invalid json",
                     headers={"Content-Type": "application/json"},
                     timeout=10
@@ -385,7 +501,7 @@ class RealDockerE2ETest:
             # Create test data
             print("📝 Creating test data...")
             create_response = requests.post(
-                "http://localhost:8000/mcp/call",
+                f"http://localhost:{self.test_port}/mcp/call",
                 json={
                     "jsonrpc": "2.0",
                     "id": 1,
@@ -425,7 +541,7 @@ class RealDockerE2ETest:
             await asyncio.sleep(3)  # Give it a moment
             
             list_response = requests.post(
-                "http://localhost:8000/mcp/call",
+                f"http://localhost:{self.test_port}/mcp/call",
                 json={
                     "jsonrpc": "2.0",
                     "id": 2,

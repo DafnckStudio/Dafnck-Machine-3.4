@@ -5,6 +5,8 @@ Test script to verify DhafnckMCP server token authentication
 
 import sys
 import os
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 # from fastmcp.auth.token_validator import TokenValidator  # Commented out to avoid import issues
@@ -37,6 +39,7 @@ def test_token_validation():
         print(f"⚠️  Error during validation: {e}")
         print("💡 This is normal for MVP mode without Supabase")
 
+@pytest.mark.asyncio
 async def test_server_creation():
     """Test server creation and tool listing"""
     

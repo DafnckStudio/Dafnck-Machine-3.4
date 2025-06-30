@@ -12,6 +12,7 @@ import logging
 from pathlib import Path
 
 import pytest
+import pytest_asyncio
 from src.fastmcp.server.mcp_entry_point import create_dhafnck_mcp_server
 
 # Configure logging
@@ -19,7 +20,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def server():
     """Create a server instance for testing."""
     print("🧪 Creating server for testing...")

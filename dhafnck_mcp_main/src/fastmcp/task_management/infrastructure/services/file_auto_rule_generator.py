@@ -66,7 +66,7 @@ class FileAutoRuleGenerator(AutoRuleGenerator):
         try:
             output_dir = os.path.dirname(self._output_path)
             if not os.path.exists(output_dir):
-                os.makedirs(output_dir)
+                os.makedirs(output_dir, exist_ok=True)
         except PermissionError:
             import tempfile
             self._output_path = os.path.join(tempfile.gettempdir(), f"auto_rule_{os.getpid()}.mdc")
