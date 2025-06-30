@@ -8,6 +8,10 @@
         "dhafnck_mcp_http": {
             "url": "http://localhost:8000/mcp/",
             "type": "http"
-        }
+        },
+        "shadcn-ui-server": {
+            "command": "npx",
+            "args": ["@heilgar/shadcn-ui-mcp-server"]
+        }        
     }
 }
